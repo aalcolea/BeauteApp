@@ -18,7 +18,8 @@ class PinEntryScreenState extends State<PinEntryScreen> {
   void authenticate() async {
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.1.220:8080/api/login'),
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/login'),
+        //Uri.parse('http://192.168.1.220:8080/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': 'doctor${widget.userId}@test.com',

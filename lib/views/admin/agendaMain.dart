@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../calendar/calendarSchedule.dart';
+import 'package:beaute_app/forms/appoinmentForm.dart';
 
 class AgendaAdmin extends StatefulWidget {
   const AgendaAdmin({super.key});
@@ -111,7 +112,9 @@ class _AgendaAdminState extends State<AgendaAdmin> {
                   SizedBox(width: MediaQuery.of(context).size.width * 0.1),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        AddAppointmentModal.showAddAppointmentModal(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: const EdgeInsets.only(top: 60, bottom: 60),
