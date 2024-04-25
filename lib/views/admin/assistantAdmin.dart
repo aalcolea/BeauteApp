@@ -1,15 +1,15 @@
-import 'package:flutter/cupertino.dart';
+import 'package:beaute_app/utils/drSelectbox.dart';
 import 'package:flutter/material.dart';
 import '../../calendar/calendarSchedule.dart';
 
-class AgendaAdmin extends StatefulWidget {
-  const AgendaAdmin({super.key});
+class AssistantAdmin extends StatefulWidget {
+  const AssistantAdmin({super.key});
 
   @override
-  State<AgendaAdmin> createState() => _AgendaAdminState();
+  State<AssistantAdmin> createState() => _AssistantAdminState();
 }
 
-class _AgendaAdminState extends State<AgendaAdmin> {
+class _AssistantAdminState extends State<AssistantAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,23 +24,7 @@ class _AgendaAdminState extends State<AgendaAdmin> {
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: Colors.grey)),
             ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.person_pin,
-                    size: 40,
-                    color: Color(0xFF4F2263),
-                  ),
-                ),
-                Text(
-                  'Doctor1',
-                  style: TextStyle(color: Color(0xFF4F2263), fontSize: 32),
-                ),
-              ],
-            ),
+            child: DoctorSelectbox(),
           ),
         ),
         actions: [
@@ -109,40 +93,78 @@ class _AgendaAdminState extends State<AgendaAdmin> {
                     ),
                   ),
                   SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: InkRipple.splashFactory,
-                        padding: const EdgeInsets.only(top: 60, bottom: 60),
-                        elevation: 10,
-                        surfaceTintColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: const BorderSide(
-                              color: Color(0xFF4F2263), width: 2),
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          splashFactory: InkRipple.splashFactory,
+                          padding: const EdgeInsets.only(
+                              left: 34, right: 34, top: 2),
+                          elevation: 10,
+                          surfaceTintColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: const BorderSide(
+                                color: Color(0xFF4F2263), width: 2),
+                          ),
+                          backgroundColor: Colors.white,
                         ),
-                        backgroundColor: Colors.white,
-                      ),
-                      child: const Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.note_add_outlined,
-                              size: 60,
-                              color: Color(0xFF8AB6DD),
-                            ),
-                            Text(
-                              'Crear cita',
-                              style: TextStyle(
+                        child: const Center(
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.note_add_outlined,
+                                size: 60,
                                 color: Color(0xFF8AB6DD),
-                                fontSize: 26,
                               ),
-                            ),
-                          ],
+                              Text(
+                                'Crear cita',
+                                style: TextStyle(
+                                  color: Color(0xFF8AB6DD),
+                                  fontSize: 26,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          splashFactory: InkRipple.splashFactory,
+                          padding: const EdgeInsets.only(top: 0, bottom: 2),
+                          elevation: 10,
+                          surfaceTintColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: const BorderSide(
+                                color: Color(0xFF4F2263), width: 2),
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                        child: const Center(
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.person_add_alt_outlined,
+                                size: 60,
+                                color: Color(0xFF8AB6DD),
+                              ),
+                              Text(
+                                'Agregar Cliente',
+                                style: TextStyle(
+                                  color: Color(0xFF8AB6DD),
+                                  fontSize: 26,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -150,7 +172,6 @@ class _AgendaAdminState extends State<AgendaAdmin> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  //color: Colors.red,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: const Color(0xFF4F2263),
