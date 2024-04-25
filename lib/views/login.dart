@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -20,20 +22,20 @@ class _LoginState extends State<Login> {
             height: MediaQuery.of(context).size.height * 0.07,
             color: const Color(0xFFC5B6CD),
           ),
-          /*Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [*/
 
           Image.asset(
             'assets/imgLog/logoBeauteWhiteSqr.png',
             width: MediaQuery.of(context).size.width *
-                0.55, // Establece el ancho de la imagen
+                0.55,
             height: MediaQuery.of(context).size.height *
-                0.16, // Establece la altura de la imagen
+                0.16,
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/agenda');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PinEntryScreen(userId: 1)),
+              );
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
@@ -62,7 +64,10 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/agenda');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PinEntryScreen(userId: 2)),
+              );
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
