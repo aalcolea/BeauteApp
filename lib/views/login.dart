@@ -32,7 +32,9 @@ class _LoginState extends State<Login> {
                 0.16, // Establece la altura de la imagen
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/agenda');
+            },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
               padding: EdgeInsets.zero,
@@ -40,7 +42,36 @@ class _LoginState extends State<Login> {
               surfaceTintColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                side: const BorderSide(color: Colors.black, width: 2),
+                side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+              ),
+              fixedSize: Size(
+                MediaQuery.of(context).size.width * 0.8,
+                MediaQuery.of(context).size.height * 0.16,
+              ),
+              backgroundColor: Colors.white,
+            ),
+            child: const Center(
+              child: Text(
+                'Doctor1',
+                style: TextStyle(
+                  color: Color(0xFF8AB6DD),
+                  fontSize: 26,
+                ),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/agenda');
+            },
+            style: ElevatedButton.styleFrom(
+              splashFactory: InkRipple.splashFactory,
+              padding: EdgeInsets.zero,
+              elevation: 10,
+              surfaceTintColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                side: const BorderSide(color: Color(0xFF4F2263), width: 2),
               ),
               fixedSize: Size(
                 MediaQuery.of(context).size.width * 0.8,
@@ -67,34 +98,7 @@ class _LoginState extends State<Login> {
               surfaceTintColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                side: const BorderSide(color: Colors.black, width: 2),
-              ),
-              fixedSize: Size(
-                MediaQuery.of(context).size.width * 0.8,
-                MediaQuery.of(context).size.height * 0.16,
-              ),
-              backgroundColor: Colors.white,
-            ),
-            child: const Center(
-              child: Text(
-                'Doctor',
-                style: TextStyle(
-                  color: Color(0xFF8AB6DD),
-                  fontSize: 26,
-                ),
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              splashFactory: InkRipple.splashFactory,
-              padding: EdgeInsets.zero,
-              elevation: 10,
-              surfaceTintColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                side: const BorderSide(color: Colors.black, width: 2),
+                side: const BorderSide(color: Color(0xFF4F2263), width: 2),
               ),
               fixedSize: Size(
                 MediaQuery.of(context).size.width * 0.8,
