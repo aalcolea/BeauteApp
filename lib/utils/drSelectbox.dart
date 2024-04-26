@@ -11,7 +11,6 @@ class DoctorSelectbox extends StatefulWidget {
 
 class _DoctorSelectboxState extends State<DoctorSelectbox> {
   String? selectedDr;
-  late Future<void> fetchEstadosFuture;
 
   @override
   void initState() {

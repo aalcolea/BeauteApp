@@ -22,14 +22,16 @@ class _LoginState extends State<Login> {
           ),
           Image.asset(
             'assets/imgLog/logoBeauteWhiteSqr.png',
-            width: MediaQuery.of(context).size.width *
-                0.55,
-            height: MediaQuery.of(context).size.height *
-                0.16,
+            width: MediaQuery.of(context).size.width * 0.55,
+            height: MediaQuery.of(context).size.height * 0.16,
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/agenda');
+              Navigator.pushNamed(context, '/pin').then((result) {
+                if (result == true) {
+                  Navigator.pushReplacementNamed(context, '/drScreen');
+                }
+              });
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
@@ -58,7 +60,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/drScreen');
+              Navigator.pushNamed(context, '/pin').then((result) {
+                if (result == true) {
+                  Navigator.pushReplacementNamed(context, '/drScreen');
+                }
+              });
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
@@ -87,7 +93,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/assistantScreen');
+              Navigator.pushNamed(context, '/pin').then((result) {
+                if (result == true) {
+                  Navigator.pushReplacementNamed(context, '/assistantScreen');
+                }
+              });
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,

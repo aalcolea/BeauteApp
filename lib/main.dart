@@ -1,3 +1,4 @@
+import 'package:beaute_app/utils/pinWidget.dart';
 import 'package:beaute_app/views/admin/assistantAdmin.dart';
 import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/login.dart';
@@ -25,10 +26,11 @@ class MyApp extends StatelessWidget {
             'Iniciar Sesión',
           ),
         ),
-        body: const Login(),
+        body: Login(),
       ),
       routes: {
         '/drScreen': (context) => DoctorAdmin(),
+        '/pin': (context) => PinWidget(),
         '/assistantScreen': (context) => AssistantAdmin(),
       },
     );
