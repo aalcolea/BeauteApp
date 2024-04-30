@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -27,11 +29,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/pin').then((result) {
-                if (result == true) {
-                  Navigator.pushReplacementNamed(context, '/drScreen');
-                }
-              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PinEntryScreen(userId: 1)),
+              );
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
@@ -60,11 +62,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/pin').then((result) {
-                if (result == true) {
-                  Navigator.pushReplacementNamed(context, '/drScreen');
-                }
-              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PinEntryScreen(userId: 2)),
+              );
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
