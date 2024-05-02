@@ -22,6 +22,35 @@ class _LoginState extends State<Login> {
             height: MediaQuery.of(context).size.height * 0.07,
             color: const Color(0xFFC5B6CD),
           ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/drScreen');
+            },
+            style: ElevatedButton.styleFrom(
+              splashFactory: InkRipple.splashFactory,
+              padding: EdgeInsets.zero,
+              elevation: 10,
+              surfaceTintColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+              ),
+              fixedSize: Size(
+                MediaQuery.of(context).size.width * 0.8,
+                MediaQuery.of(context).size.height * 0.06,
+              ),
+              backgroundColor: Colors.white,
+            ),
+            child: const Center(
+              child: Text(
+                'FlyBtn',
+                style: TextStyle(
+                  color: Color(0xFF8AB6DD),
+                  fontSize: 26,
+                ),
+              ),
+            ),
+          ),
           Image.asset(
             'assets/imgLog/logoBeauteWhiteSqr.png',
             width: MediaQuery.of(context).size.width * 0.55,
