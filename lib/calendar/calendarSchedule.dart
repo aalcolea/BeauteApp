@@ -55,6 +55,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   late int? currentMonth;
 
   CalendarController _calendarSfCController = CalendarController();
+  bool isMonthView = true;
+
   late int? visibleYear;
 
   @override
@@ -105,14 +107,33 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           Icons.arrow_back_ios_rounded,
                           color: Colors.white,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          int previousMonth = currentMonth! - 1;
+                          int previousYear = visibleYear!;
+                          if (previousMonth < 1) {
+                            previousMonth = 12;
+                            previousYear--;
+                          }
+
+                          _calendarSfCController.displayDate =
+                              DateTime(previousYear, previousMonth, 1);
+                        },
                       ),
                       IconButton(
                         icon: const Icon(
                           Icons.arrow_forward_ios_rounded,
                           color: Colors.white,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          int nextMonth = currentMonth! + 1;
+                          int nextYear = visibleYear!;
+                          if (nextMonth > 12) {
+                            nextMonth = 1;
+                            nextYear++;
+                          }
+                          _calendarSfCController.displayDate =
+                              DateTime(nextYear, nextMonth, 1);
+                        },
                       ),
                     ],
                   ),
@@ -157,6 +178,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                 controller: _calendarSfCController,
                 todayHighlightColor: const Color(0xFFDEA6CB),
                 cellBorderColor: Colors.black54,
+                dataSource: MeetingDataSource(getAppointments()),
+
+                ///
                 onViewChanged: (ViewChangedDetails details) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     int? visibleMonthController =
@@ -168,11 +192,39 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                     setState(() {});
                   });
                 },
+
+                ///
+                onTap: (CalendarTapDetails details) {
+                  if (details.targetElement == CalendarElement.calendarCell) {
+                    print('true');
+                  }
+                },
               ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+List<Appointment> getAppointments() {
+  List<Appointment> meetings = <Appointment>[];
+  final DateTime today = DateTime.now();
+  final DateTime startTime =
+      DateTime(today.year, today.month, today.day, 9, 0, 0);
+  final DateTime endTime = startTime.add(const Duration(hours: 2));
+
+  meetings.add(Appointment(
+      startTime: startTime,
+      endTime: endTime,
+      subject: 'Facial',
+      color: Colors.blueAccent));
+  return meetings;
+}
+
+class MeetingDataSource extends CalendarDataSource {
+  MeetingDataSource(List<Appointment> source) {
+    appointments = source;
   }
 }
