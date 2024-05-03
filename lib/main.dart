@@ -1,4 +1,5 @@
-import 'package:beaute_app/views/admin/agendaMain.dart';
+import 'package:beaute_app/views/admin/assistantAdmin.dart';
+import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
 
@@ -24,11 +25,11 @@ class MyApp extends StatelessWidget {
             'Iniciar Sesión',
           ),
         ),
-        body: const Login(),
+        body: Login(),
       ),
       routes: {
-        '/agenda': (context) => AgendaAdmin(),
-        //'/cerrarSesion': (context) => MyApp(),
+        '/drScreen': (context) => DoctorAdmin(),
+        '/assistantScreen': (context) => AssistantAdmin(),
       },
     );
   }

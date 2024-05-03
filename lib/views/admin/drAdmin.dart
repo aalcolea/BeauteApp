@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 
-class AgendaAdmin extends StatefulWidget {
-  const AgendaAdmin({super.key});
+class DoctorAdmin extends StatefulWidget {
+  const DoctorAdmin({super.key});
 
   @override
-  State<AgendaAdmin> createState() => _AgendaAdminState();
+  State<DoctorAdmin> createState() => _DoctorAdminState();
 }
 
-class _AgendaAdminState extends State<AgendaAdmin> {
+class _DoctorAdminState extends State<DoctorAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,7 +153,6 @@ class _AgendaAdminState extends State<AgendaAdmin> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  //color: Colors.red,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: const Color(0xFF4F2263),
