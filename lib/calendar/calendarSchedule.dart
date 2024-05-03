@@ -51,13 +51,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   DateTime now = DateTime.now();
-  late int initMonth;
-  late int? currentMonth;
+  int initMonth = 0;
+  int? currentMonth = 0;
 
-  CalendarController _calendarSfCController = CalendarController();
+  final CalendarController _calendarSfCController = CalendarController();
   bool isMonthView = true;
 
-  late int? visibleYear;
+  int? visibleYear = 0;
 
   @override
   void initState() {
@@ -87,7 +87,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             Container(
               alignment: Alignment.centerLeft,
               color: const Color(0xFF66BEC8),
-              //const Color(0xFF381460).withOpacity(0.3),
               width: MediaQuery.of(context).size.width,
               height: 40,
               child: Row(
