@@ -2,6 +2,7 @@ import 'package:beaute_app/views/admin/assistantAdmin.dart';
 import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +32,12 @@ class MyApp extends StatelessWidget {
         '/drScreen': (context) => DoctorAdmin(),
         '/assistantScreen': (context) => AssistantAdmin(),
       },
+      supportedLocales: const [Locale('es', 'ES')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }
