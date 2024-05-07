@@ -31,7 +31,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         var data = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
-        Navigator.pushReplacementNamed(context, '/agenda');
+        Navigator.pushReplacementNamed(context, '/drScreen');
       } else {
         showDialog(
           context: context,
@@ -50,7 +50,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         );
       }
     } catch (e) {
-      print(e);
+      print("hola ${e}");
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../calendar/calendarSchedule.dart';
+import '../../forms/clientForm.dart';
 import '../../utils/drSelectbox.dart';
 
 class AssistantAdmin extends StatefulWidget {
@@ -8,7 +9,17 @@ class AssistantAdmin extends StatefulWidget {
   @override
   State<AssistantAdmin> createState() => _AssistantAdminState();
 }
-
+class addClientModal{
+  static void showClientModal(BuildContext context){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        content: ClientForm(),
+        shape: RoundedRectangleBorder(borderRadius:  BorderRadius.circular(20.0)),
+      );
+    },
+    );
+  }
+}
 class _AssistantAdminState extends State<AssistantAdmin> {
   @override
   Widget build(BuildContext context) {
@@ -132,7 +143,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addClientModal.showClientModal(context);
+                        },
                         style: ElevatedButton.styleFrom(
                           splashFactory: InkRipple.splashFactory,
                           padding: const EdgeInsets.only(top: 0, bottom: 2),
