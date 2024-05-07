@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ClientForm extends StatefulWidget {
   @override
@@ -27,7 +28,16 @@ class _ClientFormState extends State<ClientForm> {
       );
 
       if (response.statusCode == 201) {
-        print('Client creado correctamente');
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(
+            msg: "Cliente agregado correctamente",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
       } else {
         print('Error al crear cliente: ${response.body}');
       }
