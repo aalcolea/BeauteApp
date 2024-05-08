@@ -70,7 +70,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
           ),
           IconButton(
             icon: const Icon(
-              Icons.home_outlined,
+              Icons.input_outlined,
               size: 40,
               color: Color(0xFF4F2263),
             ),
