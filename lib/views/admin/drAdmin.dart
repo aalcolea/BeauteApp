@@ -16,9 +16,11 @@ class AddAppointmentModal {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentPadding: EdgeInsets.zero,
           content: AppointmentForm(),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
         );
       },
     );
