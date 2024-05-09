@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -81,7 +82,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
               surface: Colors.white,
               //mod el color del fondo del reloj
               onSurface:
-              Colors.black, // Color del resto #s o letras en el widget
+                  Colors.black, // Color del resto #s o letras en el widget
             ),
           ),
           child: mediaQueryWrapper,
@@ -130,7 +131,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 children: [
                   ClipRRect(
                     borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(16.0)),
+                        const BorderRadius.vertical(top: Radius.circular(16.0)),
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 20),
                       alignment: Alignment.center,
@@ -163,7 +164,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       width: 0.1, color: Colors.black),
                                 ),
                                 backgroundColor:
-                                Colors.black.withOpacity(0.15)),
+                                    Colors.black.withOpacity(0.15)),
                             icon: const Icon(
                               Icons.close,
                               color: Colors.white,

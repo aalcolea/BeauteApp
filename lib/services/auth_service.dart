@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,14 +70,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           padding:
               const EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 10),
           //const EdgeInsets.all(20),
-          backgroundColor: const Color(0xFFA0A0A0),
+          backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.7),
         ),
         onPressed: () {
           setState(() {
             if (enteredPin.length < 6) {
               enteredPin += number.toString();
               pinController.text = enteredPin;
-              authenticate();
               enteredPin.length >= 6 ? authenticate() : print(enteredPin);
             }
           });
@@ -116,14 +117,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                   child: Text(
                     'Ingrese el pin',
                     style: TextStyle(
-                      fontSize: 40,
+                      fontSize: 35,
                       color: Colors.white,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
 
                 ///codigo para el pin
@@ -133,9 +133,9 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                     6,
                     (index) {
                       return Container(
-                        margin: const EdgeInsets.only(left: 15, right: 15),
-                        width: pinVisible ? 50 : 20,
-                        height: pinVisible ? 60 : 20,
+                        margin: const EdgeInsets.only(left: 12, right: 12),
+                        width: pinVisible ? 30 : 20,
+                        height: pinVisible ? 40 : 20,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(width: 3, color: Colors.white),
@@ -189,30 +189,40 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                   ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.symmetric(horizontal: 60),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const SizedBox(),
-                      ),
-                      numBtn(0),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            if (enteredPin.isNotEmpty) {
-                              enteredPin = enteredPin.substring(
-                                  0, enteredPin.length - 1);
-                            }
-                          });
-                        },
-                        child: const Icon(
-                          Icons.backspace_outlined,
-                          color: Colors.white,
-                          size: 45,
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {},
+                          child: const Text(''), //SizedBox(),
                         ),
-                      )
+                      ),
+                      Expanded(
+                        child: numBtn(0),
+                      ),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.only(left: 10, top: 12),
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                if (enteredPin.isNotEmpty) {
+                                  enteredPin = enteredPin.substring(
+                                      0, enteredPin.length - 1);
+                                }
+                              });
+                            },
+                            child: const Icon(
+                              Icons.backspace_outlined,
+                              color: Colors.white,
+                              size: 60,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

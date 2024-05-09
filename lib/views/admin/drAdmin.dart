@@ -8,19 +8,24 @@ class DoctorAdmin extends StatefulWidget {
   @override
   State<DoctorAdmin> createState() => _DoctorAdminState();
 }
+
 class AddAppointmentModal {
   static void showAddAppointmentModal(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const AppointmentForm(),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          contentPadding: EdgeInsets.zero,
+          content: AppointmentForm(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
         );
       },
     );
   }
 }
+
 class _DoctorAdminState extends State<DoctorAdmin> {
   @override
   Widget build(BuildContext context) {
@@ -66,7 +71,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
           ),
           IconButton(
             icon: const Icon(
-              Icons.home_outlined,
+              Icons.input_outlined,
               size: 40,
               color: Color(0xFF4F2263),
             ),
@@ -76,21 +81,21 @@ class _DoctorAdminState extends State<DoctorAdmin> {
       ),
       body: Container(
         padding:
-            const EdgeInsets.only(right: 15, left: 15, bottom: 130, top: 40),
+            const EdgeInsets.only(right: 15, left: 15, bottom: 100, top: 40),
         color: Colors.white,
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 40),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
-                        padding: const EdgeInsets.only(top: 60, bottom: 60),
+                        padding: const EdgeInsets.only(top: 30, bottom: 30),
                         elevation: 10,
                         surfaceTintColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -121,41 +126,43 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                     ),
                   ),
                   SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-    ElevatedButton(
-    onPressed: () {
-    AddAppointmentModal.showAddAppointmentModal(context);
-    },
-    style: ElevatedButton.styleFrom(
-    splashFactory: InkRipple.splashFactory,
-    padding: const EdgeInsets.only(top: 60, bottom: 60),
-    elevation: 10,
-    surfaceTintColor: Colors.white,
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(10.0),
-    side: const BorderSide(color: Color(0xFF4F2263), width: 2),
-    ),
-    backgroundColor: Colors.white,
-    ),
-    child: const Center(
-    child: Column(
-    children: [
-    Icon(
-    Icons.note_add_outlined,
-    size: 60,
-    color: Color(0xFF8AB6DD),
-    ),
-    Text(
-    'Crear cita',
-    style: TextStyle(
-    color: Color(0xFF8AB6DD),
-    fontSize: 26,
-    ),
-    ),
-    ],
-    ),
-    ),
-    )
-
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        AddAppointmentModal.showAddAppointmentModal(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        splashFactory: InkRipple.splashFactory,
+                        padding: const EdgeInsets.only(top: 30, bottom: 30),
+                        elevation: 10,
+                        surfaceTintColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: const BorderSide(
+                              color: Color(0xFF4F2263), width: 2),
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                      child: const Center(
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.note_add_outlined,
+                              size: 60,
+                              color: Color(0xFF8AB6DD),
+                            ),
+                            Text(
+                              'Crear cita',
+                              style: TextStyle(
+                                color: Color(0xFF8AB6DD),
+                                fontSize: 26,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
