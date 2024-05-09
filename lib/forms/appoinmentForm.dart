@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/getClientsService.dart';
 import '../models/clientModel.dart';
+import 'package:http/http.dart' as http;
 
 class AppointmentForm extends StatefulWidget {
   @override
@@ -12,8 +16,10 @@ class AppointmentForm extends StatefulWidget {
 class _AppointmentFormState extends State<AppointmentForm> {
   final DropdownDataManager dropdownDataManager = DropdownDataManager();
   Client? _selectedClient;
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
+  var _clientTextController = TextEditingController();
+  final  _dateController = TextEditingController();
+  final  _timeController = TextEditingController();
+  final  treatmentController = TextEditingController();
   int day = 0;
   int month = 0;
   int year = 0;
@@ -22,7 +28,80 @@ class _AppointmentFormState extends State<AppointmentForm> {
     super.initState();
     dropdownDataManager.fetchUser();
   }
+  void _updateSelectedClient(Client? client) {
+    if (client != null) {
+      setState(() {
+        _selectedClient = client;
+      });
+    } else {
+      setState(() {
+        _selectedClient = Client(id: 0, name: _clientTextController.text, email: '', number: 0);
+      });
+    }
+  }
 
+
+/*considerar mandar funcion appoinment a otro widget*/
+  Future<void> submitAppointment() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('jwt_token');
+    if (token == null) {
+      print("No token found");
+      return;
+    }
+
+    String url = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
+
+    print('Enviando los siguientes datos:');
+    print('Client ID: ${_selectedClient?.id}');
+    print('Client name: ${_clientTextController?.text}');
+    print('Date: ${_dateController.text}');
+    print('Time: ${_timeController.text}');
+    print('Treatment: ${treatmentController.text}');
+
+    try {
+      var response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'client_id': _selectedClient?.id.toString(),
+          'date': _dateController.text,
+          'time': _timeController.text,
+          'treatment': treatmentController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Éxito'),
+              content: Text('Cita creada correctamente'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        print('Respuesta del servidor: ${response.body}');
+      } else {
+        print('Error al crear la cita: StatusCode: ${response.statusCode}, Body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error al enviar los datos: $e');
+    }
+  }
+
+/*termina funcion appointmentn*/
   Future<void> _selectDate(BuildContext context) async {
     DateTime? _picked = await showDatePicker(
       context: context,
@@ -201,10 +280,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       },
                       displayStringForOption: (Client option) => option.name,
                       onSelected: (Client selection) {
-                        setState(() {
-                          _selectedClient = selection;
-                          print('You just selected ${_selectedClient?.name}');
-                        });
+                        _clientTextController.text = selection.name;
+                        _updateSelectedClient(selection);
                       },
                       fieldViewBuilder: (
                           BuildContext context,
@@ -212,6 +289,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           FocusNode fieldFocusNode,
                           VoidCallback onFieldSubmitted
                           ) {
+                        _clientTextController = fieldTextEditingController;
                         return TextFormField(
                           controller: fieldTextEditingController,
                           focusNode: fieldFocusNode,
@@ -221,6 +299,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             filled: true,
                             fillColor: Colors.white,
                           ),
+                          onChanged: (text) {
+                            _updateSelectedClient(null); // Actualiza con cliente manual si es necesario
+                          },
                         );
                       },
                     ),
@@ -309,24 +390,23 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 15, horizontal: 10),
                     child: TextFormField(
+                      controller: treatmentController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Describa el tratamiento...',
                       ),
-                      maxLines: 3,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: submitAppointment,
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          side: const BorderSide(
-                              color: Color(0xFF4F2263), width: 2),
+                          side: const BorderSide(color: Color(0xFF4F2263), width: 2),
                         ),
                         fixedSize: Size(
                           MediaQuery.of(context).size.width * 0.45,
