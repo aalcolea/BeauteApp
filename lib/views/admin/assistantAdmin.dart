@@ -13,7 +13,7 @@ class addClientModal{
   static void showClientModal(BuildContext context){
     showDialog(context: context, builder: (BuildContext context){
       return AlertDialog(
-        content: ClientForm(),
+        content: const ClientForm(),
         shape: RoundedRectangleBorder(borderRadius:  BorderRadius.circular(20.0)),
       );
     },
@@ -35,7 +35,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: Colors.grey)),
             ),
-            child: DoctorSelectbox(),
+            child: const DoctorSelectbox(),
           ),
         ),
         actions: [
@@ -191,7 +191,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                     width: 2,
                   ),
                 ),
-                child: AgendaSchedule(),
+                child: const AgendaSchedule(),
               ),
             ),
           ],

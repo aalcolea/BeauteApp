@@ -62,7 +62,7 @@ class _LoginState extends State<Login> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PinEntryScreen(userId: 1)),
+                    builder: (context) => const PinEntryScreen(userId: 1)),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -95,7 +95,7 @@ class _LoginState extends State<Login> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PinEntryScreen(userId: 2)),
+                    builder: (context) => const PinEntryScreen(userId: 2)),
               );
             },
             style: ElevatedButton.styleFrom(
