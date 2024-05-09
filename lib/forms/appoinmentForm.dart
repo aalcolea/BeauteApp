@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import '../services/getClientsService.dart';
+import '../models/clientModel.dart';
 
 class AppointmentForm extends StatefulWidget {
   @override
@@ -8,13 +10,18 @@ class AppointmentForm extends StatefulWidget {
 }
 
 class _AppointmentFormState extends State<AppointmentForm> {
+  final DropdownDataManager dropdownDataManager = DropdownDataManager();
+  Client? _selectedClient;
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   int day = 0;
   int month = 0;
   int year = 0;
-
-  String? _selectedClient;
+  @override
+  void initState() {
+    super.initState();
+    dropdownDataManager.fetchUser();
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? _picked = await showDatePicker(
@@ -37,14 +44,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
     if (_picked != null) {
       setState(() {
-        //_dateController.text = _picked.toString().split(" ")[0];
         day = _picked.day;
         month = _picked.month;
         year = _picked.year;
         _dateController.text = "$day/$month/$year";
-        print('Día seleccionado: $day');
-        print('Mes seleccionado: $month');
-        print('Año seleccionado: $year');
       });
     } else {
       setState(() {
@@ -188,27 +191,37 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: DropdownButtonFormField(
-                      value: _selectedClient,
-                      decoration: const InputDecoration(
-                        labelText: 'Cliente',
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      items: <String>['Cliente 1', 'Cliente 2', 'Cliente 3']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    child: Autocomplete<Client>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text == '') {
+                          return const Iterable<Client>.empty();
+                        }
+                        return dropdownDataManager.getSuggestions(textEditingValue.text);
+                      },
+                      displayStringForOption: (Client option) => option.name,
+                      onSelected: (Client selection) {
                         setState(() {
-                          _selectedClient = newValue;
+                          _selectedClient = selection;
+                          print('You just selected ${_selectedClient?.name}');
                         });
+                      },
+                      fieldViewBuilder: (
+                          BuildContext context,
+                          TextEditingController fieldTextEditingController,
+                          FocusNode fieldFocusNode,
+                          VoidCallback onFieldSubmitted
+                          ) {
+                        return TextFormField(
+                          controller: fieldTextEditingController,
+                          focusNode: fieldFocusNode,
+                          decoration: const InputDecoration(
+                            labelText: 'Cliente',
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        );
                       },
                     ),
                   ),
