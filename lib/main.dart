@@ -4,6 +4,8 @@ import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'forms/appoinmentForm.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/drScreen': (context) => const DoctorAdmin(),
         '/assistantScreen': (context) => const AssistantAdmin(),
+        '/citaScreen': (context) => AppointmentForm(),
       },
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [

@@ -72,14 +72,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
         final themedPicker = Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFC31B36),
+              primary: Color(0xFF4F2263),
               onPrimary: Colors.white,
               onPrimaryContainer: Colors.white,
-              tertiary: Color(0xFFC31B36),
+              tertiary: Color(0xFF4F2263),
               onTertiaryContainer: Colors.white,
               surface: Colors.white,
-              onSurface:
-                  Colors.black,
+              onSurface: Colors.black,
             ),
           ),
           child: mediaQueryWrapper,
@@ -116,9 +115,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.zero,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Appointment'),
+      ),
+      body: Form(
         child: Container(
           color: Colors.transparent,
           child: Stack(
@@ -338,7 +339,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         style: TextStyle(fontSize: 22),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ],
