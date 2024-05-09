@@ -24,7 +24,8 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/drScreen');
+              Navigator.pushReplacementNamed(context, '/assistantScreen');
+              //Navigator.pushReplacementNamed(context, '/drScreen');
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
