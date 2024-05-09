@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
@@ -15,7 +14,7 @@ class AddAppointmentModal {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: AppointmentForm(),
+          content: const AppointmentForm(),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         );
       },
@@ -169,7 +168,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                     width: 2,
                   ),
                 ),
-                child: AgendaSchedule(),
+                child: const AgendaSchedule(),
               ),
             ),
           ],

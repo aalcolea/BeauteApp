@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 class AppointmentForm extends StatelessWidget {
+  const AppointmentForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
+          const Text(
             'Nueva cita',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           DropdownButtonFormField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Cliente',
               border: OutlineInputBorder(),
               filled: true,
@@ -29,9 +31,9 @@ class AppointmentForm extends StatelessWidget {
             }).toList(),
             onChanged: (String? newValue) {},
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Fecha',
               hintText: 'DD/MM/AAAA',
               border: OutlineInputBorder(),
@@ -41,9 +43,9 @@ class AppointmentForm extends StatelessWidget {
               // Aquí puedes integrar un picker de fecha
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Hora',
               hintText: 'HH:MM',
               border: OutlineInputBorder(),
@@ -53,24 +55,24 @@ class AppointmentForm extends StatelessWidget {
               // Aquí puedes integrar un picker de tiempo
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Tratamiento',
               border: OutlineInputBorder(),
               hintText: 'Describa el tratamiento...',
             ),
             maxLines: 3,
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Acción al presionar el botón de Crear cita
+
             },
-            child: Text('Crear cita'),
             style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, 50), // ancho doble
+              minimumSize: const Size(double.infinity, 50), // ancho doble
             ),
+            child: const Text('Crear cita'),
           ),
         ],
       ),

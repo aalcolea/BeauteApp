@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class DoctorSelectbox extends StatefulWidget {
   const DoctorSelectbox({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _DoctorSelectboxState createState() => _DoctorSelectboxState();
