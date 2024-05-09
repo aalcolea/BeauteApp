@@ -22,13 +22,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Iniciar Sesión',
-          ),
-        ),
-        body: const Login(),
+      home: const Scaffold(
+        body: Login(),
       ),
       routes: {
         '/drScreen': (context) => const DoctorAdmin(),

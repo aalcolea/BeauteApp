@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import '../../forms/clientForm.dart';
 import '../../utils/drSelectbox.dart';
@@ -13,23 +16,52 @@ class AssistantAdmin extends StatefulWidget {
   State<AssistantAdmin> createState() => _AssistantAdminState();
 }
 
-class addClientModal {
+/*class addClientModal {
   static void showClientModal(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           contentPadding: EdgeInsets.zero,
-          content: const ClientForm(),
+          content: ClientForm(visibleKeyboard: ,),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         );
       },
     );
   }
-}
+}*/
 
 class _AssistantAdminState extends State<AssistantAdmin> {
+  late KeyboardVisibilityController keyboardVisibilityController;
+  late StreamSubscription<bool> keyboardVisibilitySubscription;
+  bool visibleKeyboard = false;
+
+  void checkKeyboardVisibility() {
+    keyboardVisibilitySubscription =
+        keyboardVisibilityController.onChange.listen((visible) {
+      setState(() {
+        visibleKeyboard = visible;
+        print(visibleKeyboard);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    keyboardVisibilityController = KeyboardVisibilityController();
+    checkKeyboardVisibility();
+    print(visibleKeyboard);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    keyboardVisibilitySubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,7 +195,19 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           height: MediaQuery.of(context).size.height * 0.01),
                       ElevatedButton(
                         onPressed: () {
-                          addClientModal.showClientModal(context);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                contentPadding: EdgeInsets.zero,
+                                content: const ClientForm(),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                              );
+                            },
+                          );
+                          //addClientModal.showClientModal(context);
                         },
                         style: ElevatedButton.styleFrom(
                           splashFactory: InkRipple.splashFactory,

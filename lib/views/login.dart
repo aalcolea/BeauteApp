@@ -17,10 +17,28 @@ class _LoginState extends State<Login> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.07,
-            color: const Color(0xFFC5B6CD),
+          Column(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.07,
+                color: const Color(0xFFC5B6CD),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.003,
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF4F2263),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           ElevatedButton(
             onPressed: () {
@@ -127,8 +145,8 @@ class _LoginState extends State<Login> {
             onPressed: () {
               /*Navigator.pushNamed(context, '/pin').then((result) {
                 if (result == true) {*/
-                  Navigator.pushReplacementNamed(context, '/assistantScreen');
-               /* }
+              Navigator.pushReplacementNamed(context, '/assistantScreen');
+              /* }
               });*/
             },
             style: ElevatedButton.styleFrom(
@@ -156,11 +174,29 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.07,
-            color: const Color(0xFFC5B6CD),
-          ),
+          Column(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.003,
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF4F2263),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(2, -0),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.07,
+                color: const Color(0xFFC5B6CD),
+              ),
+            ],
+          )
         ],
       ),
     );

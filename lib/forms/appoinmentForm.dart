@@ -17,6 +17,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   int day = 0;
   int month = 0;
   int year = 0;
+
   @override
   void initState() {
     super.initState();
@@ -116,9 +117,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Appointment'),
-      ),
       body: Form(
         child: Container(
           color: Colors.transparent,
@@ -127,62 +125,104 @@ class _AppointmentFormState extends State<AppointmentForm> {
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(16.0)),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 1,
-                      height: 45,
-                      color: const Color(0xFF4F2263),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.only(left: 20),
-                              alignment: Alignment.center,
-                              child: const Text(
-                                'Nueva cita',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 28),
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(color: Colors.transparent),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Nueva cita',
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF4F2263),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.notifications_none_outlined,
+                                size: 40,
+                                color: Color(0xFF4F2263),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.home_outlined,
+                                size: 40,
+                                color: Color(0xFF4F2263),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  /*Container(
+                    margin: const EdgeInsets.only(bottom: 20),
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * 1,
+                    height: 45,
+                    color: const Color(0xFF4F2263),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 20),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Nueva cita',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          IconButton(
-                            style: IconButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  side: const BorderSide(
-                                      width: 0.1, color: Colors.black),
-                                ),
-                                backgroundColor:
-                                    Colors.black.withOpacity(0.15)),
-                            icon: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
+                  ),*/
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Cliente',
+                      'Doctor: ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F2263),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'Cliente:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -191,13 +231,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 10),
                     child: Autocomplete<Client>(
                       optionsBuilder: (TextEditingValue textEditingValue) {
                         if (textEditingValue.text == '') {
                           return const Iterable<Client>.empty();
                         }
-                        return dropdownDataManager.getSuggestions(textEditingValue.text);
+                        return dropdownDataManager
+                            .getSuggestions(textEditingValue.text);
                       },
                       displayStringForOption: (Client option) => option.name,
                       onSelected: (Client selection) {
@@ -206,12 +248,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           print('You just selected ${_selectedClient?.name}');
                         });
                       },
-                      fieldViewBuilder: (
-                          BuildContext context,
+                      fieldViewBuilder: (BuildContext context,
                           TextEditingController fieldTextEditingController,
                           FocusNode fieldFocusNode,
-                          VoidCallback onFieldSubmitted
-                          ) {
+                          VoidCallback onFieldSubmitted) {
                         return TextFormField(
                           controller: fieldTextEditingController,
                           focusNode: fieldFocusNode,
@@ -226,14 +266,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Fecha',
+                      'Fecha:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -258,14 +300,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Hora',
+                      'Hora:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -290,14 +334,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Tratamiento',
+                      'Tratamiento:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -313,7 +359,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         border: OutlineInputBorder(),
                         hintText: 'Describa el tratamiento...',
                       ),
-                      maxLines: 3,
                     ),
                   ),
                   Padding(
