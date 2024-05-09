@@ -69,20 +69,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
         final themedPicker = Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFC31B36),
-              //mod el color de la bolita de seleccionar
+              primary: Color(0xFF4F2263),
               onPrimary: Colors.white,
-              //mod el color del # en la bolita de seleccionar
               onPrimaryContainer: Colors.white,
-              //mod el color del #  en el container seleccionado
-              tertiary: Color(0xFFC31B36),
-              //mod el color de la caja de AM o PM seleccionada
+              tertiary: Color(0xFF4F2263),
               onTertiaryContainer: Colors.white,
-              // mod el color de la letra de AM o PM seleccionada
               surface: Colors.white,
-              //mod el color del fondo del reloj
-              onSurface:
-                  Colors.black, // Color del resto #s o letras en el widget
+              onSurface: Colors.black,
             ),
           ),
           child: mediaQueryWrapper,
@@ -119,9 +112,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.zero,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Appointment'),
+      ),
+      body: Form(
         child: Container(
           color: Colors.transparent,
           child: Stack(
@@ -315,8 +310,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: EdgeInsets.zero,
-                        //elevation: 10,
-                        //surfaceTintColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           side: const BorderSide(
@@ -327,14 +320,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           MediaQuery.of(context).size.height * 0.06,
                         ),
                         backgroundColor: const Color(0xFFEFE6F7),
-                        //backgroundColor: const Color(0xFFC5B6CD),
                       ),
                       child: const Text(
                         'Crear cita',
                         style: TextStyle(fontSize: 22),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ],

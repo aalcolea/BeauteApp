@@ -80,8 +80,11 @@ class _DoctorAdminState extends State<DoctorAdmin> {
         ],
       ),
       body: Container(
-        padding:
-            const EdgeInsets.only(right: 15, left: 15, bottom: 100, top: 40),
+        padding: EdgeInsets.only(
+            right: 15,
+            left: 15,
+            bottom: MediaQuery.of(context).size.height * 0.075,
+            top: 40),
         color: Colors.white,
         child: Column(
           children: [
@@ -129,7 +132,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        AddAppointmentModal.showAddAppointmentModal(context);
+                        Navigator.pushNamed(context, '/citaScreen');
+                        //AddAppointmentModal.showAddAppointmentModal(context);
                       },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
