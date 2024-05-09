@@ -185,7 +185,7 @@ class _ClientFormState extends State<ClientForm> {
             Padding(
               padding: const EdgeInsets.only(bottom: 40),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: createClient,
                 style: ElevatedButton.styleFrom(
                   splashFactory: InkRipple.splashFactory,
                   padding:
