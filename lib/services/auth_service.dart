@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PinEntryScreen extends StatefulWidget {
   final int userId;
 
-  const PinEntryScreen({Key? key, required this.userId}) : super(key: key);
+  const PinEntryScreen({super.key, required this.userId});
 
   @override
   PinEntryScreenState createState() => PinEntryScreenState();
@@ -52,7 +52,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         );
       }
     } catch (e) {
-      print("hola ${e}");
+      print("hola $e");
     }
   }
 

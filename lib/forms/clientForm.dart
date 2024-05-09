@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ClientForm extends StatefulWidget {
+  const ClientForm({super.key});
+
   @override
   _ClientFormState createState() => _ClientFormState();
 }
@@ -49,44 +51,44 @@ class _ClientFormState extends State<ClientForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _nameController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Nombre',
               hintText: 'nombre',
               border: OutlineInputBorder(),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _numberController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Numero',
               hintText: 'Numero',
               border: OutlineInputBorder(),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _emailController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Email',
               border: OutlineInputBorder(),
               hintText: 'Email',
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: createClient,
-            child: Text('Crear cliente'),
             style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, 50),
+              minimumSize: const Size(double.infinity, 50),
             ),
+            child: const Text('Crear cliente'),
           ),
         ],
       ),

@@ -26,11 +26,11 @@ class MyApp extends StatelessWidget {
             'Iniciar Sesión',
           ),
         ),
-        body: Login(),
+        body: const Login(),
       ),
       routes: {
-        '/drScreen': (context) => DoctorAdmin(),
-        '/assistantScreen': (context) => AssistantAdmin(),
+        '/drScreen': (context) => const DoctorAdmin(),
+        '/assistantScreen': (context) => const AssistantAdmin(),
       },
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [
