@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,17 +16,19 @@ class _AppointmentFormState extends State<AppointmentForm> {
   final DropdownDataManager dropdownDataManager = DropdownDataManager();
   Client? _selectedClient;
   var _clientTextController = TextEditingController();
-  final  _dateController = TextEditingController();
-  final  _timeController = TextEditingController();
-  final  treatmentController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _timeController = TextEditingController();
+  final treatmentController = TextEditingController();
   int day = 0;
   int month = 0;
   int year = 0;
+
   @override
   void initState() {
     super.initState();
     dropdownDataManager.fetchUser();
   }
+
   void _updateSelectedClient(Client? client) {
     if (client != null) {
       setState(() {
@@ -35,11 +36,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
       });
     } else {
       setState(() {
-        _selectedClient = Client(id: 0, name: _clientTextController.text, email: '', number: 0);
+        _selectedClient = Client(
+            id: 0, name: _clientTextController.text, email: '', number: 0);
       });
     }
   }
-
 
 /*considerar mandar funcion appoinment a otro widget*/
   Future<void> submitAppointment() async {
@@ -50,7 +51,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
       return;
     }
 
-    String url = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
+    String url =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
 
     print('Enviando los siguientes datos:');
     print('Client ID: ${_selectedClient?.id}');
@@ -94,7 +96,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
         );
         print('Respuesta del servidor: ${response.body}');
       } else {
-        print('Error al crear la cita: StatusCode: ${response.statusCode}, Body: ${response.body}');
+        print(
+            'Error al crear la cita: StatusCode: ${response.statusCode}, Body: ${response.body}');
       }
     } catch (e) {
       print('Error al enviar los datos: $e');
@@ -195,73 +198,86 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Appointment'),
-      ),
       body: Form(
         child: Container(
-          color: Colors.transparent,
+          color: Colors.white,
           child: Stack(
             children: [
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(16.0)),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 1,
-                      height: 45,
-                      color: const Color(0xFF4F2263),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.only(left: 20),
-                              alignment: Alignment.center,
-                              child: const Text(
-                                'Nueva cita',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 28),
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(color: Colors.transparent),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Nueva cita',
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF4F2263),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.notifications_none_outlined,
+                                size: 40,
+                                color: Color(0xFF4F2263),
                               ),
                             ),
-                          ),
-                          IconButton(
-                            style: IconButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  side: const BorderSide(
-                                      width: 0.1, color: Colors.black),
-                                ),
-                                backgroundColor:
-                                    Colors.black.withOpacity(0.15)),
-                            icon: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 25,
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.home_outlined,
+                                size: 40,
+                                color: Color(0xFF4F2263),
+                              ),
                             ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Cliente',
+                      'Doctor: ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F2263),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'Cliente:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -270,25 +286,25 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
                     child: Autocomplete<Client>(
                       optionsBuilder: (TextEditingValue textEditingValue) {
                         if (textEditingValue.text == '') {
                           return const Iterable<Client>.empty();
                         }
-                        return dropdownDataManager.getSuggestions(textEditingValue.text);
+                        return dropdownDataManager
+                            .getSuggestions(textEditingValue.text);
                       },
                       displayStringForOption: (Client option) => option.name,
                       onSelected: (Client selection) {
                         _clientTextController.text = selection.name;
                         _updateSelectedClient(selection);
                       },
-                      fieldViewBuilder: (
-                          BuildContext context,
+                      fieldViewBuilder: (BuildContext context,
                           TextEditingController fieldTextEditingController,
                           FocusNode fieldFocusNode,
-                          VoidCallback onFieldSubmitted
-                          ) {
+                          VoidCallback onFieldSubmitted) {
                         _clientTextController = fieldTextEditingController;
                         return TextFormField(
                           controller: fieldTextEditingController,
@@ -296,25 +312,28 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           decoration: const InputDecoration(
                             labelText: 'Cliente',
                             border: OutlineInputBorder(),
-                            filled: true,
+                            //filled: true,
                             fillColor: Colors.white,
                           ),
                           onChanged: (text) {
-                            _updateSelectedClient(null); // Actualiza con cliente manual si es necesario
+                            _updateSelectedClient(
+                                null); // Actualiza con cliente manual si es necesario
                           },
                         );
                       },
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Fecha',
+                      'Fecha:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -339,14 +358,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Hora',
+                      'Hora:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -371,14 +392,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     ),
                   ),
                   Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: const Text(
-                      'Tratamiento',
+                      'Tratamiento:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -402,17 +425,23 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     child: ElevatedButton(
                       onPressed: submitAppointment,
                       style: ElevatedButton.styleFrom(
+                        surfaceTintColor: Colors.white,
                         splashFactory: InkRipple.splashFactory,
-                        padding: EdgeInsets.zero,
+                        padding: EdgeInsets.symmetric(
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.025,
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.2),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+                          borderRadius: BorderRadius.circular(25.0),
+                          side: const BorderSide(
+                              color: Color(0xFF4F2263), width: 2),
                         ),
-                        fixedSize: Size(
+                        /*fixedSize: Size(
                           MediaQuery.of(context).size.width * 0.45,
                           MediaQuery.of(context).size.height * 0.06,
-                        ),
-                        backgroundColor: const Color(0xFFEFE6F7),
+                        ),*/
+                        backgroundColor: Colors.white,
                       ),
                       child: const Text(
                         'Crear cita',

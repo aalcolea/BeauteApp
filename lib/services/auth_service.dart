@@ -67,8 +67,11 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
           ),
-          padding:
-              const EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 10),
+          padding: EdgeInsets.only(
+              left: MediaQuery.of(context).size.width * 0.065,
+              right: MediaQuery.of(context).size.width * 0.065,
+              top: 10,
+              bottom: 10),
           //const EdgeInsets.all(20),
           backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.7),
         ),
@@ -83,7 +86,9 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         },
         child: Text(
           number.toString(),
-          style: const TextStyle(fontSize: 36, color: Colors.white),
+          style: TextStyle(
+              fontSize: MediaQuery.of(context).size.height * 0.042,
+              color: Colors.white),
         ),
       ),
     );
@@ -93,12 +98,11 @@ class PinEntryScreenState extends State<PinEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(title: const Text('Ingrese PIN')),
       body: Stack(
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.9,
+            height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/imgLog/bgPinentry.jpg"),
@@ -107,10 +111,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 95),
+            margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height *
+                    0.18), //pading entre ingrese pin y borde superior
             color: Colors.transparent,
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05),
               physics: const BouncingScrollPhysics(),
               children: [
                 const Center(
@@ -122,8 +129,8 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 15,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.035,
                 ),
 
                 ///codigo para el pin
@@ -133,9 +140,15 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                     6,
                     (index) {
                       return Container(
-                        margin: const EdgeInsets.only(left: 12, right: 12),
-                        width: pinVisible ? 30 : 20,
-                        height: pinVisible ? 40 : 20,
+                        margin: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.height * 0.014,
+                            right: MediaQuery.of(context).size.height * 0.014),
+                        width: pinVisible
+                            ? 30
+                            : MediaQuery.of(context).size.width * 0.048,
+                        height: pinVisible
+                            ? 40
+                            : MediaQuery.of(context).size.width * 0.048,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(width: 3, color: Colors.white),
@@ -174,11 +187,15 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: pinVisible ? 20.0 : 12.0),
+                SizedBox(
+                    height: pinVisible
+                        ? MediaQuery.of(context).size.height * 0.02
+                        : MediaQuery.of(context).size.height * 0.02),
 
                 for (var i = 0; i < 3; i++)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.height * 0.042),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(
@@ -189,7 +206,8 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                   ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 60),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.height * 0.085),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -204,8 +222,10 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                       ),
                       Expanded(
                         child: Container(
+                          margin: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.height * 0.03,
+                              top: MediaQuery.of(context).size.height * 0.015),
                           alignment: Alignment.center,
-                          padding: const EdgeInsets.only(left: 10, top: 12),
                           child: TextButton(
                             onPressed: () {
                               setState(() {
@@ -215,10 +235,10 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                                 }
                               });
                             },
-                            child: const Icon(
+                            child: Icon(
                               Icons.backspace_outlined,
                               color: Colors.white,
-                              size: 60,
+                              size: MediaQuery.of(context).size.height * 0.065,
                             ),
                           ),
                         ),
