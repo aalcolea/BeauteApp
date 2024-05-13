@@ -162,7 +162,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
     if (picked != null) {
       DateTime now = DateTime.now();
-      DateTime fullTime = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+      DateTime fullTime =
+          DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
       String formattedTime = DateFormat('HH:mm:ss').format(fullTime);
       setState(() {
         _timeController.text = formattedTime;
@@ -173,6 +174,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
