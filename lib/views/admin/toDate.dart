@@ -18,7 +18,7 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen> {
   late Future<List<Appointment>> appointments;
 
-  late DateTime selectedDate2 = DateTime.now();
+  late DateTime selectedDate2 = widget.selectedDate;
   @override
   void initState() {
     super.initState();
@@ -69,14 +69,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               itemCount: 5,
               itemBuilder: (context, index) {
                 DateTime date = widget.selectedDate.add(Duration(days: index - 2));
-                bool isSelected = selectedDate2.day == date.day &&
-                    selectedDate2.month == date.month &&
-                    selectedDate2.year == date.year;
+                bool isSelected =  widget.selectedDate.day == date.day &&
+                    widget.selectedDate.month == date.month &&
+                    widget.selectedDate.year == date.year;
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      selectedDate2 = date;
+                       selectedDate2 = date;
                     });
                   },
                     child: Container(
