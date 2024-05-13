@@ -12,7 +12,6 @@ import 'drAdmin.dart';
 
 class AssistantAdmin extends StatefulWidget {
   const AssistantAdmin({super.key});
-
   @override
   State<AssistantAdmin> createState() => _AssistantAdminState();
 }
