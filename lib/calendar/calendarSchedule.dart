@@ -1,308 +1,136 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../views/admin/toDate.dart';
+
 class AgendaSchedule extends StatefulWidget {
-  const AgendaSchedule({super.key});
+  const AgendaSchedule({Key? key}) : super(key: key);
 
   @override
   State<AgendaSchedule> createState() => _AgendaScheduleState();
 }
 
 class _AgendaScheduleState extends State<AgendaSchedule> {
-  final List<String> _weekDaysInSpanish = [
-    'L',
-    'M',
-    'X',
-    'J',
-    'V',
-    'S',
-    'D',
-  ];
-
-  String getMonthName(int month) {
-    switch (month) {
-      case 1:
-        return 'Enero';
-      case 2:
-        return 'Febrero';
-      case 3:
-        return 'Marzo';
-      case 4:
-        return 'Abril';
-      case 5:
-        return 'Mayo';
-      case 6:
-        return 'Junio';
-      case 7:
-        return 'Julio';
-      case 8:
-        return 'Agosto';
-      case 9:
-        return 'Septiembre';
-      case 10:
-        return 'Octubre';
-      case 11:
-        return 'Noviembre';
-      case 12:
-        return 'Diciembre';
-      default:
-        return '';
-    }
-  }
-
-  DateTime now = DateTime.now();
-  int initMonth = 0;
-  int? currentMonth = 0;
-
-  final CalendarController _calendarSfCController = CalendarController();
-  bool monthView = true;
-  bool weekView = false;
-
-  int? visibleYear = 0;
+  CalendarController _calendarController = CalendarController();
+  List<Appointment2> _appointments = [];
 
   @override
   void initState() {
-    initMonth = now.month;
-    currentMonth = _calendarSfCController.displayDate?.month;
-    visibleYear = now.year;
     super.initState();
+    _loadAppointments();
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _calendarSfCController;
-    super.dispose();
+  Future<void> _loadAppointments() async {
+    final appointments = await fetchAppointments();
+    setState(() {
+      _appointments = appointments;
+    });
+  }
+  Future<List<Appointment2>> fetchAppointments() async {
+    final response = await http.get(Uri.parse(
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body)['appointments'];
+      print(jsonDecode(response.body)['appointments']);
+      return data.map((json) => Appointment2.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load appointments');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Visibility(
-          visible: monthView,
-          child: Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(0),
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 12),
-                      alignment: Alignment.centerLeft,
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.07,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4F2263),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back_ios_rounded,
-                              color: Colors.white,
-                              size: 35,
-                            ),
-                            onPressed: () {
-                              int previousMonth = currentMonth! - 1;
-                              int previousYear = visibleYear!;
-                              if (previousMonth < 1) {
-                                previousMonth = 12;
-                                previousYear--;
-                              }
-
-                              _calendarSfCController.displayDate =
-                                  DateTime(previousYear, previousMonth, 1);
-                            },
-                          ),
-                          Text(
-                            currentMonth != null
-                                ? '${getMonthName(currentMonth!)} $visibleYear'
-                                : '${getMonthName(initMonth)} $visibleYear',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 32, color: Colors.white),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Colors.white,
-                              size: 35,
-                            ),
-                            onPressed: () {
-                              int nextMonth = currentMonth! + 1;
-                              int nextYear = visibleYear!;
-                              if (nextMonth > 12) {
-                                nextMonth = 1;
-                                nextYear++;
-                              }
-                              _calendarSfCController.displayDate =
-                                  DateTime(nextYear, nextMonth, 1);
-                            },
-                          ),
-                        ],
-                      ),
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: SfCalendar(
+              view: CalendarView.month,
+              controller: _calendarController,
+              dataSource: MeetingDataSource(_appointments),
+              onTap: (CalendarTapDetails details) {
+                if (details.targetElement == CalendarElement.calendarCell ||
+                    details.targetElement == CalendarElement.appointment) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AppointmentScreen(selectedDate: details.date!),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(
-                        7,
-                        (index) {
-                          return Expanded(
-                            child: Container(
-                              width: null,
-                              height: null,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                    width: 0.2, color: Colors.black54),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  _weekDaysInSpanish[index],
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Color(0xFF4F2263),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: SfCalendar(
-                        view: CalendarView.month,
-                        headerHeight: 0,
-                        initialDisplayDate: DateTime.now(),
-                        viewHeaderHeight: 0,
-                        firstDayOfWeek: 1,
-                        controller: _calendarSfCController,
-                        todayHighlightColor: Colors.white,
-                        dataSource: MeetingDataSource(getAppointments()),
-
-                        ///
-                        onViewChanged: (ViewChangedDetails details) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            int? visibleMonthController =
-                                _calendarSfCController.displayDate?.month;
-                            currentMonth = visibleMonthController;
-                            int? visibleYearController =
-                                _calendarSfCController.displayDate?.year;
-                            visibleYear = visibleYearController;
-                            setState(() {});
-                          });
-                        },
-
-                        ///
-                        onTap: (CalendarTapDetails details) {
-                          if (details.targetElement ==
-                              CalendarElement.calendarCell) {
-                            setState(() {
-                              weekView = true;
-                              //monthView = false;
-                            });
-
-                            print('true');
-                          }
-                        },
-                        monthCellBuilder:
-                            (BuildContext context, MonthCellDetails details) {
-                          final bool isToday =
-                              details.date.month == DateTime.now().month &&
-                                  details.date.day == DateTime.now().day &&
-                                  details.date.year == DateTime.now().year;
-
-                          final bool isInCurrentMonth =
-                              details.date.month == currentMonth &&
-                                  details.date.year == visibleYear;
-
-                          if (isToday) {
-                            return Center(
-                              child: Container(
-                                width: 45,
-                                height: 45,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.purple,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    details.date.day.toString(),
-                                    style: const TextStyle(
-                                      color: Color(0xFF4F2263),
-                                      fontSize: 24,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 0.2,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    details.date.day.toString(),
-                                    style: TextStyle(
-                                      color: isInCurrentMonth
-                                          ? const Color(0xFF72A5D0)
-                                          : const Color(0xFFC5B6CD),
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  );
+                }
+              },
+              initialDisplayDate: DateTime.now(),
+              monthCellBuilder: (BuildContext context, MonthCellDetails details) {
+                final bool hasEvent = _appointments.any((Appointment2 appointment) =>
+                appointment.appointmentDate != null &&
+                    details.date.day == appointment.appointmentDate!.day &&
+                    details.date.month == appointment.appointmentDate!.month &&
+                    details.date.year == appointment.appointmentDate!.year);
+                return Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: hasEvent ? Colors.purple[100] : Colors.white,
+                    border: Border.all(color: hasEvent ? Colors.purple : Colors.grey),
+                  ),
+                  child: Text(
+                    details.date.day.toString(),
+                    style: TextStyle(color: hasEvent ? Colors.white : Colors.black),
+                  ),
+                );
+              },
+            )
+            ,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-List<Appointment> getAppointments() {
-  List<Appointment> meetings = <Appointment>[];
-  final DateTime today = DateTime.now();
-  final DateTime startTime =
-      DateTime(today.year, today.month, today.day, 9, 0, 0);
-  final DateTime endTime = startTime.add(const Duration(hours: 2));
-
-  meetings.add(Appointment(
-      startTime: startTime,
-      endTime: endTime,
-      subject: 'Facial',
-      color: Colors.blueAccent));
-  return meetings;
-}
-
 class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Appointment> source) {
+  MeetingDataSource(List<Appointment2> source) {
     appointments = source;
   }
 }
+
+
+class Appointment2 {
+  final int? id;
+  final int? clientId;
+  final int? createdBy;
+  final int? doctorId;
+  final DateTime? appointmentDate;
+  final String? treatmentType;
+  final String? paymentMethod;
+  final String? status;
+  final String? clientName;
+
+  Appointment2({
+    this.id,
+    this.clientId,
+    this.createdBy,
+    this.doctorId,
+    this.appointmentDate,
+    this.treatmentType,
+    this.paymentMethod,
+    this.status,
+    this.clientName,
+  });
+
+  factory Appointment2.fromJson(Map<String, dynamic> json) {
+    return Appointment2(
+      id: json['id'] as int?,
+      clientId: json['client_id'] as int?,
+      createdBy: json['created_by'] as int?,
+      doctorId: json['doctor_id'] as int?,
+      appointmentDate: json['appointment_date'] != null ? DateTime.parse(json['appointment_date']) : null,
+      treatmentType: json['treatment_type'] as String?,
+      paymentMethod: json['payment_method'] as String?,
+      status: json['status'] as String?,
+      clientName: json['client_name'] as String?,
+    );
+  }
+}
+

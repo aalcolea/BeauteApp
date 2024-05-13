@@ -7,30 +7,39 @@ import 'package:intl/intl.dart';
 import '../../models/appointmentModel.dart';
 
 class AppointmentScreen extends StatefulWidget {
+  final DateTime selectedDate;
+
+  const AppointmentScreen({Key? key, required this.selectedDate}) : super(key: key);
+
   @override
   _AppointmentScreenState createState() => _AppointmentScreenState();
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  DateTime selectedDate = DateTime.now();
   late Future<List<Appointment>> appointments;
 
+  late DateTime selectedDate2 = widget.selectedDate;
   @override
   void initState() {
     super.initState();
-    appointments = fetchAppointments();
+    appointments = fetchAppointments(widget.selectedDate);
   }
-
-  Future<List<Appointment>> fetchAppointments() async {
+  Future<List<Appointment>> fetchAppointments(DateTime selectedDate) async {
     final response = await http.get(Uri.parse(
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('appointments') && data['appointments'] != null) {
         List<dynamic> appointmentsJson = data['appointments'];
-        return appointmentsJson
+        List<Appointment> allAppointments = appointmentsJson
             .map((json) => Appointment.fromJson(json))
             .toList();
+        return allAppointments.where((appointment) =>
+        appointment.appointmentDate != null &&
+            appointment.appointmentDate!.year == selectedDate.year &&
+            appointment.appointmentDate!.month == selectedDate.month &&
+            appointment.appointmentDate!.day == selectedDate.day
+        ).toList();
       } else {
         return [];
       }
@@ -55,60 +64,70 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               scrollDirection: Axis.horizontal,
               itemCount: 5,
               itemBuilder: (context, index) {
-                DateTime date = selectedDate.add(Duration(days: index - 2));
-                bool isSelected = selectedDate.day == date.day &&
-                    selectedDate.month == date.month &&
-                    selectedDate.year == date.year;
+                DateTime date = widget.selectedDate.add(Duration(days: index - 2));
+                bool isSelected = selectedDate2.day == date.day &&
+                    selectedDate2.month == date.month &&
+                    selectedDate2.year == date.year;
 
                 return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedDate = date;
-                      });
-                    },
-                    child: Container(
-                      width: 85,
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.white : Colors.white,
-                        borderRadius: BorderRadius.circular(0),
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
+                  onTap: () {
+                    setState(() {
+                      selectedDate2 = date;
+                      appointments = fetchAppointments(date);
+                    });
+                  },
+                  child: Container(
+                    width: 85,
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white : Colors.white,
+                      borderRadius: BorderRadius.circular(0),
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(1),
+                          offset: Offset(0, 2), // Sombra abajo
+                          blurRadius: 10,
+                        )
+                      ]
+                          : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(0, -2), // Sombra arriba
+                          blurRadius: 4,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
+                          style: TextStyle(
+                            color: isSelected ? Colors.deepPurple : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            DateFormat('EEE', 'es_ES')
-                                .format(date)
-                                .toUpperCase(),
-                            style: TextStyle(
-                              color:
-                                  isSelected ? Colors.deepPurple : Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: isSelected
-                                  ? 18
-                                  : 14, // Tamaño más grande si está seleccionado
-                            ),
+                        Text(
+                          "${date.day}",
+                          style: TextStyle(
+                            color: isSelected ? Colors.deepPurple : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
                           ),
-                          Text(
-                            "${date.day}",
-                            style: TextStyle(
-                              color:
-                                  isSelected ? Colors.deepPurple : Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: isSelected
-                                  ? 18
-                                  : 14, // Tamaño más grande si está seleccionado
-                            ),
-                          ),
-                        ],
-                      ),
-                    ));
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
             ),
           ),
+
           Expanded(
             child: Container(
               color: Colors.transparent,
@@ -123,9 +142,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     List<Appointment> filteredAppointments = snapshot.data!
                         .where((a) =>
                             a.appointmentDate != null &&
-                            a.appointmentDate!.year == selectedDate.year &&
-                            a.appointmentDate!.month == selectedDate.month &&
-                            a.appointmentDate!.day == selectedDate.day)
+                            a.appointmentDate!.year == widget.selectedDate.year &&
+                            a.appointmentDate!.month == widget.selectedDate.month &&
+                            a.appointmentDate!.day == widget.selectedDate.day)
                         .toList();
 
                     return ListView.builder(
@@ -155,6 +174,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               Container(
                                 color: Colors.red,
                                 width: MediaQuery.of(context).size.width * 0.7,
+                                child: Material(
                                 child: ListTile(
                                   title: Text(
                                     clientName,
@@ -170,6 +190,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             MediaQuery.of(context).size.width *
                                                 0.05),
                                   ),
+                                ),
                                 ),
                               ),
                               Expanded(
