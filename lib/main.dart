@@ -1,5 +1,6 @@
 import 'package:beaute_app/views/admin/assistantAdmin.dart';
 import 'package:beaute_app/views/admin/drAdmin.dart';
+import 'package:beaute_app/views/admin/toDate.dart';
 import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/drScreen': (context) => const DoctorAdmin(),
         '/assistantScreen': (context) => const AssistantAdmin(),
         '/citaScreen': (context) => AppointmentForm(),
+        '/toDate': (context) => AppointmentScreen(),
       },
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [

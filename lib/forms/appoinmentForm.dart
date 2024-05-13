@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/getClientsService.dart';
 import '../models/clientModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class AppointmentForm extends StatefulWidget {
   @override
@@ -54,13 +55,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
     String url =
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
 
-    print('Enviando los siguientes datos:');
-    print('Client ID: ${_selectedClient?.id}');
-    print('Client name: ${_clientTextController?.text}');
-    print('Date: ${_dateController.text}');
-    print('Time: ${_timeController.text}');
-    print('Treatment: ${treatmentController.text}');
-
     try {
       var response = await http.post(
         Uri.parse(url),
@@ -73,10 +67,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'date': _dateController.text,
           'time': _timeController.text,
           'treatment': treatmentController.text,
+          'name': _clientTextController.text,
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -106,7 +101,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
 /*termina funcion appointmentn*/
   Future<void> _selectDate(BuildContext context) async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2024),
@@ -124,12 +119,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
       },
     );
 
-    if (_picked != null) {
+    if (picked != null) {
       setState(() {
-        day = _picked.day;
-        month = _picked.month;
-        year = _picked.year;
-        _dateController.text = "$day/$month/$year";
+        _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     } else {
       setState(() {
@@ -139,15 +131,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    int _12hrsformat = 0;
-    TimeOfDay? _picked = await showTimePicker(
+    TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
       initialEntryMode: TimePickerEntryMode.dial,
       builder: (context, child) {
         final Widget mediaQueryWrapper = MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            alwaysUse24HourFormat: false,
+            alwaysUse24HourFormat: true,
           ),
           child: child!,
         );
@@ -165,28 +156,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
           ),
           child: mediaQueryWrapper,
         );
-
-        if (Localizations.localeOf(context).languageCode == 'es') {
-          return Localizations.override(
-            context: context,
-            locale: const Locale('es', 'US'),
-            child: themedPicker,
-          );
-        }
-
         return themedPicker;
       },
     );
 
-    if (_picked != null) {
-      String period = _picked.period.toString().split('.').last;
-      if (_picked.hour > 12) {
-        _12hrsformat = _picked.hour - 12;
-      } else if (_picked.hour <= 12) {
-        _12hrsformat = _picked.hour;
-      }
+    if (picked != null) {
+      DateTime now = DateTime.now();
+      DateTime fullTime = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+      String formattedTime = DateFormat('HH:mm:ss').format(fullTime);
       setState(() {
-        _timeController.text = '$_12hrsformat:${_picked.minute} $period';
+        _timeController.text = formattedTime;
       });
     } else {
       setState(() {
@@ -194,7 +173,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
