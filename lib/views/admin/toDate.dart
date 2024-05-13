@@ -70,43 +70,49 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       selectedDate = date;
                     });
                   },
-                  child: Container(
-                    width: 85,
-                    // Ajusta el ancho aquí
-                    margin: EdgeInsets.symmetric(horizontal: 0),
-                    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : Colors.white,
-                      borderRadius: BorderRadius.circular(0),
-                      border: Border.all(
-                        color: isSelected ? Colors.grey : Colors.deepPurple,
-                        width: 2,
+                    child: Container(
+                      width: 85,
+                      decoration: BoxDecoration(
+                          color: isSelected ? Colors.white : Colors.white,
+                          borderRadius: BorderRadius.circular(0),
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                          boxShadow: isSelected
+                              ? [BoxShadow(
+                            color: Colors.red.withOpacity(1),
+                            offset: Offset(0, 2), // Sombra abajo
+                            blurRadius: 10,
+                          )]
+                              : [BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            offset: Offset(0, -2), // Sombra arriba
+                            blurRadius: 4,
+                          )]
                       ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
-                          style: TextStyle(
-                            color:
-                                isSelected ? Colors.deepPurple : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
+                            style: TextStyle(
+                              color: isSelected ? Colors.deepPurple : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
+                            ),
                           ),
-                        ),
-                        Text(
-                          "${date.day}",
-                          style: TextStyle(
-                            color:
-                                isSelected ? Colors.deepPurple : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                          Text(
+                            "${date.day}",
+                            style: TextStyle(
+                              color: isSelected ? Colors.deepPurple : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        ],
+                      ),
+                    )
                 );
               },
             ),
