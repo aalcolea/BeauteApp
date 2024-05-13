@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/getClientsService.dart';
 import '../models/clientModel.dart';
@@ -20,6 +21,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final treatmentController = TextEditingController();
+  final drSelected = TextEditingController();
+  bool drChooseWidget = false;
   int day = 0;
   int month = 0;
   int year = 0;
@@ -76,8 +79,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Éxito'),
-              content: Text('Cita creada correctamente'),
+              title: const Text('Éxito'),
+              content: const Text('Cita creada correctamente'),
               actions: <Widget>[
                 TextButton(
                   child: Text('Ok'),
@@ -162,7 +165,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
     if (picked != null) {
       DateTime now = DateTime.now();
-      DateTime fullTime = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+      DateTime fullTime =
+          DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
       String formattedTime = DateFormat('HH:mm:ss').format(fullTime);
       setState(() {
         _timeController.text = formattedTime;
@@ -173,6 +177,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,21 +250,128 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       ),
                     ),
                   ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 10, right: 10, bottom: 4),
+                    child: TextFormField(
+                      controller: drSelected,
+                      decoration: InputDecoration(
+                        hintText: 'Seleccione una opción...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: Colors.blue),
+                        ),
+                        suffixIcon: Icon(
+                          Icons.arrow_drop_down_circle_outlined,
+                          size: MediaQuery.of(context).size.width * 0.085,
+                          color: const Color(0xFF4F2263),
+                        ),
+                      ),
+                      readOnly: true,
+                      onTap: () {
+                        setState(
+                          () {
+                            drChooseWidget = drChooseWidget ? false : true;
+                          },
+                        );
+                      },
                     ),
-                    child: const Text(
-                      'Cliente:',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  Visibility(
+                    visible: drChooseWidget,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                drSelected.text = 'Doctor1';
+                              },
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width *
+                                                0.02,
+                                        right:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
+                                    child: const Icon(
+                                        CupertinoIcons.person_crop_circle_fill),
+                                  ),
+                                  Text(
+                                    'Doctor 1',
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.054),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              color: Colors.blueAccent,
+                              width: MediaQuery.of(context).size.width,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.0025,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                drSelected.text = 'Doctor2';
+                              },
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width *
+                                                0.02,
+                                        right:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
+                                    child: const Icon(
+                                        CupertinoIcons.person_crop_circle_fill),
+                                  ),
+                                  Text(
+                                    'Doctor 1',
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.054),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: !drChooseWidget,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4F2263),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        'Cliente:',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

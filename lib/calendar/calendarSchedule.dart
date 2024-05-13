@@ -94,17 +94,19 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 12),
                       alignment: Alignment.centerLeft,
-                      color: Colors.white,
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.07,
-                      //60,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4F2263),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
                             icon: const Icon(
                               Icons.arrow_back_ios_rounded,
-                              color: Color(0xFF4F2263),
+                              color: Colors.white,
                               size: 35,
                             ),
                             onPressed: () {
@@ -125,14 +127,12 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                 : '${getMonthName(initMonth)} $visibleYear',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontSize: 32,
-                              color: Color(0xFF72A5D0),
-                            ),
+                                fontSize: 32, color: Colors.white),
                           ),
                           IconButton(
                             icon: const Icon(
                               Icons.arrow_forward_ios_rounded,
-                              color: Color(0xFF4F2263),
+                              color: Colors.white,
                               size: 35,
                             ),
                             onPressed: () {
