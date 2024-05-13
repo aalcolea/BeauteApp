@@ -113,16 +113,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          showModalBottomSheet(
-                              isScrollControlled: scrollToDayComplete,
-                              context: context,
-                              builder: (builder) {
-                                return AppointmentScreen();
-                              });
-                          //Navigator.pushNamed(context, '/toDate');
-                          _selectedScreen = 1;
-                          setState(() {});
-                          print(_selectedScreen);
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),

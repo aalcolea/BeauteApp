@@ -174,6 +174,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               Container(
                                 color: Colors.red,
                                 width: MediaQuery.of(context).size.width * 0.7,
+                                child: Material(
                                 child: ListTile(
                                   title: Text(
                                     clientName,
@@ -189,6 +190,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             MediaQuery.of(context).size.width *
                                                 0.05),
                                   ),
+                                ),
                                 ),
                               ),
                               Expanded(
