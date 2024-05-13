@@ -50,20 +50,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return Container(
+      padding: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.035),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20), color: Colors.white),
+      child: Column(
         children: <Widget>[
-          Row(
-            children: [
-              Text(
-                "Hola Dr Sexo",
-                style: TextStyle(fontSize: 40),
-              )
-            ],
-          ),
           Container(
-            height: 70, // Ajusta la altura si es necesario
-            color: Colors.transparent, // Fondo de toda la barra
+            height: 70,
+            color: Colors.transparent,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 5,
@@ -139,7 +135,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 future: appointments,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else {
@@ -163,10 +159,67 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         String treatmentType =
                             appointment.treatmentType ?? 'No Treatment';
 
-                        return ListTile(
-                          title: Text(clientName),
-                          subtitle: Text(treatmentType),
-                          trailing: Text(time),
+                        return Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical:
+                                  MediaQuery.of(context).size.height * 0.02,
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.02),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.black, width: 2),
+                              color: Colors.white),
+                          child: Row(
+                            children: [
+                              Container(
+                                color: Colors.red,
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: ListTile(
+                                  title: Text(
+                                    clientName,
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                  ),
+                                  subtitle: Text(
+                                    treatmentType,
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                        color: const Color(0xFF4F2263),
+                                        width: 1.5),
+                                  ),
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.02,
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  child: Text(
+                                    time,
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.08),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     );
