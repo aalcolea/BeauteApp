@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         '/drScreen': (context) => const DoctorAdmin(),
         '/assistantScreen': (context) => const AssistantAdmin(),
         '/citaScreen': (context) => AppointmentForm(),
-        '/toDate': (context) => AppointmentScreen(),
       },
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [
