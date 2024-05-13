@@ -95,7 +95,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/toDate');
+                      },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: const EdgeInsets.only(top: 30, bottom: 30),
