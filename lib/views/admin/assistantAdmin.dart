@@ -25,6 +25,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   bool visibleKeyboard = false;
   bool scrollToDayComplete = false;
 
+
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
