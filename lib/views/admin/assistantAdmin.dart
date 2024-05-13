@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:beaute_app/views/admin/toDate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,6 +23,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
+  bool scrollToDayComplete = false;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -111,7 +113,13 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          Navigator.pushNamed(context, '/toDate');
+                          showModalBottomSheet(
+                              isScrollControlled: scrollToDayComplete,
+                              context: context,
+                              builder: (builder) {
+                                return AppointmentScreen();
+                              });
+                          //Navigator.pushNamed(context, '/toDate');
                           _selectedScreen = 1;
                           setState(() {});
                           print(_selectedScreen);
