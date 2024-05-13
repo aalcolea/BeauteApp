@@ -69,63 +69,69 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               itemCount: 5,
               itemBuilder: (context, index) {
                 DateTime date = widget.selectedDate.add(Duration(days: index - 2));
-                bool isSelected =  widget.selectedDate.day == date.day &&
-                    widget.selectedDate.month == date.month &&
-                    widget.selectedDate.year == date.year;
+                bool isSelected = selectedDate2.day == date.day &&
+                    selectedDate2.month == date.month &&
+                    selectedDate2.year == date.year;
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                       selectedDate2 = date;
+                      selectedDate2 = date;
+                      appointments = fetchAppointments(date);
                     });
                   },
-                    child: Container(
-                      width: 85,
-                      decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : Colors.white,
-                          borderRadius: BorderRadius.circular(0),
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: isSelected
-                              ? [BoxShadow(
-                            color: Colors.red.withOpacity(1),
-                            offset: Offset(0, 2), // Sombra abajo
-                            blurRadius: 10,
-                          )]
-                              : [BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            offset: Offset(0, -2), // Sombra arriba
-                            blurRadius: 4,
-                          )]
+                  child: Container(
+                    width: 85,
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white : Colors.white,
+                      borderRadius: BorderRadius.circular(0),
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
-                            style: TextStyle(
-                              color: isSelected ? Colors.deepPurple : Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
-                            ),
+                      boxShadow: isSelected
+                          ? [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(1),
+                          offset: Offset(0, 2), // Sombra abajo
+                          blurRadius: 10,
+                        )
+                      ]
+                          : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(0, -2), // Sombra arriba
+                          blurRadius: 4,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
+                          style: TextStyle(
+                            color: isSelected ? Colors.deepPurple : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
                           ),
-                          Text(
-                            "${date.day}",
-                            style: TextStyle(
-                              color: isSelected ? Colors.deepPurple : Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
-                            ),
+                        ),
+                        Text(
+                          "${date.day}",
+                          style: TextStyle(
+                            color: isSelected ? Colors.deepPurple : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
                           ),
-                        ],
-                      ),
-                    )
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
           ),
+
           Expanded(
             child: Container(
               color: Colors.transparent,
