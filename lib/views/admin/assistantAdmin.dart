@@ -12,6 +12,7 @@ import 'drAdmin.dart';
 
 class AssistantAdmin extends StatefulWidget {
   const AssistantAdmin({super.key});
+
   @override
   State<AssistantAdmin> createState() => _AssistantAdminState();
 }
@@ -23,7 +24,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool scrollToDayComplete = false;
-
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -54,57 +54,87 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     return Scaffold(
       body: Container(
         //modifica el container del calendario
-        padding: EdgeInsets.only(
-            right: 15,
-            left: 15,
-            bottom: MediaQuery.of(context).size.height * 0,
-            top: 25),
+        padding:
+            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
         color: Colors.white,
         child: Column(
           children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Calendario',
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.09),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Calendario',
+                  style: TextStyle(
+                    color: const Color(0xFF4F2263),
+                    fontSize: MediaQuery.of(context).size.width * 0.09,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.notifications_none_outlined),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.notifications_none_outlined,
+                        size: MediaQuery.of(context).size.width * 0.095,
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.input_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.input_outlined,
+                        size: MediaQuery.of(context).size.width * 0.095,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             Expanded(
               child: Container(
-                margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.width * 0.05),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: const Color(0xFF4F2263),
-                    width: 2,
-                  ),
+                margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.width * 0.055,
                 ),
-                child: const AgendaSchedule(),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(15),
+                        bottomRight: Radius.circular(15)),
+                    border: const Border(
+                      bottom: BorderSide(
+                        color: Color(0xFF4F2263),
+                        width: 2.5,
+                      ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 10.0,
+                        offset: Offset(
+                            0, MediaQuery.of(context).size.width * 0.012),
+                      ),
+                      BoxShadow(
+                        color: Colors.white,
+                        offset: Offset(
+                            0, MediaQuery.of(context).size.width * -0.025),
+                      ),
+                    ]),
+                child: Container(
+                  margin: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.width * 0.06,
+                      horizontal: MediaQuery.of(context).size.width * 0.045),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const AgendaSchedule(),
+                ),
               ),
             ),
             Container(
               margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.width * 0.065),
+                  bottom: MediaQuery.of(context).size.width * 0.055),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
@@ -112,8 +142,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        onTap: () {
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -133,42 +162,30 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(10),
-                        onTap: () {
-                          Navigator.pushNamed(context, '/citaScreen');
-                          _selectedScreen = 2;
-                          setState(() {});
-                          print(_selectedScreen);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: _selectedScreen == 2
-                                ? const Color(0xFF4F2263)
-                                : const Color(0xFF4F2263),
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: _selectedScreen == 2
-                                  ? Colors.black.withOpacity(0.12)
-                                  : Colors.transparent,
-                              width: 1,
-                            ),
-                          ),
-                          child: Icon(
-                            _selectedScreen != 2
-                                ? CupertinoIcons.add
-                                : CupertinoIcons.add,
-                            color: _selectedScreen == 2
-                                ? Colors.white
-                                : Colors.white,
-                            size: 40,
-                          ),
-                        ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4F2263),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.06),
+                      surfaceTintColor: const Color(0xFF4F2263),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: const BorderSide(
+                            color: Color(0xFF4F2263), width: 2),
                       ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/citaScreen');
+                      _selectedScreen = 2;
+                      setState(() {});
+                      print(_selectedScreen);
+                    },
+                    child: Icon(
+                      _selectedScreen != 2
+                          ? CupertinoIcons.add
+                          : CupertinoIcons.add,
+                      color: _selectedScreen == 2 ? Colors.white : Colors.white,
+                      size: 40,
                     ),
                   ),
                   Expanded(
