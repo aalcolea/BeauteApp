@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
+import '../../forms/appoinmentForm.dart';
 import '../../forms/clientForm.dart';
 import '../../utils/drSelectbox.dart';
 import 'drAdmin.dart';
@@ -37,6 +38,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
 
   @override
   void initState() {
+    _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     print(visibleKeyboard);
@@ -63,7 +65,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Calendario',
+                  _selectedScreen == 1
+                      ? 'Calendario'
+                      : _selectedScreen == 3
+                          ? 'Nuevo Cliente'
+                          : '',
                   style: TextStyle(
                     color: const Color(0xFF4F2263),
                     fontSize: MediaQuery.of(context).size.width * 0.09,
@@ -126,7 +132,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const AgendaSchedule(),
+                  child: _buildBody(),
                 ),
               ),
             ),
@@ -142,7 +148,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        onTap: () {},
+                        onTap: () {
+                          setState(() {
+                            _selectedScreen = 1;
+                          });
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -194,19 +204,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                backgroundColor: Colors.white,
-                                contentPadding: EdgeInsets.zero,
-                                content: const ClientForm(),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
-                              );
-                            },
-                          );
-
                           _selectedScreen = 3;
                           setState(() {});
                           print(_selectedScreen);
@@ -237,5 +234,18 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         ),
       ),
     );
+  }
+
+  Widget _buildBody() {
+    switch (_selectedScreen) {
+      case 1:
+        return AgendaSchedule();
+      case 2:
+        return AppointmentForm();
+      case 3:
+        return ClientForm();
+      default:
+        return Container();
+    }
   }
 }

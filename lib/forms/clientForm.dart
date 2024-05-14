@@ -82,183 +82,148 @@ class _ClientFormState extends State<ClientForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: null,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Nuevo cliente',
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: null,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: visibleKeyboard
+                ? MediaQuery.of(context).size.height * 0.36
+                : null,
+            //height: MediaQuery.of(context).size.height * 0.5,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 30),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F2263),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'Nombre del cliente',
                       style: TextStyle(
-                        color: Color(0xFF4F2263),
-                        fontSize: 24,
+                        color: Colors.white,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          backgroundColor: Colors.white),
-                      icon: const Icon(
-                        Icons.close,
-                        color: Color(0xFF4F2263),
-                        size: 25,
-                      ),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: visibleKeyboard
-                    ? MediaQuery.of(context).size.height * 0.5
-                    : null,
-                //height: MediaQuery.of(context).size.height * 0.5,
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 30),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4F2263),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          'Nombre del cliente',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 20, left: 10, right: 10, top: 0),
-                        child: TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            hintText: 'Nombre completo',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4F2263),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          'No. Celular',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 20, left: 10, right: 10, top: 10),
-                        child: TextFormField(
-                          controller: _numberController,
-                          decoration: const InputDecoration(
-                            hintText: 'No. Celular',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4F2263),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          'Correo electrónico',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 20, left: 10, right: 10, top: 10),
-                        child: TextFormField(
-                          controller: _emailController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Correo electrónico',
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 40),
-                        child: ElevatedButton(
-                          onPressed: createClient,
-                          style: ElevatedButton.styleFrom(
-                            splashFactory: InkRipple.splashFactory,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            //elevation: 10,
-                            surfaceTintColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              side: const BorderSide(
-                                  color: Color(0xFF4F2263), width: 2),
-                            ),
-                            fixedSize: Size(
-                              MediaQuery.of(context).size.width * 0.6,
-                              MediaQuery.of(context).size.height * 0.075,
-                            ),
-                            backgroundColor: Colors.white,
-                            //backgroundColor: const Color(0xFFC5B6CD),
-                          ),
-                          child: const Text(
-                            'Agregar Cliente',
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Color(0xFF4F2263),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 20, left: 10, right: 10, top: 0),
+                    child: TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        hintText: 'Nombre completo',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F2263),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'No. Celular',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 20, left: 10, right: 10, top: 10),
+                    child: TextFormField(
+                      controller: _numberController,
+                      decoration: const InputDecoration(
+                        hintText: 'No. Celular',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F2263),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'Correo electrónico',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 20, left: 10, right: 10, top: 10),
+                    child: TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Correo electrónico',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: ElevatedButton(
+                      onPressed: createClient,
+                      style: ElevatedButton.styleFrom(
+                        splashFactory: InkRipple.splashFactory,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 10),
+                        //elevation: 10,
+                        surfaceTintColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: const BorderSide(
+                              color: Color(0xFF4F2263), width: 2),
+                        ),
+                        fixedSize: Size(
+                          MediaQuery.of(context).size.width * 0.6,
+                          MediaQuery.of(context).size.height * 0.075,
+                        ),
+                        backgroundColor: Colors.white,
+                        //backgroundColor: const Color(0xFFC5B6CD),
+                      ),
+                      child: const Text(
+                        'Agregar Cliente',
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Color(0xFF4F2263),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
