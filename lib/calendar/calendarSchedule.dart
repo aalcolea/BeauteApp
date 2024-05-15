@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -161,15 +162,27 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                   view: CalendarView.month,
                   controller: _calendarController,
                   dataSource: MeetingDataSource(_appointments),
+
+                  ///
                   onTap: (CalendarTapDetails details) {
                     if (details.targetElement == CalendarElement.calendarCell ||
                         details.targetElement == CalendarElement.appointment) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              AppointmentScreen(selectedDate: details.date!),
-                        ),
+                      showModalBottomSheet(
+                        showDragHandle: false,
+                        barrierColor: Colors.black54,
+                        context: context,
+                        builder: (context) {
+                          return BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.transparent,
+                              ),
+                              child: AppointmentScreen(
+                                  selectedDate: details.date!),
+                            ),
+                          );
+                        },
                       );
                     }
                   },

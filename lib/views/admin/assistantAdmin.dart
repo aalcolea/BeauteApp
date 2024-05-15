@@ -186,9 +186,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                     ),
                     onPressed: () {
                       Navigator.pushNamed(context, '/citaScreen');
-                      _selectedScreen = 2;
-                      setState(() {});
-                      print(_selectedScreen);
                     },
                     child: Icon(
                       _selectedScreen != 2

@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/getClientsService.dart';
 import '../models/clientModel.dart';
@@ -26,11 +28,36 @@ class _AppointmentFormState extends State<AppointmentForm> {
   int day = 0;
   int month = 0;
   int year = 0;
+  bool dr1sel = false;
+  bool dr2sel = false;
+
+  late KeyboardVisibilityController keyboardVisibilityController;
+  late StreamSubscription<bool> keyboardVisibilitySubscription;
+  bool visibleKeyboard = false;
+
+  void checkKeyboardVisibility() {
+    keyboardVisibilitySubscription =
+        keyboardVisibilityController.onChange.listen((visible) {
+      setState(() {
+        visibleKeyboard = visible;
+        print("MODAL");
+        print(visibleKeyboard);
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    keyboardVisibilityController = KeyboardVisibilityController();
+    checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
+  }
+
+  @override
+  void dispose() {
+    keyboardVisibilitySubscription.cancel();
+    super.dispose();
   }
 
   void _updateSelectedClient(Client? client) {
@@ -114,7 +141,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFC31B36),
+              primary: Color(0xFF4F2263),
             ),
           ),
           child: child!,
@@ -182,367 +209,440 @@ class _AppointmentFormState extends State<AppointmentForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        child: Container(
-          color: Colors.white,
-          child: Stack(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.max,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 20),
+              height: MediaQuery.of(context).size.height * 0.08,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(color: Colors.transparent),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 12, bottom: 28),
-                    height: MediaQuery.of(context).size.height * 0.08,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(color: Colors.transparent),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Nueva cita',
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF4F2263),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.notifications_none_outlined,
-                                size: 40,
-                                color: Color(0xFF4F2263),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.home_outlined,
-                                size: 40,
-                                color: Color(0xFF4F2263),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Doctor: ',
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Nueva cita',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 35,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF4F2263),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10, left: 10, right: 10, bottom: 4),
-                    child: TextFormField(
-                      controller: drSelected,
-                      decoration: InputDecoration(
-                        hintText: 'Seleccione una opción...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.blue),
-                        ),
-                        suffixIcon: Icon(
-                          Icons.arrow_drop_down_circle_outlined,
-                          size: MediaQuery.of(context).size.width * 0.085,
-                          color: const Color(0xFF4F2263),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.notifications_none_outlined,
+                          size: 40,
+                          color: Color(0xFF4F2263),
                         ),
                       ),
-                      readOnly: true,
-                      onTap: () {
-                        setState(
-                          () {
-                            drChooseWidget = drChooseWidget ? false : true;
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: drChooseWidget,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                drSelected.text = 'Doctor1';
-                              },
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.02,
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.02),
-                                    child: const Icon(
-                                        CupertinoIcons.person_crop_circle_fill),
-                                  ),
-                                  Text(
-                                    'Doctor 1',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.054),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              color: Colors.blueAccent,
-                              width: MediaQuery.of(context).size.width,
-                              height:
-                                  MediaQuery.of(context).size.height * 0.0025,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                drSelected.text = 'Doctor2';
-                              },
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.02,
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.02),
-                                    child: const Icon(
-                                        CupertinoIcons.person_crop_circle_fill),
-                                  ),
-                                  Text(
-                                    'Doctor 1',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.054),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.home_outlined,
+                          size: 40,
+                          color: Color(0xFF4F2263),
                         ),
                       ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: !drChooseWidget,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 8),
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4F2263),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        'Cliente:',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
-                    child: Autocomplete<Client>(
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text == '') {
-                          return const Iterable<Client>.empty();
-                        }
-                        return dropdownDataManager
-                            .getSuggestions(textEditingValue.text);
-                      },
-                      displayStringForOption: (Client option) => option.name,
-                      onSelected: (Client selection) {
-                        _clientTextController.text = selection.name;
-                        _updateSelectedClient(selection);
-                      },
-                      fieldViewBuilder: (BuildContext context,
-                          TextEditingController fieldTextEditingController,
-                          FocusNode fieldFocusNode,
-                          VoidCallback onFieldSubmitted) {
-                        _clientTextController = fieldTextEditingController;
-                        return TextFormField(
-                          controller: fieldTextEditingController,
-                          focusNode: fieldFocusNode,
-                          decoration: const InputDecoration(
-                            labelText: 'Cliente',
-                            border: OutlineInputBorder(),
-                            //filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          onChanged: (text) {
-                            _updateSelectedClient(
-                                null); // Actualiza con cliente manual si es necesario
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Fecha:',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: TextFormField(
-                      controller: _dateController,
-                      decoration: const InputDecoration(
-                        labelText: 'DD/M/AAAA',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      readOnly: true,
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Hora:',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: TextFormField(
-                      controller: _timeController,
-                      decoration: const InputDecoration(
-                        labelText: 'HH:MM',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.access_time),
-                      ),
-                      readOnly: true,
-                      onTap: () {
-                        _selectTime(context);
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: const Text(
-                      'Tratamiento:',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: TextFormField(
-                      controller: treatmentController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Describa el tratamiento...',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: ElevatedButton(
-                      onPressed: submitAppointment,
-                      style: ElevatedButton.styleFrom(
-                        surfaceTintColor: Colors.white,
-                        splashFactory: InkRipple.splashFactory,
-                        padding: EdgeInsets.symmetric(
-                            vertical:
-                                MediaQuery.of(context).size.height * 0.025,
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: const BorderSide(
-                              color: Color(0xFF4F2263), width: 2),
-                        ),
-                        /*fixedSize: Size(
-                          MediaQuery.of(context).size.width * 0.45,
-                          MediaQuery.of(context).size.height * 0.06,
-                        ),*/
-                        backgroundColor: Colors.white,
-                      ),
-                      child: const Text(
-                        'Crear cita',
-                        style: TextStyle(fontSize: 22),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: visibleKeyboard
+                  ? MediaQuery.of(context).size.height * 0.52
+                  : null,
+              color: Colors.white,
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4F2263),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Text(
+                            'Doctor: ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, left: 10, right: 10, bottom: 4),
+                          child: TextFormField(
+                            controller: drSelected,
+                            decoration: InputDecoration(
+                              hintText: 'Seleccione una opción...',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                              suffixIcon: Icon(
+                                Icons.arrow_drop_down_circle_outlined,
+                                size: MediaQuery.of(context).size.width * 0.085,
+                                color: const Color(0xFF4F2263),
+                              ),
+                            ),
+                            readOnly: true,
+                            onTap: () {
+                              setState(
+                                () {
+                                  drChooseWidget =
+                                      drChooseWidget ? false : true;
+                                },
+                              );
+                            },
+                          ),
+                        ),
+
+                        ///
+                        Visibility(
+                          visible: drChooseWidget,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black54, width: 0.5),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        dr1sel = true;
+                                        dr2sel = false;
+                                        drSelected.text = 'Doctor1';
+                                        drChooseWidget = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: dr1sel
+                                              ? const Color(0xFF4F2263)
+                                              : Colors.white,
+                                          borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10))),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02,
+                                                right: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02),
+                                            child: Icon(
+                                              CupertinoIcons
+                                                  .person_crop_circle_fill,
+                                              color: dr1sel
+                                                  ? Colors.white
+                                                  : const Color(0xFF4F2263),
+                                            ),
+                                          ),
+                                          Text(
+                                            'Doctor 1',
+                                            style: TextStyle(
+                                                color: dr1sel
+                                                    ? Colors.white
+                                                    : const Color(0xFF4F2263),
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.054),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  ///
+                                  Container(
+                                    color: Colors.black54,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.0009,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        dr2sel = true;
+                                        dr1sel = false;
+                                        drSelected.text = 'Doctor2';
+                                        drChooseWidget = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: dr2sel
+                                              ? const Color(0xFF4F2263)
+                                              : Colors.white,
+                                          borderRadius: const BorderRadius.only(
+                                              bottomLeft: Radius.circular(10),
+                                              bottomRight:
+                                                  Radius.circular(10))),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02,
+                                                right: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02),
+                                            child: Icon(
+                                              CupertinoIcons
+                                                  .person_crop_circle_fill,
+                                              color: dr2sel
+                                                  ? Colors.white
+                                                  : const Color(0xFF4F2263),
+                                            ),
+                                          ),
+                                          Text(
+                                            'Doctor 2',
+                                            style: TextStyle(
+                                                color: dr2sel
+                                                    ? Colors.white
+                                                    : const Color(0xFF4F2263),
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.054),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: !drChooseWidget,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4F2263),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              'Cliente:',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 8),
+                          child: Autocomplete<Client>(
+                            optionsBuilder:
+                                (TextEditingValue textEditingValue) {
+                              if (textEditingValue.text == '') {
+                                return const Iterable<Client>.empty();
+                              }
+                              return dropdownDataManager
+                                  .getSuggestions(textEditingValue.text);
+                            },
+                            displayStringForOption: (Client option) =>
+                                option.name,
+                            onSelected: (Client selection) {
+                              _clientTextController.text = selection.name;
+                              _updateSelectedClient(selection);
+                            },
+                            fieldViewBuilder: (BuildContext context,
+                                TextEditingController
+                                    fieldTextEditingController,
+                                FocusNode fieldFocusNode,
+                                VoidCallback onFieldSubmitted) {
+                              _clientTextController =
+                                  fieldTextEditingController;
+                              return TextFormField(
+                                controller: fieldTextEditingController,
+                                focusNode: fieldFocusNode,
+                                decoration: const InputDecoration(
+                                  labelText: 'Cliente',
+                                  border: OutlineInputBorder(),
+                                  //filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                onChanged: (text) {
+                                  _updateSelectedClient(
+                                      null); // Actualiza con cliente manual si es necesario
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4F2263),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Text(
+                            'Fecha:',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 10),
+                          child: TextFormField(
+                            controller: _dateController,
+                            decoration: const InputDecoration(
+                              labelText: 'DD/M/AAAA',
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.calendar_today),
+                            ),
+                            readOnly: true,
+                            onTap: () {
+                              _selectDate(context);
+                            },
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4F2263),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Text(
+                            'Hora:',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 10),
+                          child: TextFormField(
+                            controller: _timeController,
+                            decoration: const InputDecoration(
+                              labelText: 'HH:MM',
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.access_time),
+                            ),
+                            readOnly: true,
+                            onTap: () {
+                              _selectTime(context);
+                            },
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4F2263),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: const Text(
+                            'Tratamiento:',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 10),
+                          child: TextFormField(
+                            controller: treatmentController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Describa el tratamiento...',
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: ElevatedButton(
+                            onPressed: submitAppointment,
+                            style: ElevatedButton.styleFrom(
+                              surfaceTintColor: Colors.white,
+                              splashFactory: InkRipple.splashFactory,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: MediaQuery.of(context).size.height *
+                                      0.025,
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.2),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                side: const BorderSide(
+                                    color: Color(0xFF4F2263), width: 2),
+                              ),
+                              /*fixedSize: Size(
+                          MediaQuery.of(context).size.width * 0.45,
+                          MediaQuery.of(context).size.height * 0.06,
+                        ),*/
+                              backgroundColor: Colors.white,
+                            ),
+                            child: const Text(
+                              'Crear cita',
+                              style: TextStyle(fontSize: 22),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
