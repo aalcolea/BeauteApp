@@ -11,6 +11,8 @@ import '../models/clientModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../utils/timer.dart';
+
 class AppointmentForm extends StatefulWidget {
   @override
   _AppointmentFormState createState() => _AppointmentFormState();
@@ -30,6 +32,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   int year = 0;
   bool dr1sel = false;
   bool dr2sel = false;
+  bool isTimerShow = false;
 
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -510,40 +513,47 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             },
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4F2263),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            'Fecha:',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                        Visibility(
+                          visible: !isTimerShow,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4F2263),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              'Fecha:',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 10),
-                          child: TextFormField(
-                            controller: _dateController,
-                            decoration: const InputDecoration(
-                              labelText: 'DD/M/AAAA',
-                              border: OutlineInputBorder(),
-                              suffixIcon: Icon(Icons.calendar_today),
+                        Visibility(
+                          visible: !isTimerShow,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 10),
+                            child: TextFormField(
+                              controller: _dateController,
+                              decoration: const InputDecoration(
+                                labelText: 'DD/M/AAAA',
+                                border: OutlineInputBorder(),
+                                suffixIcon: Icon(Icons.calendar_today),
+                              ),
+                              readOnly: true,
+                              onTap: () {
+                                _selectDate(context);
+                              },
                             ),
-                            readOnly: true,
-                            onTap: () {
-                              _selectDate(context);
-                            },
                           ),
                         ),
+
                         Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 8, horizontal: 8),
@@ -574,65 +584,97 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                             readOnly: true,
                             onTap: () {
-                              _selectTime(context);
+                              setState(() {
+                                if (isTimerShow == false) {
+                                  isTimerShow = true;
+                                } else if (isTimerShow == true) {
+                                  isTimerShow = false;
+                                }
+                              });
+
+                              //_selectTime(context);
                             },
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4F2263),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: const Text(
-                            'Tratamiento:',
-                            style: TextStyle(
+
+                        ///timer
+                        Visibility(
+                          visible: isTimerShow,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.black54, width: 0.5),
                               color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              borderRadius: BorderRadius.circular(15),
                             ),
+                            child: const TimerFly(),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 10),
-                          child: TextFormField(
-                            controller: treatmentController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Describa el tratamiento...',
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: ElevatedButton(
-                            onPressed: submitAppointment,
-                            style: ElevatedButton.styleFrom(
-                              surfaceTintColor: Colors.white,
-                              splashFactory: InkRipple.splashFactory,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.025,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.2),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                side: const BorderSide(
-                                    color: Color(0xFF4F2263), width: 2),
-                              ),
-                              /*fixedSize: Size(
-                          MediaQuery.of(context).size.width * 0.45,
-                          MediaQuery.of(context).size.height * 0.06,
-                        ),*/
-                              backgroundColor: Colors.white,
+                        Visibility(
+                          visible: !isTimerShow,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4F2263),
+                              borderRadius: BorderRadius.circular(15),
                             ),
                             child: const Text(
-                              'Crear cita',
-                              style: TextStyle(fontSize: 22),
+                              'Tratamiento:',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: !isTimerShow,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 10),
+                            child: TextFormField(
+                              controller: treatmentController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Describa el tratamiento...',
+                              ),
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: !isTimerShow,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: ElevatedButton(
+                              onPressed: submitAppointment,
+                              style: ElevatedButton.styleFrom(
+                                surfaceTintColor: Colors.white,
+                                splashFactory: InkRipple.splashFactory,
+                                padding: EdgeInsets.symmetric(
+                                    vertical:
+                                        MediaQuery.of(context).size.height *
+                                            0.025,
+                                    horizontal:
+                                        MediaQuery.of(context).size.width *
+                                            0.2),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  side: const BorderSide(
+                                      color: Color(0xFF4F2263), width: 2),
+                                ),
+                                backgroundColor: Colors.white,
+                              ),
+                              child: const Text(
+                                'Crear cita',
+                                style: TextStyle(fontSize: 22),
+                              ),
                             ),
                           ),
                         ),
