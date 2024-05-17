@@ -1,10 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class TimerFly extends StatefulWidget {
-  const TimerFly({super.key});
+  final void Function(
+    bool,
+    TextEditingController,
+  ) onTimeChoose;
+
+  TimerFly({super.key, required this.onTimeChoose});
 
   @override
   State<TimerFly> createState() => _TimerFlyState();
@@ -17,9 +25,16 @@ class _TimerFlyState extends State<TimerFly> {
       FixedExtentScrollController(initialItem: 0);
   final ScrollController AmPmController =
       FixedExtentScrollController(initialItem: 0);
+  final timeController = TextEditingController();
+
   int selectedIndexAmPm = 0;
   int selectedIndexMins = 0;
   int selectedIndexHours = 0;
+  int hour = 0;
+  int minuts = 0;
+
+  // 0 = AM, 1 = PM
+  bool _isTimerShow = false;
 
   @override
   void initState() {
@@ -49,6 +64,7 @@ class _TimerFlyState extends State<TimerFly> {
                   onSelectedItemChanged: (value) {
                     setState(() {
                       selectedIndexHours = value;
+                      print(selectedIndexHours);
                     });
                   },
                   childDelegate: ListWheelChildLoopingListDelegate(
@@ -58,26 +74,25 @@ class _TimerFlyState extends State<TimerFly> {
                           : Colors.grey;
 
                       return Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: Color(0xFF4F2263),
-                                width: 2,
-                              ),
-                            ),
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                            child: Text(
-                              index == 0 ? '12' : index.toString(),
-                              style: TextStyle(
-                                fontSize: 40,
-                                color: colorforhours,
-                              ),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                              color: Color(0xFF4F2263),
+                              width: 2,
                             ),
                           ),
-                        );
-
+                          color: Colors.white,
+                        ),
+                        child: Center(
+                          child: Text(
+                            index == 0 ? '12' : index.toString(),
+                            style: TextStyle(
+                              fontSize: 40,
+                              color: colorforhours,
+                            ),
+                          ),
+                        ),
+                      );
                     }),
                   ),
                 ),
@@ -98,6 +113,7 @@ class _TimerFlyState extends State<TimerFly> {
                   onSelectedItemChanged: (value) {
                     setState(() {
                       selectedIndexMins = value;
+                      print(selectedIndexMins);
                     });
                   },
                   controller: minsController,
@@ -150,6 +166,7 @@ class _TimerFlyState extends State<TimerFly> {
                   onSelectedItemChanged: (value) {
                     setState(() {
                       selectedIndexAmPm = value;
+                      print(selectedIndexAmPm);
                     });
                   },
                   perspective: 0.005,
@@ -162,7 +179,7 @@ class _TimerFlyState extends State<TimerFly> {
                         final Color colorforitems = index == selectedIndexAmPm
                             ? const Color(0xFF4F2263)
                             : Colors.grey;
-                        final String text = index == 0 ? 'a.m' : 'p.m';
+                        final String text = index == 0 ? 'p.m' : 'a.m';
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0, vertical: 0),
@@ -196,7 +213,46 @@ class _TimerFlyState extends State<TimerFly> {
             top: MediaQuery.of(context).size.width * 0.04,
           ),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              DateTime now = DateTime.now();
+              selectedIndexAmPm == 1
+                  ? selectedIndexHours == 0
+                      ? hour = 24
+                      : hour = selectedIndexHours
+                  : selectedIndexAmPm == 0
+                      ? selectedIndexHours == 0
+                          ? hour = 12
+                          : hour = selectedIndexHours + 12
+                      : print('holafly');
+              print(hour);
+
+              DateTime fullTime = DateTime(
+                  now.year, now.month, now.day, hour, selectedIndexMins);
+              String formattedTime = DateFormat('HH:mm:ss').format(fullTime);
+              setState(() {
+                timeController.text = formattedTime;
+              });
+
+              widget.onTimeChoose(
+                _isTimerShow,
+                timeController,
+              );
+            },
+
+            /*if (picked != null) {
+                 DateTime now = DateTime.now();
+                      DateTime fullTime =
+                      DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+                      String formattedTime = DateFormat('HH:mm:ss').format(fullTime);
+                      setState(() {
+                      _timeController.text = formattedTime;
+                     });
+                      } else {
+                      setState(() {
+                      _timeController.text = 'Seleccione Hora';
+                      });
+                      }
+                    }*/
             style: ElevatedButton.styleFrom(
               elevation: 7,
               surfaceTintColor: Colors.white,

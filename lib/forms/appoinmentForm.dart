@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/getClientsService.dart';
-import '../models/clientModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/clientModel.dart';
+import '../services/getClientsService.dart';
 import '../utils/timer.dart';
 
 class AppointmentForm extends StatefulWidget {
@@ -23,7 +23,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   Client? _selectedClient;
   var _clientTextController = TextEditingController();
   final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
+  TextEditingController _timeController = TextEditingController();
   final treatmentController = TextEditingController();
   final drSelected = TextEditingController();
   bool drChooseWidget = false;
@@ -46,6 +46,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
         print("MODAL");
         print(visibleKeyboard);
       });
+    });
+  }
+
+  void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime) {
+    setState(() {
+      isTimerShow = _isTimerShow;
+      _timeController = selectedTime;
     });
   }
 
@@ -107,16 +114,75 @@ class _AppointmentFormState extends State<AppointmentForm> {
       if (response.statusCode == 201) {
         showDialog(
           context: context,
+          barrierColor: Colors.transparent,
           builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Éxito'),
-              content: const Text('Cita creada correctamente'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Ok'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+            return Stack(
+              children: [
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                  child: Container(
+                    color: Colors.black54.withOpacity(0.3),
+                  ),
+                ),
+                Center(
+                  child: AlertDialog(
+                    backgroundColor: Colors.transparent,
+                    contentPadding: EdgeInsets.zero,
+                    content: Container(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.095),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white,
+                          boxShadow: const [
+                            BoxShadow(blurRadius: 3.5, offset: Offset(0, 0))
+                          ]),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '¡Cita creada!',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.085,
+                              color: const Color(0xFF4F2263),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.035,
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.03),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.black,
+                                    width: 2.5,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                'Inicio',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  color: const Color(0xFF4F2263),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -163,7 +229,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  /*Future<void> _saveTime(BuildContext context) async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -206,7 +272,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         _timeController.text = 'Seleccione Hora';
       });
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -610,7 +676,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            child: const TimerFly(),
+                            child: TimerFly(onTimeChoose: _onTimeChoose),
                           ),
                         ),
                         Visibility(
