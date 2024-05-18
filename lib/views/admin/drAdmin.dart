@@ -190,7 +190,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                     width: 2,
                   ),
                 ),
-                child: const AgendaSchedule(),
+                child: AgendaSchedule(isDoctorLog: isDocLog),
               ),
             ),
           ],

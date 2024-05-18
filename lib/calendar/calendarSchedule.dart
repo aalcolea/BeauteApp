@@ -7,7 +7,9 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
 
 class AgendaSchedule extends StatefulWidget {
-  const AgendaSchedule({Key? key}) : super(key: key);
+  final bool isDoctorLog;
+
+  const AgendaSchedule({Key? key, required this.isDoctorLog}) : super(key: key);
 
   @override
   State<AgendaSchedule> createState() => _AgendaScheduleState();
@@ -51,6 +53,15 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   int? currentMonth = 0;
   int? visibleYear = 0;
   DateTime now = DateTime.now();
+  bool _VarmodalReachTop = false;
+
+  void _reachTop(bool reachTop) {
+    setState(() {
+      _VarmodalReachTop = reachTop;
+      print('_VarmodalReachTop');
+      print(_VarmodalReachTop);
+    });
+  }
 
   @override
   void initState() {
@@ -85,6 +96,37 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     } else {
       throw Exception('Failed to load appointments');
     }
+  }
+
+  void _showModal(BuildContext context, CalendarTapDetails details) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      isScrollControlled: _VarmodalReachTop,
+      showDragHandle: false,
+      barrierColor: Colors.black54,
+      context: context,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+            ),
+            child: AppointmentScreen(
+              selectedDate: details.date!,
+              reachTop: (bool reachTop) {
+                setState(() {
+                  _VarmodalReachTop = reachTop;
+                });
+                Navigator.pop(context);
+                _showModal(context, details);
+                _VarmodalReachTop = false;
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -163,27 +205,11 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                   controller: _calendarController,
                   dataSource: MeetingDataSource(_appointments),
 
-                  ///
+                  ///modal
                   onTap: (CalendarTapDetails details) {
                     if (details.targetElement == CalendarElement.calendarCell ||
                         details.targetElement == CalendarElement.appointment) {
-                      showModalBottomSheet(
-                        showDragHandle: false,
-                        barrierColor: Colors.black54,
-                        context: context,
-                        builder: (context) {
-                          return BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.transparent,
-                              ),
-                              child: AppointmentScreen(
-                                  selectedDate: details.date!),
-                            ),
-                          );
-                        },
-                      );
+                      _showModal(context, details);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {

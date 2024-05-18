@@ -243,7 +243,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return AgendaSchedule();
+        return AgendaSchedule(isDoctorLog: isDocLog);
       case 3:
         return ClientForm();
       default:

@@ -4,12 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import '../../forms/appoinmentForm.dart';
 import '../../models/appointmentModel.dart';
+import 'modifyAppointment.dart';
 
 class AppointmentScreen extends StatefulWidget {
+  final void Function(
+    bool,
+  ) reachTop;
   final DateTime selectedDate;
 
-  const AppointmentScreen({Key? key, required this.selectedDate})
+  const AppointmentScreen(
+      {Key? key, required this.selectedDate, required this.reachTop})
       : super(key: key);
 
   @override
@@ -17,8 +23,9 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  bool isDocLog = false;
   late Future<List<Appointment>> appointments;
-
+  bool modalReachTop = true;
   late DateTime selectedDate2 = widget.selectedDate;
 
   @override
@@ -153,6 +160,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               },
             ),
           ),
+          SizedBox(
+            //espacio entre las citas y la fila de dias
+            height: MediaQuery.of(context).size.width * 0.08,
+          ),
           Expanded(
             ///este container es de lo que esta debajo de los dias
             child: Container(
@@ -188,67 +199,110 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             appointment.treatmentType ?? 'No Treatment';
 
                         ///este container agrupa al texto y a la hora
-                        return Container(
-                          margin: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.05,
-                            left: MediaQuery.of(context).size.width * 0.02,
-                            right: MediaQuery.of(context).size.width * 0.02,
-                          ),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(
-                                  color: const Color(0xFF4F2263), width: 1.5),
-                              color: Colors.white),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.7,
-                                child: ListTile(
-                                  title: Text(
-                                    clientName,
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
+                        return InkWell(
+                          onTap: () {
+                            print('tapped on $clientName');
+                            setState(() {
+                              widget.reachTop(modalReachTop);
+                            });
+                            showDialog(
+                                context: context,
+                                barrierColor: Colors.transparent,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    contentPadding: EdgeInsets.zero,
+                                    content: ModifyAppointment(),
+                                  );
+                                });
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0,
+                              left: MediaQuery.of(context).size.width * 0.02,
+                              right: MediaQuery.of(context).size.width * 0.02,
+                              bottom: MediaQuery.of(context).size.width * 0.035,
+                            ),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                    color: const Color(0xFF4F2263), width: 1.5),
+                                color: Colors.white,
+                                boxShadow: [
+                                  const BoxShadow(
+                                    blurRadius: 3,
+                                    offset: Offset(0, 0),
                                   ),
-                                  subtitle: Text(
-                                    treatmentType,
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    offset: Offset(
+                                        0,
+                                        MediaQuery.of(context).size.width *
+                                            -0.02),
                                   ),
-                                ),
-                              ),
-                              Expanded(
-                                ///este container es de la hora
-                                child: Container(
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    offset: Offset(
+                                        MediaQuery.of(context).size.width *
+                                            -0.02,
+                                        0),
+                                  ),
+                                ]),
+                            child: Row(
+                              children: [
+                                SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.2,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.06,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF4F2263),
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(
-                                        color: const Color(0xFF4F2263),
-                                        width: 1.5),
-                                  ),
-                                  margin: EdgeInsets.only(
-                                      right: MediaQuery.of(context).size.width *
-                                          0.06),
-                                  child: Text(
-                                    time,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.07),
+                                      MediaQuery.of(context).size.width * 0.7,
+                                  child: ListTile(
+                                    title: Text(
+                                      clientName,
+                                      style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05),
+                                    ),
+                                    subtitle: Text(
+                                      treatmentType,
+                                      style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  ///este container es de la hora
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.06,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF4F2263),
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(
+                                          color: const Color(0xFF4F2263),
+                                          width: 1.5),
+                                    ),
+                                    margin: EdgeInsets.only(
+                                        right:
+                                            MediaQuery.of(context).size.width *
+                                                0.06),
+                                    child: Text(
+                                      time,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.07),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -256,6 +310,32 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   }
                 },
               ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4F2263),
+              padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.06),
+              surfaceTintColor: const Color(0xFF4F2263),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+                side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                ),
+              );
+              //Navigator.pushNamed(context, '/citaScreen');
+            },
+            child: Icon(
+              CupertinoIcons.add,
+              color: Colors.white,
+              size: MediaQuery.of(context).size.width * 0.09,
             ),
           ),
         ],
