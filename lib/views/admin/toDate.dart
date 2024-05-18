@@ -9,7 +9,8 @@ import '../../models/appointmentModel.dart';
 class AppointmentScreen extends StatefulWidget {
   final DateTime selectedDate;
 
-  const AppointmentScreen({Key? key, required this.selectedDate}) : super(key: key);
+  const AppointmentScreen({Key? key, required this.selectedDate})
+      : super(key: key);
 
   @override
   _AppointmentScreenState createState() => _AppointmentScreenState();
@@ -19,11 +20,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   late Future<List<Appointment>> appointments;
 
   late DateTime selectedDate2 = widget.selectedDate;
+
   @override
   void initState() {
     super.initState();
     appointments = fetchAppointments(widget.selectedDate);
   }
+
   Future<List<Appointment>> fetchAppointments(DateTime selectedDate) async {
     final response = await http.get(Uri.parse(
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
@@ -31,15 +34,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('appointments') && data['appointments'] != null) {
         List<dynamic> appointmentsJson = data['appointments'];
-        List<Appointment> allAppointments = appointmentsJson
-            .map((json) => Appointment.fromJson(json))
+        List<Appointment> allAppointments =
+            appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
+        return allAppointments
+            .where((appointment) =>
+                appointment.appointmentDate != null &&
+                appointment.appointmentDate!.year == selectedDate.year &&
+                appointment.appointmentDate!.month == selectedDate.month &&
+                appointment.appointmentDate!.day == selectedDate.day)
             .toList();
-        return allAppointments.where((appointment) =>
-        appointment.appointmentDate != null &&
-            appointment.appointmentDate!.year == selectedDate.year &&
-            appointment.appointmentDate!.month == selectedDate.month &&
-            appointment.appointmentDate!.day == selectedDate.day
-        ).toList();
       } else {
         return [];
       }
@@ -57,14 +60,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           borderRadius: BorderRadius.circular(20), color: Colors.white),
       child: Column(
         children: <Widget>[
-          Container(
-            height: 70,
-            color: Colors.transparent,
+          ///estos son los cuadrados donde salen los dias
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.08,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 5,
               itemBuilder: (context, index) {
-                DateTime date = widget.selectedDate.add(Duration(days: index - 2));
+                DateTime date =
+                    widget.selectedDate.add(Duration(days: index - 2));
                 bool isSelected = selectedDate2.day == date.day &&
                     selectedDate2.month == date.month &&
                     selectedDate2.year == date.year;
@@ -76,30 +80,47 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       appointments = fetchAppointments(date);
                     });
                   },
+
+                  /// este es el cotainer de cada uno de los dias
                   child: Container(
-                    width: 85,
+                    width: MediaQuery.of(context).size.width * 0.2,
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : Colors.white,
+                      color: Colors.white,
+                      //color: isSelected ? Colors.white : Colors.white,
                       borderRadius: BorderRadius.circular(0),
                       border: Border.all(
                         color: Colors.grey,
                         width: 1,
                       ),
-                      boxShadow: isSelected
+                      boxShadow: !isSelected
                           ? [
-                        BoxShadow(
-                          color: Colors.red.withOpacity(1),
-                          offset: Offset(0, 2), // Sombra abajo
-                          blurRadius: 10,
-                        )
-                      ]
+                              BoxShadow(
+                                color: Colors.black,
+                                blurRadius: 5.0,
+                                offset: Offset(0,
+                                    MediaQuery.of(context).size.width * 0.003),
+                              ),
+                              BoxShadow(
+                                blurRadius: 25.0,
+                                color: Colors.white,
+                                offset: Offset(0,
+                                    MediaQuery.of(context).size.width * 0.04),
+                              ),
+                            ]
                           : [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: Offset(0, -2), // Sombra arriba
-                          blurRadius: 4,
-                        )
-                      ],
+                              ///sombra del que esta seleccionado
+                              BoxShadow(
+                                color: Colors.black54,
+                                blurRadius: 5.0,
+                                offset: Offset(0,
+                                    MediaQuery.of(context).size.width * 0.002),
+                              ),
+                              BoxShadow(
+                                color: Colors.white,
+                                offset: Offset(0,
+                                    MediaQuery.of(context).size.width * -0.04),
+                              ),
+                            ],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -109,7 +130,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           style: TextStyle(
                             color: isSelected ? Colors.deepPurple : Colors.grey,
                             fontWeight: FontWeight.bold,
-                            fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
+                            fontSize: isSelected
+                                ? MediaQuery.of(context).size.width * 0.057
+                                : MediaQuery.of(context).size.width * 0.035,
                           ),
                         ),
                         Text(
@@ -117,7 +140,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           style: TextStyle(
                             color: isSelected ? Colors.deepPurple : Colors.grey,
                             fontWeight: FontWeight.bold,
-                            fontSize: isSelected ? 18 : 14, // Tamaño más grande si está seleccionado
+                            fontSize: isSelected
+                                ? MediaQuery.of(context).size.width * 0.051
+                                : MediaQuery.of(context).size.width *
+                                    0.033, // Tamaño más grande si está seleccionado
                           ),
                         ),
                       ],
@@ -127,8 +153,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               },
             ),
           ),
-
           Expanded(
+            ///este container es de lo que esta debajo de los dias
             child: Container(
               color: Colors.transparent,
               child: FutureBuilder<List<Appointment>>(
@@ -142,8 +168,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     List<Appointment> filteredAppointments = snapshot.data!
                         .where((a) =>
                             a.appointmentDate != null &&
-                            a.appointmentDate!.year == widget.selectedDate.year &&
-                            a.appointmentDate!.month == widget.selectedDate.month &&
+                            a.appointmentDate!.year ==
+                                widget.selectedDate.year &&
+                            a.appointmentDate!.month ==
+                                widget.selectedDate.month &&
                             a.appointmentDate!.day == widget.selectedDate.day)
                         .toList();
 
@@ -159,22 +187,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         String treatmentType =
                             appointment.treatmentType ?? 'No Treatment';
 
+                        ///este container agrupa al texto y a la hora
                         return Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.02,
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.02),
+                          margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.05,
+                            left: MediaQuery.of(context).size.width * 0.02,
+                            right: MediaQuery.of(context).size.width * 0.02,
+                          ),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
-                              border: Border.all(color: Colors.black, width: 2),
+                              border: Border.all(
+                                  color: const Color(0xFF4F2263), width: 1.5),
                               color: Colors.white),
                           child: Row(
                             children: [
-                              Container(
-                                color: Colors.red,
+                              SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.7,
-                                child: Material(
                                 child: ListTile(
                                   title: Text(
                                     clientName,
@@ -191,32 +219,32 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                 0.05),
                                   ),
                                 ),
-                                ),
                               ),
                               Expanded(
+                                ///este container es de la hora
                                 child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: Colors.blue,
+                                    color: const Color(0xFF4F2263),
                                     borderRadius: BorderRadius.circular(15),
                                     border: Border.all(
                                         color: const Color(0xFF4F2263),
                                         width: 1.5),
                                   ),
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.02,
-                                      vertical:
-                                          MediaQuery.of(context).size.height *
-                                              0.01),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.2,
+                                  margin: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.06),
                                   child: Text(
                                     time,
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
-                                                0.08),
+                                                0.07),
                                   ),
                                 ),
                               ),

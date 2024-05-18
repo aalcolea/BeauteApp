@@ -69,8 +69,6 @@ class _ClientFormState extends State<ClientForm> {
   void initState() {
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
-    print("MODAL");
-    print(visibleKeyboard);
     super.initState();
   }
 
@@ -94,7 +92,7 @@ class _ClientFormState extends State<ClientForm> {
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: visibleKeyboard
-                ? MediaQuery.of(context).size.height * 0.36
+                ? MediaQuery.of(context).size.height * 0.35
                 : null,
             //height: MediaQuery.of(context).size.height * 0.5,
             child: SingleChildScrollView(
@@ -105,7 +103,7 @@ class _ClientFormState extends State<ClientForm> {
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     margin: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 30),
+                        horizontal: 10, vertical: 15),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
