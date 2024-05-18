@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -14,6 +15,13 @@ import '../services/getClientsService.dart';
 import '../utils/timer.dart';
 
 class AppointmentForm extends StatefulWidget {
+  final bool isDoctorLog;
+
+  const AppointmentForm({
+    super.key,
+    required this.isDoctorLog,
+  });
+
   @override
   _AppointmentFormState createState() => _AppointmentFormState();
 }
@@ -33,6 +41,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool dr1sel = false;
   bool dr2sel = false;
   bool isTimerShow = false;
+  bool isDocLog = false;
+  bool saveNewClient = false;
 
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -59,6 +69,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   void initState() {
     super.initState();
+    isDocLog = widget.isDoctorLog;
+    print("isDocLog");
+    print(isDocLog);
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
@@ -281,7 +294,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 20),
+              margin: const EdgeInsets.only(top: 8, bottom: 20),
               height: MediaQuery.of(context).size.height * 0.08,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(color: Colors.transparent),
@@ -335,51 +348,58 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4F2263),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            'Doctor: ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                        Visibility(
+                          visible: !isDocLog,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4F2263),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              'Doctor: ',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10, left: 10, right: 10, bottom: 4),
-                          child: TextFormField(
-                            controller: drSelected,
-                            decoration: InputDecoration(
-                              hintText: 'Seleccione una opción...',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.blue),
+                        Visibility(
+                          visible: !isDocLog,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 6, left: 10, right: 10, bottom: 4),
+                            child: TextFormField(
+                              controller: drSelected,
+                              decoration: InputDecoration(
+                                hintText: 'Seleccione una opción...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                      const BorderSide(color: Colors.blue),
+                                ),
+                                suffixIcon: Icon(
+                                  Icons.arrow_drop_down_circle_outlined,
+                                  size:
+                                      MediaQuery.of(context).size.width * 0.085,
+                                  color: const Color(0xFF4F2263),
+                                ),
                               ),
-                              suffixIcon: Icon(
-                                Icons.arrow_drop_down_circle_outlined,
-                                size: MediaQuery.of(context).size.width * 0.085,
-                                color: const Color(0xFF4F2263),
-                              ),
+                              readOnly: true,
+                              onTap: () {
+                                setState(
+                                  () {
+                                    drChooseWidget =
+                                        drChooseWidget ? false : true;
+                                  },
+                                );
+                              },
                             ),
-                            readOnly: true,
-                            onTap: () {
-                              setState(
-                                () {
-                                  drChooseWidget =
-                                      drChooseWidget ? false : true;
-                                },
-                              );
-                            },
                           ),
                         ),
 
@@ -604,7 +624,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           visible: !isTimerShow,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 10),
+                                vertical: 8, horizontal: 10),
                             child: TextFormField(
                               controller: _dateController,
                               decoration: const InputDecoration(
@@ -640,7 +660,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 10),
+                              vertical: 8, horizontal: 10),
                           child: TextFormField(
                             controller: _timeController,
                             decoration: const InputDecoration(
@@ -704,7 +724,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           visible: !isTimerShow,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 10),
+                                vertical: 8, horizontal: 10),
                             child: TextFormField(
                               controller: treatmentController,
                               decoration: const InputDecoration(
@@ -712,6 +732,39 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 hintText: 'Describa el tratamiento...',
                               ),
                             ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 10),
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                checkColor: Colors.white,
+                                value: saveNewClient,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    saveNewClient = value ?? false;
+                                  });
+                                },
+                                fillColor:
+                                    MaterialStateColor.resolveWith((states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return const Color(0xFF4F2263);
+                                  } else {
+                                    return Colors.transparent;
+                                  }
+                                }),
+                              ),
+                              Text(
+                                'Agregar nuevo cliente',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.045,
+                                  color: const Color(0xFF4F2263),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Visibility(

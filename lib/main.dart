@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDocLog = false;
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/drScreen': (context) => const DoctorAdmin(),
         '/assistantScreen': (context) => const AssistantAdmin(),
-        '/citaScreen': (context) => AppointmentForm(),
+        '/citaScreen': (context) => AppointmentForm(isDoctorLog: isDocLog),
       },
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [

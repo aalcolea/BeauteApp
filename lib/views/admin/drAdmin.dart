@@ -9,7 +9,7 @@ class DoctorAdmin extends StatefulWidget {
   State<DoctorAdmin> createState() => _DoctorAdminState();
 }
 
-class AddAppointmentModal {
+/*class AddAppointmentModal {
   static void showAddAppointmentModal(BuildContext context) {
     showDialog(
       context: context,
@@ -24,9 +24,11 @@ class AddAppointmentModal {
       },
     );
   }
-}
+}*/
 
 class _DoctorAdminState extends State<DoctorAdmin> {
+  bool isDocLog = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,7 +136,14 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/citaScreen');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AppointmentForm(isDoctorLog: isDocLog),
+                          ),
+                        );
+                        //Navigator.pushNamed(context, '/citaScreen');
                         //AddAppointmentModal.showAddAppointmentModal(context);
                       },
                       style: ElevatedButton.styleFrom(

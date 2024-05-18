@@ -25,6 +25,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool scrollToDayComplete = false;
+  bool isDocLog = false;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -185,7 +186,13 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/citaScreen');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                        ),
+                      );
+                      //Navigator.pushNamed(context, '/citaScreen');
                     },
                     child: Icon(
                       _selectedScreen != 2
@@ -237,8 +244,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     switch (_selectedScreen) {
       case 1:
         return AgendaSchedule();
-      case 2:
-        return AppointmentForm();
       case 3:
         return ClientForm();
       default:
