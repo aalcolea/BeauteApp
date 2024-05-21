@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
+
+import '../utils/showToast.dart';
+import '../utils/toastWidget.dart';
 
 class ClientForm extends StatefulWidget {
   const ClientForm({super.key});
@@ -49,14 +51,12 @@ class _ClientFormState extends State<ClientForm> {
 
       if (response.statusCode == 201) {
         Navigator.of(context).pop();
-        Fluttertoast.showToast(
-            msg: "Cliente agregado correctamente",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showOverlay(
+          context,
+          const CustomToast(
+            message: "Cliente agregado correctamente",
+          ),
+        );
       } else {
         print('Error al crear cliente: ${response.body}');
       }

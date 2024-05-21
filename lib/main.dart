@@ -3,7 +3,6 @@ import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/admin/toDate.dart';
 import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'forms/appoinmentForm.dart';
 
@@ -32,12 +31,6 @@ class MyApp extends StatelessWidget {
         '/assistantScreen': (context) => const AssistantAdmin(),
         '/citaScreen': (context) => AppointmentForm(isDoctorLog: isDocLog),
       },
-      supportedLocales: const [Locale('es', 'ES')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
     );
   }
 }
