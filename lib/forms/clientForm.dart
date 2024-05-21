@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
 import '../utils/showToast.dart';
 import '../utils/toastWidget.dart';
 
@@ -50,13 +52,10 @@ class _ClientFormState extends State<ClientForm> {
       );
 
       if (response.statusCode == 201) {
-        Navigator.of(context).pop();
-        showOverlay(
-          context,
-          const CustomToast(
-            message: "Cliente agregado correctamente",
-          ),
-        );
+        if (mounted) {
+          showClienteSuccessfullyAdded(context, widget);
+          Navigator.of(context).pop();
+        }
       } else {
         print('Error al crear cliente: ${response.body}');
       }
