@@ -18,7 +18,7 @@ class ModalDateHandler extends StatefulWidget {
 
 class _ModalDateHandlerState extends State<ModalDateHandler> {
   bool _VarmodalReachTop = false;
-  bool _onModifyAppointment = false;
+  bool _isTaped = false;
 
   void _showModaltoDate() {
     showModalBottomSheet(
@@ -36,9 +36,10 @@ class _ModalDateHandlerState extends State<ModalDateHandler> {
             ),
             child: AppointmentScreen(
               selectedDate: widget.details.date!,
-              reachTop: (bool reachTop) {
+              reachTop: (bool reachTop, bool isTaped) {
                 setState(() {
                   _VarmodalReachTop = reachTop;
+                  _isTaped = isTaped;
                 });
                 Navigator.pop(context);
                 _showModaltoDate();

@@ -14,6 +14,7 @@ import 'modifyAppointment.dart';
 class AppointmentScreen extends StatefulWidget {
   final void Function(
     bool,
+    bool,
   ) reachTop;
   final DateTime selectedDate;
 
@@ -28,11 +29,14 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen> {
   bool isDocLog = false;
   late Future<List<Appointment>> appointments;
-  bool modalReachTop = true;
+  bool modalReachTop = false;
   late DateTime selectedDate2 = widget.selectedDate;
   TextEditingController _timerController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   bool _isTimerShow = false;
+  bool modifyAppointment = true;
+  int? expandedIndex;
+  bool isTaped = false;
 
   void _onTimeChoose(bool isTimerShow, TextEditingController timerController) {
     _isTimerShow = isTimerShow;
@@ -202,20 +206,30 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       itemBuilder: (context, index) {
                         Appointment appointment = filteredAppointments[index];
                         String time = (appointment.appointmentDate != null)
-                            ? DateFormat('h:mm a').format(appointment.appointmentDate!)
+                            ? DateFormat('h:mm a')
+                                .format(appointment.appointmentDate!)
                             : 'Hora desconocida';
                         print(time);
-                        String clientName = appointment.clientName ?? 'Cliente desconocido';
-                        String treatmentType = appointment.treatmentType ?? 'Sin tratamiento';
+                        String clientName =
+                            appointment.clientName ?? 'Cliente desconocido';
+                        String treatmentType =
+                            appointment.treatmentType ?? 'Sin tratamiento';
 
                         ///este container agrupa al texto y a la hora
                         return InkWell(
                           onTap: () {
-                            //onModifyAppointment = true;
-                            print('tapped on $clientName');
-
                             setState(() {
-                              widget.reachTop(modalReachTop);
+                              print('1 modalReachTop $modalReachTop');
+                              modalReachTop = true;
+                              widget.reachTop(modalReachTop, isTaped);
+                              if (expandedIndex == index) {
+                                expandedIndex =
+                                    null; // Collapse if the same item is tapped
+                              } else {
+                                expandedIndex = index; // Expand the tapped item
+                              }
+                              print('2isTaped $isTaped');
+                              print('2modalReachTop $modalReachTop');
 
                               /*if (onModifyAppointment == false) {
                                 onModifyAppointment = true;
@@ -224,7 +238,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               }*/
                             });
 
-                            showDialog(
+                            /*showDialog(
                                 context: context,
                                 barrierColor: Colors.white.withOpacity(0.35),
                                 builder: (BuildContext context) {
@@ -232,7 +246,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     contentPadding: EdgeInsets.zero,
                                     content: ModifyAppointment(),
                                   );
-                                });
+                                });*/
                           },
                           child: Container(
                             margin: EdgeInsets.only(
@@ -330,8 +344,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 ),
 
                                 ///
+
                                 Visibility(
-                                  visible: false,
+                                  visible:
+                                      expandedIndex == index ? true : false,
                                   child: Column(
                                     children: [
                                       Container(

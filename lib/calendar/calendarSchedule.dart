@@ -58,6 +58,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   int? visibleYear = 0;
   DateTime now = DateTime.now();
   bool _VarmodalReachTop = false;
+  bool _isTaped = false;
 
   @override
   void initState() {
@@ -94,7 +95,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     }
   }
 
-  void _showModaltoDate(BuildContext context, CalendarTapDetails details) {
+  void _showModaltoDate(
+      BuildContext context, CalendarTapDetails details, bool VarmodalReachTop) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
       isScrollControlled: _VarmodalReachTop,
@@ -110,13 +112,16 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             ),
             child: AppointmentScreen(
               selectedDate: details.date!,
-              reachTop: (bool reachTop) {
+              reachTop: (bool reachTop, bool isTaped) {
                 setState(() {
+                  if (!_VarmodalReachTop) {
+                    Navigator.pop(context);
+                    _VarmodalReachTop = true;
+                    _showModaltoDate(context, details, _VarmodalReachTop);
+                  }
                   _VarmodalReachTop = reachTop;
                 });
-                Navigator.pop(context);
-                _showModaltoDate(context, details);
-                _VarmodalReachTop = false;
+                print('hola');
               },
             ),
           ),
@@ -205,7 +210,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                   onTap: (CalendarTapDetails details) {
                     if (details.targetElement == CalendarElement.calendarCell ||
                         details.targetElement == CalendarElement.appointment) {
-                      _showModaltoDate(context, details);
+                      _VarmodalReachTop = false;
+                      _showModaltoDate(context, details, _VarmodalReachTop);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
