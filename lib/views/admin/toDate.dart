@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../forms/appoinmentForm.dart';
 import '../../models/appointmentModel.dart';
+import '../../utils/PopUpTabs/deleteAppointment.dart';
+import '../../utils/PopUpTabs/modalToDate.dart';
+import '../../utils/timer.dart';
 import 'modifyAppointment.dart';
 
 class AppointmentScreen extends StatefulWidget {
@@ -27,6 +30,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   late Future<List<Appointment>> appointments;
   bool modalReachTop = true;
   late DateTime selectedDate2 = widget.selectedDate;
+  TextEditingController _timerController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  bool _isTimerShow = false;
+
+  void _onTimeChoose(bool isTimerShow, TextEditingController timerController) {
+    _isTimerShow = isTimerShow;
+    _timerController = timerController;
+  }
 
   @override
   void initState() {
@@ -201,10 +212,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         ///este container agrupa al texto y a la hora
                         return InkWell(
                           onTap: () {
+                            //onModifyAppointment = true;
                             print('tapped on $clientName');
+
                             setState(() {
                               widget.reachTop(modalReachTop);
+
+                              /*if (onModifyAppointment == false) {
+                                onModifyAppointment = true;
+                              } else if (onModifyAppointment == false) {
+                                onModifyAppointment = false;
+                              }*/
                             });
+
                             showDialog(
                                 context: context,
                                 barrierColor: Colors.white.withOpacity(0.35),
@@ -247,58 +267,271 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         0),
                                   ),
                                 ]),
-                            child: Row(
+                            child: Column(
                               children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                  child: ListTile(
-                                    title: Text(
-                                      clientName,
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      child: ListTile(
+                                        title: Text(
+                                          clientName,
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05),
+                                        ),
+                                        subtitle: Text(
+                                          treatmentType,
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05),
+                                        ),
+                                      ),
                                     ),
-                                    subtitle: Text(
-                                      treatmentType,
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  ///este container es de la hora
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.06,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF4F2263),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                          color: const Color(0xFF4F2263),
-                                          width: 1.5),
-                                    ),
-                                    margin: EdgeInsets.only(
-                                        right:
+                                    Expanded(
+                                      ///este container es de la hora
+                                      child: Container(
+                                        width:
                                             MediaQuery.of(context).size.width *
+                                                0.2,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.06,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF4F2263),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          border: Border.all(
+                                              color: const Color(0xFF4F2263),
+                                              width: 1.5),
+                                        ),
+                                        margin: EdgeInsets.only(
+                                            right: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 0.06),
-                                    child: Text(
-                                      time,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.07),
+                                        child: Text(
+                                          time,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.07),
+                                        ),
+                                      ),
                                     ),
+                                  ],
+                                ),
+
+                                ///
+                                Visibility(
+                                  visible: false,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.026),
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.026),
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF4F2263),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: const Text(
+                                          'Fecha:',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.026),
+                                        child: TextFormField(
+                                          controller: _dateController,
+                                          decoration: const InputDecoration(
+                                            labelText: 'DD/M/AAAA',
+                                            border: OutlineInputBorder(),
+                                            suffixIcon:
+                                                Icon(Icons.calendar_today),
+                                          ),
+                                          readOnly: true,
+                                          onTap: () {},
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.024),
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.026),
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF4F2263),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: const Text(
+                                          'Hora:',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.024),
+                                        child: TextFormField(
+                                          controller: _timerController,
+                                          decoration: const InputDecoration(
+                                            labelText: 'HH:MM',
+                                            border: OutlineInputBorder(),
+                                            suffixIcon: Icon(Icons.access_time),
+                                          ),
+                                          readOnly: true,
+                                          onTap: () {
+                                            TimerFly(
+                                              onTimeChoose: _onTimeChoose,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.025,
+                                            bottom: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.02),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.03,
+                                                  right: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.02),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    elevation: 4,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15.0),
+                                                      side: const BorderSide(
+                                                          color: Colors.red,
+                                                          width: 1),
+                                                    ),
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    surfaceTintColor:
+                                                        Colors.white,
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.075)),
+
+                                                ///
+                                                onPressed: () {
+                                                  showDeleteAppointmentDialog(
+                                                      context, widget);
+                                                },
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                  size: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.085,
+                                                ),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    elevation: 4,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15.0),
+                                                      side: const BorderSide(
+                                                          color:
+                                                              Color(0xFF4F2263),
+                                                          width: 1),
+                                                    ),
+                                                    backgroundColor:
+                                                        const Color(0xFF4F2263),
+                                                    surfaceTintColor:
+                                                        const Color(0xFF4F2263),
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.05)),
+                                                onPressed: () {},
+                                                child: Text(
+                                                  'Guardar Cambios',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.048),
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

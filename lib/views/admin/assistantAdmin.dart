@@ -30,6 +30,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   bool visibleKeyboard = false;
   bool scrollToDayComplete = false;
   bool isDocLog = false;
+  bool _showContentToModify = false;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -39,6 +40,10 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         print(visibleKeyboard);
       });
     });
+  }
+
+  void _OnshowContentToModify(bool showContentToModify){
+    _showContentToModify = showContentToModify;
   }
 
   @override
@@ -248,7 +253,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return AgendaSchedule(isDoctorLog: isDocLog);
+        return AgendaSchedule(isDoctorLog: isDocLog, showContentToModify: _OnshowContentToModify);
       case 3:
         return ClientForm();
       default:

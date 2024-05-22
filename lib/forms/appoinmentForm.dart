@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../calendar/calendarioScreenCita.dart';
 import '../models/clientModel.dart';
 import '../services/getClientsService.dart';
 import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
@@ -44,6 +45,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool isTimerShow = false;
   bool isDocLog = false;
   bool saveNewClient = false;
+  bool showCalendar = false;
 
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -562,52 +564,79 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               ),
                               readOnly: true,
                               onTap: () {
-                                _selectDate(context);
+                                setState(() {
+                                  !showCalendar
+                                      ? showCalendar = true
+                                      : showCalendar = false;
+                                });
                               },
                             ),
                           ),
                         ),
-
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4F2263),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            'Hora:',
-                            style: TextStyle(
+                        ///calendario
+                        Visibility(
+                          visible: showCalendar,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, bottom: 20),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.black54, width: 0.5),
                               color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CalendarioCita(),
+                          ),
+                        ),
+                        Visibility(
+                          visible: !showCalendar,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4F2263),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              'Hora:',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 10),
-                          child: TextFormField(
-                            controller: _timeController,
-                            decoration: const InputDecoration(
-                              labelText: 'HH:MM',
-                              border: OutlineInputBorder(),
-                              suffixIcon: Icon(Icons.access_time),
-                            ),
-                            readOnly: true,
-                            onTap: () {
-                              setState(() {
-                                if (isTimerShow == false) {
-                                  isTimerShow = true;
-                                } else if (isTimerShow == true) {
-                                  isTimerShow = false;
-                                }
-                              });
+                        Visibility(
+                          visible: !showCalendar,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 10),
+                            child: TextFormField(
+                              controller: _timeController,
+                              decoration: const InputDecoration(
+                                labelText: 'HH:MM',
+                                border: OutlineInputBorder(),
+                                suffixIcon: Icon(Icons.access_time),
+                              ),
+                              readOnly: true,
+                              onTap: () {
+                                setState(() {
+                                  if (isTimerShow == false) {
+                                    isTimerShow = true;
+                                  } else if (isTimerShow == true) {
+                                    isTimerShow = false;
+                                  }
+                                });
 
-                              //_selectTime(context);
-                            },
+                                //_selectTime(context);
+                              },
+                            ),
                           ),
                         ),
 
@@ -628,7 +657,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           ),
                         ),
                         Visibility(
-                          visible: !isTimerShow,
+                          visible: !isTimerShow && !showCalendar,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 8),
@@ -649,7 +678,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           ),
                         ),
                         Visibility(
-                          visible: !isTimerShow,
+                          visible: !isTimerShow && !showCalendar,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 10),
@@ -662,41 +691,47 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 0, horizontal: 10),
-                          child: Row(
-                            children: [
-                              Checkbox(
-                                checkColor: Colors.white,
-                                value: saveNewClient,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    saveNewClient = value ?? false;
-                                  });
-                                },
-                                fillColor:
-                                    MaterialStateColor.resolveWith((states) {
-                                  if (states.contains(MaterialState.selected)) {
-                                    return const Color(0xFF4F2263);
-                                  } else {
-                                    return Colors.transparent;
-                                  }
-                                }),
-                              ),
-                              Text(
-                                'Agregar nuevo cliente',
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.045,
-                                  color: const Color(0xFF4F2263),
+                        Visibility(
+                          visible: !showCalendar,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  checkColor: Colors.white,
+                                  value: saveNewClient,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      saveNewClient = value ?? false;
+                                    });
+                                  },
+                                  fillColor:
+                                      MaterialStateColor.resolveWith((states) {
+                                    if (states
+                                        .contains(MaterialState.selected)) {
+                                      return const Color(0xFF4F2263);
+                                    } else {
+                                      return Colors.transparent;
+                                    }
+                                  }),
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  'Agregar nuevo cliente',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.045,
+                                    color: const Color(0xFF4F2263),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+
                         Visibility(
-                          visible: !isTimerShow,
+                          visible: !isTimerShow && !showCalendar ? true : false,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: ElevatedButton(

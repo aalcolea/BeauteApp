@@ -28,6 +28,11 @@ class DoctorAdmin extends StatefulWidget {
 
 class _DoctorAdminState extends State<DoctorAdmin> {
   bool isDocLog = true;
+  bool _showContentToModify = false;
+
+  void _OnshowContentToModify(bool showContentToModify) {
+    _showContentToModify = showContentToModify;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +195,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                     width: 2,
                   ),
                 ),
-                child: AgendaSchedule(isDoctorLog: isDocLog),
+                child: AgendaSchedule(
+                    isDoctorLog: isDocLog,
+                    showContentToModify: _OnshowContentToModify),
               ),
             ),
           ],
