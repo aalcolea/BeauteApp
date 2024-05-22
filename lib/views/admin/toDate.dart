@@ -207,7 +207,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             });
                             showDialog(
                                 context: context,
-                                barrierColor: Colors.transparent,
+                                barrierColor: Colors.white.withOpacity(0.35),
                                 builder: (BuildContext context) {
                                   return const AlertDialog(
                                     contentPadding: EdgeInsets.zero,
