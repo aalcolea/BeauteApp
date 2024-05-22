@@ -202,12 +202,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       itemBuilder: (context, index) {
                         Appointment appointment = filteredAppointments[index];
                         String time = (appointment.appointmentDate != null)
-                            ? '${appointment.appointmentDate!.hour}:${appointment.appointmentDate!.minute}'
-                            : 'Unknown Time';
-                        String clientName =
-                            appointment.clientName ?? 'Unknown Client';
-                        String treatmentType =
-                            appointment.treatmentType ?? 'No Treatment';
+                            ? DateFormat('h:mm a').format(appointment.appointmentDate!)
+                            : 'Hora desconocida';
+                        print(time);
+                        String clientName = appointment.clientName ?? 'Cliente desconocido';
+                        String treatmentType = appointment.treatmentType ?? 'Sin tratamiento';
 
                         ///este container agrupa al texto y a la hora
                         return InkWell(
