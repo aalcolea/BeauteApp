@@ -1,6 +1,10 @@
-import 'package:beaute_app/views/admin/agendaMain.dart';
+import 'package:beaute_app/views/admin/assistantAdmin.dart';
+import 'package:beaute_app/views/admin/drAdmin.dart';
+import 'package:beaute_app/views/admin/toDate.dart';
 import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
+
+import 'forms/appoinmentForm.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,9 +13,9 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    bool isDocLog = false;
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -19,17 +23,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Iniciar Sesión',
-          ),
-        ),
-        body: const Login(),
+      home: const Scaffold(
+        body: Login(),
       ),
       routes: {
-        '/agenda': (context) => AgendaAdmin(),
-        //'/cerrarSesion': (context) => MyApp(),
+        '/drScreen': (context) => const DoctorAdmin(),
+        '/assistantScreen': (context) => const AssistantAdmin(),
+        '/citaScreen': (context) => AppointmentForm(isDoctorLog: isDocLog),
       },
     );
   }
