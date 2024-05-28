@@ -39,6 +39,12 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     _showContentToModify = showContentToModify;
   }
 
+  void _onHideBtnsBottom(bool hideBtnsBottom) {
+    setState(() {
+      _hideBtnsBottom = hideBtnsBottom;
+    });
+  }
+
   @override
   void initState() {
     _selectedScreen = 1;
@@ -53,11 +59,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     super.dispose();
   }
 
-  void _onHideBtnsBottom(bool hideBtnsBottom) {
-    setState(() {
-      _hideBtnsBottom = hideBtnsBottom;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {

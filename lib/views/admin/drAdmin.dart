@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 
+import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 
 class DoctorAdmin extends StatefulWidget {
@@ -10,164 +15,184 @@ class DoctorAdmin extends StatefulWidget {
   @override
   State<DoctorAdmin> createState() => _DoctorAdminState();
 }
-/*class AddAppointmentModal {
-  static void showAddAppointmentModal(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          content: AppointmentForm(),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-        );
-      },
-    );
-  }
-}*/
 
 class _DoctorAdminState extends State<DoctorAdmin> {
   bool isDocLog = true;
   bool _showContentToModify = false;
+  int _selectedScreen = 0;
+  bool _hideBtnsBottom = false;
+  late KeyboardVisibilityController keyboardVisibilityController;
+  late StreamSubscription<bool> keyboardVisibilitySubscription;
+  bool visibleKeyboard = false;
 
-  void _navigateToAppointmentForm() async {
-    bool? appointmentCreated = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
-      ),
-    );
-
-    if (appointmentCreated == true) {
-      setState(() {
-        print('Cita creada, actualizar el calendario');
-      });
-    }
+  void checkKeyboardVisibility() {
+    keyboardVisibilitySubscription =
+        keyboardVisibilityController.onChange.listen((visible) {
+          setState(() {
+            visibleKeyboard = visible;
+          });
+        });
   }
 
-  void _OnshowContentToModify(bool showContentToModify) {
+  void _onshowContentToModify(bool showContentToModify) {
     _showContentToModify = showContentToModify;
   }
+
+  void _onHideBtnsBottom(bool hideBtnsBottom) {
+    setState(() {
+      _hideBtnsBottom = hideBtnsBottom;
+    });
+  }
+
+  @override
+  void initState() {
+    _selectedScreen = 1;
+    keyboardVisibilityController = KeyboardVisibilityController();
+    checkKeyboardVisibility();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Padding(
-          padding: const EdgeInsets.only(
-            right: 85,
-          ),
-          child: Container(
-            width: null,
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey)),
-            ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.person_pin,
-                    size: 40,
-                    color: Color(0xFF4F2263),
-                  ),
-                ),
-                Text(
-                  'Doctor1',
-                  style: TextStyle(color: Color(0xFF4F2263), fontSize: 32),
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications_none_outlined,
-              size: 40,
-              color: Color(0xFF4F2263),
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.input_outlined,
-              size: 40,
-              color: Color(0xFF4F2263),
-            ),
-            onPressed: () {
-              showClienteSuccessfullyAdded(context, widget);
-            },
-          ),
-        ],
-      ),
       body: Container(
-        padding: EdgeInsets.only(
-            right: 15,
-            left: 15,
-            bottom: MediaQuery.of(context).size.height * 0.075,
-            top: 40),
+        padding:
+            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
         color: Colors.white,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AppointmentForm(
-                                isDoctorLog: isDocLog
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedScreen == 1
+                      ? 'Calendario'
+                      : _selectedScreen == 3
+                          ? 'Nuevo Cliente'
+                          : '',
+                  style: TextStyle(
+                    color: const Color(0xFF4F2263),
+                    fontSize: MediaQuery.of(context).size.width * 0.09,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.notifications_none_outlined,
+                        size: MediaQuery.of(context).size.width * 0.095,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.input_outlined,
+                        size: MediaQuery.of(context).size.width * 0.095,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.width * 0.055,
+                ),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(15),
+                        bottomRight: Radius.circular(15)),
+                    border: const Border(
+                      bottom: BorderSide(
+                        color: Color(0xFF4F2263),
+                        width: 2.5,
+                      ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 10.0,
+                        offset: Offset(
+                            0, MediaQuery.of(context).size.width * 0.012),
+                      ),
+                      BoxShadow(
+                        color: Colors.white,
+                        offset: Offset(
+                            0, MediaQuery.of(context).size.width * -0.025),
+                      ),
+                    ]),
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: _selectedScreen == 1
+                          ? MediaQuery.of(context).size.width * 0.06
+                          : MediaQuery.of(context).size.width * 0.0,
+                      bottom: MediaQuery.of(context).size.width * 0.06,
+                      left: MediaQuery.of(context).size.width * 0.045,
+                      right: MediaQuery.of(context).size.width * 0.045),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _buildBody(),
+                ),
+              ),
+            ),
+            Visibility(
+              visible: !_hideBtnsBottom,
+              child: Container(
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.width * 0.055),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(10),
+                          onTap: () {
+                            setState(() {
+                              _selectedScreen = 1;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(
+                              _selectedScreen != 1
+                                  ? CupertinoIcons.calendar
+                                  : CupertinoIcons.calendar,
+                              color: _selectedScreen == 1
+                                  ? const Color(0xFF4F2263)
+                                  : const Color(0xFF4F2263).withOpacity(0.2),
+                              size: MediaQuery.of(context).size.width * 0.12,
                             ),
                           ),
-                        );
-                        //Navigator.pushNamed(context, '/toDate');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: InkRipple.splashFactory,
-                        padding: const EdgeInsets.only(top: 30, bottom: 30),
-                        elevation: 10,
-                        surfaceTintColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: const BorderSide(
-                              color: Color(0xFF4F2263), width: 2),
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                      child: const Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.event_note,
-                              size: 60,
-                              color: Color(0xFF8AB6DD),
-                            ),
-                            Text(
-                              'Para hoy',
-                              style: TextStyle(
-                                color: Color(0xFF8AB6DD),
-                                fontSize: 26,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-                  Expanded(
-                    child: ElevatedButton(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4F2263),
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.06),
+                        surfaceTintColor: const Color(0xFF4F2263),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          side: const BorderSide(
+                              color: Color(0xFF4F2263), width: 2),
+                        ),
+                      ),
                       onPressed: () {
-                        _navigateToAppointmentForm();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -175,61 +200,63 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                                 AppointmentForm(isDoctorLog: isDocLog),
                           ),
                         );
-                        //Navigator.pushNamed(context, '/citaScreen');
-                        //AddAppointmentModal.showAddAppointmentModal(context);
                       },
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: InkRipple.splashFactory,
-                        padding: const EdgeInsets.only(top: 30, bottom: 30),
-                        elevation: 10,
-                        surfaceTintColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: const BorderSide(
-                              color: Color(0xFF4F2263), width: 2),
-                        ),
-                        backgroundColor: Colors.white,
+                      child: Icon(
+                        _selectedScreen != 2
+                            ? CupertinoIcons.add
+                            : CupertinoIcons.add,
+                        color:
+                            _selectedScreen == 2 ? Colors.white : Colors.white,
+                        size: MediaQuery.of(context).size.width * 0.1,
                       ),
-                      child: const Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.note_add_outlined,
-                              size: 60,
-                              color: Color(0xFF8AB6DD),
+                    ),
+                    Expanded(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(10),
+                          onTap: () {
+                            _selectedScreen = 3;
+                            setState(() {});
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Text(
-                              'Crear cita',
-                              style: TextStyle(
-                                color: Color(0xFF8AB6DD),
-                                fontSize: 26,
-                              ),
+                            child: Icon(
+                              _selectedScreen == 3
+                                  ? Icons.person_add_alt_outlined
+                                  : Icons.person_add_alt_outlined,
+                              color: _selectedScreen == 3
+                                  ? const Color(0xFF4F2263)
+                                  : const Color(0xFF4F2263).withOpacity(0.2),
+                              size: MediaQuery.of(context).size.width * 0.12,
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: const Color(0xFF4F2263),
-                    width: 2,
-                  ),
+                  ],
                 ),
-                child: AgendaSchedule(
-                    isDoctorLog: isDocLog,
-                    showContentToModify: _OnshowContentToModify),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildBody() {
+    switch (_selectedScreen) {
+      case 1:
+        return AgendaSchedule(
+            isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
+      case 3:
+        return ClientForm(onHideBtnsBottom: _onHideBtnsBottom);
+      default:
+        return Container();
+    }
   }
 }
