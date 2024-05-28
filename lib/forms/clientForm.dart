@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
-import '../utils/showToast.dart';
-import '../utils/toastWidget.dart';
 
 class ClientForm extends StatefulWidget {
-  const ClientForm({super.key});
+  final void Function(
+    bool,
+  ) onHideBtnsBottom;
+
+  const ClientForm({super.key, required this.onHideBtnsBottom});
 
   @override
   _ClientFormState createState() => _ClientFormState();
@@ -24,14 +27,17 @@ class _ClientFormState extends State<ClientForm> {
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
+  bool hideBtnsBottom = false;
+  FocusNode focusNodeClient = FocusNode();
+  FocusNode focusNodeCel = FocusNode();
+  FocusNode focusNodeEmail = FocusNode();
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
         visibleKeyboard = visible;
-        print("MODAL");
-        print(visibleKeyboard);
+        !visibleKeyboard ? widget.onHideBtnsBottom(false) : null;
       });
     });
   }
@@ -64,8 +70,21 @@ class _ClientFormState extends State<ClientForm> {
     }
   }
 
+  void changeFocus(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
+  }
+
+  void hideKeyBoard() {
+    if (visibleKeyboard) {
+      FocusScope.of(context).unfocus();
+    }
+  }
+
   @override
   void initState() {
+    hideKeyBoard();
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     super.initState();
@@ -73,6 +92,9 @@ class _ClientFormState extends State<ClientForm> {
 
   @override
   void dispose() {
+    focusNodeClient.dispose();
+    focusNodeCel.dispose();
+    focusNodeEmail.dispose();
     keyboardVisibilitySubscription.cancel();
     super.dispose();
   }
@@ -91,18 +113,19 @@ class _ClientFormState extends State<ClientForm> {
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: visibleKeyboard
-                ? MediaQuery.of(context).size.height * 0.35
+                ? MediaQuery.of(context).size.height * 0.47
                 : null,
-            //height: MediaQuery.of(context).size.height * 0.5,
             child: SingleChildScrollView(
               padding: EdgeInsets.zero,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 15),
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.width * 0.01),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.01,
+                        vertical: MediaQuery.of(context).size.width * 0.025),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
@@ -118,19 +141,37 @@ class _ClientFormState extends State<ClientForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        bottom: 20, left: 10, right: 10, top: 0),
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.width * 0.045,
+                        left: MediaQuery.of(context).size.width * 0.0112,
+                        right: MediaQuery.of(context).size.width * 0.0112,
+                        top: 0),
                     child: TextFormField(
+                      focusNode: focusNodeClient,
                       controller: _nameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.03),
                         hintText: 'Nombre completo',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
+                      onTap: () {
+                        !visibleKeyboard
+                            ? widget.onHideBtnsBottom(!visibleKeyboard)
+                            : print('hello');
+                      },
+                      onEditingComplete: () =>
+                          changeFocus(context, focusNodeClient, focusNodeCel),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.width * 0.01),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.01),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
@@ -146,19 +187,36 @@ class _ClientFormState extends State<ClientForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        bottom: 20, left: 10, right: 10, top: 10),
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.width * 0.07,
+                        left: MediaQuery.of(context).size.width * 0.0112,
+                        right: MediaQuery.of(context).size.width * 0.0112,
+                        top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
                       controller: _numberController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'No. Celular',
-                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.03),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
+                      onTap: () {
+                        !visibleKeyboard
+                            ? widget.onHideBtnsBottom(!visibleKeyboard)
+                            : null;
+                      },
+                      onEditingComplete: () =>
+                          changeFocus(context, focusNodeCel, focusNodeEmail),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.width * 0.01),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.01),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
@@ -174,25 +232,45 @@ class _ClientFormState extends State<ClientForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        bottom: 20, left: 10, right: 10, top: 10),
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.width * 0.045,
+                        left: MediaQuery.of(context).size.width * 0.0112,
+                        right: MediaQuery.of(context).size.width * 0.0112,
+                        top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
+                      focusNode: focusNodeEmail,
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.03),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                         hintText: 'Correo electrónico',
                       ),
+                      onTap: () {
+                        !visibleKeyboard
+                            ? widget.onHideBtnsBottom(!visibleKeyboard)
+                            : null;
+                      },
+                      onEditingComplete: () => focusNodeEmail.unfocus(),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
+                    padding: EdgeInsets.only(
+                        bottom: !visibleKeyboard
+                            ? MediaQuery.of(context).size.width * 0.2
+                            : MediaQuery.of(context).size.width * 0.0),
                     child: ElevatedButton(
                       onPressed: createClient,
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 10),
-                        //elevation: 10,
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.01,
+                            vertical:
+                                MediaQuery.of(context).size.width * 0.0112),
                         surfaceTintColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -204,13 +282,12 @@ class _ClientFormState extends State<ClientForm> {
                           MediaQuery.of(context).size.height * 0.075,
                         ),
                         backgroundColor: Colors.white,
-                        //backgroundColor: const Color(0xFFC5B6CD),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Agregar Cliente',
                         style: TextStyle(
-                          fontSize: 22,
-                          color: Color(0xFF4F2263),
+                          fontSize: MediaQuery.of(context).size.width * 0.055,
+                          color: const Color(0xFF4F2263),
                         ),
                       ),
                     ),

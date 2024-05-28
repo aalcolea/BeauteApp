@@ -1,12 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
 
 class CalendarioCita extends StatefulWidget {
+  final void Function(String, bool) onDayToAppointFormSelected;
 
-
-  const CalendarioCita({Key? key}) : super(key: key);
+  CalendarioCita({Key? key, required this.onDayToAppointFormSelected})
+      : super(key: key);
 
   @override
   State<CalendarioCita> createState() => _CalendarioCitaState();
@@ -71,7 +73,6 @@ class _CalendarioCitaState extends State<CalendarioCita> {
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 12),
             alignment: Alignment.centerLeft,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.07,
@@ -83,10 +84,10 @@ class _CalendarioCitaState extends State<CalendarioCita> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back_ios_rounded,
-                    color: Color(0xFF4F2263),
-                    size: 25,
+                    color: const Color(0xFF4F2263),
+                    size: MediaQuery.of(context).size.width * 0.07,
                   ),
                   onPressed: () {
                     int previousMonth = currentMonth! - 1;
@@ -104,13 +105,15 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                       ? '${getMonthName(currentMonth!)} $visibleYear'
                       : '${getMonthName(initMonth)} $visibleYear',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 30, color: Color(0xFF72A5D0)),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.07,
+                      color: const Color(0xFF72A5D0)),
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: Color(0xFF4F2263),
-                    size: 25,
+                    color: const Color(0xFF4F2263),
+                    size: MediaQuery.of(context).size.width * 0.07,
                   ),
                   onPressed: () {
                     int nextMonth = currentMonth! + 1;
@@ -140,9 +143,22 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                   view: CalendarView.month,
                   controller: _calendarController,
                   onTap: (CalendarTapDetails details) {
-                    if (details.targetElement == CalendarElement.calendarCell ||
-                        details.targetElement == CalendarElement.appointment) {
-                      ///aqui manda crea cita
+                    if (details.date != null) {
+                      DateTime selectedDate = details.date!;
+                      DateTime now = DateTime.now();
+
+                      if (selectedDate
+                          .isBefore(DateTime(now.year, now.month, now.day))) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'No se pueden seleccionar fechas pasadas')),
+                        );
+                      } else {
+                        String dateOnly =
+                            DateFormat('yyyy-MM-dd').format(selectedDate);
+                        widget.onDayToAppointFormSelected(dateOnly, false);
+                      }
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
@@ -171,8 +187,8 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                     if (isToday) {
                       return Center(
                         child: Container(
-                          width: 45,
-                          height: 45,
+                          width: null,
+                          height: null,
                           decoration: BoxDecoration(
                             color: Colors.purple[100],
                             shape: BoxShape.circle,
@@ -184,9 +200,10 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                           child: Center(
                             child: Text(
                               details.date.day.toString(),
-                              style: const TextStyle(
-                                color: Color(0xFF4F2263),
-                                fontSize: 24,
+                              style: TextStyle(
+                                color: const Color(0xFF4F2263),
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
                               ),
                             ),
                           ),
@@ -194,8 +211,8 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                       );
                     } else if (isToday) {
                       return Container(
-                        width: 45,
-                        height: 45,
+                        width: null,
+                        height: null,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -207,9 +224,10 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                         child: Center(
                           child: Text(
                             details.date.day.toString(),
-                            style: const TextStyle(
-                              color: Color(0xFF4F2263),
-                              fontSize: 24,
+                            style: TextStyle(
+                              color: const Color(0xFF4F2263),
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
                             ),
                           ),
                         ),
@@ -231,7 +249,8 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                 color: isInCurrentMonth
                                     ? const Color(0xFF72A5D0)
                                     : const Color(0xFFC5B6CD),
-                                fontSize: 20,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
                               ),
                             ),
                           ),

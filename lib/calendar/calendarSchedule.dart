@@ -59,6 +59,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   DateTime now = DateTime.now();
   bool _VarmodalReachTop = false;
   bool _isTaped = false;
+  int? _expandedIndex;
 
   @override
   void initState() {
@@ -96,9 +97,11 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   void _showModaltoDate(
-      BuildContext context, CalendarTapDetails details, bool VarmodalReachTop) {
+      BuildContext context, CalendarTapDetails details, bool varmodalReachTop) {
     showModalBottomSheet(
-      backgroundColor: Colors.white,
+      backgroundColor: !_VarmodalReachTop
+          ? Colors.transparent
+          : Colors.black54.withOpacity(0.3),
       isScrollControlled: _VarmodalReachTop,
       showDragHandle: false,
       barrierColor: Colors.black54,
@@ -111,17 +114,20 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               color: Colors.transparent,
             ),
             child: AppointmentScreen(
+              expandedIndex: _expandedIndex,
               selectedDate: details.date!,
-              reachTop: (bool reachTop, bool isTaped) {
+              reachTop: (bool reachTop, int? expandedIndex) {
                 setState(() {
                   if (!_VarmodalReachTop) {
                     Navigator.pop(context);
                     _VarmodalReachTop = true;
+                    _expandedIndex = expandedIndex;
                     _showModaltoDate(context, details, _VarmodalReachTop);
+                  } else {
+                    _expandedIndex = null;
+                    _VarmodalReachTop = reachTop;
                   }
-                  _VarmodalReachTop = reachTop;
                 });
-                print('hola');
               },
             ),
           ),
@@ -148,10 +154,10 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back_ios_rounded,
                     color: Colors.white,
-                    size: 35,
+                    size: MediaQuery.of(context).size.width * 0.1,
                   ),
                   onPressed: () {
                     int previousMonth = currentMonth! - 1;
@@ -169,13 +175,15 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                       ? '${getMonthName(currentMonth!)} $visibleYear'
                       : '${getMonthName(initMonth)} $visibleYear',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 32, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.09,
+                      color: Colors.white),
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: Colors.white,
-                    size: 35,
+                    size: MediaQuery.of(context).size.width * 0.1,
                   ),
                   onPressed: () {
                     int nextMonth = currentMonth! + 1;
@@ -248,8 +256,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                     if (isToday && hasEvent) {
                       return Center(
                         child: Container(
-                          width: 45,
-                          height: 45,
+                          width: null,
+                          height: null,
                           decoration: BoxDecoration(
                             color: hasEvent ? Colors.purple[100] : Colors.white,
                             shape: BoxShape.circle,
@@ -271,8 +279,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                       );
                     } else if (isToday) {
                       return Container(
-                        width: 45,
-                        height: 45,
+                        width: null,
+                        height: null,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -284,15 +292,18 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         child: Center(
                           child: Text(
                             details.date.day.toString(),
-                            style: const TextStyle(
-                              color: Color(0xFF4F2263),
-                              fontSize: 24,
+                            style: TextStyle(
+                              color: const Color(0xFF4F2263),
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.07,
                             ),
                           ),
                         ),
                       );
                     } else if (hasEvent) {
                       return Container(
+                        width: null,
+                        height: null,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: hasEvent ? Colors.purple[100] : Colors.white,
@@ -302,12 +313,18 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         child: Text(
                           details.date.day.toString(),
                           style: TextStyle(
-                              color: hasEvent ? Colors.white : Colors.black),
+                            color: hasEvent ? Colors.white : Colors.black,
+                            fontSize: MediaQuery.of(context).size.width * 0.06,
+                          ),
                         ),
                       );
                     } else {
                       return Center(
                         child: Container(
+                          width: null,
+                          //MediaQuery.of(context).size.width * 0.2,
+                          height: null,
+                          //MediaQuery.of(context).size.width * 0.2,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
@@ -322,7 +339,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                 color: isInCurrentMonth
                                     ? const Color(0xFF72A5D0)
                                     : const Color(0xFFC5B6CD),
-                                fontSize: 20,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.055,
                               ),
                             ),
                           ),

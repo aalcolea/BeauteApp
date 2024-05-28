@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -49,18 +50,14 @@ class _TimerFlyState extends State<TimerFly> {
           child: Row(
             children: [
               ///hrs
-              Container(
-                margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.02,
-                ),
-                width: MediaQuery.of(context).size.width * 0.30,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.29,
                 child: ListWheelScrollView.useDelegate(
                   controller: hourcontroller,
-                  useMagnifier: true,
-                  perspective: 0.005,
-                  diameterRatio: 1.4,
+                  perspective: 0.001,
+                  diameterRatio: MediaQuery.of(context).size.height * 1,
                   physics: const FixedExtentScrollPhysics(),
-                  itemExtent: 50,
+                  itemExtent: MediaQuery.of(context).size.width * 0.18,
                   onSelectedItemChanged: (value) {
                     setState(() {
                       selectedIndexHours = value;
@@ -87,7 +84,9 @@ class _TimerFlyState extends State<TimerFly> {
                           child: Text(
                             index == 0 ? '12' : index.toString(),
                             style: TextStyle(
-                              fontSize: 40,
+                              fontSize: index == selectedIndexHours
+                                  ? MediaQuery.of(context).size.width * 0.11
+                                  : MediaQuery.of(context).size.width * 0.08,
                               color: colorforhours,
                             ),
                           ),
@@ -97,18 +96,18 @@ class _TimerFlyState extends State<TimerFly> {
                   ),
                 ),
               ),
-              const Text(
+              Text(
                 ':',
                 style: TextStyle(
-                  fontSize: 40,
-                  color: Color(0xFF4F2263),
+                  fontSize: MediaQuery.of(context).size.width * 0.125,
+                  color: const Color(0xFF4F2263),
                 ),
               ),
 
               ///mins
 
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.30,
+                width: MediaQuery.of(context).size.width * 0.29,
                 child: ListWheelScrollView.useDelegate(
                   onSelectedItemChanged: (value) {
                     setState(() {
@@ -117,19 +116,18 @@ class _TimerFlyState extends State<TimerFly> {
                     });
                   },
                   controller: minsController,
-                  perspective: 0.005,
-                  diameterRatio: 1.4,
+                  perspective: 0.001,
+                  diameterRatio: MediaQuery.of(context).size.width * 0.1,
                   physics: const FixedExtentScrollPhysics(),
-                  itemExtent: 50,
+                  itemExtent: MediaQuery.of(context).size.width * 0.18,
                   childDelegate: ListWheelChildLoopingListDelegate(
-                    children: List.generate(60, (index) {
-                      final Color colorformins = index == selectedIndexMins
-                          ? const Color(0xFF4F2263)
-                          : Colors.grey;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 0),
-                        child: Container(
+                    children: List.generate(
+                      60,
+                      (index) {
+                        final Color colorformins = index == selectedIndexMins
+                            ? const Color(0xFF4F2263)
+                            : Colors.grey;
+                        return Container(
                           decoration: const BoxDecoration(
                             border: Border(
                               top: BorderSide(
@@ -143,14 +141,16 @@ class _TimerFlyState extends State<TimerFly> {
                             child: Text(
                               index < 10 ? '0$index' : index.toString(),
                               style: TextStyle(
-                                fontSize: 40,
+                                fontSize: index == selectedIndexMins
+                                    ? MediaQuery.of(context).size.width * 0.11
+                                    : MediaQuery.of(context).size.width * 0.08,
                                 color: colorformins,
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -158,9 +158,9 @@ class _TimerFlyState extends State<TimerFly> {
               ///am/pm
               Container(
                 margin: EdgeInsets.only(
-                    right: MediaQuery.of(context).size.width * 0.02,
-                    left: MediaQuery.of(context).size.width * 0.02),
-                width: MediaQuery.of(context).size.width * 0.26,
+                    right: MediaQuery.of(context).size.width * 0.0,
+                    left: MediaQuery.of(context).size.width * 0.03),
+                width: MediaQuery.of(context).size.width * 0.23,
                 child: ListWheelScrollView.useDelegate(
                   controller: AmPmController,
                   onSelectedItemChanged: (value) {
@@ -169,10 +169,10 @@ class _TimerFlyState extends State<TimerFly> {
                       print(selectedIndexAmPm);
                     });
                   },
-                  perspective: 0.005,
-                  diameterRatio: 1.4,
+                  perspective: 0.001,
+                  diameterRatio: MediaQuery.of(context).size.height * 1,
                   physics: const FixedExtentScrollPhysics(),
-                  itemExtent: 50,
+                  itemExtent: MediaQuery.of(context).size.width * 0.18,
                   childDelegate: ListWheelChildBuilderDelegate(
                       childCount: 2,
                       builder: (context, index) {
@@ -196,7 +196,9 @@ class _TimerFlyState extends State<TimerFly> {
                                 child: Text(
                               text,
                               style: TextStyle(
-                                fontSize: 40,
+                                fontSize: index == selectedIndexAmPm
+                                    ? MediaQuery.of(context).size.width * 0.11
+                                    : MediaQuery.of(context).size.width * 0.08,
                                 color: colorforitems,
                               ),
                             )),
