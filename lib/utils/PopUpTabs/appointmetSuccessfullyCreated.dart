@@ -21,7 +21,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
               contentPadding: EdgeInsets.zero,
               content: Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.095),
+                    top: MediaQuery.of(context).size.height * 0.08),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.25,
                 decoration: BoxDecoration(
@@ -42,11 +42,11 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.pushReplacementNamed(context, '/drScreen');
                       },
                       child: Container(
                         margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.035,
+                          top: MediaQuery.of(context).size.height * 0.03,
                         ),
                         padding: EdgeInsets.symmetric(
                             horizontal:

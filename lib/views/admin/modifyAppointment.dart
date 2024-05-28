@@ -13,15 +13,21 @@ class ModifyAppointment extends StatefulWidget {
 }
 
 class _ModifyAppointmentState extends State<ModifyAppointment> {
+  TextEditingController _timerController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   bool _isTimerShow = false;
 
-  void _onTimeChoose(bool isTimerShow, TextEditingController dateController) {
+  void _onTimeChoose(bool isTimerShow, TextEditingController timerController) {
     _isTimerShow = isTimerShow;
-    _dateController = dateController;
+    _timerController = timerController;
   }
 
-  final TextEditingController _timeController = TextEditingController();
+  @override
+  void initState() {
+    _timerController.text = 'Este va a agarrar la hora';
+    _dateController.text = 'Este va a agarrar la fecha';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +59,21 @@ class _ModifyAppointmentState extends State<ModifyAppointment> {
               padding: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.029,
                   top: MediaQuery.of(context).size.width * 0.027),
-              child: Text(
-                'Paciente',
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.055),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Paciente',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.055),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -127,7 +144,7 @@ class _ModifyAppointmentState extends State<ModifyAppointment> {
                   vertical: 8,
                   horizontal: MediaQuery.of(context).size.width * 0.024),
               child: TextFormField(
-                controller: _timeController,
+                controller: _timerController,
                 decoration: const InputDecoration(
                   labelText: 'HH:MM',
                   border: OutlineInputBorder(),

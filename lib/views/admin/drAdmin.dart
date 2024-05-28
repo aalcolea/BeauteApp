@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 
+import '../../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
+
 class DoctorAdmin extends StatefulWidget {
   const DoctorAdmin({super.key});
 
   @override
   State<DoctorAdmin> createState() => _DoctorAdminState();
 }
-
 /*class AddAppointmentModal {
   static void showAddAppointmentModal(BuildContext context) {
     showDialog(
@@ -28,6 +29,26 @@ class DoctorAdmin extends StatefulWidget {
 
 class _DoctorAdminState extends State<DoctorAdmin> {
   bool isDocLog = true;
+  bool _showContentToModify = false;
+
+  void _navigateToAppointmentForm() async {
+    bool? appointmentCreated = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+      ),
+    );
+
+    if (appointmentCreated == true) {
+      setState(() {
+        print('Cita creada, actualizar el calendario');
+      });
+    }
+  }
+
+  void _OnshowContentToModify(bool showContentToModify) {
+    _showContentToModify = showContentToModify;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +98,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
               size: 40,
               color: Color(0xFF4F2263),
             ),
-            onPressed: () {},
+            onPressed: () {
+              showClienteSuccessfullyAdded(context, widget);
+            },
           ),
         ],
       ),
@@ -98,7 +121,15 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/toDate');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AppointmentForm(
+                                isDoctorLog: isDocLog
+                            ),
+                          ),
+                        );
+                        //Navigator.pushNamed(context, '/toDate');
                       },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
@@ -136,6 +167,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
+                        _navigateToAppointmentForm();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -190,7 +222,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                     width: 2,
                   ),
                 ),
-                child: AgendaSchedule(isDoctorLog: isDocLog),
+                child: AgendaSchedule(
+                    isDoctorLog: isDocLog,
+                    showContentToModify: _OnshowContentToModify),
               ),
             ),
           ],
