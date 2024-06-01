@@ -179,18 +179,27 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.027,
-                        ),
-                        child: Text(
-                          'Nueva cita',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.095,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF4F2263),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: MediaQuery.of(context).size.width * 0.082,
+                            ),
                           ),
-                        ),
+                          Text(
+                            'Nueva cita',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.095,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF4F2263),
+                            ),
+                          ),
+                        ],
                       ),
                       Row(
                         children: [
