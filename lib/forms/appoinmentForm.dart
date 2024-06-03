@@ -179,18 +179,27 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.027,
-                        ),
-                        child: Text(
-                          'Nueva cita',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.095,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF4F2263),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: MediaQuery.of(context).size.width * 0.082,
+                            ),
                           ),
-                        ),
+                          Text(
+                            'Nueva cita',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.095,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF4F2263),
+                            ),
+                          ),
+                        ],
                       ),
                       Row(
                         children: [
@@ -563,6 +572,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 ),
               ],
             ),
+
+            ///timer
             if (isTimerShow)
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -571,14 +582,18 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 ),
               ),
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.36,
+              top: MediaQuery.of(context).size.height * 0.11,
               child: Visibility(
                 visible: isTimerShow,
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 1,
                   child: Column(
                     children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.365,
+                      ),
                       TitleContainer(
                         child: Text(
                           'Hora:',
@@ -607,8 +622,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           },
                         ),
                       ),
-
-                      ///timer
                       Container(
                         margin: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.02,
@@ -632,7 +645,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
               ),
             ),
 
-            ///
+            ///calendario
             if (_showCalendar)
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -641,7 +654,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 ),
               ),
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.36,
+              top: MediaQuery.of(context).size.height * 0.11,
               child: Visibility(
                 visible: _showCalendar,
                 child: SizedBox(
@@ -649,6 +662,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   height: MediaQuery.of(context).size.height,
                   child: Column(
                     children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.25,
+                      ),
                       TitleContainer(
                         child: Text(
                           'Fecha:',
@@ -659,7 +676,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: MediaQuery.of(context).size.width * 0.02,
@@ -680,8 +696,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           },
                         ),
                       ),
-
-                      ///calendario
                       CalendarContainer(
                         child: CalendarioCita(
                             onDayToAppointFormSelected:
@@ -692,6 +706,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 ),
               ),
             ),
+
+            ///widgetChooseDr
             if (_showdrChooseWidget)
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -718,7 +734,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: MediaQuery.of(context).size.width * 0.02,
@@ -753,8 +768,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           },
                         ),
                       ),
-
-                      ///widgetChooseDr
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal:

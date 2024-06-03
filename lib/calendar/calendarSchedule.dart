@@ -142,7 +142,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 12),
+            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.035),
             alignment: Alignment.centerLeft,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.07,

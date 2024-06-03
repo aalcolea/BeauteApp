@@ -7,6 +7,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import '../../forms/appoinmentForm.dart';
 import '../../forms/clientForm.dart';
+import 'notifications.dart';
 
 class AssistantAdmin extends StatefulWidget {
   const AssistantAdmin({super.key});
@@ -39,6 +40,12 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     _showContentToModify = showContentToModify;
   }
 
+  void _onHideBtnsBottom(bool hideBtnsBottom) {
+    setState(() {
+      _hideBtnsBottom = hideBtnsBottom;
+    });
+  }
+
   @override
   void initState() {
     _selectedScreen = 1;
@@ -53,12 +60,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     super.dispose();
   }
 
-  void _onHideBtnsBottom(bool hideBtnsBottom) {
-    setState(() {
-      _hideBtnsBottom = hideBtnsBottom;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,61 +70,118 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         color: Colors.white,
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _selectedScreen == 1
-                      ? 'Calendario'
-                      : _selectedScreen == 3
-                          ? 'Nuevo Cliente'
-                          : '',
-                  style: TextStyle(
-                    color: const Color(0xFF4F2263),
-                    fontSize: MediaQuery.of(context).size.width * 0.09,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: EdgeInsets.only(
+                left: _selectedScreen == 4
+                    ? MediaQuery.of(context).size.width * 0.0
+                    : _selectedScreen == 3
+                        ? MediaQuery.of(context).size.width * 0.0
+                        : MediaQuery.of(context).size.width * 0.045,
+                right: _selectedScreen != 4
+                    ? MediaQuery.of(context).size.width * 0.025
+                    : MediaQuery.of(context).size.width * 0.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Visibility(
+                        visible: _selectedScreen == 4
+                            ? true
+                            : _selectedScreen == 3
+                                ? true
+                                : false,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedScreen = 1;
+                              _hideBtnsBottom = false;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.arrow_back_ios_rounded,
+                            size: MediaQuery.of(context).size.width * 0.082,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        _selectedScreen == 1
+                            ? 'Calendario'
+                            : _selectedScreen == 3
+                                ? 'Nuevo Cliente'
+                                : _selectedScreen == 4
+                                    ? 'Notificaciones'
+                                    : '',
+                        style: TextStyle(
+                          color: const Color(0xFF4F2263),
+                          fontSize: MediaQuery.of(context).size.width * 0.09,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.notifications_none_outlined,
-                        size: MediaQuery.of(context).size.width * 0.095,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          setState(() {
+                            _selectedScreen = 4;
+                            _hideBtnsBottom = true;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.notifications_none_outlined,
+                          size: MediaQuery.of(context).size.width * 0.095,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.input_outlined,
-                        size: MediaQuery.of(context).size.width * 0.095,
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.input_outlined,
+                          size: MediaQuery.of(context).size.width * 0.095,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.width * 0.055,
+                  bottom: _selectedScreen != 4
+                      ? MediaQuery.of(context).size.width * 0.055
+                      : MediaQuery.of(context).size.width * 0.0,
                 ),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15)),
-                    border: const Border(
-                      bottom: BorderSide(
-                        color: Color(0xFF4F2263),
-                        width: 2.5,
-                      ),
-                    ),
+                    borderRadius: BorderRadius.only(
+                        topLeft: _selectedScreen == 4
+                            ? const Radius.circular(15)
+                            : const Radius.circular(0),
+                        topRight: _selectedScreen == 4
+                            ? const Radius.circular(15)
+                            : const Radius.circular(0),
+                        bottomLeft: const Radius.circular(15),
+                        bottomRight: const Radius.circular(15)),
+                    border: _selectedScreen != 4
+                        ? const Border(
+                            bottom: BorderSide(
+                            color: Color(0xFF4F2263),
+                            width: 2.5,
+                          ))
+                        : null,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black54,
-                        blurRadius: 10.0,
+                        color: _selectedScreen != 4
+                            ? Colors.black54
+                            : Colors.white,
+                        blurRadius: _selectedScreen != 4 ? 10.0 : 0,
                         offset: Offset(
                             0, MediaQuery.of(context).size.width * 0.012),
                       ),
@@ -135,12 +193,17 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                     ]),
                 child: Container(
                   margin: EdgeInsets.only(
-                      top: _selectedScreen == 1
-                          ? MediaQuery.of(context).size.width * 0.06
-                          : MediaQuery.of(context).size.width * 0.0,
-                      bottom: MediaQuery.of(context).size.width * 0.06,
-                      left: MediaQuery.of(context).size.width * 0.045,
-                      right: MediaQuery.of(context).size.width * 0.045),
+                    top: _selectedScreen == 1
+                        ? MediaQuery.of(context).size.width * 0.06
+                        : MediaQuery.of(context).size.width * 0.0,
+                    bottom: MediaQuery.of(context).size.width * 0.06,
+                    left: _selectedScreen != 4
+                        ? MediaQuery.of(context).size.width * 0.045
+                        : MediaQuery.of(context).size.width * 0.0,
+                    right: _selectedScreen != 4
+                        ? MediaQuery.of(context).size.width * 0.045
+                        : MediaQuery.of(context).size.width * 0.0,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -203,9 +266,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AppointmentForm(
-                              isDoctorLog: isDocLog
-                            ),
+                            builder: (context) =>
+                                AppointmentForm(isDoctorLog: isDocLog),
                           ),
                         );
                       },
@@ -263,6 +325,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
         return ClientForm(onHideBtnsBottom: _onHideBtnsBottom);
+      case 4:
+        return NotificationsScreen();
       default:
         return Container();
     }

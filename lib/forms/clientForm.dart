@@ -122,11 +122,12 @@ class _ClientFormState extends State<ClientForm> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.width * 0.01),
+                        vertical: MediaQuery.of(context).size.width * 0.01,
+                        horizontal: MediaQuery.of(context).size.width * 0.02),
                     margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.01,
+                        horizontal: MediaQuery.of(context).size.width * 0.0,
                         vertical: MediaQuery.of(context).size.width * 0.025),
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
@@ -143,16 +144,15 @@ class _ClientFormState extends State<ClientForm> {
                   Padding(
                     padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).size.width * 0.045,
-                        left: MediaQuery.of(context).size.width * 0.0112,
-                        right: MediaQuery.of(context).size.width * 0.0112,
                         top: 0),
                     child: TextFormField(
                       focusNode: focusNodeClient,
                       controller: _nameController,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.width * 0.02,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.03),
+                                MediaQuery.of(context).size.width * 0.02),
                         hintText: 'Nombre completo',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -169,10 +169,11 @@ class _ClientFormState extends State<ClientForm> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.width * 0.01),
+                        vertical: MediaQuery.of(context).size.width * 0.01,
+                        horizontal: MediaQuery.of(context).size.width * 0.02),
                     margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.01),
-                    alignment: Alignment.center,
+                        horizontal: MediaQuery.of(context).size.width * 0.0),
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
@@ -188,17 +189,16 @@ class _ClientFormState extends State<ClientForm> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.07,
-                        left: MediaQuery.of(context).size.width * 0.0112,
-                        right: MediaQuery.of(context).size.width * 0.0112,
+                        bottom: MediaQuery.of(context).size.width * 0.045,
                         top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
                       controller: _numberController,
                       decoration: InputDecoration(
                         hintText: 'No. Celular',
                         contentPadding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.width * 0.02,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.03),
+                                MediaQuery.of(context).size.width * 0.02),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -214,10 +214,11 @@ class _ClientFormState extends State<ClientForm> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.width * 0.01),
+                        vertical: MediaQuery.of(context).size.width * 0.01,
+                        horizontal: MediaQuery.of(context).size.width * 0.02),
                     margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.01),
-                    alignment: Alignment.center,
+                        horizontal: MediaQuery.of(context).size.width * 0.0),
+                    alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
@@ -234,16 +235,15 @@ class _ClientFormState extends State<ClientForm> {
                   Padding(
                     padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).size.width * 0.045,
-                        left: MediaQuery.of(context).size.width * 0.0112,
-                        right: MediaQuery.of(context).size.width * 0.0112,
                         top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
                       focusNode: focusNodeEmail,
                       controller: _emailController,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.width * 0.02,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.03),
+                                MediaQuery.of(context).size.width * 0.02),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
