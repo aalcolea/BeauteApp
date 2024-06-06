@@ -16,7 +16,7 @@ class AssistantAdmin extends StatefulWidget {
   State<AssistantAdmin> createState() => _AssistantAdminState();
 }
 
-int _selectedScreen = 0;
+
 
 class _AssistantAdminState extends State<AssistantAdmin> {
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -26,6 +26,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   bool isDocLog = false;
   bool _showContentToModify = false;
   bool _hideBtnsBottom = false;
+  int _selectedScreen = 0;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =

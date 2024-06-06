@@ -37,6 +37,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   final _dateController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
   final treatmentController = TextEditingController();
+  FocusNode fieldClientNode = FocusNode();
   TextEditingController _drSelected = TextEditingController();
   bool _showdrChooseWidget = false;
   int day = 0;
@@ -47,6 +48,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool saveNewClient = false;
   bool _showCalendar = false;
   int _optSelected = 0;
+  bool drFieldDone = false;
+  bool clientFieldDone = false;
+  bool dateFieldDone = false;
+  bool timeFieldDone = false;
+  bool treatmentFieldDone = false;
 
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -305,6 +311,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       },
                                     );
                                   },
+                                  onEditingComplete: () {
+                                    setState(() {
+                                      drFieldDone = true;
+                                    });
+                                  },
                                 ),
                               ),
                             ),
@@ -342,17 +353,25 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 displayStringForOption: (Client option) =>
                                     option.name,
                                 onSelected: (Client selection) {
-                                  _clientTextController.text = selection.name;
-                                  _updateSelectedClient(selection);
+                                  setState(() {
+                                    _clientTextController.text = selection.name;
+                                    _updateSelectedClient(selection);
+                                    clientFieldDone = true;
+                                    print(
+                                        'ActivarFechaaaa $drFieldDone y $clientFieldDone');
+                                    fieldClientNode.unfocus();
+                                  });
                                 },
                                 fieldViewBuilder: (BuildContext context,
                                     TextEditingController
                                         fieldTextEditingController,
                                     FocusNode fieldFocusNode,
                                     VoidCallback onFieldSubmitted) {
+                                  fieldClientNode = fieldFocusNode;
                                   _clientTextController =
                                       fieldTextEditingController;
                                   return FieldsToWrite(
+                                    textInputAction: TextInputAction.done,
                                     readOnly: false,
                                     labelText: 'Cliente',
                                     suffixIcon:
@@ -362,6 +381,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     focusNode: fieldFocusNode,
                                     onChanged: (text) {
                                       _updateSelectedClient(null);
+                                    },
+                                    onEdComplete: () {
+                                      setState(() {
+                                        clientFieldDone = true;
+                                        fieldFocusNode.unfocus();
+                                        print(
+                                            'ActivarFecha $drFieldDone y $clientFieldDone');
+                                      });
                                     },
                                   );
                                 },
@@ -401,6 +428,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         MediaQuery.of(context).size.width *
                                             0.026),
                                 child: FieldsToWrite(
+                                  eneabled: drFieldDone && clientFieldDone
+                                      ? true
+                                      : false,
                                   readOnly: true,
                                   labelText: 'DD/M/AAAA',
                                   controller: _dateController,
@@ -412,6 +442,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           : _showCalendar = false;
                                       print(_showCalendar);
                                     });
+                                  },
+                                  onEdComplete: () {
+                                    dateFieldDone = true;
                                   },
                                 ),
                               ),
@@ -446,6 +479,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         MediaQuery.of(context).size.width *
                                             0.026),
                                 child: FieldsToWrite(
+                                  eneabled: dateFieldDone ? true : false,
                                   labelText: 'HH:MM',
                                   readOnly: true,
                                   controller: _timeController,
@@ -458,6 +492,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         isTimerShow = false;
                                       }
                                     });
+                                  },
+                                  onEdComplete: () {
+                                    timeFieldDone = true;
                                   },
                                 ),
                               ),
@@ -491,6 +528,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         MediaQuery.of(context).size.width *
                                             0.026),
                                 child: FieldsToWrite(
+                                  eneabled: timeFieldDone ? true : false,
                                   labelText: 'Tratamiento',
                                   readOnly: false,
                                   controller: treatmentController,
@@ -536,7 +574,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               visible:
                                   !isTimerShow && !_showCalendar ? true : false,
                               child: ElevatedButton(
-                                onPressed: submitAppointment,
+                                onPressed: treatmentFieldDone
+                                    ? submitAppointment
+                                    : null,
                                 style: ElevatedButton.styleFrom(
                                   surfaceTintColor: Colors.white,
                                   splashFactory: InkRipple.splashFactory,
@@ -549,8 +589,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                               0.2),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25.0),
-                                    side: const BorderSide(
-                                        color: Color(0xFF4F2263), width: 2),
+                                    side: BorderSide(
+                                        color: treatmentFieldDone
+                                            ? const Color(0xFF4F2263)
+                                            : const Color(0xFF4F2263)
+                                                .withOpacity(0.3),
+                                        width: 2),
                                   ),
                                   backgroundColor: Colors.white,
                                 ),
