@@ -308,6 +308,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       () {
                                         _showdrChooseWidget =
                                             _showdrChooseWidget ? false : true;
+                                        drFieldDone = true;
                                       },
                                     );
                                   },
@@ -358,7 +359,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     _updateSelectedClient(selection);
                                     clientFieldDone = true;
                                     print(
-                                        'ActivarFechaaaa $drFieldDone y $clientFieldDone');
+                                        'ActivarFecha $drFieldDone y $clientFieldDone');
                                     fieldClientNode.unfocus();
                                   });
                                 },
@@ -443,9 +444,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       print(_showCalendar);
                                     });
                                   },
-                                  onEdComplete: () {
-                                    dateFieldDone = true;
-                                  },
                                 ),
                               ),
                             ),
@@ -479,7 +477,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         MediaQuery.of(context).size.width *
                                             0.026),
                                 child: FieldsToWrite(
-                                  eneabled: dateFieldDone ? true : false,
+                                  eneabled: _dateController.text.isNotEmpty
+                                      ? true
+                                      : false,
                                   labelText: 'HH:MM',
                                   readOnly: true,
                                   controller: _timeController,
@@ -492,9 +492,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         isTimerShow = false;
                                       }
                                     });
-                                  },
-                                  onEdComplete: () {
-                                    timeFieldDone = true;
                                   },
                                 ),
                               ),
@@ -528,7 +525,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         MediaQuery.of(context).size.width *
                                             0.026),
                                 child: FieldsToWrite(
-                                  eneabled: timeFieldDone ? true : false,
+                                  eneabled: _timeController.text.isNotEmpty
+                                      ? true
+                                      : false,
                                   labelText: 'Tratamiento',
                                   readOnly: false,
                                   controller: treatmentController,
@@ -574,7 +573,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               visible:
                                   !isTimerShow && !_showCalendar ? true : false,
                               child: ElevatedButton(
-                                onPressed: treatmentFieldDone
+                                onPressed: treatmentController.text.isNotEmpty
                                     ? submitAppointment
                                     : null,
                                 style: ElevatedButton.styleFrom(
@@ -590,10 +589,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     side: BorderSide(
-                                        color: treatmentFieldDone
-                                            ? const Color(0xFF4F2263)
-                                            : const Color(0xFF4F2263)
-                                                .withOpacity(0.3),
+                                        color:
+                                            treatmentController.text.isNotEmpty
+                                                ? const Color(0xFF4F2263)
+                                                : const Color(0xFF4F2263)
+                                                    .withOpacity(0.3),
                                         width: 2),
                                   ),
                                   backgroundColor: Colors.white,
