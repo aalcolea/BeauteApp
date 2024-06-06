@@ -36,7 +36,7 @@ dependencies:
   provider: ^5.0.0
   flutter_secure_storage: ^7.0.1
   syncfusion_flutter_calendar: ^25.1.42
-  intl: ^0.18.0
+  intl: ^0.19.0
 
 
     # The following adds the Cupertino Icons font to your application.
