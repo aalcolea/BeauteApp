@@ -274,8 +274,11 @@ class FieldsToWrite extends StatelessWidget {
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final bool readOnly;
+  final bool? eneabled;
+  final TextInputAction? textInputAction;
   final void Function(String)? onChanged;
   final void Function()? onTap;
+  final void Function()? onEdComplete;
 
   const FieldsToWrite({
     super.key,
@@ -285,7 +288,7 @@ class FieldsToWrite extends StatelessWidget {
     this.contentPadding,
     this.controller,
     required this.readOnly,
-    this.focusNode, this.onChanged, this.onTap,
+    this.focusNode, this.onChanged, this.onTap, this.eneabled, this.onEdComplete, this.textInputAction,
   });
 
   @override
@@ -295,6 +298,9 @@ class FieldsToWrite extends StatelessWidget {
     );
 
     return TextFormField(
+      textInputAction: textInputAction,
+      onEditingComplete: onEdComplete,
+      enabled: eneabled,
       focusNode: focusNode,
       controller: controller,
       readOnly: readOnly,

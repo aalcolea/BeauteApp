@@ -249,7 +249,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             Appointment appointment =
                                 filteredAppointments[index];
                             String time = (appointment.appointmentDate != null)
-                                ? DateFormat('h:mm a')
+                                ? DateFormat('HH:mm') //('h:mm a')
                                     .format(appointment.appointmentDate!)
                                 : 'Hora desconocida';
                             print(time);
@@ -397,17 +397,23 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                       ? MediaQuery.of(context)
                                                               .size
                                                               .width *
-                                                          0.06
+                                                          0.05
                                                       : 0),
-                                              child: Text(
-                                                time,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        MediaQuery.of(context)
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    time,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
                                                             0.07),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -727,9 +733,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AppointmentForm(
-                        isDoctorLog: isDocLog
-                      ),
+                      builder: (context) =>
+                          AppointmentForm(isDoctorLog: isDocLog),
                     ),
                   );
                   //Navigator.pushNamed(context, '/citaScreen');
