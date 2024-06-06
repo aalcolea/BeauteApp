@@ -96,6 +96,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
     });
   }
 
+  void hideKeyBoard() {
+    if (visibleKeyboard) {
+      FocusScope.of(context).unfocus();
+    }
+  }
+
   void _updateSelectedClient(Client? client) {
     if (client != null) {
       setState(() {
@@ -438,6 +444,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   suffixIcon: const Icon(Icons.calendar_today),
                                   onTap: () {
                                     setState(() {
+                                      hideKeyBoard();
                                       !_showCalendar
                                           ? _showCalendar = true
                                           : _showCalendar = false;
@@ -486,6 +493,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   suffixIcon: const Icon(Icons.access_time),
                                   onTap: () {
                                     setState(() {
+                                      hideKeyBoard();
                                       if (isTimerShow == false) {
                                         isTimerShow = true;
                                       } else if (isTimerShow == true) {
