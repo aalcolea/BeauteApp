@@ -53,6 +53,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool dateFieldDone = false;
   bool timeFieldDone = false;
   bool treatmentFieldDone = false;
+  bool clientInDB = true;
+  bool auxclientInDB = false;
 
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -102,16 +104,31 @@ class _AppointmentFormState extends State<AppointmentForm> {
     }
   }
 
+  void addClientInNoDB() {
+    setState(() {
+      if (clientInDB == false) {
+        _selectedClient = Client(
+            id: 0, name: _clientTextController.text, email: '', number: 0);
+        print('hola');
+      } else {
+        return;
+      }
+    });
+  }
+
   void _updateSelectedClient(Client? client) {
     if (client != null) {
       setState(() {
         _selectedClient = client;
       });
     } else {
-      setState(() {
+      clientInDB = false;
+      /* setState(() {
+        clientInDB = false;
         _selectedClient = Client(
             id: 0, name: _clientTextController.text, email: '', number: 0);
-      });
+        print('hola');
+      });*/
     }
   }
 
@@ -364,8 +381,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     _clientTextController.text = selection.name;
                                     _updateSelectedClient(selection);
                                     clientFieldDone = true;
-                                    print(
-                                        'ActivarFecha $drFieldDone y $clientFieldDone');
+                                    clientInDB = true;
+                                    saveNewClient = false;
+                                    /* if (clientInDB == false) {
+                                      clientInDB = true;
+                                    } else {
+                                      clientInDB = true;
+                                      return;
+                                    }*/
                                     fieldClientNode.unfocus();
                                   });
                                 },
@@ -381,8 +404,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     textInputAction: TextInputAction.done,
                                     readOnly: false,
                                     labelText: 'Cliente',
-                                    suffixIcon:
-                                        const Icon(CupertinoIcons.person),
+                                    suffixIcon: Icon(
+                                      CupertinoIcons.person,
+                                      color: const Color(0xFF4F2263),
+                                      size: MediaQuery.of(context).size.width *
+                                          0.075,
+                                    ),
                                     controller: fieldTextEditingController,
                                     fillColor: Colors.white,
                                     focusNode: fieldFocusNode,
@@ -391,6 +418,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     },
                                     onEdComplete: () {
                                       setState(() {
+                                        addClientInNoDB();
                                         clientFieldDone = true;
                                         fieldFocusNode.unfocus();
                                         print(
@@ -441,7 +469,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   readOnly: true,
                                   labelText: 'DD/M/AAAA',
                                   controller: _dateController,
-                                  suffixIcon: const Icon(Icons.calendar_today),
+                                  suffixIcon: Icon(
+                                    Icons.calendar_today,
+                                    color: drFieldDone && clientFieldDone
+                                        ? const Color(0xFF4F2263)
+                                        : const Color(0xFF4F2263)
+                                            .withOpacity(0.3),
+                                    size: MediaQuery.of(context).size.width *
+                                        0.07,
+                                  ),
                                   onTap: () {
                                     setState(() {
                                       hideKeyBoard();
@@ -490,7 +526,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   labelText: 'HH:MM',
                                   readOnly: true,
                                   controller: _timeController,
-                                  suffixIcon: const Icon(Icons.access_time),
+                                  suffixIcon: Icon(
+                                    Icons.access_time,
+                                    color: _dateController.text.isNotEmpty
+                                        ? const Color(0xFF4F2263)
+                                        : const Color(0xFF4F2263)
+                                            .withOpacity(0.3),
+                                    size: MediaQuery.of(context).size.width *
+                                        0.075,
+                                  ),
                                   onTap: () {
                                     setState(() {
                                       hideKeyBoard();
@@ -533,6 +577,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         MediaQuery.of(context).size.width *
                                             0.026),
                                 child: FieldsToWrite(
+                                  suffixIcon: Icon(
+                                    CupertinoIcons.pencil_ellipsis_rectangle,
+                                    size: MediaQuery.of(context).size.width *
+                                        0.085,
+                                    color: _timeController.text.isNotEmpty
+                                        ? const Color(0xFF4F2263)
+                                        : const Color(0xFF4F2263)
+                                            .withOpacity(0.3),
+                                  ),
                                   eneabled: _timeController.text.isNotEmpty
                                       ? true
                                       : false,
@@ -549,11 +602,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   Checkbox(
                                     checkColor: Colors.white,
                                     value: saveNewClient,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        saveNewClient = value ?? false;
-                                      });
-                                    },
+                                    onChanged: clientInDB
+                                        ? null
+                                        : (bool? value) {
+                                            setState(() {
+                                              auxclientInDB = true;
+                                              saveNewClient = value ?? false;
+                                            });
+                                          },
                                     fillColor: MaterialStateColor.resolveWith(
                                         (states) {
                                       if (states
@@ -570,7 +626,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.045,
-                                      color: const Color(0xFF4F2263),
+                                      color: clientInDB
+                                          ? const Color(0xFF4F2263)
+                                              .withOpacity(0.3)
+                                          : const Color(0xFF4F2263),
                                     ),
                                   ),
                                 ],
@@ -627,12 +686,20 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
             ///timer
             if (isTimerShow)
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(
-                  color: Colors.black54.withOpacity(0.27),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isTimerShow = false;
+                  });
+                },
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    color: Colors.black54.withOpacity(0.27),
+                  ),
                 ),
               ),
+
             Positioned(
               top: MediaQuery.of(context).size.height * 0.11,
               child: Visibility(
@@ -699,12 +766,20 @@ class _AppointmentFormState extends State<AppointmentForm> {
 
             ///calendario
             if (_showCalendar)
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(
-                  color: Colors.black54.withOpacity(0.27),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showCalendar = false;
+                  });
+                },
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    color: Colors.black54.withOpacity(0.27),
+                  ),
                 ),
               ),
+
             Positioned(
               top: MediaQuery.of(context).size.height * 0.11,
               child: Visibility(
