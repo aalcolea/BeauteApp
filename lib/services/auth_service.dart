@@ -267,25 +267,6 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           ),
         ],
       ),
-
-      /*Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            controller: pinController,
-            keyboardType: TextInputType.number,
-            obscureText: true,
-            decoration: const InputDecoration(
-              labelText: 'PIN',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: authenticate,
-            child: const Text('Ingresar'),
-          ),
-        ],
-      ),*/
     );
   }
 }

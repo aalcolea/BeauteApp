@@ -7,7 +7,6 @@ import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 
 import '../../forms/clientForm.dart';
-import '../../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 
 class DoctorAdmin extends StatefulWidget {
   const DoctorAdmin({super.key});
@@ -28,10 +27,10 @@ class _DoctorAdminState extends State<DoctorAdmin> {
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
-          setState(() {
-            visibleKeyboard = visible;
-          });
-        });
+      setState(() {
+        visibleKeyboard = visible;
+      });
+    });
   }
 
   void _onshowContentToModify(bool showContentToModify) {
@@ -48,10 +47,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
   void initState() {
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
-    checkKeyboardVisibility();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -248,13 +245,22 @@ class _DoctorAdminState extends State<DoctorAdmin> {
     );
   }
 
+  void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddClient) {
+    setState(() {
+      _selectedScreen = initScreen;
+      _hideBtnsBottom = forShowBtnAfterAddClient;
+    });
+  }
+
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientForm(onHideBtnsBottom: _onHideBtnsBottom);
+        return ClientForm(
+            onHideBtnsBottom: _onHideBtnsBottom,
+            onFinishedAddClient: _onFinishedAddClient);
       default:
         return Container();
     }

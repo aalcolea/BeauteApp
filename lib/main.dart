@@ -9,11 +9,10 @@ import 'forms/appoinmentForm.dart';
 import 'models/notificationsForAssistant.dart';
 
 void main() {
-  // Ejemplo de cómo agregar elementos a las listas globales
+
   ListaSingleton.instance.notiforAssistant.add(NotificationsforAssistant('Valor 1A', 'Valor 2A', DateTime.now()));
   ListaSingleton.instance.notiforAssistant.add(NotificationsforAssistant('Valor 3A', 'Valor 4A',  DateTime.now()));
-  // Ejemplo de cómo acceder a los elementos de las listas globales
-  print(ListaSingleton.instance.notiforAssistant[0]); // Imprime: Elemento(valor1: Valor 1A, valor2: Valor 2A)
+  print(ListaSingleton.instance.notiforAssistant[0]);
   runApp(const MyApp());
 }
 

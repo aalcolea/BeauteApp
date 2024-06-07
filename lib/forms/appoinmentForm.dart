@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:beaute_app/forms/clientForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart%20';
@@ -15,8 +16,10 @@ import '../calendar/calendarioScreenCita.dart';
 import '../models/clientModel.dart';
 import '../services/getClientsService.dart';
 import '../styles/AppointmentStyles.dart';
+import '../utils/PopUpTabs/addNewClientandAppointment.dart';
 import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/timer.dart';
+import 'package:beaute_app/forms/clientForm.dart';
 
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
@@ -31,6 +34,7 @@ class AppointmentForm extends StatefulWidget {
 }
 
 class _AppointmentFormState extends State<AppointmentForm> {
+  final GlobalKey<ClientFormState> myWidgetKey = GlobalKey<ClientFormState>();
   final DropdownDataManager dropdownDataManager = DropdownDataManager();
   Client? _selectedClient;
   var _clientTextController = TextEditingController();
@@ -54,11 +58,98 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool timeFieldDone = false;
   bool treatmentFieldDone = false;
   bool clientInDB = true;
-  bool auxclientInDB = false;
-
+  int? number;
+  TextEditingController emailController = TextEditingController();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
+
+  Future<void> createClient() async {
+    try {
+      var response = await http.post(
+        Uri.parse(
+            'https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'name': _clientTextController.text,
+          'number': number,
+          'email': emailController.text,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        setState(() {
+          print('Cliente Añadido desde Nueva Cita');
+        });
+      } else {
+        print('Error al crear cliente: ${response.body}');
+      }
+    } catch (e) {
+      print('Error al enviar datos: $e');
+    }
+  }
+
+  Future<void> addClientAndSubmitAppointment() async {
+    bool? confirmed = await showAddClientAndAppointment();
+    if (confirmed == true) {
+      print('confirmed $confirmed');
+      createClient();
+      submitAppointment();
+      print('submitAppointment');
+    } else {
+      //esto trata el false pero no hace si manda un false
+      print('confirmed $confirmed');
+      return;
+    }
+  }
+
+  Future<bool?> showAddClientAndAppointment() {
+    return showDialog<bool>(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Stack(
+          children: [
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+              child: Container(
+                color: Colors.black54.withOpacity(0.3),
+              ),
+            ),
+            Center(
+              child: AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: AddClientAndAppointment(
+                    clientNamefromAppointmetForm: _clientTextController.text,
+                    onSendDataToAppointmentForm:
+                        _onRecieveDataToAppointmentForm,
+                    onConfirm: _onConfirm),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onRecieveDataToAppointmentForm(
+      String _name, String _email, int celnumber) {
+    setState(() {
+      _clientTextController.text = _name;
+      emailController.text = _email;
+      number = celnumber;
+      print(_clientTextController.text);
+      print(emailController.text);
+      print(number);
+    });
+  }
+
+  void _onConfirm() {}
 
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
@@ -104,50 +195,23 @@ class _AppointmentFormState extends State<AppointmentForm> {
     }
   }
 
-  void addClientInNoDB() {
-    setState(() {
-      if (clientInDB == false) {
-        _selectedClient = Client(
-            id: 0, name: _clientTextController.text, email: '', number: 0);
-        print('hola');
-      } else {
-        return;
-      }
-    });
-  }
-
   void _updateSelectedClient(Client? client) {
     if (client != null) {
       setState(() {
         _selectedClient = client;
       });
     } else {
-      clientInDB = false;
-      /* setState(() {
+      setState(() {
         clientInDB = false;
         _selectedClient = Client(
-            id: 0, name: _clientTextController.text, email: '', number: 0);
-        print('hola');
-      });*/
+            id: 0,
+            name: _clientTextController.text,
+            email: emailController.text,
+            number: number!);
+      });
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    isDocLog = widget.isDoctorLog;
-    keyboardVisibilityController = KeyboardVisibilityController();
-    checkKeyboardVisibility();
-    dropdownDataManager.fetchUser();
-  }
-
-  @override
-  void dispose() {
-    keyboardVisibilitySubscription.cancel();
-    super.dispose();
-  }
-
-/*considerar mandar funcion appoinment a otro widget*/
   Future<void> submitAppointment() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
@@ -187,6 +251,21 @@ class _AppointmentFormState extends State<AppointmentForm> {
     } catch (e) {
       print('Error al enviar los datos: $e');
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    isDocLog = widget.isDoctorLog;
+    keyboardVisibilityController = KeyboardVisibilityController();
+    checkKeyboardVisibility();
+    dropdownDataManager.fetchUser();
+  }
+
+  @override
+  void dispose() {
+    keyboardVisibilitySubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -383,12 +462,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     clientFieldDone = true;
                                     clientInDB = true;
                                     saveNewClient = false;
-                                    /* if (clientInDB == false) {
-                                      clientInDB = true;
-                                    } else {
-                                      clientInDB = true;
-                                      return;
-                                    }*/
                                     fieldClientNode.unfocus();
                                   });
                                 },
@@ -418,11 +491,18 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     },
                                     onEdComplete: () {
                                       setState(() {
-                                        addClientInNoDB();
                                         clientFieldDone = true;
                                         fieldFocusNode.unfocus();
                                         print(
                                             'ActivarFecha $drFieldDone y $clientFieldDone');
+                                      });
+                                    },
+                                    onTapOutside: (PointerDownEvent tapout) {
+                                      setState(() {
+                                        _clientTextController.text != ''
+                                            ? clientInDB = false
+                                            : true;
+                                        fieldFocusNode.unfocus();
                                       });
                                     },
                                   );
@@ -465,7 +545,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 child: FieldsToWrite(
                                   eneabled: drFieldDone && clientFieldDone
                                       ? true
-                                      : false,
+                                      : isDocLog && clientFieldDone
+                                          ? true
+                                          : false,
                                   readOnly: true,
                                   labelText: 'DD/M/AAAA',
                                   controller: _dateController,
@@ -473,8 +555,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     Icons.calendar_today,
                                     color: drFieldDone && clientFieldDone
                                         ? const Color(0xFF4F2263)
-                                        : const Color(0xFF4F2263)
-                                            .withOpacity(0.3),
+                                        : isDocLog && clientFieldDone
+                                            ? const Color(0xFF4F2263)
+                                            : const Color(0xFF4F2263)
+                                                .withOpacity(0.3),
                                     size: MediaQuery.of(context).size.width *
                                         0.07,
                                   ),
@@ -606,7 +690,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         ? null
                                         : (bool? value) {
                                             setState(() {
-                                              auxclientInDB = true;
                                               saveNewClient = value ?? false;
                                             });
                                           },
@@ -620,16 +703,25 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       }
                                     }),
                                   ),
-                                  Text(
-                                    'Agregar nuevo cliente',
-                                    style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.045,
-                                      color: clientInDB
-                                          ? const Color(0xFF4F2263)
-                                              .withOpacity(0.3)
-                                          : const Color(0xFF4F2263),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        saveNewClient == false
+                                            ? saveNewClient = true
+                                            : saveNewClient = false;
+                                      });
+                                    },
+                                    child: Text(
+                                      'Agregar nuevo cliente',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.045,
+                                        color: clientInDB
+                                            ? const Color(0xFF4F2263)
+                                                .withOpacity(0.3)
+                                            : const Color(0xFF4F2263),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -640,9 +732,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               visible:
                                   !isTimerShow && !_showCalendar ? true : false,
                               child: ElevatedButton(
-                                onPressed: treatmentController.text.isNotEmpty
+                                onPressed: treatmentController
+                                            .text.isNotEmpty &&
+                                        !saveNewClient
                                     ? submitAppointment
-                                    : null,
+                                    : saveNewClient &&
+                                            treatmentController.text.isNotEmpty
+                                        ? addClientAndSubmitAppointment
+                                        : null,
                                 style: ElevatedButton.styleFrom(
                                   surfaceTintColor: Colors.white,
                                   splashFactory: InkRipple.splashFactory,

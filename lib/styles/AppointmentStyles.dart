@@ -279,6 +279,7 @@ class FieldsToWrite extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function()? onTap;
   final void Function()? onEdComplete;
+  final void Function(PointerDownEvent)? onTapOutside;
 
   const FieldsToWrite({
     super.key,
@@ -288,7 +289,7 @@ class FieldsToWrite extends StatelessWidget {
     this.contentPadding,
     this.controller,
     required this.readOnly,
-    this.focusNode, this.onChanged, this.onTap, this.eneabled, this.onEdComplete, this.textInputAction,
+    this.focusNode, this.onChanged, this.onTap, this.eneabled, this.onEdComplete, this.textInputAction, this.onTapOutside,
   });
 
   @override
@@ -316,6 +317,7 @@ class FieldsToWrite extends StatelessWidget {
       ),
       onChanged: onChanged,
       onTap: onTap,
+      onTapOutside: onTapOutside,
     );
   }
 }
