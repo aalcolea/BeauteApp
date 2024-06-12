@@ -96,7 +96,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     if (confirmed == true) {
       print('confirmed $confirmed');
       createClient();
-      submitAppointment();
+      //submitAppointment();
       print('submitAppointment');
     } else {
       //esto trata el false pero no hace si manda un false

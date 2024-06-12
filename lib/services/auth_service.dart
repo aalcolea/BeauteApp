@@ -33,7 +33,11 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         var data = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
-        Navigator.pushReplacementNamed(context, '/drScreen');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/drScreen',
+          (Route<dynamic> route) => false,
+        );
       } else {
         showDialog(
           context: context,
