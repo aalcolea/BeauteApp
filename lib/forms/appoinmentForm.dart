@@ -26,10 +26,12 @@ import 'package:beaute_app/forms/clientForm.dart';
 
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
+  final String? dateFromCalendarSchedule;
 
   const AppointmentForm({
     super.key,
     required this.isDoctorLog,
+    this.dateFromCalendarSchedule,
   });
 
   @override
@@ -60,7 +62,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool dateFieldDone = false;
   bool timeFieldDone = false;
   bool treatmentFieldDone = false;
-  bool clientInDB = true;
+  bool clientInDB = false;
   int? number;
   TextEditingController emailController = TextEditingController();
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -68,6 +70,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool visibleKeyboard = false;
   bool _cancelConfirm = false;
   late BuildContext dialogforappointment;
+
   Future<void> createClient() async {
     try {
       var response = await http.post(
@@ -228,19 +231,24 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   void _updateSelectedClient(Client? client) {
+    clientFieldDone = true;
     if (client != null) {
       setState(() {
         _selectedClient = client;
       });
-    } else {
+    } else if (client == null) {
       setState(() {
+        print('_updateSelectedClient client = null');
         clientInDB = false;
         _selectedClient = Client(
             id: 0,
             name: _clientTextController.text,
-            email: emailController.text,
-            number: number!);
+            email: '0', //emailController.text,
+            number: 0);
       });
+      print('_selectedClient: ${_selectedClient!.id}');
+    } else {
+      return;
     }
   }
 
@@ -256,6 +264,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
 
     try {
+      print('client_id: ${_selectedClient?.id}');
       var response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -288,6 +297,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   void initState() {
     super.initState();
+    if (widget.dateFromCalendarSchedule != null) {
+      _dateController.text = widget.dateFromCalendarSchedule!;
+    }
     isDocLog = widget.isDoctorLog;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
@@ -531,12 +543,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       controller: fieldTextEditingController,
                                       fillColor: Colors.white,
                                       focusNode: fieldFocusNode,
-                                      onChanged: (text) {
-                                        _updateSelectedClient(null);
-                                      },
+                                      onChanged: (text) {},
                                       onEdComplete: () {
                                         setState(() {
                                           clientFieldDone = true;
+                                          clientInDB
+                                              ? print('cliente en la DB')
+                                              : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
                                           print(
                                               'ActivarFecha $drFieldDone y $clientFieldDone');
@@ -544,9 +557,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       },
                                       onTapOutside: (PointerDownEvent tapout) {
                                         setState(() {
-                                          _clientTextController.text != ''
-                                              ? clientInDB = false
-                                              : true;
+                                          print('tapOutside');
+                                          print(_clientTextController.text);
+                                          clientInDB
+                                              ? clientFieldDone = true
+                                              : _updateSelectedClient(null);
+                                          print(
+                                              '_selectedClient!.id: ${_selectedClient!.id}');
                                           fieldFocusNode.unfocus();
                                         });
                                       },
@@ -588,9 +605,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           MediaQuery.of(context).size.width *
                                               0.026),
                                   child: FieldsToWrite(
-                                    eneabled: drFieldDone && clientFieldDone
+                                    eneabled: drFieldDone &&
+                                            clientFieldDone &&
+                                            widget.dateFromCalendarSchedule ==
+                                                null //
                                         ? true
-                                        : isDocLog && clientFieldDone
+                                        : isDocLog &&
+                                                clientFieldDone &&
+                                                widget.dateFromCalendarSchedule ==
+                                                    null
                                             ? true
                                             : false,
                                     readOnly: true,
@@ -598,9 +621,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     controller: _dateController,
                                     suffixIcon: Icon(
                                       Icons.calendar_today,
-                                      color: drFieldDone && clientFieldDone
+                                      color: drFieldDone &&
+                                              clientFieldDone &&
+                                              widget.dateFromCalendarSchedule ==
+                                                  null
                                           ? const Color(0xFF4F2263)
-                                          : isDocLog && clientFieldDone
+                                          : isDocLog &&
+                                                  clientFieldDone &&
+                                                  widget.dateFromCalendarSchedule ==
+                                                      null
                                               ? const Color(0xFF4F2263)
                                               : const Color(0xFF4F2263)
                                                   .withOpacity(0.3),

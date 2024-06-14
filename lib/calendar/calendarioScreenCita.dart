@@ -63,207 +63,198 @@ class _CalendarioCitaState extends State<CalendarioCita> {
   @override
   void dispose() {
     // TODO: implement dispose
-    _calendarController;
+    _calendarController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            alignment: Alignment.centerLeft,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.07,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
+        body: Column(children: [
+      Container(
+        alignment: Alignment.centerLeft,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.07,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_rounded,
+                color: const Color(0xFF4F2263),
+                size: MediaQuery.of(context).size.width * 0.07,
+              ),
+              onPressed: () {
+                int previousMonth = currentMonth! - 1;
+                int previousYear = visibleYear!;
+                if (previousMonth < 1) {
+                  previousMonth = 12;
+                  previousYear--;
+                }
+                _calendarController.displayDate =
+                    DateTime(previousYear, previousMonth, 1);
+              },
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: const Color(0xFF4F2263),
-                    size: MediaQuery.of(context).size.width * 0.07,
-                  ),
-                  onPressed: () {
-                    int previousMonth = currentMonth! - 1;
-                    int previousYear = visibleYear!;
-                    if (previousMonth < 1) {
-                      previousMonth = 12;
-                      previousYear--;
-                    }
-                    _calendarController.displayDate =
-                        DateTime(previousYear, previousMonth, 1);
-                  },
-                ),
-                Text(
-                  currentMonth != null
-                      ? '${getMonthName(currentMonth!)} $visibleYear'
-                      : '${getMonthName(initMonth)} $visibleYear',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.07,
-                      color: const Color(0xFF72A5D0)),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: const Color(0xFF4F2263),
-                    size: MediaQuery.of(context).size.width * 0.07,
-                  ),
-                  onPressed: () {
-                    int nextMonth = currentMonth! + 1;
-                    int nextYear = visibleYear!;
-                    if (nextMonth > 12) {
-                      nextMonth = 1;
-                      nextYear++;
-                    }
-                    _calendarController.displayDate =
-                        DateTime(nextYear, nextMonth, 1);
-                  },
-                ),
-              ],
+            Text(
+              currentMonth != null
+                  ? '${getMonthName(currentMonth!)} $visibleYear'
+                  : '${getMonthName(initMonth)} $visibleYear',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.07,
+                  color: const Color(0xFF72A5D0)),
             ),
-          ),
-          Expanded(
-            child: Container(
+            IconButton(
+              icon: Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: const Color(0xFF4F2263),
+                size: MediaQuery.of(context).size.width * 0.07,
+              ),
+              onPressed: () {
+                int nextMonth = currentMonth! + 1;
+                int nextYear = visibleYear!;
+                if (nextMonth > 12) {
+                  nextMonth = 1;
+                  nextYear++;
+                }
+                _calendarController.displayDate =
+                    DateTime(nextYear, nextMonth, 1);
+              },
+            ),
+          ],
+        ),
+      ),
+      Expanded(
+          child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(0),
                 border: Border.all(color: Colors.grey, width: 1.2),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(0),
-                child: SfCalendar(
-                  headerHeight: 0,
-                  firstDayOfWeek: 1,
-                  view: CalendarView.month,
-                  controller: _calendarController,
-                  onTap: (CalendarTapDetails details) {
-                    if (details.date != null) {
-                      DateTime selectedDate = details.date!;
-                      DateTime now = DateTime.now();
+                  borderRadius: BorderRadius.circular(0),
+                  child: SfCalendar(
+                      headerHeight: 0,
+                      firstDayOfWeek: 1,
+                      view: CalendarView.month,
+                      controller: _calendarController,
+                      onTap: (CalendarTapDetails details) {
+                        if (details.date != null) {
+                          DateTime selectedDate = details.date!;
+                          DateTime now = DateTime.now();
 
-                      if (selectedDate
-                          .isBefore(DateTime(now.year, now.month, now.day))) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'No se pueden seleccionar fechas pasadas')),
-                        );
-                      } else {
-                        String dateOnly =
-                            DateFormat('yyyy-MM-dd').format(selectedDate);
-                        widget.onDayToAppointFormSelected(dateOnly, false);
-                      }
-                    }
-                  },
-                  onViewChanged: (ViewChangedDetails details) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      int? visibleMonthController =
-                          _calendarController.displayDate?.month;
-                      currentMonth = visibleMonthController;
-                      int? visibleYearController =
-                          _calendarController.displayDate?.year;
-                      visibleYear = visibleYearController;
-                      setState(() {});
-                    });
-                  },
-                  initialDisplayDate: DateTime.now(),
-                  monthCellBuilder:
-                      (BuildContext context, MonthCellDetails details) {
-                    final bool isToday =
-                        details.date.month == DateTime.now().month &&
-                            details.date.day == DateTime.now().day &&
-                            details.date.year == DateTime.now().year;
+                          if (selectedDate.isBefore(
+                              DateTime(now.year, now.month, now.day))) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'No se pueden seleccionar fechas pasadas')),
+                            );
+                          } else {
+                            String dateOnly =
+                                DateFormat('yyyy-MM-dd').format(selectedDate);
+                            widget.onDayToAppointFormSelected(dateOnly, false);
+                          }
+                        }
+                      },
+                      onViewChanged: (ViewChangedDetails details) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          int? visibleMonthController =
+                              _calendarController.displayDate?.month;
+                          currentMonth = visibleMonthController;
+                          int? visibleYearController =
+                              _calendarController.displayDate?.year;
+                          visibleYear = visibleYearController;
+                          setState(() {});
+                        });
+                      },
+                      initialDisplayDate: DateTime.now(),
+                      monthCellBuilder:
+                          (BuildContext context, MonthCellDetails details) {
+                        final bool isToday =
+                            details.date.month == DateTime.now().month &&
+                                details.date.day == DateTime.now().day &&
+                                details.date.year == DateTime.now().year;
 
-                    final bool isInCurrentMonth =
-                        details.date.month == currentMonth &&
-                            details.date.year == visibleYear;
+                        final bool isInCurrentMonth =
+                            details.date.month == currentMonth &&
+                                details.date.year == visibleYear;
 
-                    if (isToday) {
-                      return Center(
-                        child: Container(
-                          width: null,
-                          height: null,
-                          decoration: BoxDecoration(
-                            color: Colors.purple[100],
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.purple,
-                              width: 1.0,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              details.date.day.toString(),
-                              style: TextStyle(
-                                color: const Color(0xFF4F2263),
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.05,
+                        if (isToday) {
+                          return Center(
+                            child: Container(
+                              width: null,
+                              height: null,
+                              decoration: BoxDecoration(
+                                color: Colors.purple[100],
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.purple,
+                                  width: 1.0,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  details.date.day.toString(),
+                                  style: TextStyle(
+                                    color: const Color(0xFF4F2263),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.05,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    } else if (isToday) {
-                      return Container(
-                        width: null,
-                        height: null,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.purple,
-                            width: 1.0,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            details.date.day.toString(),
-                            style: TextStyle(
-                              color: const Color(0xFF4F2263),
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 0.2,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              details.date.day.toString(),
-                              style: TextStyle(
-                                color: isInCurrentMonth
-                                    ? const Color(0xFF72A5D0)
-                                    : const Color(0xFFC5B6CD),
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.05,
+                          );
+                        } else if (isToday) {
+                          return Container(
+                            width: null,
+                            height: null,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.purple,
+                                width: 1.0,
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                            child: Center(
+                              child: Text(
+                                details.date.day.toString(),
+                                style: TextStyle(
+                                  color: const Color(0xFF4F2263),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Center(
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 0.2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                      child: Text(details.date.day.toString(),
+                                          style: TextStyle(
+                                            color: isInCurrentMonth
+                                                ? const Color(0xFF72A5D0)
+                                                : const Color(0xFFC5B6CD),
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05,
+                                          )))));
+                        }
+                      }))))
+    ]));
   }
 }
