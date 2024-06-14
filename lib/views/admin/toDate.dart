@@ -14,6 +14,7 @@ class AppointmentScreen extends StatefulWidget {
     bool,
     int?,
   ) reachTop;
+  final bool isDocLog;
   final DateTime selectedDate;
   final int? expandedIndex;
 
@@ -21,7 +22,8 @@ class AppointmentScreen extends StatefulWidget {
       {Key? key,
       required this.selectedDate,
       required this.reachTop,
-      required this.expandedIndex})
+      required this.expandedIndex,
+      required this.isDocLog})
       : super(key: key);
 
   @override
@@ -49,6 +51,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
+    isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     expandedIndex != null ? isTaped = true : isTaped = false;
     appointments = fetchAppointments(widget.selectedDate);
@@ -131,6 +134,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       onTap: () {
                         setState(() {
                           selectedDate2 = date;
+                          print('tab');
+                          print('$date');
                           appointments = fetchAppointments(date);
                         });
                       },
@@ -140,7 +145,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         width: MediaQuery.of(context).size.width * 0.2,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          //color: isSelected ? Colors.white : Colors.white,
                           borderRadius: BorderRadius.circular(0),
                           border: Border.all(
                             color: Colors.grey,
@@ -737,8 +741,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          AppointmentForm(isDoctorLog: isDocLog, dateFromCalendarSchedule: dateOnly),
+                      builder: (context) => AppointmentForm(
+                          isDoctorLog: isDocLog,
+                          dateFromCalendarSchedule: dateOnly),
                     ),
                   );
                   //Navigator.pushNamed(context, '/citaScreen');

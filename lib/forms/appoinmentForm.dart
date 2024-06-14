@@ -1,18 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:beaute_app/forms/clientForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart%20';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../calendar/calendarioScreenCita.dart';
 import '../models/clientModel.dart';
 import '../services/getClientsService.dart';
@@ -20,9 +16,7 @@ import '../styles/AppointmentStyles.dart';
 import '../utils/PopUpTabs/addNewClientandAppointment.dart';
 import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
-import '../utils/PopUpTabs/closeConfirm.dart';
 import '../utils/timer.dart';
-import 'package:beaute_app/forms/clientForm.dart';
 
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
@@ -241,7 +235,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         print('_updateSelectedClient client = null');
         clientInDB = false;
         _selectedClient = Client(
-            id: 0,
+            id: 1,
             name: _clientTextController.text,
             email: '0', //emailController.text,
             number: 0);

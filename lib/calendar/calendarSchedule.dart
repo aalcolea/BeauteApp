@@ -60,10 +60,12 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _VarmodalReachTop = false;
   bool _isTaped = false;
   int? _expandedIndex;
+  bool docLog = false;
 
   @override
   void initState() {
     super.initState();
+    docLog = widget.isDoctorLog;
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -114,6 +116,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               color: Colors.transparent,
             ),
             child: AppointmentScreen(
+              isDocLog: docLog,
               expandedIndex: _expandedIndex,
               selectedDate: details.date!,
               reachTop: (bool reachTop, int? expandedIndex) {
@@ -142,7 +145,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.035),
+            margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.width * 0.035),
             alignment: Alignment.centerLeft,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.07,
