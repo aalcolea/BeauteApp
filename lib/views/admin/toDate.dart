@@ -80,6 +80,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       throw Exception('Vefique conexión a internet');
     }
   }
+  Future<void> refreshAppointments() async {
+    setState(() {
+      appointments = fetchAppointments(selectedDate2);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -653,8 +658,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
                                                     ///
                                                     onPressed: () {
-                                                      showDeleteAppointmentDialog(
-                                                          context, widget);
+                                                      showDeleteAppointmentDialog(context, widget, appointment.id, refreshAppointments);
                                                     },
                                                     child: Icon(
                                                       Icons.delete,
