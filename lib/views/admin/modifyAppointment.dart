@@ -25,7 +25,7 @@ class _ModifyAppointmentState extends State<ModifyAppointment> {
   @override
   void initState() {
     _timerController.text = 'Este va a agarrar la hora';
-    _dateController.text = 'Este va a agarrar la fecha';
+    _dateController.text = 'Este va a agarrar la fecha'; ///Que es esto?????????
     super.initState();
   }
 
@@ -184,7 +184,7 @@ class _ModifyAppointmentState extends State<ModifyAppointment> {
 
                       ///
                       onPressed: () {
-                        showDeleteAppointmentDialog(context, widget);
+
                       },
                       child: Icon(
                         Icons.delete,
@@ -206,7 +206,9 @@ class _ModifyAppointmentState extends State<ModifyAppointment> {
                           padding: EdgeInsets.symmetric(
                               horizontal:
                                   MediaQuery.of(context).size.width * 0.05)),
-                      onPressed: () {},
+                      onPressed: () {
+
+                      },
                       child: Text(
                         'Guardar Cambios',
                         style: TextStyle(

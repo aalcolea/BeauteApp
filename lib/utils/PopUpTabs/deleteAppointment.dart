@@ -1,9 +1,33 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Necesario para ImageFilter.blur
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:ui';
+import 'package:http/http.dart' as http;
 
-void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
+void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, Function refreshAppointments) {
+  Future<void> deleteAppt(int id) async {
+    const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/deleteAppoinment/';
+
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl + '$id'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        print("Appointment eliminado con éxito");
+        refreshAppointments();
+      } else {
+        print('Error eliminando appointment: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   showDialog(
     context: context,
     barrierColor: Colors.transparent,
@@ -22,16 +46,18 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
               contentPadding: EdgeInsets.zero,
               content: Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.02,
-                    left: MediaQuery.of(context).size.height * 0.02),
+                  top: MediaQuery.of(context).size.height * 0.02,
+                  left: MediaQuery.of(context).size.height * 0.02,
+                ),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.25,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(blurRadius: 3.5, offset: Offset(0, 0))
-                    ]),
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.white,
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 3.5, offset: Offset(0, 0)),
+                  ],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -44,7 +70,8 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
                     ),
                     Padding(
                       padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.035),
+                        right: MediaQuery.of(context).size.width * 0.035,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -58,8 +85,8 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
                                 top: MediaQuery.of(context).size.height * 0.035,
                               ),
                               padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.03),
+                                horizontal: MediaQuery.of(context).size.width * 0.03,
+                              ),
                               decoration: const BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
@@ -71,8 +98,7 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
                               child: Text(
                                 'Cancelar',
                                 style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.05,
+                                  fontSize: MediaQuery.of(context).size.width * 0.05,
                                   color: const Color(0xFF4F2263),
                                 ),
                               ),
@@ -80,25 +106,27 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  side: const BorderSide(
-                                      color: Colors.red, width: 1),
-                                ),
-                                backgroundColor: Colors.white,
-                                surfaceTintColor: Colors.white,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.05)),
-                            onPressed: () {},
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                side: const BorderSide(color: Colors.red, width: 1),
+                              ),
+                              backgroundColor: Colors.white,
+                              surfaceTintColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: MediaQuery.of(context).size.width * 0.05,
+                              ),
+                            ),
+                            onPressed: () {
+                              deleteAppt(id!);
+                              Navigator.of(context).pop();
+                            },
                             child: Text(
                               'Eliminar',
                               style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: MediaQuery.of(context).size.width *
-                                      0.048),
+                                color: Colors.red,
+                                fontSize: MediaQuery.of(context).size.width * 0.048,
+                              ),
                             ),
                           ),
                         ],
@@ -114,3 +142,4 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget) {
     },
   );
 }
+
