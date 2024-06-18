@@ -12,14 +12,18 @@ class ClientForm extends StatefulWidget {
   final void Function(
     bool,
   ) onHideBtnsBottom;
+  final void Function(
+      int,
+      bool,
+      ) onFinishedAddClient;
 
-  const ClientForm({super.key, required this.onHideBtnsBottom});
+  const ClientForm({super.key, required this.onHideBtnsBottom, required this.onFinishedAddClient});
 
   @override
-  _ClientFormState createState() => _ClientFormState();
+  ClientFormState createState() => ClientFormState();
 }
 
-class _ClientFormState extends State<ClientForm> {
+class ClientFormState extends State<ClientForm> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -31,6 +35,13 @@ class _ClientFormState extends State<ClientForm> {
   FocusNode focusNodeClient = FocusNode();
   FocusNode focusNodeCel = FocusNode();
   FocusNode focusNodeEmail = FocusNode();
+
+  void hideKeyBoard() {
+    if (visibleKeyboard) {
+      FocusScope.of(context).unfocus();
+    }
+  }
+
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -57,10 +68,15 @@ class _ClientFormState extends State<ClientForm> {
         }),
       );
 
+      print(response.statusCode);
+
       if (response.statusCode == 201) {
         if (mounted) {
-          showClienteSuccessfullyAdded(context, widget);
-          Navigator.of(context).pop();
+          focusNodeCel.unfocus();
+          focusNodeClient.unfocus();
+          focusNodeEmail.unfocus();
+          hideKeyBoard();
+          showClienteSuccessfullyAdded(context, widget, () {widget.onFinishedAddClient(1, false);});
         }
       } else {
         print('Error al crear cliente: ${response.body}');
@@ -74,12 +90,6 @@ class _ClientFormState extends State<ClientForm> {
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
-  }
-
-  void hideKeyBoard() {
-    if (visibleKeyboard) {
-      FocusScope.of(context).unfocus();
-    }
   }
 
   @override
@@ -161,7 +171,7 @@ class _ClientFormState extends State<ClientForm> {
                       onTap: () {
                         !visibleKeyboard
                             ? widget.onHideBtnsBottom(!visibleKeyboard)
-                            : print('hello');
+                            : print('');
                       },
                       onEditingComplete: () =>
                           changeFocus(context, focusNodeClient, focusNodeCel),
@@ -263,7 +273,9 @@ class _ClientFormState extends State<ClientForm> {
                             ? MediaQuery.of(context).size.width * 0.2
                             : MediaQuery.of(context).size.width * 0.0),
                     child: ElevatedButton(
-                      onPressed: createClient,
+                      onPressed: () {
+                        createClient();
+                      },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: EdgeInsets.symmetric(

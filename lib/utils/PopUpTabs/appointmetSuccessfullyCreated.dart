@@ -42,7 +42,11 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/drScreen');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/drScreen',
+                          (Route<dynamic> route) => false,
+                        );
                       },
                       child: Container(
                         margin: EdgeInsets.only(

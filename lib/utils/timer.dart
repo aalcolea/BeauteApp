@@ -33,6 +33,17 @@ class _TimerFlyState extends State<TimerFly> {
 
   // 0 = AM, 1 = PM
   bool _isTimerShow = false;
+  double? smallestDimension;
+  double? diameterRatio ;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    smallestDimension  = MediaQuery.of(context).size.shortestSide;
+    diameterRatio = (smallestDimension! * 0.0028);
+    print(diameterRatio);
+  }
+
 
   @override
   void initState() {
@@ -50,7 +61,7 @@ class _TimerFlyState extends State<TimerFly> {
             child: ListWheelScrollView.useDelegate(
                 controller: hourcontroller,
                 perspective: 0.001,
-                diameterRatio: MediaQuery.of(context).size.height * 1,
+                diameterRatio: diameterRatio!,
                 physics: const FixedExtentScrollPhysics(),
                 itemExtent: MediaQuery.of(context).size.width * 0.18,
                 onSelectedItemChanged: (value) {
@@ -66,15 +77,43 @@ class _TimerFlyState extends State<TimerFly> {
                       : Colors.grey;
 
                   return Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Color(0xFF4F2263),
-                            width: 2,
-                          ),
-                        ),
-                        color: Colors.white,
-                      ),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: index != selectedIndexHours
+                              ? MediaQuery.of(context).size.width * 0.04
+                              : MediaQuery.of(context).size.width * 0.0),
+                      decoration: index == selectedIndexHours
+                          ? const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Color(0xFF4F2263),
+                                  width: 2,
+                                ),
+                                bottom: BorderSide(
+                                  color: Color(0xFF4F2263),
+                                  width: 2,
+                                ),
+                              ),
+                              color: Colors.white,
+                            )
+                          : index - 1 == selectedIndexHours
+                              ? const BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey,
+                                      width: 2,
+                                    ),
+                                  ),
+                                )
+                              : index + 1 == selectedIndexHours
+                                  ? const BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(
+                                          color: Colors.grey,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
                       child: Center(
                           child: Text(index == 0 ? '12' : index.toString(),
                               style: TextStyle(
@@ -105,7 +144,7 @@ class _TimerFlyState extends State<TimerFly> {
                 },
                 controller: minsController,
                 perspective: 0.001,
-                diameterRatio: MediaQuery.of(context).size.width * 0.1,
+                diameterRatio: diameterRatio!,
                 physics: const FixedExtentScrollPhysics(),
                 itemExtent: MediaQuery.of(context).size.width * 0.18,
                 childDelegate: ListWheelChildLoopingListDelegate(
@@ -114,15 +153,39 @@ class _TimerFlyState extends State<TimerFly> {
                       ? const Color(0xFF4F2263)
                       : Colors.grey;
                   return Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Color(0xFF4F2263),
-                            width: 2,
-                          ),
-                        ),
-                        color: Colors.white,
-                      ),
+                      decoration: index == selectedIndexMins
+                          ? const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Color(0xFF4F2263),
+                                  width: 2,
+                                ),
+                                bottom: BorderSide(
+                                  color: Color(0xFF4F2263),
+                                  width: 2,
+                                ),
+                              ),
+                              color: Colors.white,
+                            )
+                          : index - 1 == selectedIndexMins
+                              ? const BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey,
+                                      width: 2,
+                                    ),
+                                  ),
+                                )
+                              : index + 1 == selectedIndexMins
+                                  ? const BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(
+                                          color: Colors.grey,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
                       child: Center(
                           child: Text(index < 10 ? '0$index' : index.toString(),
                               style: TextStyle(
@@ -148,7 +211,7 @@ class _TimerFlyState extends State<TimerFly> {
                   });
                 },
                 perspective: 0.001,
-                diameterRatio: MediaQuery.of(context).size.height * 1,
+                diameterRatio: diameterRatio!,
                 physics: const FixedExtentScrollPhysics(),
                 itemExtent: MediaQuery.of(context).size.width * 0.18,
                 childDelegate: ListWheelChildBuilderDelegate(

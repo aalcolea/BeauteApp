@@ -39,6 +39,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   bool modifyAppointment = false;
   int? expandedIndex;
   bool isTaped = false;
+  String? dateOnly;
 
   void _onTimeChoose(bool isTimerShow, TextEditingController timerController) {
     _isTimerShow = isTimerShow;
@@ -51,6 +52,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     expandedIndex = widget.expandedIndex;
     expandedIndex != null ? isTaped = true : isTaped = false;
     appointments = fetchAppointments(widget.selectedDate);
+    print(widget.selectedDate);
+    dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+    print(dateOnly);
   }
 
   Future<List<Appointment>> fetchAppointments(DateTime selectedDate) async {
@@ -73,7 +77,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         return [];
       }
     } else {
-      throw Exception('Failed to load appointments');
+      throw Exception('Vefique conexión a internet');
     }
   }
 
@@ -734,7 +738,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          AppointmentForm(isDoctorLog: isDocLog),
+                          AppointmentForm(isDoctorLog: isDocLog, dateFromCalendarSchedule: dateOnly),
                     ),
                   );
                   //Navigator.pushNamed(context, '/citaScreen');

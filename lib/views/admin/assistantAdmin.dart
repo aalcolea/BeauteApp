@@ -16,8 +16,6 @@ class AssistantAdmin extends StatefulWidget {
   State<AssistantAdmin> createState() => _AssistantAdminState();
 }
 
-
-
 class _AssistantAdminState extends State<AssistantAdmin> {
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -319,13 +317,23 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     );
   }
 
+  void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddclient) {
+    setState(() {
+      _selectedScreen = initScreen;
+      _hideBtnsBottom = forShowBtnAfterAddclient;
+    });
+
+  }
+
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientForm(onHideBtnsBottom: _onHideBtnsBottom);
+        return ClientForm(
+            onHideBtnsBottom: _onHideBtnsBottom,
+            onFinishedAddClient: _onFinishedAddClient);
       case 4:
         return NotificationsScreen();
       default:
