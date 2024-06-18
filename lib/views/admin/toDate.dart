@@ -34,7 +34,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   bool isDocLog = false;
   late Future<List<Appointment>> appointments;
   bool modalReachTop = false;
-  late DateTime selectedDate2 = widget.selectedDate;
+  late DateTime selectedDate2; // = widget.selectedDate;
   TextEditingController _timerController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   bool _isTimerShow = false;
@@ -51,24 +51,39 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
+    selectedDate2 = widget.selectedDate;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     expandedIndex != null ? isTaped = true : isTaped = false;
-    appointments = fetchAppointments(widget.selectedDate);
+    appointments = fetchAppointments(selectedDate2); //widget.selectedDate);
     print(widget.selectedDate);
     dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
     print(dateOnly);
   }
 
+/*
+  @override
+  void didUpdateWidget(AppointmentScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (selectedDate2 != oldWidget.selectedDate) {
+      print('cambioAAAAAAAAAAAAAA');
+      appointments = fetchAppointments(selectedDate2);
+    }
+  }
+*/
+
   Future<List<Appointment>> fetchAppointments(DateTime selectedDate) async {
+    print('principio de la func');
     final response = await http.get(Uri.parse(
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('appointments') && data['appointments'] != null) {
+        print('primer if $selectedDate');
         List<dynamic> appointmentsJson = data['appointments'];
         List<Appointment> allAppointments =
             appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
+
         return allAppointments
             .where((appointment) =>
                 appointment.appointmentDate != null &&
@@ -77,6 +92,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 appointment.appointmentDate!.day == selectedDate.day)
             .toList();
       } else {
+        print('else');
+
         return [];
       }
     } else {
@@ -134,9 +151,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       onTap: () {
                         setState(() {
                           selectedDate2 = date;
-                          print('tab');
-                          print('$date');
-                          appointments = fetchAppointments(date);
+                          print('selectedDate2 $selectedDate2');
+                          appointments =
+                              fetchAppointments(selectedDate2); //date);
                         });
                       },
 
@@ -738,6 +755,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 onPressed: () {
+                  dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate2);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
