@@ -19,24 +19,35 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
   void authenticate() async {
     try {
-      var response = await http.post(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/login'),
-        //Uri.parse('http://192.168.1.220:8080/api/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+      String jsonBody;
+      if (widget.userId == 3) {
+        jsonBody = json.encode({
+          'email': 'dulce@test.com',
+          'password': pinController.text,
+        });
+      } else {
+        jsonBody = json.encode({
           'email': 'doctor${widget.userId}@test.com',
           'password': pinController.text,
-        }),
+        });
+      }
+
+      var response = await http.post(
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
       );
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
+        await prefs.setInt('user_id', data['user']['id']); 
+
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/drScreen',
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
       } else {
         showDialog(
@@ -56,7 +67,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         );
       }
     } catch (e) {
-      print("hola $e");
+      print("Error $e");
     }
   }
 
