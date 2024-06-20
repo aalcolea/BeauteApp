@@ -143,11 +143,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
-              /*Navigator.pushNamed(context, '/pin').then((result) {
-                if (result == true) {*/
-              Navigator.pushReplacementNamed(context, '/assistantScreen');
-              /* }
-              });*/
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const PinEntryScreen(userId: 3)),
+              );
             },
             style: ElevatedButton.styleFrom(
               splashFactory: InkRipple.splashFactory,
