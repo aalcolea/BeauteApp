@@ -101,10 +101,10 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   void _showModaltoDate(
       BuildContext context, CalendarTapDetails details, bool varmodalReachTop) {
     showModalBottomSheet(
-      backgroundColor: !_VarmodalReachTop
+      backgroundColor: !varmodalReachTop
           ? Colors.transparent
           : Colors.black54.withOpacity(0.3),
-      isScrollControlled: _VarmodalReachTop,
+      isScrollControlled: varmodalReachTop,
       showDragHandle: false,
       barrierColor: Colors.black54,
       context: context,
@@ -121,14 +121,14 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               selectedDate: details.date!,
               reachTop: (bool reachTop, int? expandedIndex) {
                 setState(() {
-                  if (!_VarmodalReachTop) {
+                  if (!varmodalReachTop) {
                     Navigator.pop(context);
-                    _VarmodalReachTop = true;
+                    varmodalReachTop = true;
                     _expandedIndex = expandedIndex;
-                    _showModaltoDate(context, details, _VarmodalReachTop);
+                    _showModaltoDate(context, details, varmodalReachTop);
                   } else {
                     _expandedIndex = null;
-                    _VarmodalReachTop = reachTop;
+                    varmodalReachTop = reachTop;
                   }
                 });
               },
@@ -136,7 +136,21 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
           ),
         );
       },
-    );
+    ).then((_) {
+      setState(() {
+        _expandedIndex = null;
+      });
+      /*  setState(() {
+        print('varmodalReachTop: $varmodalReachTop');
+        if (varmodalReachTop == true) {
+          _expandedIndex = null;
+          print('_expandedIndex: $_expandedIndex');
+        } else {
+          print('holafly');
+          print('_expandedIndex: $_expandedIndex');
+        }
+      });*/
+    });
   }
 
   @override

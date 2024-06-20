@@ -56,9 +56,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     expandedIndex = widget.expandedIndex;
     expandedIndex != null ? isTaped = true : isTaped = false;
     appointments = fetchAppointments(selectedDate2); //widget.selectedDate);
-    print(widget.selectedDate);
     dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
-    print(dateOnly);
   }
 
 /*
@@ -73,13 +71,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 */
 
   Future<List<Appointment>> fetchAppointments(DateTime selectedDate) async {
-    print('principio de la func');
     final response = await http.get(Uri.parse(
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('appointments') && data['appointments'] != null) {
-        print('primer if $selectedDate');
         List<dynamic> appointmentsJson = data['appointments'];
         List<Appointment> allAppointments =
             appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
@@ -92,7 +88,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 appointment.appointmentDate!.day == selectedDate.day)
             .toList();
       } else {
-        print('else');
 
         return [];
       }
@@ -297,6 +292,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     isTaped = false;
                                   } else {
                                     expandedIndex = index;
+                                    ///print(index);
                                     isTaped = true;
                                   }
                                   modalReachTop = true;
@@ -370,7 +366,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                                 0xFFC5B6CD),
                                                   ),
                                                 ),
-                                                //SizedBox(width: 200),
                                               ],
                                             ),
                                             subtitle: Text(
@@ -552,7 +547,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     Icons.calendar_today),
                                               ),
                                               readOnly: true,
-                                              onTap: () {},
+                                              onTap: () {
+
+                                              },
                                             ),
                                           ),
                                           Container(
@@ -768,7 +765,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           dateFromCalendarSchedule: dateOnly),
                     ),
                   );
-                  //Navigator.pushNamed(context, '/citaScreen');
                 },
                 child: Icon(
                   CupertinoIcons.add,
@@ -790,6 +786,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             size: MediaQuery.of(context).size.width * 0.14,
           ),
         ),
+
       ],
     );
   }
