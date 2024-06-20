@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../forms/appoinmentForm.dart';
 import '../../models/appointmentModel.dart';
 import '../../utils/PopUpTabs/deleteAppointment.dart';
@@ -51,27 +52,40 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     super.initState();
     expandedIndex = widget.expandedIndex;
     expandedIndex != null ? isTaped = true : isTaped = false;
-    appointments = fetchAppointments(widget.selectedDate);
+    //appointments = fetchAppointments(widget.selectedDate);
+    initializeAppointments();
     print(widget.selectedDate);
     dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
     print(dateOnly);
   }
 
-  Future<List<Appointment>> fetchAppointments(DateTime selectedDate) async {
-    final response = await http.get(Uri.parse(
-        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
+  Future<List<Appointment>> fetchAppointments(DateTime selectedDate, {int? id}) async {
+    String baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments';
+    String url = id != null ? '$baseUrl/$id' : baseUrl;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if (token == null) {
+      throw Exception('No token found');
+    }
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('appointments') && data['appointments'] != null) {
         List<dynamic> appointmentsJson = data['appointments'];
         List<Appointment> allAppointments =
-            appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
+        appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
         return allAppointments
             .where((appointment) =>
-                appointment.appointmentDate != null &&
-                appointment.appointmentDate!.year == selectedDate.year &&
-                appointment.appointmentDate!.month == selectedDate.month &&
-                appointment.appointmentDate!.day == selectedDate.day)
+        appointment.appointmentDate != null &&
+            appointment.appointmentDate!.year == selectedDate.year &&
+            appointment.appointmentDate!.month == selectedDate.month &&
+            appointment.appointmentDate!.day == selectedDate.day)
             .toList();
       } else {
         return [];
@@ -80,11 +94,33 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       throw Exception('Vefique conexión a internet');
     }
   }
+  Future<void> initializeAppointments() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? userId = prefs.getInt('user_id');
+      if (userId != null) {
+        setState(() {
+          appointments = fetchAppointments(widget.selectedDate, id: userId);
+        });
+      } else {
+        setState(() {
+          appointments = fetchAppointments(widget.selectedDate);
+        });
+      }
+    } catch (e) {
+      print("Error retrieving user ID: $e");
+      setState(() {
+        appointments = Future.error("Error retrieving user ID: $e");
+      });
+    }
+  }
   Future<void> refreshAppointments() async {
     setState(() {
-      appointments = fetchAppointments(selectedDate2);
+      //appointments = fetchAppointments(widget.selectedDate);
+      initializeAppointments();
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

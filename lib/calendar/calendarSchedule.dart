@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
 
@@ -78,23 +79,53 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   Future<void> _loadAppointments() async {
-    final appointments = await fetchAppointments();
-    setState(() {
-      _appointments = appointments;
-    });
-  }
-
-  Future<List<Appointment2>> fetchAppointments() async {
-    final response = await http.get(Uri.parse(
-        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));
-    if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body)['appointments'];
-      print(jsonDecode(response.body)['appointments']);
-      return data.map((json) => Appointment2.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load appointments');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? userId = prefs.getInt('user_id');
+      if (userId == null) {
+        throw Exception('User ID not found');
+      }
+      final appointments = await fetchAppointments(userId);
+      setState(() {
+        _appointments = appointments;
+      });
+    } catch (e) {
+      print('Error loading appointments: $e');
     }
   }
+
+  Future<List<Appointment2>> fetchAppointments(int id) async {
+    const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
+    /*final response = await http.get(Uri.parse(
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));*/
+    try{
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? token = prefs.getString('jwt_token');
+
+        if (token == null) {
+          throw Exception('No token found');
+        }
+
+        final response = await http.get(
+          Uri.parse(baseUrl + '$id'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+        if (response.statusCode == 200) {
+          List<dynamic> data = jsonDecode(response.body)['appointments'];
+          print(jsonDecode(response.body)['appointments']);
+          return data.map((json) => Appointment2.fromJson(json)).toList();
+        } else {
+          throw Exception('Failed to load appointments');
+        }
+      } catch (e) {
+      print('Error: $e');
+      rethrow;
+      }
+    }
+
 
   void _showModaltoDate(
       BuildContext context, CalendarTapDetails details, bool varmodalReachTop) {
