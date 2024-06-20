@@ -63,6 +63,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _isTaped = false;
   int? _expandedIndex;
   bool docLog = false;
+  bool _showModalCalledscndTime = false;
 
   @override
   void initState() {
@@ -130,8 +131,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     }
   }
 
-  void _showModaltoDate(
-      BuildContext context, CalendarTapDetails details, bool varmodalReachTop) {
+  void _showModaltoDate(BuildContext context, CalendarTapDetails details,
+      bool varmodalReachTop, _expandedIndex) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
           ? Colors.transparent
@@ -157,11 +158,10 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                     Navigator.pop(context);
                     varmodalReachTop = true;
                     _expandedIndex = expandedIndex;
-                    _showModaltoDate(context, details, varmodalReachTop);
-                    print('varmodalReachTop $varmodalReachTop');
+                    _showModalCalledscndTime = true;
+                    _showModaltoDate(
+                        context, details, varmodalReachTop, _expandedIndex);
                   } else {
-                    _expandedIndex = expandedIndex;
-                    print('varmodalReachTop $varmodalReachTop');
                     varmodalReachTop = reachTop;
                   }
                 });
@@ -171,28 +171,11 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
         );
       },
     ).then((_) {
-      setState(() {
-        if(_expandedIndex != null && varmodalReachTop){
-          print('aqui debe de ser nulo el _expandedIndex');
-          //_expandedIndex = null;
-        } else{
-          print('aqui NO DEBE de ser nulo el _expandedIndex');
-
-        }
-     /*   _expandedIndex != null && varmodalReachTop == true
-            ? _expandedIndex = null
-            : print('object');*/
-      });
-      /*  setState(() {
-        print('varmodalReachTop: $varmodalReachTop');
-        if (varmodalReachTop == true) {
-          _expandedIndex = null;
-          print('_expandedIndex: $_expandedIndex');
-        } else {
-          print('holafly');
-          print('_expandedIndex: $_expandedIndex');
-        }
-      });*/
+      if (_showModalCalledscndTime == true &&
+          _expandedIndex != null &&
+          varmodalReachTop == true) {
+        _expandedIndex = null;
+      }
     });
   }
 
@@ -284,6 +267,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         context,
                         details,
                         _VarmodalReachTop,
+                        null,
                       );
                     }
                   },
