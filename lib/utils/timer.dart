@@ -269,6 +269,8 @@ class _TimerFlyState extends State<TimerFly> {
                     now.year, now.month, now.day, hour, selectedIndexMins);
                 String formattedTime = DateFormat('HH:mm:ss').format(fullTime);
                 setState(() {
+                  print('selectedDate>>> ${fullTime.hour}');
+
                   timeController.text = formattedTime;
                 });
 

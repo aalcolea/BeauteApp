@@ -96,40 +96,46 @@ class _DoctorAdminState extends State<DoctorAdmin> {
           color: Colors.white,
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedScreen == 1
-                        ? 'Calendario'
-                        : _selectedScreen == 3
-                            ? 'Nuevo Cliente'
-                            : '',
-                    style: TextStyle(
-                      color: const Color(0xFF4F2263),
-                      fontSize: MediaQuery.of(context).size.width * 0.09,
-                      fontWeight: FontWeight.bold,
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.055),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _selectedScreen == 1
+                          ? 'Calendario'
+                          : _selectedScreen == 3
+                              ? 'Nuevo Cliente'
+                              : '',
+                      style: TextStyle(
+                        color: const Color(0xFF4F2263),
+                        fontSize: MediaQuery.of(context).size.width * 0.09,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.notifications_none_outlined,
-                          size: MediaQuery.of(context).size.width * 0.095,
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.notifications_none_outlined,
+                            size: MediaQuery.of(context).size.width * 0.095,
+                            color: const Color(0xFF4F2263),
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.input_outlined,
-                          size: MediaQuery.of(context).size.width * 0.095,
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.input_outlined,
+                            size: MediaQuery.of(context).size.width * 0.095,
+                            color: const Color(0xFF4F2263),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                 child: Container(

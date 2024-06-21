@@ -42,12 +42,12 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         var data = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
-        await prefs.setInt('user_id', data['user']['id']); 
+        await prefs.setInt('user_id', data['user']['id']);
 
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/drScreen',
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       } else {
         showDialog(
@@ -128,7 +128,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           Container(
             margin: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height *
-                    0.18), //pading entre ingrese pin y borde superior
+                    0.13), //pading entre ingrese pin y borde superior
             color: Colors.transparent,
             child: ListView(
               padding: EdgeInsets.symmetric(
@@ -221,40 +221,34 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                   ),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.height * 0.085),
+                  padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.height * 0.051),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(''), //SizedBox(),
+                      ),
+                      numBtn(0),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.height * 0.03,
+                            top: MediaQuery.of(context).size.height * 0.015),
+                        alignment: Alignment.center,
                         child: TextButton(
-                          onPressed: () {},
-                          child: const Text(''), //SizedBox(),
-                        ),
-                      ),
-                      Expanded(
-                        child: numBtn(0),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.height * 0.03,
-                              top: MediaQuery.of(context).size.height * 0.015),
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                if (enteredPin.isNotEmpty) {
-                                  enteredPin = enteredPin.substring(
-                                      0, enteredPin.length - 1);
-                                }
-                              });
-                            },
-                            child: Icon(
-                              Icons.backspace_outlined,
-                              color: Colors.white,
-                              size: MediaQuery.of(context).size.height * 0.065,
-                            ),
+                          onPressed: () {
+                            setState(() {
+                              if (enteredPin.isNotEmpty) {
+                                enteredPin = enteredPin.substring(
+                                    0, enteredPin.length - 1);
+                              }
+                            });
+                          },
+                          child: Icon(
+                            Icons.backspace_outlined,
+                            color: Colors.white,
+                            size: MediaQuery.of(context).size.height * 0.065,
                           ),
                         ),
                       ),
