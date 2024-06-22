@@ -341,6 +341,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
     isDocLog = widget.isDoctorLog;
+    print('isDocLog en AppointmentForm: $isDocLog');
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();

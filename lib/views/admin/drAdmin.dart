@@ -11,7 +11,8 @@ import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
 
 class DoctorAdmin extends StatefulWidget {
-  const DoctorAdmin({super.key});
+  final bool docLog;
+  const DoctorAdmin({super.key, required this.docLog});
 
   @override
   State<DoctorAdmin> createState() => _DoctorAdminState();

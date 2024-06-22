@@ -10,6 +10,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool isDocLog = true;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -77,10 +79,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
+              isDocLog = true;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const PinEntryScreen(userId: 1)),
+                    builder: (context) => PinEntryScreen(userId: 1, docLog: isDocLog,)),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -110,10 +113,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
+              isDocLog = true;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const PinEntryScreen(userId: 2)),
+                    builder: (context) => PinEntryScreen(userId: 2, docLog: isDocLog,)),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -143,10 +147,11 @@ class _LoginState extends State<Login> {
           ),
           ElevatedButton(
             onPressed: () {
+              isDocLog = false;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const PinEntryScreen(userId: 3)),
+                    builder: (context) => PinEntryScreen(userId: 3, docLog: isDocLog,)),
               );
             },
             style: ElevatedButton.styleFrom(

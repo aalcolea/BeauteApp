@@ -7,8 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PinEntryScreen extends StatefulWidget {
   final int userId;
+  final bool docLog;
 
-  const PinEntryScreen({super.key, required this.userId});
+  const PinEntryScreen({super.key, required this.userId, required this.docLog});
 
   @override
   PinEntryScreenState createState() => PinEntryScreenState();
@@ -16,6 +17,14 @@ class PinEntryScreen extends StatefulWidget {
 
 class PinEntryScreenState extends State<PinEntryScreen> {
   final TextEditingController pinController = TextEditingController();
+  bool isDocLog = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isDocLog = widget.docLog;
+  }
 
   void authenticate() async {
     try {
@@ -44,11 +53,19 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         await prefs.setString('jwt_token', data['token']);
         await prefs.setInt('user_id', data['user']['id']);
 
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/drScreen',
-          (Route<dynamic> route) => false,
-        );
+        if (isDocLog == true) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/drScreen',
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/assistantScreen',
+            (Route<dynamic> route) => false,
+          );
+        }
       } else {
         showDialog(
           context: context,
