@@ -11,15 +11,17 @@ import '../../utils/timer.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final void Function(bool, int?) reachTop;
+  final bool isDocLog;
   final DateTime selectedDate;
   final int? expandedIndex;
 
-  const AppointmentScreen({
-    Key? key,
-    required this.selectedDate,
-    required this.reachTop,
-    required this.expandedIndex,
-  }) : super(key: key);
+  const AppointmentScreen(
+      {Key? key,
+      required this.selectedDate,
+      required this.reachTop,
+      required this.expandedIndex,
+      required this.isDocLog})
+      : super(key: key);
 
   @override
   _AppointmentScreenState createState() => _AppointmentScreenState();
@@ -29,6 +31,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   bool isDocLog = false;
   late Future<List<Appointment>> appointments;
   bool modalReachTop = false;
+
   late DateTime selectedDate2;
   TextEditingController _timerController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
@@ -41,6 +44,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
+    selectedDate2 = widget.selectedDate;
+    isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
     selectedDate2 = widget.selectedDate;
@@ -68,8 +73,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
   }
 
-  Future<List<Appointment>> fetchAppointments(DateTime selectedDate, {int? id}) async {
-    String baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments';
+  Future<List<Appointment>> fetchAppointments(DateTime selectedDate,
+      {int? id}) async {
+    String baseUrl =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments';
     String url = id != null ? '$baseUrl/$id' : baseUrl;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
@@ -90,12 +97,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('appointments') && data['appointments'] != null) {
         List<dynamic> appointmentsJson = data['appointments'];
-        List<Appointment> allAppointments = appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
-        return allAppointments.where((appointment) =>
-        appointment.appointmentDate != null &&
-            appointment.appointmentDate!.year == selectedDate.year &&
-            appointment.appointmentDate!.month == selectedDate.month &&
-            appointment.appointmentDate!.day == selectedDate.day).toList();
+
+        List<Appointment> allAppointments =
+            appointmentsJson.map((json) => Appointment.fromJson(json)).toList();
+        return allAppointments
+            .where((appointment) =>
+                appointment.appointmentDate != null &&
+                appointment.appointmentDate!.year == selectedDate.year &&
+                appointment.appointmentDate!.month == selectedDate.month &&
+                appointment.appointmentDate!.day == selectedDate.day)
+            .toList();
       } else {
         return [];
       }
@@ -103,12 +114,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       throw Exception('Vefique conexión a internet');
     }
   }
+
   Future<void> refreshAppointments() async {
     setState(() {
       appointments = fetchAppointments(widget.selectedDate);
-      //initializeAppointments();
     });
   }
+
   void _onTimeChoose(bool isTimerShow, TextEditingController timerController) {
     setState(() {
       _isTimerShow = isTimerShow;
@@ -137,10 +149,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Stack(
       children: [
         Container(
-          margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.09),
-          padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.035),
+          margin:
+              EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.09),
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.035),
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             color: Colors.white,
           ),
           child: Column(
@@ -152,7 +167,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   scrollDirection: Axis.horizontal,
                   itemCount: 5,
                   itemBuilder: (context, index) {
-                    DateTime date = widget.selectedDate.add(Duration(days: index - 2));
+                    DateTime date =
+                        widget.selectedDate.add(Duration(days: index - 2));
                     bool isSelected = selectedDate2.day == date.day &&
                         selectedDate2.month == date.month &&
                         selectedDate2.year == date.year;
@@ -161,6 +177,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       onTap: () {
                         setState(() {
                           selectedDate2 = date;
+
                           initializeAppointments(date);
                         });
                       },
@@ -175,36 +192,52 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                           boxShadow: !isSelected
                               ? [
-                            BoxShadow(
-                              color: Colors.black,
-                              blurRadius: 5.0,
-                              offset: Offset(0, MediaQuery.of(context).size.width * 0.003),
-                            ),
-                            BoxShadow(
-                              blurRadius: 25.0,
-                              color: Colors.white,
-                              offset: Offset(0, MediaQuery.of(context).size.width * 0.04),
-                            ),
-                          ]
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 5.0,
+                                    offset: Offset(
+                                        0,
+                                        MediaQuery.of(context).size.width *
+                                            0.003),
+                                  ),
+                                  BoxShadow(
+                                    blurRadius: 25.0,
+                                    color: Colors.white,
+                                    offset: Offset(
+                                        0,
+                                        MediaQuery.of(context).size.width *
+                                            0.04),
+                                  ),
+                                ]
                               : [
-                            BoxShadow(
-                              color: Colors.black54,
-                              blurRadius: 5.0,
-                              offset: Offset(0, MediaQuery.of(context).size.width * 0.002),
-                            ),
-                            BoxShadow(
-                              color: Colors.white,
-                              offset: Offset(0, MediaQuery.of(context).size.width * -0.04),
-                            ),
-                          ],
+                                  BoxShadow(
+                                    color: Colors.black54,
+                                    blurRadius: 5.0,
+                                    offset: Offset(
+                                        0,
+                                        MediaQuery.of(context).size.width *
+                                            0.002),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    offset: Offset(
+                                        0,
+                                        MediaQuery.of(context).size.width *
+                                            -0.04),
+                                  ),
+                                ],
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
+                              DateFormat('EEE', 'es_ES')
+                                  .format(date)
+                                  .toUpperCase(),
                               style: TextStyle(
-                                color: isSelected ? Colors.deepPurple : Colors.grey,
+                                color: isSelected
+                                    ? Colors.deepPurple
+                                    : Colors.grey,
                                 fontWeight: FontWeight.bold,
                                 fontSize: isSelected
                                     ? MediaQuery.of(context).size.width * 0.057
@@ -214,7 +247,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             Text(
                               "${date.day}",
                               style: TextStyle(
-                                color: isSelected ? Colors.deepPurple : Colors.grey,
+                                color: isSelected
+                                    ? Colors.deepPurple
+                                    : Colors.grey,
                                 fontWeight: FontWeight.bold,
                                 fontSize: isSelected
                                     ? MediaQuery.of(context).size.width * 0.051
@@ -248,12 +283,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         return ListView.builder(
                           itemCount: filteredAppointments.length,
                           itemBuilder: (context, index) {
-                            Appointment appointment = filteredAppointments[index];
+                            Appointment appointment =
+                                filteredAppointments[index];
                             String time = (appointment.appointmentDate != null)
-                                ? DateFormat('HH:mm').format(appointment.appointmentDate!)
+                                ? DateFormat('HH:mm')
+                                    .format(appointment.appointmentDate!)
                                 : 'Hora desconocida';
-                            String clientName = appointment.clientName ?? 'Cliente desconocido';
-                            String treatmentType = appointment.treatmentType ?? 'Sin tratamiento';
+                            String clientName =
+                                appointment.clientName ?? 'Cliente desconocido';
+                            String treatmentType =
+                                appointment.treatmentType ?? 'Sin tratamiento';
 
                             return InkWell(
                               onTap: () {
@@ -272,9 +311,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               child: Container(
                                 margin: EdgeInsets.only(
                                   top: MediaQuery.of(context).size.height * 0,
-                                  left: MediaQuery.of(context).size.width * 0.02,
-                                  right: MediaQuery.of(context).size.width * 0.02,
-                                  bottom: MediaQuery.of(context).size.width * 0.035,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  right:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  bottom:
+                                      MediaQuery.of(context).size.width * 0.035,
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
@@ -282,15 +324,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     color: expandedIndex == index
                                         ? const Color(0xFF4F2263)
                                         : !isTaped && expandedIndex != index
-                                        ? const Color(0xFF4F2263)
-                                        : const Color(0xFFC5B6CD),
+                                            ? const Color(0xFF4F2263)
+                                            : const Color(0xFFC5B6CD),
                                     width: 1.5,
                                   ),
                                   color: expandedIndex == index
                                       ? Colors.white
                                       : !isTaped && expandedIndex != index
-                                      ? Colors.white
-                                      : Colors.white,
+                                          ? Colors.white
+                                          : Colors.white,
                                   boxShadow: normallyShadow,
                                 ),
                                 child: Column(
@@ -302,21 +344,37 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       children: [
                                         SizedBox(
                                           width: expandedIndex == index
-                                              ? MediaQuery.of(context).size.width * 0.75
-                                              : MediaQuery.of(context).size.width * 0.70,
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.75
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.70,
                                           child: ListTile(
                                             title: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   clientName,
                                                   style: TextStyle(
-                                                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                                                    color: expandedIndex == index
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.05,
+                                                    color: expandedIndex ==
+                                                            index
                                                         ? Colors.black
-                                                        : !isTaped && expandedIndex != index
-                                                        ? Colors.black
-                                                        : const Color(0xFFC5B6CD),
+                                                        : !isTaped &&
+                                                                expandedIndex !=
+                                                                    index
+                                                            ? Colors.black
+                                                            : const Color(
+                                                                0xFFC5B6CD),
                                                   ),
                                                 ),
                                               ],
@@ -324,28 +382,43 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             subtitle: Text(
                                               treatmentType,
                                               style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width * 0.05,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.05,
                                                 color: expandedIndex == index
                                                     ? Colors.black
-                                                    : !isTaped && expandedIndex != index
-                                                    ? Colors.black
-                                                    : const Color(0xFFC5B6CD),
+                                                    : !isTaped &&
+                                                            expandedIndex !=
+                                                                index
+                                                        ? Colors.black
+                                                        : const Color(
+                                                            0xFFC5B6CD),
                                               ),
                                             ),
                                           ),
                                         ),
                                         Visibility(
-                                          visible: expandedIndex != index ? true : false,
+                                          visible: expandedIndex != index
+                                              ? true
+                                              : false,
                                           child: Expanded(
                                             child: Container(
-                                              width: MediaQuery.of(context).size.width * 0.2,
-                                              height: MediaQuery.of(context).size.height * 0.06,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.06,
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
                                                 color: !isTaped
                                                     ? const Color(0xFF4F2263)
                                                     : const Color(0xFFC5B6CD),
-                                                borderRadius: BorderRadius.circular(15),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
                                                 border: Border.all(
                                                   color: !isTaped
                                                       ? const Color(0xFF4F2263)
@@ -355,17 +428,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                               ),
                                               margin: EdgeInsets.only(
                                                 right: expandedIndex != index
-                                                    ? MediaQuery.of(context).size.width * 0.05
+                                                    ? MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.05
                                                     : 0,
                                               ),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
                                                   Text(
                                                     time,
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: MediaQuery.of(context).size.width * 0.07,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.07,
                                                     ),
                                                   ),
                                                 ],
@@ -375,10 +456,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         ),
                                         Visibility(
                                           visible: expandedIndex == index,
-                                          child: SizedBox(width: MediaQuery.of(context).size.width * 0.065),
+                                          child: SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.065),
                                         ),
                                         Visibility(
-                                          visible: expandedIndex == index ? true : false,
+                                          visible: expandedIndex == index
+                                              ? true
+                                              : false,
                                           child: Container(
                                             alignment: Alignment.topRight,
                                             color: Colors.transparent,
@@ -388,11 +475,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                 setState(() {
                                                   expandedIndex = null;
                                                   isTaped = false;
+                                                  print(
+                                                      'expandedIndex:: $expandedIndex');
                                                 });
                                               },
                                               icon: Icon(
                                                 CupertinoIcons.minus,
-                                                size: MediaQuery.of(context).size.width * 0.09,
+                                                size: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.09,
                                                 color: const Color(0xFF4F2263),
                                               ),
                                             ),
@@ -401,21 +493,29 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       ],
                                     ),
                                     Visibility(
-                                      visible: expandedIndex == index ? true : false,
+                                      visible:
+                                          expandedIndex == index ? true : false,
                                       child: Column(
                                         children: [
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                               vertical: 8,
-                                              horizontal: MediaQuery.of(context).size.width * 0.026,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.026,
                                             ),
                                             margin: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context).size.width * 0.026,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.026,
                                             ),
                                             alignment: Alignment.centerLeft,
                                             decoration: BoxDecoration(
                                               color: const Color(0xFF4F2263),
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: const Text(
                                               'Fecha:',
@@ -429,19 +529,30 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                               vertical: 8,
-                                              horizontal: MediaQuery.of(context).size.width * 0.026,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.026,
                                             ),
                                             child: TextFormField(
                                               controller: _dateController,
                                               decoration: InputDecoration(
-                                                contentPadding: EdgeInsets.symmetric(
-                                                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.03,
                                                 ),
                                                 border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
                                                 ),
                                                 labelText: 'DD/M/AAAA',
-                                                suffixIcon: const Icon(Icons.calendar_today),
+                                                suffixIcon: const Icon(
+                                                    Icons.calendar_today),
                                               ),
                                               readOnly: true,
                                               onTap: () {},
@@ -450,15 +561,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                               vertical: 8,
-                                              horizontal: MediaQuery.of(context).size.width * 0.024,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.024,
                                             ),
                                             margin: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context).size.width * 0.026,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.026,
                                             ),
                                             alignment: Alignment.centerLeft,
                                             decoration: BoxDecoration(
                                               color: const Color(0xFF4F2263),
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: const Text(
                                               'Hora:',
@@ -472,19 +590,30 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                               vertical: 8,
-                                              horizontal: MediaQuery.of(context).size.width * 0.024,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.024,
                                             ),
                                             child: TextFormField(
                                               controller: _timerController,
                                               decoration: InputDecoration(
-                                                contentPadding: EdgeInsets.symmetric(
-                                                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.03,
                                                 ),
                                                 border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
                                                 ),
                                                 labelText: 'HH:MM',
-                                                suffixIcon: const Icon(Icons.access_time),
+                                                suffixIcon: const Icon(
+                                                    Icons.access_time),
                                               ),
                                               readOnly: true,
                                               onTap: () {
@@ -496,59 +625,115 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context).size.width * 0.025,
-                                              bottom: MediaQuery.of(context).size.width * 0.02,
-                                              right: MediaQuery.of(context).size.width * 0.025,
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.025,
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.02,
+                                              right: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.025,
                                             ),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
                                               children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                    left: MediaQuery.of(context).size.width * 0.05,
-                                                    right: MediaQuery.of(context).size.width * 0.02,
+                                                    left: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.05,
+                                                    right:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.02,
                                                   ),
                                                   child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
                                                       elevation: 4,
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(10.0),
-                                                        side: const BorderSide(color: Colors.red, width: 1),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.0),
+                                                        side: const BorderSide(
+                                                            color: Colors.red,
+                                                            width: 1),
                                                       ),
-                                                      backgroundColor: Colors.white,
-                                                      surfaceTintColor: Colors.white,
-                                                      padding: EdgeInsets.symmetric(
-                                                        horizontal: MediaQuery.of(context).size.width * 0.05,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      surfaceTintColor:
+                                                          Colors.white,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.05,
                                                       ),
                                                     ),
                                                     onPressed: () {
-                                                      showDeleteAppointmentDialog(context, widget, appointment.id, refreshAppointments);
+                                                      showDeleteAppointmentDialog(
+                                                          context,
+                                                          widget,
+                                                          appointment.id,
+                                                          refreshAppointments);
                                                     },
                                                     child: Icon(
                                                       Icons.delete,
                                                       color: Colors.red,
-                                                      size: MediaQuery.of(context).size.width * 0.085,
+                                                      size:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.085,
                                                     ),
                                                   ),
                                                 ),
                                                 ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
                                                     elevation: 4,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                      side: const BorderSide(color: Color(0xFF4F2263), width: 1),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                      side: const BorderSide(
+                                                          color:
+                                                              Color(0xFF4F2263),
+                                                          width: 1),
                                                     ),
-                                                    backgroundColor: const Color(0xFF4F2263),
-                                                    surfaceTintColor: const Color(0xFF4F2263),
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: MediaQuery.of(context).size.width * 0.05,
+                                                    backgroundColor:
+                                                        const Color(0xFF4F2263),
+                                                    surfaceTintColor:
+                                                        const Color(0xFF4F2263),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.05,
                                                     ),
                                                   ),
                                                   onPressed: () {},
                                                   child: Icon(
                                                     CupertinoIcons.checkmark,
                                                     color: Colors.white,
-                                                    size: MediaQuery.of(context).size.width * 0.09,
+                                                    size: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.09,
                                                   ),
                                                 ),
                                               ],
@@ -581,6 +766,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 onPressed: () {
+                  dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate2);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

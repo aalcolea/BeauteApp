@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -61,10 +62,14 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _VarmodalReachTop = false;
   bool _isTaped = false;
   int? _expandedIndex;
+  bool docLog = false;
+  bool _showModalCalledscndTime = false;
 
   @override
   void initState() {
     super.initState();
+    docLog = widget.isDoctorLog;
+    print(docLog);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -95,45 +100,45 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   Future<List<Appointment2>> fetchAppointments(int id) async {
-    const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
+    const baseUrl =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
     /*final response = await http.get(Uri.parse(
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));*/
-    try{
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? token = prefs.getString('jwt_token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
 
-        if (token == null) {
-          throw Exception('No token found');
-        }
+      if (token == null) {
+        throw Exception('No token found');
+      }
 
-        final response = await http.get(
-          Uri.parse(baseUrl + '$id'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-        );
-        if (response.statusCode == 200) {
-          List<dynamic> data = jsonDecode(response.body)['appointments'];
-          print(jsonDecode(response.body)['appointments']);
-          return data.map((json) => Appointment2.fromJson(json)).toList();
-        } else {
-          throw Exception('Failed to load appointments');
-        }
-      } catch (e) {
+      final response = await http.get(
+        Uri.parse(baseUrl + '$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body)['appointments'];
+        print(jsonDecode(response.body)['appointments']);
+        return data.map((json) => Appointment2.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load appointments');
+      }
+    } catch (e) {
       print('Error: $e');
       rethrow;
-      }
     }
+  }
 
-
-  void _showModaltoDate(
-      BuildContext context, CalendarTapDetails details, bool varmodalReachTop) {
+  void _showModaltoDate(BuildContext context, CalendarTapDetails details,
+      bool varmodalReachTop, _expandedIndex) {
     showModalBottomSheet(
-      backgroundColor: !_VarmodalReachTop
+      backgroundColor: !varmodalReachTop
           ? Colors.transparent
           : Colors.black54.withOpacity(0.3),
-      isScrollControlled: _VarmodalReachTop,
+      isScrollControlled: varmodalReachTop,
       showDragHandle: false,
       barrierColor: Colors.black54,
       context: context,
@@ -145,18 +150,20 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               color: Colors.transparent,
             ),
             child: AppointmentScreen(
+              isDocLog: docLog,
               expandedIndex: _expandedIndex,
               selectedDate: details.date!,
               reachTop: (bool reachTop, int? expandedIndex) {
                 setState(() {
-                  if (!_VarmodalReachTop) {
+                  if (!varmodalReachTop) {
                     Navigator.pop(context);
-                    _VarmodalReachTop = true;
+                    varmodalReachTop = true;
                     _expandedIndex = expandedIndex;
-                    _showModaltoDate(context, details, _VarmodalReachTop);
+                    _showModalCalledscndTime = true;
+                    _showModaltoDate(
+                        context, details, varmodalReachTop, _expandedIndex);
                   } else {
-                    _expandedIndex = null;
-                    _VarmodalReachTop = reachTop;
+                    varmodalReachTop = reachTop;
                   }
                 });
               },
@@ -164,7 +171,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
           ),
         );
       },
-    );
+    ).then((_) {
+      if (_showModalCalledscndTime == true &&
+          _expandedIndex != null &&
+          varmodalReachTop == true) {
+        _expandedIndex = null;
+      }
+    });
   }
 
   @override
@@ -173,7 +186,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.035),
+            margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.width * 0.035),
             alignment: Alignment.centerLeft,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.07,
@@ -250,7 +264,12 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                     if (details.targetElement == CalendarElement.calendarCell ||
                         details.targetElement == CalendarElement.appointment) {
                       _VarmodalReachTop = false;
-                      _showModaltoDate(context, details, _VarmodalReachTop);
+                      _showModaltoDate(
+                        context,
+                        details,
+                        _VarmodalReachTop,
+                        null,
+                      );
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {

@@ -34,8 +34,12 @@ class MyApp extends StatelessWidget {
         body: Login(),
       ),
       routes: {
-        '/drScreen': (context) => const DoctorAdmin(),
-        '/assistantScreen': (context) => const AssistantAdmin(),
+        '/drScreen': (context) => const DoctorAdmin(
+              docLog: true,
+            ),
+        '/assistantScreen': (context) => const AssistantAdmin(
+              docLog: false,
+            ),
         '/citaScreen': (context) => AppointmentForm(isDoctorLog: isDocLog),
       },
       supportedLocales: const [Locale('es', 'ES')],

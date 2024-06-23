@@ -11,7 +11,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../calendar/calendarioScreenCita.dart';
 import '../models/clientModel.dart';
 import '../services/getClientsService.dart';
@@ -19,9 +18,7 @@ import '../styles/AppointmentStyles.dart';
 import '../utils/PopUpTabs/addNewClientandAppointment.dart';
 import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
-import '../utils/PopUpTabs/closeConfirm.dart';
 import '../utils/timer.dart';
-import 'package:beaute_app/forms/clientForm.dart';
 
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
@@ -44,6 +41,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   var _clientTextController = TextEditingController();
   final _dateController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
+  TextEditingController timerControllertoShow = TextEditingController();
   final treatmentController = TextEditingController();
   FocusNode fieldClientNode = FocusNode();
   TextEditingController _drSelected = TextEditingController();
@@ -61,14 +59,17 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool dateFieldDone = false;
   bool timeFieldDone = false;
   bool treatmentFieldDone = false;
-  bool clientInDB = false;
+  bool? clientInDB;
   int? number;
+  bool isHourCorrect = false;
   TextEditingController emailController = TextEditingController();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool _cancelConfirm = false;
   late BuildContext dialogforappointment;
+  String nameToCompare = '';
+  bool amPm = false;
 
   Future<void> createClient() async {
     try {
@@ -100,13 +101,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   Future<void> addClientAndSubmitAppointment() async {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
-      print('confirmed $confirmed');
       createClient();
-      //submitAppointment();
-      print('submitAppointment');
     } else {
-      //esto trata el false pero no hace si manda un false
-      print('confirmed $confirmed');
       return;
     }
   }
@@ -156,21 +152,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _clientTextController.text = _name;
       emailController.text = _email;
       number = celnumber;
-      print(_clientTextController.text);
-      print(emailController.text);
-      print(number);
     });
   }
 
   void _onConfirm() {}
-
-  void _onDateToAppointmentForm(
-      String dateToAppointmentForm, bool showCalendar) {
-    setState(() {
-      _dateController.text = dateToAppointmentForm;
-      _showCalendar = showCalendar;
-    });
-  }
 
   onBackPressed(didPop) {
     if (!didPop) {
@@ -219,7 +204,62 @@ class _AppointmentFormState extends State<AppointmentForm> {
   void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime) {
     setState(() {
       isTimerShow = _isTimerShow;
-      _timeController = selectedTime;
+      String toCompare = selectedTime.text;
+      List<String> timeToCompare = toCompare.split(':');
+      int hourToCompareConvert = int.parse(timeToCompare[0]);
+      int minuteToCompareConvert = int.parse(timeToCompare[1]);
+      DateTime dateTimeNow = DateTime.now();
+
+      if (dateTimeNow.isAfter(DateTime(dateTimeNow.year, dateTimeNow.month,
+          dateTimeNow.day, hourToCompareConvert, minuteToCompareConvert))) {
+        isHourCorrect = false;
+        _timeController.text = 'Seleccione hora válida';
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pueden seleccionar horarios pasados'),
+          ),
+        );
+      } else {
+        isHourCorrect = true;
+        _timeController = selectedTime;
+        String toShow = selectedTime.text;
+        List<String> timetoShow = toShow.split(':');
+        int hourToShowConvert = int.parse(timetoShow[0]);
+        int minuteToShowConvert = int.parse(timetoShow[1]);
+        if (hourToShowConvert <= 12) {
+          amPm = false;
+          String am = 'a.m';
+          String hourToShowtext = hourToShowConvert.toString();
+          String minutesShowText = '';
+          if (minuteToShowConvert < 10) {
+            minutesShowText = '0$minutesShowText';
+          } else {
+            minutesShowText = minuteToShowConvert.toString();
+          }
+          timerControllertoShow.text =
+              '$hourToShowtext : $minutesShowText : $am';
+        } else if (hourToShowConvert > 12) {
+          amPm = true;
+          String pm = 'p.m';
+          hourToShowConvert = hourToShowConvert - 12;
+          String hourToShowtext = hourToShowConvert.toString();
+          String minutesShowText = minuteToShowConvert.toString();
+          if (minuteToShowConvert < 10) {
+            minutesShowText = '0$minutesShowText';
+          } else {
+            minutesShowText = minuteToShowConvert.toString();
+          }
+          timerControllertoShow.text = '$hourToShowtext:$minutesShowText $pm';
+        }
+      }
+    });
+  }
+
+  void _onDateToAppointmentForm(
+      String dateToAppointmentForm, bool showCalendar) {
+    setState(() {
+      _dateController.text = dateToAppointmentForm;
+      _showCalendar = showCalendar;
     });
   }
 
@@ -233,19 +273,21 @@ class _AppointmentFormState extends State<AppointmentForm> {
     clientFieldDone = true;
     if (client != null) {
       setState(() {
+        clientInDB = true;
+        print('clientInDB T: $clientInDB');
         _selectedClient = client;
       });
     } else if (client == null) {
       setState(() {
-        print('_updateSelectedClient client = null');
+        print('clientInDB BF: $clientInDB');
         clientInDB = false;
+        print('clientInDB F: $clientInDB');
         _selectedClient = Client(
-            id: 0,
+            id: 1,
             name: _clientTextController.text,
             email: '0', //emailController.text,
             number: 0);
       });
-      print('_selectedClient: ${_selectedClient!.id}');
     } else {
       return;
     }
@@ -263,7 +305,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
 
     try {
-      print('client_id: ${_selectedClient?.id}');
       var response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -300,6 +341,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
     isDocLog = widget.isDoctorLog;
+    print('isDocLog en AppointmentForm: $isDocLog');
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
@@ -513,10 +555,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     setState(() {
                                       _clientTextController.text =
                                           selection.name;
+                                      nameToCompare = selection.name;
                                       _updateSelectedClient(selection);
-                                      clientFieldDone = true;
-                                      clientInDB = true;
-                                      saveNewClient = false;
                                       fieldClientNode.unfocus();
                                     });
                                   },
@@ -546,23 +586,20 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       onEdComplete: () {
                                         setState(() {
                                           clientFieldDone = true;
-                                          clientInDB
-                                              ? print('cliente en la DB')
+                                          nameToCompare ==
+                                                  _clientTextController.text
+                                              ? null
                                               : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
-                                          print(
-                                              'ActivarFecha $drFieldDone y $clientFieldDone');
                                         });
                                       },
                                       onTapOutside: (PointerDownEvent tapout) {
                                         setState(() {
-                                          print('tapOutside');
-                                          print(_clientTextController.text);
-                                          clientInDB
-                                              ? clientFieldDone = true
+                                          clientFieldDone = true;
+                                          nameToCompare ==
+                                                  _clientTextController.text
+                                              ? null
                                               : _updateSelectedClient(null);
-                                          print(
-                                              '_selectedClient!.id: ${_selectedClient!.id}');
                                           fieldFocusNode.unfocus();
                                         });
                                       },
@@ -641,7 +678,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         !_showCalendar
                                             ? _showCalendar = true
                                             : _showCalendar = false;
-                                        print(_showCalendar);
                                       });
                                     },
                                   ),
@@ -682,7 +718,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         : false,
                                     labelText: 'HH:MM',
                                     readOnly: true,
-                                    controller: _timeController,
+                                    controller: timerControllertoShow,
                                     suffixIcon: Icon(
                                       Icons.access_time,
                                       color: _dateController.text.isNotEmpty
@@ -738,12 +774,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       CupertinoIcons.pencil_ellipsis_rectangle,
                                       size: MediaQuery.of(context).size.width *
                                           0.085,
-                                      color: _timeController.text.isNotEmpty
+                                      color: _timeController.text.isNotEmpty &&
+                                              isHourCorrect
                                           ? const Color(0xFF4F2263)
                                           : const Color(0xFF4F2263)
                                               .withOpacity(0.3),
                                     ),
-                                    eneabled: _timeController.text.isNotEmpty
+                                    eneabled: _timeController.text.isNotEmpty &&
+                                            isHourCorrect
                                         ? true
                                         : false,
                                     labelText: 'Tratamiento',
@@ -759,7 +797,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     Checkbox(
                                       checkColor: Colors.white,
                                       value: saveNewClient,
-                                      onChanged: clientInDB
+                                      onChanged: clientInDB == null ||
+                                              clientInDB == true
                                           ? null
                                           : (bool? value) {
                                               setState(() {
@@ -777,13 +816,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       }),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          saveNewClient == false
-                                              ? saveNewClient = true
-                                              : saveNewClient = false;
-                                        });
-                                      },
+                                      onPressed: clientInDB == null ||
+                                              clientInDB == true
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                saveNewClient == false
+                                                    ? saveNewClient = true
+                                                    : saveNewClient = false;
+                                              });
+                                            },
                                       child: Text(
                                         'Agregar nuevo cliente',
                                         style: TextStyle(
@@ -791,7 +833,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                                   .size
                                                   .width *
                                               0.045,
-                                          color: clientInDB
+                                          color: clientInDB == null ||
+                                                  clientInDB == true
                                               ? const Color(0xFF4F2263)
                                                   .withOpacity(0.3)
                                               : const Color(0xFF4F2263),
@@ -809,11 +852,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 child: ElevatedButton(
                                   onPressed:
                                       treatmentController.text.isNotEmpty &&
-                                              !saveNewClient
+                                              !saveNewClient &&
+                                              isHourCorrect
                                           ? submitAppointment
                                           : saveNewClient &&
                                                   treatmentController
-                                                      .text.isNotEmpty
+                                                      .text.isNotEmpty &&
+                                                  isHourCorrect
                                               ? addClientAndSubmitAppointment
                                               : null,
                                   style: ElevatedButton.styleFrom(
