@@ -64,6 +64,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   int? _expandedIndex;
   bool docLog = false;
   bool _showModalCalledscndTime = false;
+  String _primeraFechaPrueba = '';
 
   @override
   void initState() {
@@ -133,13 +134,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   void _showModaltoDate(BuildContext context, CalendarTapDetails details,
-      bool varmodalReachTop, _expandedIndex) {
+      bool varmodalReachTop, _expandedIndex, _primeraFechaPrueba) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
           ? Colors.transparent
           : Colors.black54.withOpacity(0.3),
       isScrollControlled: varmodalReachTop,
-      showDragHandle: false,
+      showDragHandle: true,
       barrierColor: Colors.black54,
       context: context,
       builder: (context) {
@@ -153,15 +154,18 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               isDocLog: docLog,
               expandedIndex: _expandedIndex,
               selectedDate: details.date!,
-              reachTop: (bool reachTop, int? expandedIndex) {
+              PruebaPaas: _primeraFechaPrueba,
+              reachTop: (bool reachTop, int? expandedIndex, String firstFechaPrueba) {
                 setState(() {
                   if (!varmodalReachTop) {
                     Navigator.pop(context);
+                    _primeraFechaPrueba = firstFechaPrueba;
+                    print('_primeraFechaPrueba que se recibe del Inkwell $_primeraFechaPrueba');
                     varmodalReachTop = true;
                     _expandedIndex = expandedIndex;
                     _showModalCalledscndTime = true;
                     _showModaltoDate(
-                        context, details, varmodalReachTop, _expandedIndex);
+                        context, details, varmodalReachTop, _expandedIndex, _primeraFechaPrueba);
                   } else {
                     varmodalReachTop = reachTop;
                   }
@@ -268,7 +272,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         context,
                         details,
                         _VarmodalReachTop,
-                        null,
+                        null, _primeraFechaPrueba,
                       );
                     }
                   },
