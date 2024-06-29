@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
@@ -64,7 +65,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   int? _expandedIndex;
   bool docLog = false;
   bool _showModalCalledscndTime = false;
-  String _primeraFechaPrueba = '';
+  String _timerOfTheFstIndexTouched = '';
+  String _dateOfTheFstIndexTouched = '';
 
   @override
   void initState() {
@@ -133,8 +135,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     }
   }
 
-  void _showModaltoDate(BuildContext context, CalendarTapDetails details,
-      bool varmodalReachTop, _expandedIndex, _primeraFechaPrueba) {
+  void _showModaltoDate(
+      BuildContext context,
+      CalendarTapDetails details,
+      bool varmodalReachTop,
+      _expandedIndex,
+      _timerOfTheFstIndexTouched,
+      _dateOfTheFstIndexTouched) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
           ? Colors.transparent
@@ -154,18 +161,32 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               isDocLog: docLog,
               expandedIndex: _expandedIndex,
               selectedDate: details.date!,
-              PruebaPaas: _primeraFechaPrueba,
-              reachTop: (bool reachTop, int? expandedIndex, String firstFechaPrueba) {
+              firtsIndexTouchHour: _timerOfTheFstIndexTouched,
+              firtsIndexTouchDate: _dateOfTheFstIndexTouched,
+              reachTop: (bool reachTop,
+                  int? expandedIndex,
+                  String timerOfTheFstIndexTouched,
+                  String dateOfTheFstIndexTouched) {
                 setState(() {
                   if (!varmodalReachTop) {
                     Navigator.pop(context);
-                    _primeraFechaPrueba = firstFechaPrueba;
-                    print('_primeraFechaPrueba que se recibe del Inkwell $_primeraFechaPrueba');
+                    _timerOfTheFstIndexTouched = timerOfTheFstIndexTouched;
+                    _dateOfTheFstIndexTouched = dateOfTheFstIndexTouched;
+                    DateTime formattedTime24hrs =
+                        DateFormat('HH:mm').parse(_timerOfTheFstIndexTouched);
+                    String formattedTime12hrs =
+                        DateFormat('hh:mm a').format(formattedTime24hrs);
+                    _timerOfTheFstIndexTouched = formattedTime12hrs;
                     varmodalReachTop = true;
                     _expandedIndex = expandedIndex;
                     _showModalCalledscndTime = true;
                     _showModaltoDate(
-                        context, details, varmodalReachTop, _expandedIndex, _primeraFechaPrueba);
+                        context,
+                        details,
+                        varmodalReachTop,
+                        _expandedIndex,
+                        _timerOfTheFstIndexTouched,
+                        _dateOfTheFstIndexTouched);
                   } else {
                     varmodalReachTop = reachTop;
                   }
@@ -272,7 +293,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         context,
                         details,
                         _VarmodalReachTop,
-                        null, _primeraFechaPrueba,
+                        null,
+                        _timerOfTheFstIndexTouched,
+                        _dateOfTheFstIndexTouched,
                       );
                     }
                   },
