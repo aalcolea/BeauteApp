@@ -145,7 +145,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           Container(
             margin: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height *
-                    0.13), //pading entre ingrese pin y borde superior
+                    0.13),
             color: Colors.transparent,
             child: ListView(
               padding: EdgeInsets.symmetric(

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,17 +12,19 @@ import '../../utils/PopUpTabs/deleteAppointment.dart';
 import '../../utils/timer.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  final void Function(bool, int?) reachTop;
+  final void Function(bool, int?, String) reachTop;
   final bool isDocLog;
   final DateTime selectedDate;
   final int? expandedIndex;
+  final String? PruebaPaas;
 
   const AppointmentScreen(
       {Key? key,
       required this.selectedDate,
       required this.reachTop,
       required this.expandedIndex,
-      required this.isDocLog})
+      required this.isDocLog,
+      this.PruebaPaas})
       : super(key: key);
 
   @override
@@ -40,17 +44,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   int? expandedIndex;
   bool isTaped = false;
   String? dateOnly;
+  late KeyboardVisibilityController keyboardVisibilityController;
+  late StreamSubscription<bool> keyboardVisibilitySubscription;
+  bool visibleKeyboard = false;
+  String primeraFechaPrueba = '`';
 
-  @override
-  void initState() {
-    super.initState();
-    selectedDate2 = widget.selectedDate;
-    isDocLog = widget.isDocLog;
-    expandedIndex = widget.expandedIndex;
-    isTaped = expandedIndex != null;
-    selectedDate2 = widget.selectedDate;
-    initializeAppointments(widget.selectedDate);
-    dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+  void checkKeyboardVisibility() {
+    keyboardVisibilitySubscription =
+        keyboardVisibilityController.onChange.listen((visible) {
+      setState(() {
+        visibleKeyboard = visible;
+        print(visibleKeyboard);
+      });
+    });
+  }
+
+  void hideKeyBoard() {
+    if (visibleKeyboard) {
+      FocusScope.of(context).unfocus();
+    }
   }
 
   Future<void> initializeAppointments(DateTime date) async {
@@ -129,6 +141,27 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    selectedDate2 = widget.selectedDate;
+    isDocLog = widget.isDocLog;
+    expandedIndex = widget.expandedIndex;
+    isTaped = expandedIndex != null;
+    selectedDate2 = widget.selectedDate;
+    initializeAppointments(widget.selectedDate);
+    dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+    widget.PruebaPaas != null
+        ? _timerController.text = widget.PruebaPaas!
+        : null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timerController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<BoxShadow> normallyShadow = [
       const BoxShadow(
@@ -177,7 +210,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       onTap: () {
                         setState(() {
                           selectedDate2 = date;
-
                           initializeAppointments(date);
                         });
                       },
@@ -296,17 +328,26 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
                             return InkWell(
                               onTap: () {
-                                setState(() {
-                                  if (expandedIndex == index) {
+                                if (expandedIndex == index) {
+                                  setState(() {
                                     expandedIndex = null;
                                     isTaped = false;
-                                  } else {
+                                  });
+                                } else {
+                                  setState(() {
+                                    Appointment appointmetsToModify =
+                                        filteredAppointments[index];
+                                    _timerController.text = DateFormat('HH:mm')
+                                        .format(appointmetsToModify
+                                            .appointmentDate!);
                                     expandedIndex = index;
                                     isTaped = true;
-                                  }
-                                  modalReachTop = true;
-                                  widget.reachTop(modalReachTop, expandedIndex);
-                                });
+                                    modalReachTop = true;
+                                    primeraFechaPrueba = _timerController.text;
+                                    widget.reachTop(modalReachTop,
+                                        expandedIndex, primeraFechaPrueba);
+                                  });
+                                }
                               },
                               child: Container(
                                 margin: EdgeInsets.only(
