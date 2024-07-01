@@ -5,10 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class TimerFly extends StatefulWidget {
-  final void Function(
-    bool,
-    TextEditingController,
-  ) onTimeChoose;
+  final void Function(bool, TextEditingController, int) onTimeChoose;
 
   TimerFly({super.key, required this.onTimeChoose});
 
@@ -34,16 +31,15 @@ class _TimerFlyState extends State<TimerFly> {
   // 0 = AM, 1 = PM
   bool _isTimerShow = false;
   double? smallestDimension;
-  double? diameterRatio ;
+  double? diameterRatio;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    smallestDimension  = MediaQuery.of(context).size.shortestSide;
+    smallestDimension = MediaQuery.of(context).size.shortestSide;
     diameterRatio = (smallestDimension! * 0.0028);
     print(diameterRatio);
   }
-
 
   @override
   void initState() {
@@ -61,7 +57,7 @@ class _TimerFlyState extends State<TimerFly> {
             child: ListWheelScrollView.useDelegate(
                 controller: hourcontroller,
                 perspective: 0.001,
-                diameterRatio: diameterRatio!,
+                diameterRatio: 0.96,
                 physics: const FixedExtentScrollPhysics(),
                 itemExtent: MediaQuery.of(context).size.width * 0.18,
                 onSelectedItemChanged: (value) {
@@ -95,19 +91,19 @@ class _TimerFlyState extends State<TimerFly> {
                               ),
                               color: Colors.white,
                             )
-                          : index - 1 == selectedIndexHours
+                          : index == 11
                               ? const BoxDecoration(
                                   border: Border(
-                                    bottom: BorderSide(
+                                    top: BorderSide(
                                       color: Colors.grey,
                                       width: 2,
                                     ),
                                   ),
                                 )
-                              : index + 1 == selectedIndexHours
+                              : index == 1
                                   ? const BoxDecoration(
                                       border: Border(
-                                        top: BorderSide(
+                                        bottom: BorderSide(
                                           color: Colors.grey,
                                           width: 2,
                                         ),
@@ -119,7 +115,7 @@ class _TimerFlyState extends State<TimerFly> {
                               style: TextStyle(
                                 fontSize: index == selectedIndexHours
                                     ? MediaQuery.of(context).size.width * 0.11
-                                    : MediaQuery.of(context).size.width * 0.08,
+                                    : MediaQuery.of(context).size.width * 0.12,
                                 color: colorforhours,
                               ))));
                 })))),
@@ -144,7 +140,7 @@ class _TimerFlyState extends State<TimerFly> {
                 },
                 controller: minsController,
                 perspective: 0.001,
-                diameterRatio: diameterRatio!,
+                diameterRatio: 0.96,
                 physics: const FixedExtentScrollPhysics(),
                 itemExtent: MediaQuery.of(context).size.width * 0.18,
                 childDelegate: ListWheelChildLoopingListDelegate(
@@ -167,19 +163,19 @@ class _TimerFlyState extends State<TimerFly> {
                               ),
                               color: Colors.white,
                             )
-                          : index - 1 == selectedIndexMins
+                          : index == 59 && index == 59
                               ? const BoxDecoration(
                                   border: Border(
-                                    bottom: BorderSide(
+                                    top: BorderSide(
                                       color: Colors.grey,
                                       width: 2,
                                     ),
                                   ),
                                 )
-                              : index + 1 == selectedIndexMins
+                              : index == 1
                                   ? const BoxDecoration(
                                       border: Border(
-                                        top: BorderSide(
+                                        bottom: BorderSide(
                                           color: Colors.grey,
                                           width: 2,
                                         ),
@@ -192,7 +188,7 @@ class _TimerFlyState extends State<TimerFly> {
                                   fontSize: index == selectedIndexMins
                                       ? MediaQuery.of(context).size.width * 0.11
                                       : MediaQuery.of(context).size.width *
-                                          0.08,
+                                          0.12,
                                   color: colorformins))));
                 })))),
 
@@ -211,7 +207,7 @@ class _TimerFlyState extends State<TimerFly> {
                   });
                 },
                 perspective: 0.001,
-                diameterRatio: diameterRatio!,
+                diameterRatio: 0.96,
                 physics: const FixedExtentScrollPhysics(),
                 itemExtent: MediaQuery.of(context).size.width * 0.18,
                 childDelegate: ListWheelChildBuilderDelegate(
@@ -221,31 +217,49 @@ class _TimerFlyState extends State<TimerFly> {
                           ? const Color(0xFF4F2263)
                           : Colors.grey;
                       final String text = index == 0 ? 'p.m' : 'a.m';
-                      return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 0),
-                          child: Container(
-                              decoration: const BoxDecoration(
+                      return Container(
+                          decoration: index == selectedIndexAmPm
+                              ? const BoxDecoration(
                                   border: Border(
                                     top: BorderSide(
                                       color: Color(0xFF4F2263),
                                       width: 2,
                                     ),
+                                    bottom: BorderSide(
+                                      color: Color(0xFF4F2263),
+                                      width: 2,
+                                    ),
                                   ),
-                                  color: Colors.white),
-                              child: Center(
-                                  child: Text(text,
-                                      style: TextStyle(
-                                          fontSize: index == selectedIndexAmPm
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.11
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.08,
-                                          color: colorforitems)))));
+                                  color: Colors.white,
+                                )
+                              : index - 1 == selectedIndexAmPm
+                                  ? const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.grey,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : index + 1 == selectedIndexAmPm
+                                      ? const BoxDecoration(
+                                          border: Border(
+                                            top: BorderSide(
+                                              color: Colors.grey,
+                                              width: 2,
+                                            ),
+                                          ),
+                                        )
+                                      : null,
+                          child: Center(
+                              child: Text(text,
+                                  style: TextStyle(
+                                      fontSize: index == selectedIndexAmPm
+                                          ? MediaQuery.of(context).size.width *
+                                              0.11
+                                          : MediaQuery.of(context).size.width *
+                                              0.12,
+                                      color: colorforitems))));
                     })))
       ])),
       Padding(
@@ -263,7 +277,7 @@ class _TimerFlyState extends State<TimerFly> {
                         ? selectedIndexHours == 0
                             ? hour = 12
                             : hour = selectedIndexHours + 12
-                        : print('holafly');
+                        : null;
 
                 DateTime fullTime = DateTime(
                     now.year, now.month, now.day, hour, selectedIndexMins);
@@ -277,6 +291,7 @@ class _TimerFlyState extends State<TimerFly> {
                 widget.onTimeChoose(
                   _isTimerShow,
                   timeController,
+                  selectedIndexAmPm,
                 );
               },
               style: ElevatedButton.styleFrom(

@@ -70,6 +70,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   late BuildContext dialogforappointment;
   String nameToCompare = '';
   bool amPm = false;
+  int _selectedIndexAmPm = 0;
 
   Future<void> createClient() async {
     try {
@@ -201,19 +202,33 @@ class _AppointmentFormState extends State<AppointmentForm> {
     });
   }
 
-  void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime) {
+  void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime,
+      int selectedIndexAmPm) {
     setState(() {
+      _selectedIndexAmPm = selectedIndexAmPm;
       isTimerShow = _isTimerShow;
       String toCompare = selectedTime.text;
       List<String> timeToCompare = toCompare.split(':');
       int hourToCompareConvert = int.parse(timeToCompare[0]);
       int minuteToCompareConvert = int.parse(timeToCompare[1]);
       DateTime dateTimeNow = DateTime.now();
+      DateTime selectedDateT =
+          DateFormat('yyyy-MM-dd').parse(_dateController.text);
 
-      if (dateTimeNow.isAfter(DateTime(dateTimeNow.year, dateTimeNow.month,
-          dateTimeNow.day, hourToCompareConvert, minuteToCompareConvert))) {
+      DateTime selectedDateTimeToCompare = DateTime(
+          selectedDateT.year,
+          selectedDateT.month,
+          selectedDateT.day,
+          hourToCompareConvert,
+          minuteToCompareConvert);
+
+      if (selectedDateT.year == dateTimeNow.year &&
+          selectedDateT.month == dateTimeNow.month &&
+          selectedDateT.day == dateTimeNow.day &&
+          selectedDateTimeToCompare.isBefore(dateTimeNow)) {
         isHourCorrect = false;
         _timeController.text = 'Seleccione hora válida';
+        timerControllertoShow.text = 'Seleccione hora válida';
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('No se pueden seleccionar horarios pasados'),
@@ -223,14 +238,25 @@ class _AppointmentFormState extends State<AppointmentForm> {
         isHourCorrect = true;
         _timeController = selectedTime;
         String toShow = selectedTime.text;
+        print('toshow : $toShow');
         List<String> timetoShow = toShow.split(':');
         int hourToShowConvert = int.parse(timetoShow[0]);
         int minuteToShowConvert = int.parse(timetoShow[1]);
-        if (hourToShowConvert <= 12) {
+        if (hourToShowConvert == 12) {
+          String amPm = _selectedIndexAmPm == 0 ? 'p.m' : 'a.m';
+          String hourToShowtext = hourToShowConvert.toString();
+          String minutesShowText = minuteToShowConvert.toString();
+          if (minuteToShowConvert < 10) {
+            minutesShowText = '0$minutesShowText';
+          } else {
+            minutesShowText = minuteToShowConvert.toString();
+          }
+          timerControllertoShow.text = '$hourToShowtext:$minutesShowText $amPm';
+        } else if (hourToShowConvert < 12) {
           amPm = false;
           String am = 'a.m';
           String hourToShowtext = hourToShowConvert.toString();
-          String minutesShowText = '';
+          String minutesShowText = minuteToShowConvert.toString();
           if (minuteToShowConvert < 10) {
             minutesShowText = '0$minutesShowText';
           } else {

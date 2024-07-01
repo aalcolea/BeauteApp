@@ -16,10 +16,12 @@ class _ModifyAppointmentState extends State<ModifyAppointment> {
   TextEditingController _timerController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   bool _isTimerShow = false;
+  int _selectedIndexAmPm = 0;
 
-  void _onTimeChoose(bool isTimerShow, TextEditingController timerController) {
+  void _onTimeChoose(bool isTimerShow, TextEditingController timerController, int selectedIndexAmPm) {
     _isTimerShow = isTimerShow;
     _timerController = timerController;
+    _selectedIndexAmPm = selectedIndexAmPm;
   }
 
   @override
