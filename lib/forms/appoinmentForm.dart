@@ -228,7 +228,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
           selectedDateTimeToCompare.isBefore(dateTimeNow)) {
         isHourCorrect = false;
         _timeController.text = 'Seleccione hora válida';
-        timerControllertoShow.text = 'Seleccione hora válida';
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('No se pueden seleccionar horarios pasados'),
@@ -236,47 +235,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
         );
       } else {
         isHourCorrect = true;
-        _timeController = selectedTime;
         String toShow = selectedTime.text;
-        print('toshow : $toShow');
-        List<String> timetoShow = toShow.split(':');
-        int hourToShowConvert = int.parse(timetoShow[0]);
-        int minuteToShowConvert = int.parse(timetoShow[1]);
-        if (hourToShowConvert == 12) {
-          String amPm = _selectedIndexAmPm == 0 ? 'p.m' : 'a.m';
-          String hourToShowtext = hourToShowConvert.toString();
-          String minutesShowText = minuteToShowConvert.toString();
-          if (minuteToShowConvert < 10) {
-            minutesShowText = '0$minutesShowText';
-          } else {
-            minutesShowText = minuteToShowConvert.toString();
-          }
-          timerControllertoShow.text = '$hourToShowtext:$minutesShowText $amPm';
-        } else if (hourToShowConvert < 12) {
-          amPm = false;
-          String am = 'a.m';
-          String hourToShowtext = hourToShowConvert.toString();
-          String minutesShowText = minuteToShowConvert.toString();
-          if (minuteToShowConvert < 10) {
-            minutesShowText = '0$minutesShowText';
-          } else {
-            minutesShowText = minuteToShowConvert.toString();
-          }
-          timerControllertoShow.text =
-              '$hourToShowtext : $minutesShowText : $am';
-        } else if (hourToShowConvert > 12) {
-          amPm = true;
-          String pm = 'p.m';
-          hourToShowConvert = hourToShowConvert - 12;
-          String hourToShowtext = hourToShowConvert.toString();
-          String minutesShowText = minuteToShowConvert.toString();
-          if (minuteToShowConvert < 10) {
-            minutesShowText = '0$minutesShowText';
-          } else {
-            minutesShowText = minuteToShowConvert.toString();
-          }
-          timerControllertoShow.text = '$hourToShowtext:$minutesShowText $pm';
-        }
+        DateTime formattedTime24hrs = DateFormat('HH:mm').parse(toShow);
+        String formattedTime12hrs =
+            DateFormat('hh:mm a').format(formattedTime24hrs);
+        _timeController.text = formattedTime12hrs;
       }
     });
   }
@@ -744,7 +707,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         : false,
                                     labelText: 'HH:MM',
                                     readOnly: true,
-                                    controller: timerControllertoShow,
+                                    controller: _timeController,
                                     suffixIcon: Icon(
                                       Icons.access_time,
                                       color: _dateController.text.isNotEmpty
