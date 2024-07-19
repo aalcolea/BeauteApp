@@ -13,6 +13,7 @@ import '../../forms/appoinmentForm.dart';
 import '../../models/appointmentModel.dart';
 import '../../styles/AppointmentStyles.dart';
 import '../../utils/PopUpTabs/deleteAppointment.dart';
+import '../../utils/PopUpTabs/saveAppointment.dart';
 import '../../utils/timer.dart';
 
 class AppointmentScreen extends StatefulWidget {
@@ -861,7 +862,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                               0.05,
                                                     ),
                                                   ),
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    showConfirmationDialog(context, appointment, _dateController, _timerController, refreshAppointments);
+                                                    //showEditAppointmentDialog(context, appointment, refreshAppointments);
+                                                  },
                                                   child: Icon(
                                                     CupertinoIcons.checkmark,
                                                     color: Colors.white,
