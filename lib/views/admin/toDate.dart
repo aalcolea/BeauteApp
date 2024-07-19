@@ -100,7 +100,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       {int? id}) async {
     String baseUrl =
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments';
-    String url = id != null ? '$baseUrl/$id' : baseUrl;
+    String baseUrl2 = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinmentsAssit';
+    String url = id != null ? '$baseUrl/$id' : baseUrl2;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
 

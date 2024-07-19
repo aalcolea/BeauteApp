@@ -105,29 +105,44 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   Future<List<Appointment2>> fetchAppointments(int id) async {
     const baseUrl =
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
-    /*final response = await http.get(Uri.parse(
-        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));*/
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('jwt_token');
 
       if (token == null) {
-        throw Exception('No token found');
+        //throw Exception('No token found');
+        const baseUrl =
+            'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinmentsAssit';
+        final response = await http.get(
+          Uri.parse(baseUrl),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+        if (response.statusCode == 200) {
+          List<dynamic> data = jsonDecode(response.body)['appointments'];
+          print(jsonDecode(response.body)['appointments']);
+          return data.map((json) => Appointment2.fromJson(json)).toList();
+        } else {
+          throw Exception('Failed to load appointments');
+        }
       }
-
-      final response = await http.get(
-        Uri.parse(baseUrl + '$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body)['appointments'];
-        print(jsonDecode(response.body)['appointments']);
-        return data.map((json) => Appointment2.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load appointments');
+      else{
+        final response = await http.get(
+          Uri.parse(baseUrl + '$id'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+        if (response.statusCode == 200) {
+          List<dynamic> data = jsonDecode(response.body)['appointments'];
+          print(jsonDecode(response.body)['appointments']);
+          return data.map((json) => Appointment2.fromJson(json)).toList();
+        } else {
+          throw Exception('Failed to load appointments');
+        }
       }
     } catch (e) {
       print('Error: $e');
