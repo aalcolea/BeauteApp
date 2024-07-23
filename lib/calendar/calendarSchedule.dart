@@ -108,27 +108,10 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('jwt_token');
-
       if (token == null) {
-        //throw Exception('No token found');
-        const baseUrl =
-            'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinmentsAssit';
-        final response = await http.get(
-          Uri.parse(baseUrl),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-        );
-        if (response.statusCode == 200) {
-          List<dynamic> data = jsonDecode(response.body)['appointments'];
-          print(jsonDecode(response.body)['appointments']);
-          return data.map((json) => Appointment2.fromJson(json)).toList();
-        } else {
-          throw Exception('Failed to load appointments');
-        }
-      }
-      else{
+        throw Exception('No token found');
+      } else {
+        print('Cargando appointments para ID: $id');
         final response = await http.get(
           Uri.parse(baseUrl + '$id'),
           headers: {
@@ -136,9 +119,10 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             'Authorization': 'Bearer $token',
           },
         );
+        print(baseUrl + '$id');
         if (response.statusCode == 200) {
           List<dynamic> data = jsonDecode(response.body)['appointments'];
-          print(jsonDecode(response.body)['appointments']);
+          print('appointments cargados: ${data.length}');
           return data.map((json) => Appointment2.fromJson(json)).toList();
         } else {
           throw Exception('Failed to load appointments');
@@ -149,6 +133,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
       rethrow;
     }
   }
+
 
   void _showModaltoDate(
       BuildContext context,

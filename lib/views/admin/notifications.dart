@@ -1,11 +1,14 @@
 import 'package:beaute_app/models/notificationsForAssistant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../calendar/calendarSchedule.dart';
 import '../../utils/paintToNotifications.dart';
 import '../../utils/sliverlist/notiCards.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({super.key});
+  final int doctorId;
+
+  const NotificationsScreen({super.key, required this.doctorId});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
@@ -15,16 +18,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   double? screenWidth;
   double? screenHeight;
 
+  late Future<List<Appointment2>> _todayAppointments;
+  late Future<List<Appointment2>> _yesterdayAppointments;
+  late Future<List<Appointment2>> _dayBeforeYesterdayAppointments;
+
+  @override
+  void initState() {
+    super.initState();
+    _todayAppointments = fetchAppointmentsByDate(widget.doctorId, DateTime.now().toString());
+    _yesterdayAppointments = fetchAppointmentsByDate(widget.doctorId, DateTime.now().subtract(Duration(days: 1)).toString());
+    _dayBeforeYesterdayAppointments = fetchAppointmentsByDate(widget.doctorId, DateTime.now().subtract(Duration(days: 2)).toString());
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -76,94 +86,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ),
                   ],
                 ),
-
-                ///--------------------------------------------------------------------------------
                 Expanded(
                   child: Container(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.02),
-                                child: Text(
-                                  'HOY',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.05,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.0035,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4F2263),
-                            ),
-                          ),
-
-                          ///
-                          Column(
-                            children: ListaSingleton.instance.notiforAssistant
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                              int index = entry.key;
-                              return NotiCards(index: index);
-                            }).toList(),
-                          ),
-
-                          ///
-                          Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical:
-                                        MediaQuery.of(context).size.width *
-                                            0.01,
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.02),
-                                child: Text(
-                                  'AYER',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.05,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.0035,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4F2263),
-                            ),
-                          ),
-                          Column(
-                            children: ListaSingleton.instance.notiforAssistant
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                              int index = entry.key;
-                              return NotiCards(index: index);
-                            }).toList(),
-                          ),
+                          _buildSection('HOY', _todayAppointments),
+                          _buildSection('AYER', _yesterdayAppointments),
+                          _buildSection('ANTIER', _dayBeforeYesterdayAppointments),
                         ],
                       ),
                     ),
@@ -174,6 +104,54 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSection(String title, Future<List<Appointment2>> appointmentsFuture) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.02),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.02),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.0035,
+          decoration: const BoxDecoration(
+            color: Color(0xFF4F2263),
+          ),
+        ),
+        FutureBuilder<List<Appointment2>>(
+          future: appointmentsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Text('No hay citas');
+            } else {
+              return Column(
+                children: snapshot.data!.map((appointment) {
+                  return NotiCards(appointment: appointment);
+                }).toList(),
+              );
+            }
+          },
+        ),
+      ],
     );
   }
 }

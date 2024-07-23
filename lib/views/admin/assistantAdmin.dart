@@ -30,10 +30,10 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
-      setState(() {
-        visibleKeyboard = visible;
-      });
-    });
+          setState(() {
+            visibleKeyboard = visible;
+          });
+        });
   }
 
   void _onshowContentToModify(bool showContentToModify) {
@@ -65,9 +65,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        //modifica el container del calendario
         padding:
-            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
+        EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
         color: Colors.white,
         child: Column(
           children: [
@@ -76,8 +75,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                 left: _selectedScreen == 4
                     ? MediaQuery.of(context).size.width * 0.0
                     : _selectedScreen == 3
-                        ? MediaQuery.of(context).size.width * 0.0
-                        : MediaQuery.of(context).size.width * 0.045,
+                    ? MediaQuery.of(context).size.width * 0.0
+                    : MediaQuery.of(context).size.width * 0.045,
                 right: _selectedScreen != 4
                     ? MediaQuery.of(context).size.width * 0.025
                     : MediaQuery.of(context).size.width * 0.0,
@@ -92,8 +91,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         visible: _selectedScreen == 4
                             ? true
                             : _selectedScreen == 3
-                                ? true
-                                : false,
+                            ? true
+                            : false,
                         child: IconButton(
                           onPressed: () {
                             setState(() {
@@ -111,10 +110,10 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         _selectedScreen == 1
                             ? 'Calendario'
                             : _selectedScreen == 3
-                                ? 'Nuevo Cliente'
-                                : _selectedScreen == 4
-                                    ? 'Notificaciones'
-                                    : '',
+                            ? 'Nuevo Cliente'
+                            : _selectedScreen == 4
+                            ? 'Notificaciones'
+                            : '',
                         style: TextStyle(
                           color: const Color(0xFF4F2263),
                           fontSize: MediaQuery.of(context).size.width * 0.09,
@@ -172,10 +171,10 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         bottomRight: const Radius.circular(15)),
                     border: _selectedScreen != 4
                         ? const Border(
-                            bottom: BorderSide(
-                            color: Color(0xFF4F2263),
-                            width: 2.5,
-                          ))
+                        bottom: BorderSide(
+                          color: Color(0xFF4F2263),
+                          width: 2.5,
+                        ))
                         : null,
                     boxShadow: [
                       BoxShadow(
@@ -255,7 +254,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         backgroundColor: const Color(0xFF4F2263),
                         padding: EdgeInsets.symmetric(
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.06),
+                            MediaQuery.of(context).size.width * 0.06),
                         surfaceTintColor: const Color(0xFF4F2263),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
@@ -277,7 +276,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             ? CupertinoIcons.add
                             : CupertinoIcons.add,
                         color:
-                            _selectedScreen == 2 ? Colors.white : Colors.white,
+                        _selectedScreen == 2 ? Colors.white : Colors.white,
                         size: MediaQuery.of(context).size.width * 0.1,
                       ),
                     ),
@@ -324,7 +323,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
       _selectedScreen = initScreen;
       _hideBtnsBottom = forShowBtnAfterAddclient;
     });
-
   }
 
   Widget _buildBody() {
@@ -337,7 +335,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
             onHideBtnsBottom: _onHideBtnsBottom,
             onFinishedAddClient: _onFinishedAddClient);
       case 4:
-        return NotificationsScreen();
+        return NotificationsScreen(doctorId: 3);
       default:
         return Container();
     }
