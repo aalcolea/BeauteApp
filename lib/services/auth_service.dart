@@ -52,7 +52,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
         await prefs.setInt('user_id', data['user']['id']);
-
+        print(data['user']['id']);
         if (isDocLog == true) {
           Navigator.pushNamedAndRemoveUntil(
             context,

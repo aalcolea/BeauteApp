@@ -645,7 +645,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     eneabled: drFieldDone &&
                                             clientFieldDone &&
                                             widget.dateFromCalendarSchedule ==
-                                                null //
+                                                null
                                         ? true
                                         : isDocLog &&
                                                 clientFieldDone &&

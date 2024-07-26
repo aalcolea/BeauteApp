@@ -1,27 +1,45 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import '../../calendar/calendarSchedule.dart';
 import '../../models/notificationsForAssistant.dart';
+import 'package:http/http.dart' as http;
 
-class NotiCards extends StatefulWidget {
-  final int index;
-
-  const NotiCards({super.key, required this.index});
-
-  @override
-  State<NotiCards> createState() => _NotiCardsState();
-}
-
-class _NotiCardsState extends State<NotiCards> {
-  int index = 0;
-
-  @override
-  void initState() {
-    index = widget.index;
-    super.initState();
+Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
+  const baseUrl ='https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppointmentsByDate/';
+  try{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if(token == null){
+      throw Exception('No token found');
+    }else{
+      final response = await http.get(Uri.parse('$baseUrl$id/$date'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(response.statusCode == 200){
+        List<dynamic> data = jsonDecode(response.body)['appointments'];
+        return data.map((json) => Appointment2.fromJson(json)).toList();
+      }else{
+        throw Exception('Fallo al cargar appointments');
+      }
+    }
+  }
+  catch (e){
+    print('Error: $e');
+    rethrow;
   }
 
-  //print(ListaSingleton.instance.notiforAssistant[0]);
+}
+
+class NotiCards extends StatelessWidget {
+  final Appointment2 appointment;
+
+  const NotiCards({super.key, required this.appointment});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -79,8 +97,7 @@ class _NotiCardsState extends State<NotiCards> {
               ),
             ),
             Container(
-              padding:
-                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
               decoration: const BoxDecoration(
                 color: Color(0xFFC5B6CD),
                 borderRadius: BorderRadius.only(
@@ -111,7 +128,7 @@ class _NotiCardsState extends State<NotiCards> {
                         ),
                       ),
                       Text(
-                        ListaSingleton.instance.notiforAssistant[index].name,
+                        appointment.clientName ?? 'Desconocido',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
                         ),
@@ -128,7 +145,9 @@ class _NotiCardsState extends State<NotiCards> {
                         ),
                       ),
                       Text(
-                        ListaSingleton.instance.notiforAssistant[index].hour,
+                        appointment.appointmentDate != null
+                            ? '${appointment.appointmentDate!.hour}:${appointment.appointmentDate!.minute}'
+                            : 'Desconocido',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
                         ),
