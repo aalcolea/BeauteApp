@@ -70,6 +70,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   String nameToCompare = '';
   bool amPm = false;
   int _selectedIndexAmPm = 0;
+  int? doctor_id_body = 0;
 
   Future<void> createClient() async {
     try {
@@ -186,6 +187,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
       bool showdrChooseWidget) {
     setState(() {
       _drSelected = drSelected;
+      if (_drSelected!.text == 'Doctor1') {
+        doctor_id_body = 1;
+      } else {
+        doctor_id_body = 2;
+      }
       _optSelected = optSelected;
       _showdrChooseWidget = showdrChooseWidget;
     });
@@ -306,7 +312,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
-          'dr_id': _drSelected?.text,
+          'dr_id': doctor_id_body!,
           'client_id': _selectedClient?.id.toString(),
           'date': _dateController.text,
           'time': _timeController.text,
@@ -314,7 +320,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'name': _clientTextController.text,
         }),
       );
-      print('dr_id: ${_drSelected?.text}');
+      print('doctor_id_body: $doctor_id_body');
 
       if (response.statusCode == 201) {
         if (mounted) {
