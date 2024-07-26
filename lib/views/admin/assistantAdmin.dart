@@ -11,6 +11,7 @@ import 'notifications.dart';
 
 class AssistantAdmin extends StatefulWidget {
   final bool docLog;
+
   const AssistantAdmin({super.key, required this.docLog});
 
   @override
@@ -72,40 +73,14 @@ class _AssistantAdminState extends State<AssistantAdmin> {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                left: _selectedScreen == 4
-                    ? MediaQuery.of(context).size.width * 0.0
-                    : _selectedScreen == 3
-                    ? MediaQuery.of(context).size.width * 0.0
-                    : MediaQuery.of(context).size.width * 0.045,
-                right: _selectedScreen != 4
-                    ? MediaQuery.of(context).size.width * 0.025
-                    : MediaQuery.of(context).size.width * 0.0,
-              ),
+                  left: MediaQuery.of(context).size.width * 0.045,
+                  right: MediaQuery.of(context).size.width * 0.025),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Visibility(
-                        visible: _selectedScreen == 4
-                            ? true
-                            : _selectedScreen == 3
-                            ? true
-                            : false,
-                        child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedScreen = 1;
-                              _hideBtnsBottom = false;
-                            });
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_ios_rounded,
-                            size: MediaQuery.of(context).size.width * 0.082,
-                          ),
-                        ),
-                      ),
                       Text(
                         _selectedScreen == 1
                             ? 'Calendario'
@@ -129,8 +104,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         padding: EdgeInsets.zero,
                         onPressed: () {
                           setState(() {
-                            _selectedScreen = 4;
-                            _hideBtnsBottom = true;
+                            if (_selectedScreen != 4) {
+                              _selectedScreen = 4;
+                              _hideBtnsBottom = true;
+                            } else {
+                              _selectedScreen = 1;
+                              _hideBtnsBottom = false;
+                            }
+
+                            //
                           });
                         },
                         icon: Icon(

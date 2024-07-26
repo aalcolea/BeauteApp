@@ -5,7 +5,6 @@ import 'package:beaute_app/forms/clientForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
@@ -44,7 +43,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   TextEditingController timerControllertoShow = TextEditingController();
   final treatmentController = TextEditingController();
   FocusNode fieldClientNode = FocusNode();
-  TextEditingController _drSelected = TextEditingController();
+  TextEditingController? _drSelected = TextEditingController();
   bool _showdrChooseWidget = false;
   int day = 0;
   int month = 0;
@@ -71,6 +70,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   String nameToCompare = '';
   bool amPm = false;
   int _selectedIndexAmPm = 0;
+  int? doctor_id_body = 0;
 
   Future<void> createClient() async {
     try {
@@ -187,6 +187,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
       bool showdrChooseWidget) {
     setState(() {
       _drSelected = drSelected;
+      if (_drSelected!.text == 'Doctor1') {
+        doctor_id_body = 1;
+      } else {
+        doctor_id_body = 2;
+      }
       _optSelected = optSelected;
       _showdrChooseWidget = showdrChooseWidget;
     });
@@ -197,7 +202,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
         visibleKeyboard = visible;
-        print(visibleKeyboard);
       });
     });
   }
@@ -283,6 +287,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   Future<void> submitAppointment() async {
+    String toShow = _timeController.text;
+    DateFormat dateFormat12Hour = DateFormat('hh:mm a');
+    DateFormat dateFormat24Hour = DateFormat('HH:mm');
+    DateTime dateTime = dateFormat12Hour.parse(toShow);
+    String time24HourFormat = dateFormat24Hour.format(dateTime);
+
+    _timeController.text = time24HourFormat;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
     if (token == null) {
@@ -301,6 +312,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
+          'dr_id': doctor_id_body!,
           'client_id': _selectedClient?.id.toString(),
           'date': _dateController.text,
           'time': _timeController.text,
@@ -308,10 +320,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'name': _clientTextController.text,
         }),
       );
+      print('doctor_id_body: $doctor_id_body');
 
       if (response.statusCode == 201) {
         if (mounted) {
-          showClienteSuccessfullyAdded(context, widget);
+          showClienteSuccessfullyAdded(context, widget, isDocLog);
         }
         print('Respuesta del servidor: ${response.body}');
       } else {
@@ -330,7 +343,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
     isDocLog = widget.isDoctorLog;
-    print('isDocLog en AppointmentForm: $isDocLog');
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
