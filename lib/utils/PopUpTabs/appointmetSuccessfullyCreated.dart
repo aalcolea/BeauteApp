@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
+void showClienteSuccessfullyAdded(BuildContext context, Widget widget, bool isDoctorLog) {
   showDialog(
     context: context,
     barrierColor: Colors.transparent,
@@ -42,10 +42,15 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
                     ),
                     TextButton(
                       onPressed: () {
+                        isDoctorLog == true ?
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           '/drScreen',
                           (Route<dynamic> route) => false,
+                        ) : Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/assistantScreen',
+                              (Route<dynamic> route) => false,
                         );
                       },
                       child: Container(

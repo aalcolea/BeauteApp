@@ -42,7 +42,7 @@ class _LoginState extends State<Login> {
               ),
             ],
           ),
-          ElevatedButton(
+          /*ElevatedButton(
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/assistantScreen');
               //Navigator.pushReplacementNamed(context, '/drScreen');
@@ -71,9 +71,9 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-          ),
+          ),*/
           Image.asset(
-            'assets/imgLog/logoBeauteWhiteSqr.png',
+            'aassets/imgLog/logoBeauteWhiteSqr.png',
             width: MediaQuery.of(context).size.width * 0.55,
             height: MediaQuery.of(context).size.height * 0.16,
           ),

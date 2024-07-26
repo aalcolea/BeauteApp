@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
+import 'customCell.dart';
 
 class AgendaSchedule extends StatefulWidget {
   final bool isDoctorLog;
@@ -63,6 +64,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _VarmodalReachTop = false;
   bool _isTaped = false;
   int? _expandedIndex;
+  bool _btnToReachTop = false;
   bool docLog = false;
   bool _showModalCalledscndTime = false;
   String _timerOfTheFstIndexTouched = '';
@@ -136,65 +138,67 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   void _showModaltoDate(
-      BuildContext context,
-      CalendarTapDetails details,
-      bool varmodalReachTop,
-      _expandedIndex,
-      _timerOfTheFstIndexTouched,
-      _dateOfTheFstIndexTouched) {
+    BuildContext context,
+    CalendarTapDetails details,
+    bool varmodalReachTop,
+    _expandedIndex,
+    _timerOfTheFstIndexTouched,
+    _dateOfTheFstIndexTouched,
+    _btnToReachTop,
+  ) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
           ? Colors.transparent
           : Colors.black54.withOpacity(0.3),
       isScrollControlled: varmodalReachTop,
-      showDragHandle: true,
+      showDragHandle: false,
       barrierColor: Colors.black54,
       context: context,
       builder: (context) {
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            child: AppointmentScreen(
-              isDocLog: docLog,
-              expandedIndex: _expandedIndex,
-              selectedDate: details.date!,
-              firtsIndexTouchHour: _timerOfTheFstIndexTouched,
-              firtsIndexTouchDate: _dateOfTheFstIndexTouched,
-              reachTop: (bool reachTop,
-                  int? expandedIndex,
-                  String timerOfTheFstIndexTouched,
-                  String dateOfTheFstIndexTouched) {
-                setState(() {
-                  if (!varmodalReachTop) {
-                    Navigator.pop(context);
-                    _timerOfTheFstIndexTouched = timerOfTheFstIndexTouched;
-                    _dateOfTheFstIndexTouched = dateOfTheFstIndexTouched;
-                    DateTime formattedTime24hrs =
-                        DateFormat('HH:mm').parse(_timerOfTheFstIndexTouched);
-                    String formattedTime12hrs =
-                        DateFormat('hh:mm a').format(formattedTime24hrs);
-                    _timerOfTheFstIndexTouched = formattedTime12hrs;
-                    varmodalReachTop = true;
-                    _expandedIndex = expandedIndex;
-                    _showModalCalledscndTime = true;
-                    _showModaltoDate(
-                        context,
-                        details,
-                        varmodalReachTop,
-                        _expandedIndex,
-                        _timerOfTheFstIndexTouched,
-                        _dateOfTheFstIndexTouched);
-                  } else {
-                    varmodalReachTop = reachTop;
-                  }
-                });
-              },
-            ),
-          ),
-        );
+            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: AppointmentScreen(
+                  isDocLog: docLog,
+                  expandedIndex: _expandedIndex,
+                  selectedDate: details.date!,
+                  firtsIndexTouchHour: _timerOfTheFstIndexTouched,
+                  firtsIndexTouchDate: _dateOfTheFstIndexTouched,
+                  btnToReachTop: _btnToReachTop,
+                  reachTop: (bool reachTop,
+                      int? expandedIndex,
+                      String timerOfTheFstIndexTouched,
+                      String dateOfTheFstIndexTouched,
+                      bool auxToReachTop) {
+                    setState(() {
+                      if (!varmodalReachTop) {
+                        Navigator.pop(context);
+                        _timerOfTheFstIndexTouched = timerOfTheFstIndexTouched;
+                        _dateOfTheFstIndexTouched = dateOfTheFstIndexTouched;
+                        _btnToReachTop = auxToReachTop;
+                        varmodalReachTop = true;
+                        _expandedIndex = expandedIndex;
+                        _showModalCalledscndTime = true;
+                        _showModaltoDate(
+                            context,
+                            details,
+                            varmodalReachTop,
+                            _expandedIndex,
+                            _timerOfTheFstIndexTouched,
+                            _dateOfTheFstIndexTouched,
+                            _btnToReachTop);
+                      } else {
+                        varmodalReachTop = reachTop;
+                        if (auxToReachTop == false) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    });
+                  }),
+            ));
       },
     ).then((_) {
       if (_showModalCalledscndTime == true &&
@@ -290,13 +294,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         details.targetElement == CalendarElement.appointment) {
                       _VarmodalReachTop = false;
                       _showModaltoDate(
-                        context,
-                        details,
-                        _VarmodalReachTop,
-                        null,
-                        _timerOfTheFstIndexTouched,
-                        _dateOfTheFstIndexTouched,
-                      );
+                          context,
+                          details,
+                          _VarmodalReachTop,
+                          null,
+                          _timerOfTheFstIndexTouched,
+                          _dateOfTheFstIndexTouched,
+                          _btnToReachTop);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
@@ -330,16 +334,49 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             appointment.appointmentDate!.month &&
                         details.date.year == appointment.appointmentDate!.year);
 
+                    final bool hasEventDoc1 = _appointments.any(
+                        (Appointment2 appointment) =>
+                            appointment.appointmentDate != null &&
+                            details.date.day ==
+                                appointment.appointmentDate!.day &&
+                            details.date.month ==
+                                appointment.appointmentDate!.month &&
+                            details.date.year ==
+                                appointment.appointmentDate!.year &&
+                            appointment.doctorId == 1);
+
+                    final bool hasEventDoc2 = _appointments.any(
+                        (Appointment2 appointment) =>
+                            appointment.appointmentDate != null &&
+                            details.date.day ==
+                                appointment.appointmentDate!.day &&
+                            details.date.month ==
+                                appointment.appointmentDate!.month &&
+                            details.date.year ==
+                                appointment.appointmentDate!.year &&
+                            appointment.doctorId == 2);
+
+                    /* final bool hasEventSameDay = _appointments.any(
+                            (Appointment2 appointment) =>
+                        appointment.appointmentDate != null &&
+                            details.date.day ==
+                                appointment.appointmentDate!.day &&
+                            details.date.month ==
+                                appointment.appointmentDate!.month &&
+                            details.date.year ==
+                                appointment.appointmentDate!.year &&
+                            appointment.doctorId == 2);*/
+
                     if (isToday && hasEvent) {
                       return Center(
                         child: Container(
                           width: null,
                           height: null,
                           decoration: BoxDecoration(
-                            color: hasEvent ? Colors.purple[100] : Colors.white,
+                            color: Colors.purple[100],
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: hasEvent ? Colors.purple : Colors.grey,
+                              color: Colors.purple,
                               width: 1.0,
                             ),
                           ),
@@ -378,47 +415,67 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         ),
                       );
                     } else if (hasEvent) {
+                      return hasEventDoc1 == true && hasEventDoc2 == false
+                          ? Container(
+                              width: null,
+                              height: null,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withOpacity(0.35),
+                                border: Border.all(
+                                  color: Colors.purple.withOpacity(0.35),
+                                ),
+                              ),
+                              child: Text(
+                                details.date.day.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.06,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: null,
+                              height: null,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color:
+                                    const Color(0xFF8AB6DD).withOpacity(0.35),
+                                //Colors.blue.withOpacity(0.35),
+                                border: Border.all(
+                                  color: const Color(0xFF8AB6DD),
+                                ),
+                              ),
+                              child: Text(
+                                details.date.day.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.06,
+                                ),
+                              ),
+                            );
+                    } else {
                       return Container(
                         width: null,
                         height: null,
-                        alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: hasEvent ? Colors.purple[100] : Colors.white,
+                          color: Colors.white,
                           border: Border.all(
-                              color: hasEvent ? Colors.purple : Colors.grey),
-                        ),
-                        child: Text(
-                          details.date.day.toString(),
-                          style: TextStyle(
-                            color: hasEvent ? Colors.white : Colors.black,
-                            fontSize: MediaQuery.of(context).size.width * 0.06,
+                            color: Colors.grey,
+                            width: 0.2,
                           ),
                         ),
-                      );
-                    } else {
-                      return Center(
-                        child: Container(
-                          width: null,
-                          //MediaQuery.of(context).size.width * 0.2,
-                          height: null,
-                          //MediaQuery.of(context).size.width * 0.2,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 0.2,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              details.date.day.toString(),
-                              style: TextStyle(
-                                color: isInCurrentMonth
-                                    ? const Color(0xFF72A5D0)
-                                    : const Color(0xFFC5B6CD),
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.055,
-                              ),
+                        child: Center(
+                          child: Text(
+                            details.date.day.toString(),
+                            style: TextStyle(
+                              color: isInCurrentMonth
+                                  ? const Color(0xFF72A5D0)
+                                  : const Color(0xFFC5B6CD),
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.055,
                             ),
                           ),
                         ),
