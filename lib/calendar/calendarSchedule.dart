@@ -534,6 +534,8 @@ class Appointment2 {
   final String? paymentMethod;
   final String? status;
   final String? clientName;
+  bool? notificationRead;
+
 
   Appointment2({
     this.id,
@@ -545,6 +547,7 @@ class Appointment2 {
     this.paymentMethod,
     this.status,
     this.clientName,
+    this.notificationRead,
   });
 
   factory Appointment2.fromJson(Map<String, dynamic> json) {
@@ -560,6 +563,7 @@ class Appointment2 {
       paymentMethod: json['payment_method'] as String?,
       status: json['status'] as String?,
       clientName: json['client_name'] as String?,
+      notificationRead: json['notification_read'] == 1,
     );
   }
 }

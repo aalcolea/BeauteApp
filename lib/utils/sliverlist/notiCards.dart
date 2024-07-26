@@ -21,6 +21,7 @@ Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
         },
       );
       if(response.statusCode == 200){
+        print(jsonDecode(response.body)['appointments']);
         List<dynamic> data = jsonDecode(response.body)['appointments'];
         return data.map((json) => Appointment2.fromJson(json)).toList();
       }else{
@@ -32,7 +33,32 @@ Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
     print('Error: $e');
     rethrow;
   }
-
+}
+Future<void> readNotification(int appointmentId) async {
+  const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/appointments';
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if(token == null){
+      throw Exception('No token found');
+    }else{
+      final response = await http.put(Uri.parse('$baseUrl/$appointmentId/read'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(response.statusCode == 200){
+        print('Notificacion marcada como leida');
+        //crear widget de leido
+      }else{
+        throw Exception('Error al marcar la notificacion como leida');
+      }
+    }
+  }catch (e){
+    print('Error: $e');
+    rethrow;
+  }
 }
 
 class NotiCards extends StatelessWidget {
@@ -76,7 +102,13 @@ class NotiCards extends StatelessWidget {
                     children: [
                       IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () {},
+                        onPressed: () async {
+                          try {
+                            await readNotification(appointment.id!);
+                          } catch (e) {
+                            print('Error: $e');
+                          }
+                          },
                         icon: Icon(
                           CupertinoIcons.checkmark_alt,
                           color: Colors.white,
@@ -86,11 +118,11 @@ class NotiCards extends StatelessWidget {
                       Container(
                         width: MediaQuery.of(context).size.width * 0.05,
                         height: MediaQuery.of(context).size.width * 0.05,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white,
+                          color: appointment.notificationRead == true ? Colors.green : Colors.white,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],
