@@ -414,7 +414,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           ),
                         ),
                       );
-                    } else if (hasEvent) {
+                    } else {
                       return hasEventDoc1 == true && hasEventDoc2 == false
                           ? Container(
                               width: null,
@@ -435,51 +435,77 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                 ),
                               ),
                             )
-                          : Container(
-                              width: null,
-                              height: null,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color:
-                                    const Color(0xFF8AB6DD).withOpacity(0.35),
-                                //Colors.blue.withOpacity(0.35),
-                                border: Border.all(
-                                  color: const Color(0xFF8AB6DD),
-                                ),
-                              ),
-                              child: Text(
-                                details.date.day.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.06,
-                                ),
-                              ),
-                            );
-                    } else {
-                      return Container(
-                        width: null,
-                        height: null,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 0.2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            details.date.day.toString(),
-                            style: TextStyle(
-                              color: isInCurrentMonth
-                                  ? const Color(0xFF72A5D0)
-                                  : const Color(0xFFC5B6CD),
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.055,
-                            ),
-                          ),
-                        ),
-                      );
+                          : hasEventDoc1 == false && hasEventDoc2 == true
+                              ? Container(
+                                  width: null,
+                                  height: null,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF8AB6DD)
+                                        .withOpacity(0.35),
+                                    //Colors.blue.withOpacity(0.35),
+                                    border: Border.all(
+                                      color: const Color(0xFF8AB6DD),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    details.date.day.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.06,
+                                    ),
+                                  ),
+                                )
+                              : hasEventDoc1 && hasEventDoc2
+                                  ? Container(
+                                      width: null,
+                                      height: null,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: Colors.brown.withOpacity(0.35),
+                                        //Colors.blue.withOpacity(0.35),
+                                        border: Border.all(
+                                          color: Colors.brown,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        details.date.day.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.06,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      width: null,
+                                      height: null,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 0.2,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          details.date.day.toString(),
+                                          style: TextStyle(
+                                            color: isInCurrentMonth
+                                                ? const Color(0xFF72A5D0)
+                                                : const Color(0xFFC5B6CD),
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.055,
+                                          ),
+                                        ),
+                                      ),
+                                    );
                     }
                   },
                 ),
