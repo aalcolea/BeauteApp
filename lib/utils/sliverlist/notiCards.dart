@@ -83,12 +83,14 @@ class NotiCards extends StatelessWidget {
                           size: MediaQuery.of(context).size.width * 0.085,
                         ),
                       ),
+                      appointment.notifi ?? 'Desconocido',
                       Container(
                         width: MediaQuery.of(context).size.width * 0.05,
                         height: MediaQuery.of(context).size.width * 0.05,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
+
                         ),
                       )
                     ],
