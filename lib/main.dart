@@ -3,10 +3,17 @@ import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/admin/toDate.dart';
 import 'package:beaute_app/views/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'forms/appoinmentForm.dart';
+import 'models/notificationsForAssistant.dart';
 
 void main() {
+  ListaSingleton.instance.notiforAssistant
+      .add(NotificationsforAssistant('Valor 1A', 'Valor 2A', DateTime.now()));
+  ListaSingleton.instance.notiforAssistant
+      .add(NotificationsforAssistant('Valor 3A', 'Valor 4A', DateTime.now()));
+  print(ListaSingleton.instance.notiforAssistant[0]);
   runApp(const MyApp());
 }
 
@@ -27,10 +34,20 @@ class MyApp extends StatelessWidget {
         body: Login(),
       ),
       routes: {
-        '/drScreen': (context) => const DoctorAdmin(),
-        '/assistantScreen': (context) => const AssistantAdmin(),
+        '/drScreen': (context) => const DoctorAdmin(
+              docLog: true,
+            ),
+        '/assistantScreen': (context) => const AssistantAdmin(
+              docLog: false,
+            ),
         '/citaScreen': (context) => AppointmentForm(isDoctorLog: isDocLog),
       },
+      supportedLocales: const [Locale('es', 'ES')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }

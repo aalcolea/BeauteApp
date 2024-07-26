@@ -7,8 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PinEntryScreen extends StatefulWidget {
   final int userId;
+  final bool docLog;
 
-  const PinEntryScreen({super.key, required this.userId});
+  const PinEntryScreen({super.key, required this.userId, required this.docLog});
 
   @override
   PinEntryScreenState createState() => PinEntryScreenState();
@@ -16,24 +17,55 @@ class PinEntryScreen extends StatefulWidget {
 
 class PinEntryScreenState extends State<PinEntryScreen> {
   final TextEditingController pinController = TextEditingController();
+  bool isDocLog = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isDocLog = widget.docLog;
+  }
 
   void authenticate() async {
     try {
-      var response = await http.post(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/login'),
-        //Uri.parse('http://192.168.1.220:8080/api/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+      String jsonBody;
+      if (widget.userId == 3) {
+        jsonBody = json.encode({
+          'email': 'dulce@test.com',
+          'password': pinController.text,
+        });
+      } else {
+        jsonBody = json.encode({
           'email': 'doctor${widget.userId}@test.com',
           'password': pinController.text,
-        }),
+        });
+      }
+
+      var response = await http.post(
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
       );
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
-        Navigator.pushReplacementNamed(context, '/drScreen');
+        await prefs.setInt('user_id', data['user']['id']);
+        print(data['user']['id']);
+        if (isDocLog == true) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/drScreen',
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/assistantScreen',
+            (Route<dynamic> route) => false,
+          );
+        }
       } else {
         showDialog(
           context: context,
@@ -52,7 +84,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         );
       }
     } catch (e) {
-      print("hola $e");
+      print("Error $e");
     }
   }
 
@@ -113,7 +145,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           Container(
             margin: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height *
-                    0.18), //pading entre ingrese pin y borde superior
+                    0.13),
             color: Colors.transparent,
             child: ListView(
               padding: EdgeInsets.symmetric(
@@ -206,40 +238,34 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                   ),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.height * 0.085),
+                  padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.height * 0.051),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(''), //SizedBox(),
+                      ),
+                      numBtn(0),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.height * 0.03,
+                            top: MediaQuery.of(context).size.height * 0.015),
+                        alignment: Alignment.center,
                         child: TextButton(
-                          onPressed: () {},
-                          child: const Text(''), //SizedBox(),
-                        ),
-                      ),
-                      Expanded(
-                        child: numBtn(0),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.height * 0.03,
-                              top: MediaQuery.of(context).size.height * 0.015),
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                if (enteredPin.isNotEmpty) {
-                                  enteredPin = enteredPin.substring(
-                                      0, enteredPin.length - 1);
-                                }
-                              });
-                            },
-                            child: Icon(
-                              Icons.backspace_outlined,
-                              color: Colors.white,
-                              size: MediaQuery.of(context).size.height * 0.065,
-                            ),
+                          onPressed: () {
+                            setState(() {
+                              if (enteredPin.isNotEmpty) {
+                                enteredPin = enteredPin.substring(
+                                    0, enteredPin.length - 1);
+                              }
+                            });
+                          },
+                          child: Icon(
+                            Icons.backspace_outlined,
+                            color: Colors.white,
+                            size: MediaQuery.of(context).size.height * 0.065,
                           ),
                         ),
                       ),
@@ -267,25 +293,6 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           ),
         ],
       ),
-
-      /*Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            controller: pinController,
-            keyboardType: TextInputType.number,
-            obscureText: true,
-            decoration: const InputDecoration(
-              labelText: 'PIN',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: authenticate,
-            child: const Text('Ingresar'),
-          ),
-        ],
-      ),*/
     );
   }
 }

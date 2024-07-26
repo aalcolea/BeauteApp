@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
-import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-import 'dart:ui'; // Necesario para ImageFilter.blur
-
-void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
+void showClienteSuccessfullyAdded(BuildContext context, Widget widget, VoidCallback onDialogClose) {
   showDialog(
     context: context,
     barrierColor: Colors.transparent,
@@ -40,6 +36,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
                         IconButton(
                           onPressed: () {
                             Navigator.of(context).pop();
+                            onDialogClose();
                           },
                           icon: const Icon(Icons.close),
                         ),
@@ -65,5 +62,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget) {
         ],
       );
     },
-  );
+  ).then((_) {
+    onDialogClose();
+  });
 }
