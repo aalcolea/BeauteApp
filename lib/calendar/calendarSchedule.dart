@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
+import 'customCell.dart';
 
 class AgendaSchedule extends StatefulWidget {
   final bool isDoctorLog;
@@ -61,10 +64,17 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _VarmodalReachTop = false;
   bool _isTaped = false;
   int? _expandedIndex;
+  bool _btnToReachTop = false;
+  bool docLog = false;
+  bool _showModalCalledscndTime = false;
+  String _timerOfTheFstIndexTouched = '';
+  String _dateOfTheFstIndexTouched = '';
 
   @override
   void initState() {
     super.initState();
+    docLog = widget.isDoctorLog;
+    print(docLog);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -95,76 +105,108 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   Future<List<Appointment2>> fetchAppointments(int id) async {
-    const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
+    const baseUrl =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
     /*final response = await http.get(Uri.parse(
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments'));*/
-    try{
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? token = prefs.getString('jwt_token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
 
-        if (token == null) {
-          throw Exception('No token found');
-        }
+      if (token == null) {
+        throw Exception('No token found');
+      }
 
-        final response = await http.get(
-          Uri.parse(baseUrl + '$id'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-        );
-        if (response.statusCode == 200) {
-          List<dynamic> data = jsonDecode(response.body)['appointments'];
-          print(jsonDecode(response.body)['appointments']);
-          return data.map((json) => Appointment2.fromJson(json)).toList();
-        } else {
-          throw Exception('Failed to load appointments');
-        }
-      } catch (e) {
+      final response = await http.get(
+        Uri.parse(baseUrl + '$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body)['appointments'];
+        print(jsonDecode(response.body)['appointments']);
+        return data.map((json) => Appointment2.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load appointments');
+      }
+    } catch (e) {
       print('Error: $e');
       rethrow;
-      }
     }
-
+  }
 
   void _showModaltoDate(
-      BuildContext context, CalendarTapDetails details, bool varmodalReachTop) {
+    BuildContext context,
+    CalendarTapDetails details,
+    bool varmodalReachTop,
+    _expandedIndex,
+    _timerOfTheFstIndexTouched,
+    _dateOfTheFstIndexTouched,
+    _btnToReachTop,
+  ) {
     showModalBottomSheet(
-      backgroundColor: !_VarmodalReachTop
+      backgroundColor: !varmodalReachTop
           ? Colors.transparent
           : Colors.black54.withOpacity(0.3),
-      isScrollControlled: _VarmodalReachTop,
+      isScrollControlled: varmodalReachTop,
       showDragHandle: false,
       barrierColor: Colors.black54,
       context: context,
       builder: (context) {
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            child: AppointmentScreen(
-              expandedIndex: _expandedIndex,
-              selectedDate: details.date!,
-              reachTop: (bool reachTop, int? expandedIndex) {
-                setState(() {
-                  if (!_VarmodalReachTop) {
-                    Navigator.pop(context);
-                    _VarmodalReachTop = true;
-                    _expandedIndex = expandedIndex;
-                    _showModaltoDate(context, details, _VarmodalReachTop);
-                  } else {
-                    _expandedIndex = null;
-                    _VarmodalReachTop = reachTop;
-                  }
-                });
-              },
-            ),
-          ),
-        );
+            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: AppointmentScreen(
+                  isDocLog: docLog,
+                  expandedIndex: _expandedIndex,
+                  selectedDate: details.date!,
+                  firtsIndexTouchHour: _timerOfTheFstIndexTouched,
+                  firtsIndexTouchDate: _dateOfTheFstIndexTouched,
+                  btnToReachTop: _btnToReachTop,
+                  reachTop: (bool reachTop,
+                      int? expandedIndex,
+                      String timerOfTheFstIndexTouched,
+                      String dateOfTheFstIndexTouched,
+                      bool auxToReachTop) {
+                    setState(() {
+                      if (!varmodalReachTop) {
+                        Navigator.pop(context);
+                        _timerOfTheFstIndexTouched = timerOfTheFstIndexTouched;
+                        _dateOfTheFstIndexTouched = dateOfTheFstIndexTouched;
+                        _btnToReachTop = auxToReachTop;
+                        varmodalReachTop = true;
+                        _expandedIndex = expandedIndex;
+                        _showModalCalledscndTime = true;
+                        _showModaltoDate(
+                            context,
+                            details,
+                            varmodalReachTop,
+                            _expandedIndex,
+                            _timerOfTheFstIndexTouched,
+                            _dateOfTheFstIndexTouched,
+                            _btnToReachTop);
+                      } else {
+                        varmodalReachTop = reachTop;
+                        if (auxToReachTop == false) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    });
+                  }),
+            ));
       },
-    );
+    ).then((_) {
+      if (_showModalCalledscndTime == true &&
+          _expandedIndex != null &&
+          varmodalReachTop == true) {
+        _expandedIndex = null;
+      }
+    });
   }
 
   @override
@@ -173,7 +215,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.035),
+            margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.width * 0.035),
             alignment: Alignment.centerLeft,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.07,
@@ -250,7 +293,14 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                     if (details.targetElement == CalendarElement.calendarCell ||
                         details.targetElement == CalendarElement.appointment) {
                       _VarmodalReachTop = false;
-                      _showModaltoDate(context, details, _VarmodalReachTop);
+                      _showModaltoDate(
+                          context,
+                          details,
+                          _VarmodalReachTop,
+                          null,
+                          _timerOfTheFstIndexTouched,
+                          _dateOfTheFstIndexTouched,
+                          _btnToReachTop);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
@@ -284,16 +334,49 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             appointment.appointmentDate!.month &&
                         details.date.year == appointment.appointmentDate!.year);
 
+                    final bool hasEventDoc1 = _appointments.any(
+                        (Appointment2 appointment) =>
+                            appointment.appointmentDate != null &&
+                            details.date.day ==
+                                appointment.appointmentDate!.day &&
+                            details.date.month ==
+                                appointment.appointmentDate!.month &&
+                            details.date.year ==
+                                appointment.appointmentDate!.year &&
+                            appointment.doctorId == 1);
+
+                    final bool hasEventDoc2 = _appointments.any(
+                        (Appointment2 appointment) =>
+                            appointment.appointmentDate != null &&
+                            details.date.day ==
+                                appointment.appointmentDate!.day &&
+                            details.date.month ==
+                                appointment.appointmentDate!.month &&
+                            details.date.year ==
+                                appointment.appointmentDate!.year &&
+                            appointment.doctorId == 2);
+
+                    /* final bool hasEventSameDay = _appointments.any(
+                            (Appointment2 appointment) =>
+                        appointment.appointmentDate != null &&
+                            details.date.day ==
+                                appointment.appointmentDate!.day &&
+                            details.date.month ==
+                                appointment.appointmentDate!.month &&
+                            details.date.year ==
+                                appointment.appointmentDate!.year &&
+                            appointment.doctorId == 2);*/
+
                     if (isToday && hasEvent) {
                       return Center(
                         child: Container(
                           width: null,
                           height: null,
                           decoration: BoxDecoration(
-                            color: hasEvent ? Colors.purple[100] : Colors.white,
+                            color: Colors.purple[100],
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: hasEvent ? Colors.purple : Colors.grey,
+                              color: Colors.purple,
                               width: 1.0,
                             ),
                           ),
@@ -332,47 +415,67 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         ),
                       );
                     } else if (hasEvent) {
+                      return hasEventDoc1 == true && hasEventDoc2 == false
+                          ? Container(
+                              width: null,
+                              height: null,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withOpacity(0.35),
+                                border: Border.all(
+                                  color: Colors.purple.withOpacity(0.35),
+                                ),
+                              ),
+                              child: Text(
+                                details.date.day.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.06,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: null,
+                              height: null,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color:
+                                    const Color(0xFF8AB6DD).withOpacity(0.35),
+                                //Colors.blue.withOpacity(0.35),
+                                border: Border.all(
+                                  color: const Color(0xFF8AB6DD),
+                                ),
+                              ),
+                              child: Text(
+                                details.date.day.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.06,
+                                ),
+                              ),
+                            );
+                    } else {
                       return Container(
                         width: null,
                         height: null,
-                        alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: hasEvent ? Colors.purple[100] : Colors.white,
+                          color: Colors.white,
                           border: Border.all(
-                              color: hasEvent ? Colors.purple : Colors.grey),
-                        ),
-                        child: Text(
-                          details.date.day.toString(),
-                          style: TextStyle(
-                            color: hasEvent ? Colors.white : Colors.black,
-                            fontSize: MediaQuery.of(context).size.width * 0.06,
+                            color: Colors.grey,
+                            width: 0.2,
                           ),
                         ),
-                      );
-                    } else {
-                      return Center(
-                        child: Container(
-                          width: null,
-                          //MediaQuery.of(context).size.width * 0.2,
-                          height: null,
-                          //MediaQuery.of(context).size.width * 0.2,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 0.2,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              details.date.day.toString(),
-                              style: TextStyle(
-                                color: isInCurrentMonth
-                                    ? const Color(0xFF72A5D0)
-                                    : const Color(0xFFC5B6CD),
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.055,
-                              ),
+                        child: Center(
+                          child: Text(
+                            details.date.day.toString(),
+                            style: TextStyle(
+                              color: isInCurrentMonth
+                                  ? const Color(0xFF72A5D0)
+                                  : const Color(0xFFC5B6CD),
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.055,
                             ),
                           ),
                         ),

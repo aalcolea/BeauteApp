@@ -5,9 +5,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 
-void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, Function refreshAppointments) {
+void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
+    Function refreshAppointments) {
   Future<void> deleteAppt(int id) async {
-    const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/deleteAppoinment/';
+    const baseUrl =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/deleteAppoinment/';
 
     try {
       final response = await http.post(
@@ -85,7 +87,8 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, F
                                 top: MediaQuery.of(context).size.height * 0.035,
                               ),
                               padding: EdgeInsets.symmetric(
-                                horizontal: MediaQuery.of(context).size.width * 0.03,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.03,
                               ),
                               decoration: const BoxDecoration(
                                 border: Border(
@@ -98,7 +101,8 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, F
                               child: Text(
                                 'Cancelar',
                                 style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.05,
                                   color: const Color(0xFF4F2263),
                                 ),
                               ),
@@ -109,23 +113,30 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, F
                               elevation: 4,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
-                                side: const BorderSide(color: Colors.red, width: 1),
+                                side: const BorderSide(
+                                    color: Colors.red, width: 1),
                               ),
                               backgroundColor: Colors.white,
                               surfaceTintColor: Colors.white,
                               padding: EdgeInsets.symmetric(
-                                horizontal: MediaQuery.of(context).size.width * 0.05,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05,
                               ),
                             ),
                             onPressed: () {
                               deleteAppt(id!);
-                              Navigator.of(context).pop();
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                '/drScreen',
+                                (Route<dynamic> route) => false,
+                              );
                             },
                             child: Text(
                               'Eliminar',
                               style: TextStyle(
                                 color: Colors.red,
-                                fontSize: MediaQuery.of(context).size.width * 0.048,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.048,
                               ),
                             ),
                           ),
@@ -142,4 +153,3 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, F
     },
   );
 }
-

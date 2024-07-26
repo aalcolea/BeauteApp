@@ -5,13 +5,11 @@ import 'package:beaute_app/forms/clientForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../calendar/calendarioScreenCita.dart';
 import '../models/clientModel.dart';
 import '../services/getClientsService.dart';
@@ -19,9 +17,7 @@ import '../styles/AppointmentStyles.dart';
 import '../utils/PopUpTabs/addNewClientandAppointment.dart';
 import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
-import '../utils/PopUpTabs/closeConfirm.dart';
 import '../utils/timer.dart';
-import 'package:beaute_app/forms/clientForm.dart';
 
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
@@ -44,9 +40,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
   var _clientTextController = TextEditingController();
   final _dateController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
+  TextEditingController timerControllertoShow = TextEditingController();
   final treatmentController = TextEditingController();
   FocusNode fieldClientNode = FocusNode();
-  TextEditingController _drSelected = TextEditingController();
+  TextEditingController? _drSelected = TextEditingController();
   bool _showdrChooseWidget = false;
   int day = 0;
   int month = 0;
@@ -61,14 +58,18 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool dateFieldDone = false;
   bool timeFieldDone = false;
   bool treatmentFieldDone = false;
-  bool clientInDB = false;
+  bool? clientInDB;
   int? number;
+  bool isHourCorrect = false;
   TextEditingController emailController = TextEditingController();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool _cancelConfirm = false;
   late BuildContext dialogforappointment;
+  String nameToCompare = '';
+  bool amPm = false;
+  int _selectedIndexAmPm = 0;
 
   Future<void> createClient() async {
     try {
@@ -100,13 +101,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   Future<void> addClientAndSubmitAppointment() async {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
-      print('confirmed $confirmed');
       createClient();
-      //submitAppointment();
-      print('submitAppointment');
     } else {
-      //esto trata el false pero no hace si manda un false
-      print('confirmed $confirmed');
       return;
     }
   }
@@ -156,21 +152,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _clientTextController.text = _name;
       emailController.text = _email;
       number = celnumber;
-      print(_clientTextController.text);
-      print(emailController.text);
-      print(number);
     });
   }
 
   void _onConfirm() {}
-
-  void _onDateToAppointmentForm(
-      String dateToAppointmentForm, bool showCalendar) {
-    setState(() {
-      _dateController.text = dateToAppointmentForm;
-      _showCalendar = showCalendar;
-    });
-  }
 
   onBackPressed(didPop) {
     if (!didPop) {
@@ -211,15 +196,57 @@ class _AppointmentFormState extends State<AppointmentForm> {
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
         visibleKeyboard = visible;
-        print(visibleKeyboard);
       });
     });
   }
 
-  void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime) {
+  void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime,
+      int selectedIndexAmPm) {
     setState(() {
+      _selectedIndexAmPm = selectedIndexAmPm;
       isTimerShow = _isTimerShow;
-      _timeController = selectedTime;
+      String toCompare = selectedTime.text;
+      List<String> timeToCompare = toCompare.split(':');
+      int hourToCompareConvert = int.parse(timeToCompare[0]);
+      int minuteToCompareConvert = int.parse(timeToCompare[1]);
+      DateTime dateTimeNow = DateTime.now();
+      DateTime selectedDateT =
+          DateFormat('yyyy-MM-dd').parse(_dateController.text);
+
+      DateTime selectedDateTimeToCompare = DateTime(
+          selectedDateT.year,
+          selectedDateT.month,
+          selectedDateT.day,
+          hourToCompareConvert,
+          minuteToCompareConvert);
+
+      if (selectedDateT.year == dateTimeNow.year &&
+          selectedDateT.month == dateTimeNow.month &&
+          selectedDateT.day == dateTimeNow.day &&
+          selectedDateTimeToCompare.isBefore(dateTimeNow)) {
+        isHourCorrect = false;
+        _timeController.text = 'Seleccione hora válida';
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pueden seleccionar horarios pasados'),
+          ),
+        );
+      } else {
+        isHourCorrect = true;
+        String toShow = selectedTime.text;
+        DateTime formattedTime24hrs = DateFormat('HH:mm').parse(toShow);
+        String formattedTime12hrs =
+            DateFormat('hh:mm a').format(formattedTime24hrs);
+        _timeController.text = formattedTime12hrs;
+      }
+    });
+  }
+
+  void _onDateToAppointmentForm(
+      String dateToAppointmentForm, bool showCalendar) {
+    setState(() {
+      _dateController.text = dateToAppointmentForm;
+      _showCalendar = showCalendar;
     });
   }
 
@@ -233,25 +260,34 @@ class _AppointmentFormState extends State<AppointmentForm> {
     clientFieldDone = true;
     if (client != null) {
       setState(() {
+        clientInDB = true;
+        print('clientInDB T: $clientInDB');
         _selectedClient = client;
       });
     } else if (client == null) {
       setState(() {
-        print('_updateSelectedClient client = null');
+        print('clientInDB BF: $clientInDB');
         clientInDB = false;
+        print('clientInDB F: $clientInDB');
         _selectedClient = Client(
-            id: 0,
+            id: 1,
             name: _clientTextController.text,
             email: '0', //emailController.text,
             number: 0);
       });
-      print('_selectedClient: ${_selectedClient!.id}');
     } else {
       return;
     }
   }
 
   Future<void> submitAppointment() async {
+    String toShow = _timeController.text;
+    DateFormat dateFormat12Hour = DateFormat('hh:mm a');
+    DateFormat dateFormat24Hour = DateFormat('HH:mm');
+    DateTime dateTime = dateFormat12Hour.parse(toShow);
+    String time24HourFormat = dateFormat24Hour.format(dateTime);
+
+    _timeController.text = time24HourFormat;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
     if (token == null) {
@@ -263,7 +299,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
 
     try {
-      print('client_id: ${_selectedClient?.id}');
       var response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -271,6 +306,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
+          'dr_id': _drSelected?.text,
           'client_id': _selectedClient?.id.toString(),
           'date': _dateController.text,
           'time': _timeController.text,
@@ -278,10 +314,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'name': _clientTextController.text,
         }),
       );
+      print('dr_id: ${_drSelected?.text}');
 
       if (response.statusCode == 201) {
         if (mounted) {
-          showClienteSuccessfullyAdded(context, widget);
+          showClienteSuccessfullyAdded(context, widget, isDocLog);
         }
         print('Respuesta del servidor: ${response.body}');
       } else {
@@ -513,10 +550,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     setState(() {
                                       _clientTextController.text =
                                           selection.name;
+                                      nameToCompare = selection.name;
                                       _updateSelectedClient(selection);
-                                      clientFieldDone = true;
-                                      clientInDB = true;
-                                      saveNewClient = false;
                                       fieldClientNode.unfocus();
                                     });
                                   },
@@ -546,23 +581,20 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       onEdComplete: () {
                                         setState(() {
                                           clientFieldDone = true;
-                                          clientInDB
-                                              ? print('cliente en la DB')
+                                          nameToCompare ==
+                                                  _clientTextController.text
+                                              ? null
                                               : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
-                                          print(
-                                              'ActivarFecha $drFieldDone y $clientFieldDone');
                                         });
                                       },
                                       onTapOutside: (PointerDownEvent tapout) {
                                         setState(() {
-                                          print('tapOutside');
-                                          print(_clientTextController.text);
-                                          clientInDB
-                                              ? clientFieldDone = true
+                                          clientFieldDone = true;
+                                          nameToCompare ==
+                                                  _clientTextController.text
+                                              ? null
                                               : _updateSelectedClient(null);
-                                          print(
-                                              '_selectedClient!.id: ${_selectedClient!.id}');
                                           fieldFocusNode.unfocus();
                                         });
                                       },
@@ -641,7 +673,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         !_showCalendar
                                             ? _showCalendar = true
                                             : _showCalendar = false;
-                                        print(_showCalendar);
                                       });
                                     },
                                   ),
@@ -738,12 +769,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       CupertinoIcons.pencil_ellipsis_rectangle,
                                       size: MediaQuery.of(context).size.width *
                                           0.085,
-                                      color: _timeController.text.isNotEmpty
+                                      color: _timeController.text.isNotEmpty &&
+                                              isHourCorrect
                                           ? const Color(0xFF4F2263)
                                           : const Color(0xFF4F2263)
                                               .withOpacity(0.3),
                                     ),
-                                    eneabled: _timeController.text.isNotEmpty
+                                    eneabled: _timeController.text.isNotEmpty &&
+                                            isHourCorrect
                                         ? true
                                         : false,
                                     labelText: 'Tratamiento',
@@ -759,7 +792,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     Checkbox(
                                       checkColor: Colors.white,
                                       value: saveNewClient,
-                                      onChanged: clientInDB
+                                      onChanged: clientInDB == null ||
+                                              clientInDB == true
                                           ? null
                                           : (bool? value) {
                                               setState(() {
@@ -777,13 +811,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       }),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          saveNewClient == false
-                                              ? saveNewClient = true
-                                              : saveNewClient = false;
-                                        });
-                                      },
+                                      onPressed: clientInDB == null ||
+                                              clientInDB == true
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                saveNewClient == false
+                                                    ? saveNewClient = true
+                                                    : saveNewClient = false;
+                                              });
+                                            },
                                       child: Text(
                                         'Agregar nuevo cliente',
                                         style: TextStyle(
@@ -791,7 +828,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                                   .size
                                                   .width *
                                               0.045,
-                                          color: clientInDB
+                                          color: clientInDB == null ||
+                                                  clientInDB == true
                                               ? const Color(0xFF4F2263)
                                                   .withOpacity(0.3)
                                               : const Color(0xFF4F2263),
@@ -809,11 +847,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 child: ElevatedButton(
                                   onPressed:
                                       treatmentController.text.isNotEmpty &&
-                                              !saveNewClient
+                                              !saveNewClient &&
+                                              isHourCorrect
                                           ? submitAppointment
                                           : saveNewClient &&
                                                   treatmentController
-                                                      .text.isNotEmpty
+                                                      .text.isNotEmpty &&
+                                                  isHourCorrect
                                               ? addClientAndSubmitAppointment
                                               : null,
                                   style: ElevatedButton.styleFrom(

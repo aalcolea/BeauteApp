@@ -10,7 +10,8 @@ import '../../forms/clientForm.dart';
 import 'notifications.dart';
 
 class AssistantAdmin extends StatefulWidget {
-  const AssistantAdmin({super.key});
+  final bool docLog;
+  const AssistantAdmin({super.key, required this.docLog});
 
   @override
   State<AssistantAdmin> createState() => _AssistantAdminState();
@@ -48,6 +49,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   @override
   void initState() {
     _selectedScreen = 1;
+    print('isDocLog en assistantAdmind: $isDocLog');
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     super.initState();
