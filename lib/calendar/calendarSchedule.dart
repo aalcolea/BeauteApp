@@ -136,7 +136,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     }
   }
 
-
   void _showModaltoDate(
     BuildContext context,
     CalendarTapDetails details,
@@ -282,6 +281,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: SfCalendar(
+                  showCurrentTimeIndicator: true,
                   headerHeight: 0,
                   firstDayOfWeek: 1,
                   view: CalendarView.month,
@@ -356,22 +356,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                 appointment.appointmentDate!.year &&
                             appointment.doctorId == 2);
 
-                    /* final bool hasEventSameDay = _appointments.any(
-                            (Appointment2 appointment) =>
-                        appointment.appointmentDate != null &&
-                            details.date.day ==
-                                appointment.appointmentDate!.day &&
-                            details.date.month ==
-                                appointment.appointmentDate!.month &&
-                            details.date.year ==
-                                appointment.appointmentDate!.year &&
-                            appointment.doctorId == 2);*/
-
                     if (isToday && hasEvent) {
-                      return Center(
-                        child: Container(
-                          width: null,
-                          height: null,
+                      return Container(
                           decoration: BoxDecoration(
                             color: Colors.purple[100],
                             shape: BoxShape.circle,
@@ -389,12 +375,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               ),
                             ),
                           ),
-                        ),
-                      );
+                        );
                     } else if (isToday) {
                       return Container(
-                        width: null,
-                        height: null,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -403,8 +386,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             width: 1.0,
                           ),
                         ),
-                        child: Center(
-                          child: Text(
+                        child: Text(
                             details.date.day.toString(),
                             style: TextStyle(
                               color: const Color(0xFF4F2263),
@@ -412,7 +394,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                   MediaQuery.of(context).size.width * 0.07,
                             ),
                           ),
-                        ),
+
                       );
                     } else {
                       return hasEventDoc1 == true && hasEventDoc2 == false
@@ -421,65 +403,176 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               height: null,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.purple.withOpacity(0.35),
                                 border: Border.all(
                                   color: Colors.purple.withOpacity(0.35),
                                 ),
                               ),
-                              child: Text(
-                                details.date.day.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.06,
-                                ),
-                              ),
-                            )
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      details.date.day.toString(),
+                                      style: TextStyle(
+                                        color: const Color(0xFF72A5D0),
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.06,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.01),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: const Color(0xFF9C27B0)),
+                                          color: const Color(0xFFE1BEE7),
+                                          //Colors.purple.withOpacity(0.35),
+                                          shape: BoxShape.circle),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.055,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.055,
+                                    ),
+                                  ),
+                                ],
+                              ))
                           : hasEventDoc1 == false && hasEventDoc2 == true
                               ? Container(
                                   width: null,
                                   height: null,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF8AB6DD)
-                                        .withOpacity(0.35),
                                     //Colors.blue.withOpacity(0.35),
                                     border: Border.all(
                                       color: const Color(0xFF8AB6DD),
                                     ),
                                   ),
-                                  child: Text(
-                                    details.date.day.toString(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.06,
-                                    ),
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          details.date.day.toString(),
+                                          style: TextStyle(
+                                            color: const Color(0xFF72A5D0),
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.06,
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.01),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: const Color(0xFF8AB6DD),
+                                              ),
+                                              color: const Color(0xFF8AB6DD)
+                                                  .withOpacity(0.35),
+                                              shape: BoxShape.circle),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.055,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.055,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 )
                               : hasEventDoc1 && hasEventDoc2
-                                  ? Container(
-                                      width: null,
-                                      height: null,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: Colors.brown.withOpacity(0.35),
-                                        //Colors.blue.withOpacity(0.35),
-                                        border: Border.all(
-                                          color: Colors.brown,
+                                  ? Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            details.date.day.toString(),
+                                            style: TextStyle(
+                                              color: const Color(0xFF72A5D0),
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.06,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      child: Text(
-                                        details.date.day.toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.06,
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.01),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: const Color(
+                                                            0xFF9C27B0)),
+                                                    color:
+                                                        const Color(0xFFE1BEE7),
+                                                    //Colors.purple.withOpacity(0.35),
+                                                    shape: BoxShape.circle),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.055,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.055,
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.01),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: const Color(
+                                                          0xFF8AB6DD),
+                                                    ),
+                                                    color:
+                                                        const Color(0xFF8AB6DD)
+                                                            .withOpacity(0.35),
+                                                    shape: BoxShape.circle),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.055,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.055,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     )
                                   : Container(
                                       width: null,
@@ -535,7 +628,6 @@ class Appointment2 {
   final String? status;
   final String? clientName;
   bool? notificationRead;
-
 
   Appointment2({
     this.id,
