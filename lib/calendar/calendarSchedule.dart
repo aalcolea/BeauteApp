@@ -378,6 +378,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         );
                     } else if (isToday) {
                       return Container(
+                        alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
