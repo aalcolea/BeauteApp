@@ -8,8 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PinEntryScreen extends StatefulWidget {
   final int userId;
   final bool docLog;
+  final void Function(
+    bool,
+  ) onCloseScreeen;
 
-  const PinEntryScreen({super.key, required this.userId, required this.docLog});
+  const PinEntryScreen(
+      {super.key,
+      required this.userId,
+      required this.docLog,
+      required this.onCloseScreeen});
 
   @override
   PinEntryScreenState createState() => PinEntryScreenState();
@@ -97,15 +104,15 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
+            borderRadius: BorderRadius.circular(24.0),
           ),
           padding: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.065,
-              right: MediaQuery.of(context).size.width * 0.065,
+              left: MediaQuery.of(context).size.width * 0.085,
+              right: MediaQuery.of(context).size.width * 0.085,
               top: 10,
               bottom: 10),
           //const EdgeInsets.all(20),
-          backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.7),
+          backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.70),
         ),
         onPressed: () {
           setState(() {
@@ -133,161 +140,167 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       body: Stack(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/imgLog/bgPinentry.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height *
-                    0.13),
-            color: Colors.transparent,
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.36),
+            color: const Color(0xFF111111).withOpacity(0.81),
             child: ListView(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
               physics: const BouncingScrollPhysics(),
               children: [
-                const Center(
-                  child: Text(
-                    'Ingrese el pin',
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.035,
-                ),
-
-                ///codigo para el pin
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    6,
-                    (index) {
-                      return Container(
-                        margin: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.height * 0.014,
-                            right: MediaQuery.of(context).size.height * 0.014),
-                        width: pinVisible
-                            ? 30
-                            : MediaQuery.of(context).size.width * 0.048,
-                        height: pinVisible
-                            ? 40
-                            : MediaQuery.of(context).size.width * 0.048,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(width: 3, color: Colors.white),
-                          color: index < enteredPin.length
-                              ? pinVisible
-                                  ? Colors.black54
-                                  : Colors.white
-                              : Colors.transparent,
+                Column(
+                  children: [
+                    Center(
+                      child: Text(
+                        'Ingrese el pin',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.065,
+                          color: Colors.white,
                         ),
-                        child: pinVisible && index < enteredPin.length
-                            ? Center(
-                                child: Text(
-                                enteredPin[index],
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ))
-                            : null,
-                      );
-                    },
-                  ),
-                ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.015,
+                    ),
 
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      pinVisible = !pinVisible;
-                    });
-                  },
-                  icon: Icon(
-                    pinVisible
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                    height: pinVisible
-                        ? MediaQuery.of(context).size.height * 0.02
-                        : MediaQuery.of(context).size.height * 0.02),
-
-                for (var i = 0; i < 3; i++)
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.height * 0.042),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ///codigo para el pin
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        3,
-                        (index) => numBtn(1 + 3 * i + index),
-                      ).toList(),
-                    ),
-                  ),
-
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.height * 0.051),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text(''), //SizedBox(),
+                        6,
+                        (index) {
+                          return Container(
+                            margin: EdgeInsets.only(
+                                left:
+                                    MediaQuery.of(context).size.height * 0.014,
+                                right:
+                                    MediaQuery.of(context).size.height * 0.014),
+                            width: pinVisible
+                                ? 30
+                                : MediaQuery.of(context).size.width * 0.048,
+                            height: pinVisible
+                                ? 40
+                                : MediaQuery.of(context).size.width * 0.048,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(width: 3, color: Colors.white),
+                              color: index < enteredPin.length
+                                  ? pinVisible
+                                      ? Colors.black54
+                                      : Colors.white
+                                  : Colors.transparent,
+                            ),
+                            child: pinVisible && index < enteredPin.length
+                                ? Center(
+                                    child: Text(
+                                    enteredPin[index],
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ))
+                                : null,
+                          );
+                        },
                       ),
-                      numBtn(0),
-                      Container(
-                        margin: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.height * 0.03,
-                            top: MediaQuery.of(context).size.height * 0.015),
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              if (enteredPin.isNotEmpty) {
-                                enteredPin = enteredPin.substring(
-                                    0, enteredPin.length - 1);
-                              }
-                            });
-                          },
-                          child: Icon(
-                            Icons.backspace_outlined,
-                            color: Colors.white,
-                            size: MediaQuery.of(context).size.height * 0.065,
-                          ),
+                    ),
+
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          pinVisible = !pinVisible;
+                        });
+                      },
+                      icon: Icon(
+                        pinVisible
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                        height: pinVisible
+                            ? MediaQuery.of(context).size.height * 0.02
+                            : MediaQuery.of(context).size.height * 0.02),
+
+                    for (var i = 0; i < 3; i++)
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.height * 0.042),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(
+                            3,
+                            (index) => numBtn(1 + 3 * i + index),
+                          ).toList(),
                         ),
                       ),
-                    ],
-                  ),
-                ),
 
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      enteredPin = '';
-                      Navigator.of(context).pop(context);
-                    });
-                  },
-                  child: const Text(
-                    'Cancelar',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.height * 0.041),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(''), //SizedBox(),
+                          ),
+                          numBtn(0),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: MediaQuery.of(context).size.height * 0.03,
+                                top:
+                                    MediaQuery.of(context).size.height * 0.015),
+                            alignment: Alignment.center,
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (enteredPin.isNotEmpty) {
+                                    enteredPin = enteredPin.substring(
+                                        0, enteredPin.length - 1);
+                                  }
+                                });
+                              },
+                              child: Icon(
+                                Icons.backspace_outlined,
+                                color: Colors.white,
+                                size:
+                                    MediaQuery.of(context).size.height * 0.065,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.13,
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          enteredPin = '';
+                          widget.onCloseScreeen(true);
+                          //Navigator.of(context).pop(context);
+                        });
+                      },
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
