@@ -103,6 +103,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
       createClient();
+      submitAppointment();
     } else {
       return;
     }
