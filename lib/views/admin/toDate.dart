@@ -403,8 +403,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 ? DateFormat('hh:mm a')
                                     .format(appointment.appointmentDate!)
                                 : 'Hora desconocida';
-                            List<String> timeParts =
-                                time.split(' ');
+                            List<String> timeParts = time.split(' ');
 
                             String clientName =
                                 appointment.clientName ?? 'Cliente desconocido';
@@ -879,7 +878,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                           context,
                                                           widget,
                                                           appointment.id,
-                                                          refreshAppointments);
+                                                          refreshAppointments,
+                                                          isDocLog);
                                                     },
                                                     child: Icon(
                                                       Icons.delete,

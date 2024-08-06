@@ -498,81 +498,87 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                   ),
                                 )
                               : hasEventDoc1 && hasEventDoc2
-                                  ? Stack(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            details.date.day.toString(),
-                                            style: TextStyle(
-                                              color: const Color(0xFF72A5D0),
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.06,
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.purple
+                                                .withOpacity(0.35)),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              details.date.day.toString(),
+                                              style: TextStyle(
+                                                color: const Color(0xFF72A5D0),
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.06,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    bottom:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.01),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0xFF9C27B0)),
-                                                    color:
-                                                        const Color(0xFFE1BEE7),
-                                                    //Colors.purple.withOpacity(0.35),
-                                                    shape: BoxShape.circle),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.055,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.055,
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    bottom:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.01),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
+                                          Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.01),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0xFF9C27B0)),
                                                       color: const Color(
-                                                          0xFF8AB6DD),
-                                                    ),
-                                                    color:
-                                                        const Color(0xFF8AB6DD)
-                                                            .withOpacity(0.35),
-                                                    shape: BoxShape.circle),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.055,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.055,
-                                              ),
-                                            ],
+                                                          0xFFE1BEE7),
+                                                      //Colors.purple.withOpacity(0.35),
+                                                      shape: BoxShape.circle),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.01),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFF8AB6DD),
+                                                      ),
+                                                      color: const Color(
+                                                              0xFF8AB6DD)
+                                                          .withOpacity(0.35),
+                                                      shape: BoxShape.circle),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    )
+                                        ],
+                                      ))
                                   : Container(
                                       width: null,
                                       height: null,
