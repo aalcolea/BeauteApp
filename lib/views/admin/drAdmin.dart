@@ -55,22 +55,29 @@ class _DoctorAdminState extends State<DoctorAdmin> {
 
   onBackPressed(didPop) {
     if (!didPop) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (builder) {
-          return AlertCloseDialog(
-            onCancelConfirm: _onCancelConfirm,
-          );
-        },
-      ).then((_) {
-        if (_cancelConfirm == true) {
-          if (_cancelConfirm) {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              SystemNavigator.pop();
-            });
-          }
-        }
+      setState(() {
+        setState(() {
+          _selectedScreen == 3
+              ? _selectedScreen = 1
+              : showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return AlertCloseDialog(
+                onCancelConfirm: _onCancelConfirm,
+              );
+            },
+          ).then((_) {
+            if (_cancelConfirm == true) {
+              if (_cancelConfirm) {
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  SystemNavigator.pop();
+                });
+              }
+            }
+          });
+        });
+
       });
       return;
     }
@@ -81,7 +88,15 @@ class _DoctorAdminState extends State<DoctorAdmin> {
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     super.initState();
+
   }
+
+  @override
+  void dispose() {
+    keyboardVisibilitySubscription.cancel();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -99,26 +114,64 @@ class _DoctorAdminState extends State<DoctorAdmin> {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.055),
+                    left: _selectedScreen != 1
+                        ? MediaQuery.of(context).size.width * 0.016
+                        : MediaQuery.of(context).size.width * 0.045,
+                    right: MediaQuery.of(context).size.width * 0.025),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _selectedScreen == 1
-                          ? 'Calendario'
-                          : _selectedScreen == 3
+                    Row(
+                      children: [
+                        Visibility(
+                          visible: _selectedScreen != 1,
+                          child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _selectedScreen = 1;
+                                });
+                              },
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                CupertinoIcons.back,
+                                size: MediaQuery.of(context).size.width * 0.08,
+                                color: const Color(0xFF4F2263),
+                              )),
+                        ),
+                        Text(
+                          _selectedScreen == 1
+                              ? 'Calendario'
+                              : _selectedScreen == 3
                               ? 'Nuevo Cliente'
+                              : _selectedScreen == 4
+                              ? 'Notificaciones'
                               : '',
-                      style: TextStyle(
-                        color: const Color(0xFF4F2263),
-                        fontSize: MediaQuery.of(context).size.width * 0.09,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          style: TextStyle(
+                            color: const Color(0xFF4F2263),
+                            fontSize: MediaQuery.of(context).size.width * 0.082,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
+
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              if (_selectedScreen != 4) {
+                                _selectedScreen = 4;
+                                _hideBtnsBottom = true;
+                              } else {
+                                _selectedScreen = 1;
+                                _hideBtnsBottom = false;
+                              }
+                              _hideBtnsBottom = false;
+
+                              //
+                            });
+                          },
                           icon: Icon(
                             Icons.notifications_none_outlined,
                             size: MediaQuery.of(context).size.width * 0.095,

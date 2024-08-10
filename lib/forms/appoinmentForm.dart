@@ -103,6 +103,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
       createClient();
+      submitAppointment();
     } else {
       return;
     }
@@ -385,8 +386,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 Navigator.pop(context);
                               },
                               icon: Icon(
-                                Icons.arrow_back_ios_rounded,
-                                size: MediaQuery.of(context).size.width * 0.082,
+                                CupertinoIcons.back,
+                                size: MediaQuery.of(context).size.width * 0.08,
+                                color: const Color(0xFF4F2263),
                               ),
                             ),
                             Text(
@@ -400,7 +402,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                           ],
                         ),
-                        Row(
+                        /*Row(
                           children: [
                             IconButton(
                               onPressed: () {},
@@ -419,7 +421,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               ),
                             ),
                           ],
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

@@ -6,7 +6,7 @@ import 'dart:ui';
 import 'package:http/http.dart' as http;
 
 void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
-    Function refreshAppointments) {
+    Function refreshAppointments, docLog) {
   Future<void> deleteAppt(int id) async {
     const baseUrl =
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/deleteAppoinment/';
@@ -44,109 +44,134 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
           ),
           Center(
             child: AlertDialog(
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              content: Container(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.02,
-                  left: MediaQuery.of(context).size.height * 0.02,
-                ),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.25,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 3.5, offset: Offset(0, 0)),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                backgroundColor: Colors.transparent,
+                contentPadding: EdgeInsets.zero,
+                content: Wrap(
                   children: [
-                    Text(
-                      '¿Seguro que desea eliminar esta cita?',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.085,
-                        color: const Color(0xFF4F2263),
-                      ),
-                    ),
-                    Padding(
+                    Container(
                       padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.035,
+                        top: MediaQuery.of(context).size.height * 0.02,
+                        left: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      margin: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.035),
+                      //width: MediaQuery.of(context).size.width,
+                      //height: MediaQuery.of(context).size.height * 0.25,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 3.5, offset: Offset(0, 0)),
+                        ],
+                      ),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.035,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.03,
-                              ),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.black,
-                                    width: 2.5,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  '¿Seguro que desea eliminar esta cita?',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.075,
+                                    color: const Color(0xFF4F2263),
                                   ),
                                 ),
                               ),
-                              child: Text(
-                                'Cancelar',
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.05,
-                                  color: const Color(0xFF4F2263),
-                                ),
-                              ),
-                            ),
+                            ],
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                side: const BorderSide(
-                                    color: Colors.red, width: 1),
-                              ),
-                              backgroundColor: Colors.white,
-                              surfaceTintColor: Colors.white,
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.05,
-                              ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.035,
                             ),
-                            onPressed: () {
-                              deleteAppt(id!);
-                              Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                '/drScreen',
-                                (Route<dynamic> route) => false,
-                              );
-                            },
-                            child: Text(
-                              'Eliminar',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.048,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height *
+                                          0.035,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.03,
+                                    ),
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.black,
+                                          width: 2.5,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Cancelar',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.05,
+                                        color: const Color(0xFF4F2263),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 4,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      side: const BorderSide(
+                                          color: Colors.red, width: 1),
+                                    ),
+                                    backgroundColor: Colors.white,
+                                    surfaceTintColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.05,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    deleteAppt(id!);
+                                    docLog
+                                        ? Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            '/drScreen',
+                                            (Route<dynamic> route) => false,
+                                          )
+                                        : Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            '/assistantScreen',
+                                            (Route<dynamic> route) => false,
+                                          );
+                                  },
+                                  child: Text(
+                                    'Eliminar',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.048,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
                   ],
-                ),
-              ),
-            ),
+                )),
           ),
         ],
       );
