@@ -9,6 +9,7 @@ import 'package:beaute_app/forms/appoinmentForm.dart';
 
 import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
+import 'notifications.dart';
 
 class DoctorAdmin extends StatefulWidget {
   final bool docLog;
@@ -360,6 +361,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
         return ClientForm(
             onHideBtnsBottom: _onHideBtnsBottom,
             onFinishedAddClient: _onFinishedAddClient);
+      case 4:
+        return const NotificationsScreen(doctorId: 3);
       default:
         return Container();
     }
