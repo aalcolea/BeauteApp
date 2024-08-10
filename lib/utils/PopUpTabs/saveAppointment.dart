@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/appointmentModel.dart';
 
-void showConfirmationDialog(BuildContext context, Appointment appointment, TextEditingController dateController, TextEditingController timeController, Function refreshAppointments) {
+void showConfirmationDialog(BuildContext context, Appointment appointment, TextEditingController dateController, TextEditingController timeController,
+    Function(DateTime) fetchAppointments) {
   Future<void> saveAppointment() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,7 +39,7 @@ void showConfirmationDialog(BuildContext context, Appointment appointment, TextE
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
       if (response.statusCode == 200) {
-        refreshAppointments();
+        fetchAppointments(updatedDateTime);
         Navigator.of(context).pop();
       } else {
         throw Exception('Error al actualizar el appointment');
