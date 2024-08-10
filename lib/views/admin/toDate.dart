@@ -389,7 +389,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       } else if (snapshot.hasError) {
                         return Text("Error: ${snapshot.error}");
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Text('No appointments found');
+                        return Text('No se han encontrado appoinments');
                       } else {
                         List<Appointment> filteredAppointments = snapshot.data!;
                         return ListView.builder(
@@ -923,7 +923,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                         appointment,
                                                         _dateController,
                                                         _timerController,
-                                                        refreshAppointments);
+                                                        fetchAppointments);
                                                     //showEditAppointmentDialog(context, appointment, refreshAppointments);
                                                   },
                                                   child: Icon(
