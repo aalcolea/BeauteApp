@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -23,8 +25,9 @@ class PinEntryScreen extends StatefulWidget {
 }
 
 class PinEntryScreenState extends State<PinEntryScreen> {
-  final TextEditingController pinController = TextEditingController();
+  final pinController = TextEditingController();
   bool isDocLog = false;
+  final textfield = TextEditingController();
 
   @override
   void initState() {
@@ -100,7 +103,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
   Widget numBtn(int number) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: 11),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -133,173 +136,237 @@ class PinEntryScreenState extends State<PinEntryScreen> {
     );
   }
 
+  onNumberTapped(number) {
+    setState(() {
+      if (enteredPin.length < 6) {
+        textfield.text += number;
+        enteredPin += number.toString();
+        pinController.text = enteredPin;
+        enteredPin.length >= 6 ? authenticate() : print(enteredPin);
+      }
+    });
+  }
+
+  onCancelText() {
+    setState(() {
+      if (enteredPin.isNotEmpty) {
+        enteredPin = enteredPin.substring(0, enteredPin.length - 1);
+        textfield.text = enteredPin;
+      }
+    });
+  }
+
+  Widget inputField() {
+    return Container(
+      color: const Color(0xFFA0A0A0).withOpacity(0.7),
+      height: 100,
+      alignment: Alignment.bottomCenter,
+      child: TextFormField(
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        controller: textfield,
+      ),
+    );
+  }
+
+  Widget keyField(numK, desc, col, blur) {
+    return InkWell(
+      onTap: () => onNumberTapped(numK),
+      child: Container(
+        margin: const EdgeInsets.all(12),
+        width: MediaQuery.of(context).size.width * 0.17,
+        height: MediaQuery.of(context).size.width * 0.17,
+        decoration: BoxDecoration(
+          color: col,
+          shape: BoxShape.circle,
+        ),
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+            child: Container(
+              decoration: BoxDecoration(
+                color: col.withOpacity(0.5),
+                // Ajusta la opacidad según prefieras
+                shape: BoxShape.circle,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    numK,
+                    style: TextStyle(fontSize: 30, color: Colors.white),
+                  ),
+                  Text(
+                    desc,
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget backSpace() {
+    return Container(
+      margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.07),
+      alignment: Alignment.centerRight,
+      //mainAxisAlignment: MainAxisAlignment.end,
+      child: TextButton(
+        onPressed: textfield.text.isNotEmpty
+            ? () {
+                onCancelText();
+              }
+            : () {
+                widget.onCloseScreeen(true);
+              },
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
+        child: Text(
+          textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: MediaQuery.of(context).size.width * 0.0485),
+        ),
+      ),
+    );
+  }
+
+  Widget gridView() {
+    return Container(
+        padding: EdgeInsets.only(left: 60, right: 60, top: 10),
+        child: GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          children: [
+            keyField('1', '', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '2', 'A B C', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '3', 'D E F', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '4', 'G H I', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '5', 'J K L', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '6', 'M N Ñ', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '7', 'O P Q', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '8', 'R S T', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '9', 'U V W', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            /*    keyField('', '', Colors.transparent, 0.0),
+            keyField('0', 'X Y Z', const Color(0xFFA0A0A0).withOpacity(0.2),7.0),
+            keyField('', '', Colors.transparent, 0.0),*/
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
+    return SafeArea(
+      child: Stack(
         children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            child: Container(),
+          ),
           Container(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.36),
-            color: const Color(0xFF111111).withOpacity(0.81),
-            child: ListView(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05),
-              physics: const BouncingScrollPhysics(),
+            decoration: BoxDecoration(
+              color: const Color(0xFF111111).withOpacity(0.7),
+            ),
+            child: Column(
               children: [
-                Column(
-                  children: [
-                    Center(
-                      child: Text(
-                        'Ingrese el pin',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.065,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.015,
-                    ),
-
-                    ///codigo para el pin
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        6,
-                        (index) {
-                          return Container(
-                            margin: EdgeInsets.only(
-                                left:
-                                    MediaQuery.of(context).size.height * 0.014,
-                                right:
-                                    MediaQuery.of(context).size.height * 0.014),
-                            width: pinVisible
-                                ? 30
-                                : MediaQuery.of(context).size.width * 0.048,
-                            height: pinVisible
-                                ? 40
-                                : MediaQuery.of(context).size.width * 0.048,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(width: 3, color: Colors.white),
-                              color: index < enteredPin.length
-                                  ? pinVisible
-                                      ? Colors.black54
-                                      : Colors.white
-                                  : Colors.transparent,
-                            ),
-                            child: pinVisible && index < enteredPin.length
-                                ? Center(
-                                    child: Text(
-                                    enteredPin[index],
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ))
-                                : null,
-                          );
-                        },
-                      ),
-                    ),
-
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          pinVisible = !pinVisible;
-                        });
-                      },
-                      icon: Icon(
-                        pinVisible
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility,
+                //inputField(),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.15,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Ingrese el pin',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.065,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(
-                        height: pinVisible
-                            ? MediaQuery.of(context).size.height * 0.02
-                            : MediaQuery.of(context).size.height * 0.02),
-
-                    for (var i = 0; i < 3; i++)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.height * 0.042),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: List.generate(
-                            3,
-                            (index) => numBtn(1 + 3 * i + index),
-                          ).toList(),
-                        ),
-                      ),
-
-                    Padding(
-                      padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.height * 0.041),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(''), //SizedBox(),
-                          ),
-                          numBtn(0),
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: MediaQuery.of(context).size.height * 0.03,
-                                top:
-                                    MediaQuery.of(context).size.height * 0.015),
-                            alignment: Alignment.center,
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  if (enteredPin.isNotEmpty) {
-                                    enteredPin = enteredPin.substring(
-                                        0, enteredPin.length - 1);
-                                  }
-                                });
-                              },
-                              child: Icon(
-                                Icons.backspace_outlined,
-                                color: Colors.white,
-                                size:
-                                    MediaQuery.of(context).size.height * 0.065,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.13,
-                    )
-                  ],
+                  ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          enteredPin = '';
-                          widget.onCloseScreeen(true);
-                          //Navigator.of(context).pop(context);
-                        });
+
+                ///codigo para el pin
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height * 0.04,
+                    top: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      4,
+                      (index) {
+                        return Container(
+                          margin: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.height * 0.014,
+                              right:
+                                  MediaQuery.of(context).size.height * 0.014),
+                          width: pinVisible
+                              ? 30
+                              : MediaQuery.of(context).size.width * 0.040,
+                          height: pinVisible
+                              ? 40
+                              : MediaQuery.of(context).size.width * 0.040,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(width: 1.2, color: Colors.white),
+                            color: index < enteredPin.length
+                                ? pinVisible
+                                    ? Colors.black54
+                                    : Colors.white
+                                : Colors.transparent,
+                          ),
+                          child: pinVisible && index < enteredPin.length
+                              ? Center(
+                                  child: Text(
+                                  enteredPin[index],
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ))
+                              : null,
+                        );
                       },
-                      child: const Text(
-                        'Cancelar',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
-                  ],
+                  ),
+                ),
+
+                gridView(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 60),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      keyField('0', 'X Y Z',
+                          const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                    ],
+                  ),
+                ),
+
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      backSpace(),
+                    ],
+                  ),
                 ),
               ],
             ),

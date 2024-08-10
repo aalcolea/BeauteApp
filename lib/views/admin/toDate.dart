@@ -240,6 +240,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     _timerController.dispose();
     _dateController.dispose();
     timerControllertoShow.dispose();
+    keyboardVisibilitySubscription.cancel();
   }
 
   @override

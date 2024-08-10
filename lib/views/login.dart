@@ -41,6 +41,7 @@ class _LoginState extends State<Login> {
                     bottom: MediaQuery.of(context).size.width * 0.32),
                 child: CircleAvatar(
                   radius: MediaQuery.of(context).size.height * 0.21,
+
                   backgroundImage:
                       const AssetImage("assets/imgLog/logoBeauteWhite.png"),
                 ),
