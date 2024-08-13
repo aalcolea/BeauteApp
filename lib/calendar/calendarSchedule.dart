@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -217,18 +218,16 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.width * 0.035),
             alignment: Alignment.centerLeft,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.07,
             decoration: BoxDecoration(
               color: const Color(0xFF4F2263),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
                   icon: Icon(
-                    Icons.arrow_back_ios_rounded,
+                    CupertinoIcons.back,
                     color: Colors.white,
                     size: MediaQuery.of(context).size.width * 0.094,
                   ),
@@ -254,7 +253,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                 ),
                 IconButton(
                   icon: Icon(
-                    Icons.arrow_forward_ios_rounded,
+                    CupertinoIcons.forward,
                     color: Colors.white,
                     size: MediaQuery.of(context).size.width * 0.094,
                   ),

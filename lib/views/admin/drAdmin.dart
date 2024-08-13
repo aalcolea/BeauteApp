@@ -9,9 +9,11 @@ import 'package:beaute_app/forms/appoinmentForm.dart';
 
 import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
+import 'notifications.dart';
 
 class DoctorAdmin extends StatefulWidget {
   final bool docLog;
+
   const DoctorAdmin({super.key, required this.docLog});
 
   @override
@@ -60,24 +62,23 @@ class _DoctorAdminState extends State<DoctorAdmin> {
           _selectedScreen == 3
               ? _selectedScreen = 1
               : showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (builder) {
-              return AlertCloseDialog(
-                onCancelConfirm: _onCancelConfirm,
-              );
-            },
-          ).then((_) {
-            if (_cancelConfirm == true) {
-              if (_cancelConfirm) {
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  SystemNavigator.pop();
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (builder) {
+                    return AlertCloseDialog(
+                      onCancelConfirm: _onCancelConfirm,
+                    );
+                  },
+                ).then((_) {
+                  if (_cancelConfirm == true) {
+                    if (_cancelConfirm) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        SystemNavigator.pop();
+                      });
+                    }
+                  }
                 });
-              }
-            }
-          });
         });
-
       });
       return;
     }
@@ -88,7 +89,6 @@ class _DoctorAdminState extends State<DoctorAdmin> {
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     super.initState();
-
   }
 
   @override
@@ -96,7 +96,6 @@ class _DoctorAdminState extends State<DoctorAdmin> {
     keyboardVisibilitySubscription.cancel();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -142,10 +141,10 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                           _selectedScreen == 1
                               ? 'Calendario'
                               : _selectedScreen == 3
-                              ? 'Nuevo Cliente'
-                              : _selectedScreen == 4
-                              ? 'Notificaciones'
-                              : '',
+                                  ? 'Nuevo Cliente'
+                                  : _selectedScreen == 4
+                                      ? 'Notificaciones'
+                                      : '',
                           style: TextStyle(
                             color: const Color(0xFF4F2263),
                             fontSize: MediaQuery.of(context).size.width * 0.082,
@@ -154,7 +153,6 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                         ),
                       ],
                     ),
-
                     Row(
                       children: [
                         IconButton(
@@ -360,6 +358,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
         return ClientForm(
             onHideBtnsBottom: _onHideBtnsBottom,
             onFinishedAddClient: _onFinishedAddClient);
+      case 4:
+        return const NotificationsScreen(doctorId: 3);
       default:
         return Container();
     }
