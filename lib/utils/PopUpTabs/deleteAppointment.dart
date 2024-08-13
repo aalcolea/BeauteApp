@@ -43,135 +43,121 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
             ),
           ),
           Center(
-            child: AlertDialog(
-                backgroundColor: Colors.transparent,
-                contentPadding: EdgeInsets.zero,
-                content: Wrap(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.02,
-                        left: MediaQuery.of(context).size.height * 0.02,
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.04),
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.02,
+                bottom: MediaQuery.of(context).size.height * 0.02,
+              ),
+              //width: MediaQuery.of(context).size.width,
+              //height: MediaQuery.of(context).size.height * 0.25,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white,
+                boxShadow: const [
+                  BoxShadow(blurRadius: 3.5, offset: Offset(0, 0)),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          '¿Seguro que desea eliminar esta cita?',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.075,
+                            color: const Color(0xFF4F2263),
+                          ),
+                        ),
                       ),
-                      margin: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.035),
-                      //width: MediaQuery.of(context).size.width,
-                      //height: MediaQuery.of(context).size.height * 0.25,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white,
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 3.5, offset: Offset(0, 0)),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  textAlign: TextAlign.center,
-                                  '¿Seguro que desea eliminar esta cita?',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.075,
-                                    color: const Color(0xFF4F2263),
-                                  ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.035,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.03,
+                            ),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Color(0xFF4F2263),
+                                  width: 2.0,
                                 ),
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              right: MediaQuery.of(context).size.width * 0.035,
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height *
-                                          0.035,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.03,
-                                    ),
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.black,
-                                          width: 2.5,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Cancelar',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        color: const Color(0xFF4F2263),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      side: const BorderSide(
-                                          color: Colors.red, width: 1),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                    surfaceTintColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.05,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    deleteAppt(id!);
-                                    docLog
-                                        ? Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            '/drScreen',
-                                            (Route<dynamic> route) => false,
-                                          )
-                                        : Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            '/assistantScreen',
-                                            (Route<dynamic> route) => false,
-                                          );
-                                  },
-                                  child: Text(
-                                    'Eliminar',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.048,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              'Cancelar',
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                color: const Color(0xFF4F2263),
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side:
+                                  const BorderSide(color: Colors.red, width: 1),
+                            ),
+                            backgroundColor: Colors.white,
+                            surfaceTintColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.05,
+                            ),
+                          ),
+                          onPressed: () {
+                            deleteAppt(id!);
+                            docLog
+                                ? Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/drScreen',
+                                    (Route<dynamic> route) => false,
+                                  )
+                                : Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/assistantScreen',
+                                    (Route<dynamic> route) => false,
+                                  );
+                          },
+                          child: Text(
+                            'Eliminar',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.048,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                )),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       );
