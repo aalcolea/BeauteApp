@@ -171,8 +171,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 _selectedScreen = 1;
                                 _hideBtnsBottom = false;
                               }
-
-                              //
                             });
                           },
                           icon: Icon(

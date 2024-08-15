@@ -238,7 +238,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           padding: EdgeInsets.zero,
         ),
         child: Text(
-          textfield.text.isNotEmpty ? 'Elimi nar' : 'Cancelar',
+          textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
           style: TextStyle(
               color: Colors.white,
               fontSize: MediaQuery.of(context).size.width * 0.0485),
@@ -254,10 +254,9 @@ class PinEntryScreenState extends State<PinEntryScreen> {
             right: MediaQuery.of(context).size.width * 0.16,
             top: MediaQuery.of(context).size.width * 0.03),
         child: GridView.count(
+          physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: MediaQuery.of(context).size.width * 0.06,
-          // Espacio horizontal entre columnas
           mainAxisSpacing: MediaQuery.of(context).size.width * 0.06,
-          // Espacio vertical entre filas
           crossAxisCount: 3,
           shrinkWrap: true,
           children: [

@@ -40,8 +40,8 @@ class _LoginState extends State<Login> {
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.width * 0.32),
                 child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
                   radius: MediaQuery.of(context).size.height * 0.21,
-
                   backgroundImage:
                       const AssetImage("assets/imgLog/logoBeauteWhite.png"),
                 ),
@@ -86,10 +86,10 @@ class _LoginState extends State<Login> {
                         Padding(
                           padding: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.035),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: MediaQuery.of(context).size.width * 0.1,
+                          child: Image.asset(
+                            'assets/imgLog/docWhite.png',
+                            width: MediaQuery.of(context).size.width * 0.08,
+                            height: MediaQuery.of(context).size.width * 0.08,
                           ),
                         ),
                         Container(
@@ -153,14 +153,16 @@ class _LoginState extends State<Login> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.035),
-                          child: Icon(
+                            padding: EdgeInsets.only(
+                                left:
+                                    MediaQuery.of(context).size.width * 0.035),
+                            child: Image.asset(
+                                'assets/imgLog/docWhite.png') /*Icon(
                             Icons.person,
                             color: Colors.white,
                             size: MediaQuery.of(context).size.width * 0.1,
-                          ),
-                        ),
+                          ),*/
+                            ),
                         Container(
                           margin: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.015,
@@ -223,11 +225,7 @@ class _LoginState extends State<Login> {
                         Padding(
                           padding: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.035),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: MediaQuery.of(context).size.width * 0.1,
-                          ),
+                          child: Image.asset('assets/imgLog/assiWhite.png'),
                         ),
                         Container(
                           margin: EdgeInsets.only(

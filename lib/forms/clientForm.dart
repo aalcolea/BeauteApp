@@ -9,6 +9,27 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
 
+/*class CustomTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    if (oldValue.text.endsWith(' ') &&
+        !newValue.text.endsWith(' ') &&
+        newValue.text.length == oldValue.text.length - 1 &&
+        oldValue.text.length > 1) {
+      return newValue;
+    }
+    return FilteringTextInputFormatter.allow(
+      RegExp(r'[a-zA-Z\s]'),
+    ).formatEditUpdate(oldValue, newValue);
+  }
+}*/
+
 class ClientForm extends StatefulWidget {
   final void Function(
     bool,
@@ -39,6 +60,8 @@ class ClientFormState extends State<ClientForm> {
   FocusNode focusNodeClient = FocusNode();
   FocusNode focusNodeCel = FocusNode();
   FocusNode focusNodeEmail = FocusNode();
+
+  //final RegExp letterRegex = RegExp(r'^[a-zA-Z]+$');
 
   void hideKeyBoard() {
     if (visibleKeyboard) {
@@ -161,6 +184,9 @@ class ClientFormState extends State<ClientForm> {
                         bottom: MediaQuery.of(context).size.width * 0.045,
                         top: 0),
                     child: TextFormField(
+                      /* inputFormatters: [
+                        CustomTextInputFormatter(),
+                      ],*/
                       focusNode: focusNodeClient,
                       controller: _nameController,
                       decoration: InputDecoration(
@@ -207,6 +233,10 @@ class ClientFormState extends State<ClientForm> {
                         bottom: MediaQuery.of(context).size.width * 0.045,
                         top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(10),
+                      ],
                       controller: _numberController,
                       decoration: InputDecoration(
                         hintText: 'No. Celular',

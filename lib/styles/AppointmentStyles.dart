@@ -185,12 +185,22 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
-                    child: Icon(
+                    child: optSelected == 1
+                        ? Image.asset(
+                            'assets/imgLog/docWhite.png',
+                            width: MediaQuery.of(context).size.width * 0.06,
+                            height: MediaQuery.of(context).size.width * 0.06,
+                          )
+                        : Image.asset(
+                            'assets/imgLog/docPurpleS.png',
+                            width: MediaQuery.of(context).size.width * 0.07,
+                            height: MediaQuery.of(context).size.width * 0.07,
+                          ), /*Icon(
                       CupertinoIcons.person_crop_circle_fill,
                       color: optSelected == 1
                           ? Colors.white
                           : const Color(0xFF4F2263),
-                    ),
+                    ),*/
                   ),
                   Text(
                     'Doctor 1',
@@ -241,12 +251,22 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
-                    child: Icon(
+                    child: optSelected == 2
+                        ? Image.asset(
+                            'assets/imgLog/docWhite.png',
+                            width: MediaQuery.of(context).size.width * 0.06,
+                            height: MediaQuery.of(context).size.width * 0.06,
+                          )
+                        : Image.asset(
+                            'assets/imgLog/docPurpleS.png',
+                            width: MediaQuery.of(context).size.width * 0.07,
+                            height: MediaQuery.of(context).size.width * 0.07,
+                          ), /*Icon(
                       CupertinoIcons.person_crop_circle_fill,
                       color: optSelected == 2
                           ? Colors.white
                           : const Color(0xFF4F2263),
-                    ),
+                    ),*/
                   ),
                   Text(
                     'Doctor 2',
@@ -289,7 +309,13 @@ class FieldsToWrite extends StatelessWidget {
     this.contentPadding,
     this.controller,
     required this.readOnly,
-    this.focusNode, this.onChanged, this.onTap, this.eneabled, this.onEdComplete, this.textInputAction, this.onTapOutside,
+    this.focusNode,
+    this.onChanged,
+    this.onTap,
+    this.eneabled,
+    this.onEdComplete,
+    this.textInputAction,
+    this.onTapOutside,
   });
 
   @override

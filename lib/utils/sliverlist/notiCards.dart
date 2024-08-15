@@ -36,62 +36,6 @@ Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
   }
 }
 
-Future<void> readNotification(int appointmentId) async {
-  const baseUrl =
-      'https://beauteapp-dd0175830cc2.herokuapp.com/api/appointments';
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt_token');
-    if (token == null) {
-      throw Exception('No token found');
-    } else {
-      final response = await http.put(
-        Uri.parse('$baseUrl/$appointmentId/read'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        print('Notificacion marcada como leida');
-      } else {
-        throw Exception('Error al marcar la notificacion como leida');
-      }
-    }
-  } catch (e) {
-    print('Error: $e');
-    rethrow;
-  }
-}
-
-Future<void> unReadNotification(int appointmentId) async {
-  const baseUrl =
-      'https://beauteapp-dd0175830cc2.herokuapp.com/api/appointments';
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt_token');
-    if (token == null) {
-      throw Exception('No token found');
-    } else {
-      final response = await http.put(
-        Uri.parse('$baseUrl/$appointmentId/unRead'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        print('Notificacion marcada como desleida');
-      } else {
-        throw Exception('Error al marcar la notificacion como desleida');
-      }
-    }
-  } catch (e) {
-    print('Error: $e');
-    rethrow;
-  }
-}
-
 class NotiCards extends StatefulWidget {
   final Appointment2 appointment;
 
@@ -102,12 +46,70 @@ class NotiCards extends StatefulWidget {
 }
 
 class _NotiCardsState extends State<NotiCards> {
-  bool isRead = false;
+  late bool isRead;
+
+  Future<void> readNotification(int appointmentId) async {
+    const baseUrl =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/appointments';
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
+      if (token == null) {
+        throw Exception('No token found');
+      } else {
+        final response = await http.put(
+          Uri.parse('$baseUrl/$appointmentId/read'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+        if (response.statusCode == 200) {
+          setState(() {});
+          print('Notificacion marcada como leida');
+        } else {
+          throw Exception('Error al marcar la notificacion como leida');
+        }
+      }
+    } catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> unReadNotification(int appointmentId) async {
+    const baseUrl =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/appointments';
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
+      if (token == null) {
+        throw Exception('No token found');
+      } else {
+        final response = await http.put(
+          Uri.parse('$baseUrl/$appointmentId/unRead'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+        if (response.statusCode == 200) {
+          setState(() {});
+          print('Notificacion marcada como desleida');
+        } else {
+          throw Exception('Error al marcar la notificacion como desleida');
+        }
+      }
+    } catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    isRead = widget.appointment.notificationRead ?? false;
+    isRead = widget.appointment.notificationRead!;
   }
 
   @override
@@ -125,9 +127,10 @@ class _NotiCardsState extends State<NotiCards> {
               padding: EdgeInsets.only(
                   left: MediaQuery.of(context).size.height * 0.01,
                   right: MediaQuery.of(context).size.height * 0.01),
-              decoration: const BoxDecoration(
-                color: Color(0xFF4F2263),
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color:
+                    !isRead ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -139,7 +142,7 @@ class _NotiCardsState extends State<NotiCards> {
                     '¡Cita próxima!',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.055,
-                      color: Colors.white,
+                      color: !isRead ? Colors.white : Colors.white,
                     ),
                   ),
                   Row(
@@ -170,21 +173,13 @@ class _NotiCardsState extends State<NotiCards> {
                                 }
                               },
                         icon: Icon(
-                          widget.appointment.notificationRead!
+                          !isRead
                               ? CupertinoIcons.mail_solid
-                              : CupertinoIcons.mail,
+                              : Icons.markunread_mailbox_outlined,
                           color: Colors.white,
                           size: MediaQuery.of(context).size.width * 0.07,
                         ),
                       ),
-                      /*  Container(
-                        width: MediaQuery.of(context).size.width * 0.05,
-                        height: MediaQuery.of(context).size.width * 0.05,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isRead ? Colors.green : Colors.white,
-                        ),
-                      ),*/
                     ],
                   ),
                 ],
@@ -193,8 +188,10 @@ class _NotiCardsState extends State<NotiCards> {
             Container(
               padding:
                   EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-              decoration: const BoxDecoration(
-                color: Color(0xFFC5B6CD),
+              decoration: BoxDecoration(
+                color: !isRead
+                    ? const Color(0xFFC5B6CD)
+                    : Color(0xFFC5B6CD).withOpacity(0.3),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15),
                   bottomRight: Radius.circular(15),
@@ -209,6 +206,7 @@ class _NotiCardsState extends State<NotiCards> {
                         'Prepárate para tu cita de hoy.',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
+                          color: !isRead ? Colors.black : Colors.white,
                         ),
                       ),
                     ],
@@ -220,12 +218,14 @@ class _NotiCardsState extends State<NotiCards> {
                         'Paciente: ',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
+                          color: !isRead ? Colors.black : Colors.white,
                         ),
                       ),
                       Text(
                         widget.appointment.clientName ?? 'Desconocido',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
+                          color: !isRead ? Colors.black : Colors.white,
                         ),
                       ),
                     ],
@@ -237,6 +237,7 @@ class _NotiCardsState extends State<NotiCards> {
                         'Hora: ',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
+                          color: !isRead ? Colors.black : Colors.white,
                         ),
                       ),
                       Text(
@@ -245,6 +246,7 @@ class _NotiCardsState extends State<NotiCards> {
                             : 'Desconocido',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
+                          color: !isRead ? Colors.black : Colors.white,
                         ),
                       ),
                     ],
