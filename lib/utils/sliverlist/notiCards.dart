@@ -64,6 +64,34 @@ Future<void> readNotification(int appointmentId) async {
   }
 }
 
+Future<void> unReadNotification(int appointmentId) async {
+  const baseUrl =
+      'https://beauteapp-dd0175830cc2.herokuapp.com/api/appointments';
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if (token == null) {
+      throw Exception('No token found');
+    } else {
+      final response = await http.put(
+        Uri.parse('$baseUrl/$appointmentId/read'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print('Notificacion marcada como leida');
+      } else {
+        throw Exception('Error al marcar la notificacion como leida');
+      }
+    }
+  } catch (e) {
+    print('Error: $e');
+    rethrow;
+  }
+}
+
 class NotiCards extends StatefulWidget {
   final Appointment2 appointment;
 
@@ -119,31 +147,29 @@ class _NotiCardsState extends State<NotiCards> {
                       IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: () async {
-                          setState(() async {
-                            try {
-                              await readNotification(widget.appointment.id!);
-                              setState(() {
-                                isRead = true;
-                              });
-                            } catch (e) {
-                              print('Error: $e');
-                            }
-                          });
+                          try {
+                            await readNotification(widget.appointment.id!);
+                            setState(() {
+                              isRead = !isRead;
+                            });
+                          } catch (e) {
+                            print('Error: $e');
+                          }
                         },
                         icon: Icon(
-                          CupertinoIcons.checkmark_alt,
+                          isRead ? CupertinoIcons.mail_solid : CupertinoIcons.mail_solid,
                           color: Colors.white,
-                          size: MediaQuery.of(context).size.width * 0.085,
+                          size: MediaQuery.of(context).size.width * 0.07,
                         ),
                       ),
-                      Container(
+                      /*  Container(
                         width: MediaQuery.of(context).size.width * 0.05,
                         height: MediaQuery.of(context).size.width * 0.05,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isRead ? Colors.green : Colors.white,
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ],

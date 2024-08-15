@@ -8,11 +8,11 @@ class AlertCloseAppointmentScreen extends StatefulWidget {
   const AlertCloseAppointmentScreen({super.key, required this.onCancelConfirm});
 
   @override
-  State<AlertCloseAppointmentScreen> createState() => _AlertCloseAppointmentScreen();
+  State<AlertCloseAppointmentScreen> createState() =>
+      _AlertCloseAppointmentScreen();
 }
 
 class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
-  late int _colorIconHeadTorito;
   bool cancelConfirm = false;
 
   @override
@@ -80,7 +80,7 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                             backgroundColor: const Color(0xFFE8D3BE),
                             shape: const RoundedRectangleBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                             ),
                           ),
                           onPressed: () {
@@ -106,7 +106,7 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                           backgroundColor: const Color(0xFFE8D3BE),
                           shape: const RoundedRectangleBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(8.0)),
+                                BorderRadius.all(Radius.circular(8.0)),
                           ),
                         ),
                         onPressed: () {
