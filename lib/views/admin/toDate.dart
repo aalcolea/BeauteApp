@@ -103,7 +103,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       {int? id}) async {
     String baseUrl =
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments';
-    String baseUrl2 = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinmentsAssit';
+    String baseUrl2 =
+        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinmentsAssit';
     String url = id != null ? '$baseUrl/$id' : baseUrl2;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
@@ -239,6 +240,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     _timerController.dispose();
     _dateController.dispose();
     timerControllertoShow.dispose();
+    keyboardVisibilitySubscription.cancel();
   }
 
   @override
@@ -402,8 +404,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 ? DateFormat('hh:mm a')
                                     .format(appointment.appointmentDate!)
                                 : 'Hora desconocida';
-                            List<String> timeParts =
-                                time.split(' '); // Separar "01:00" y "PM"
+                            List<String> timeParts = time.split(' ');
 
                             String clientName =
                                 appointment.clientName ?? 'Cliente desconocido';
@@ -442,6 +443,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     ///
                                     expandedIndex = index;
                                     isTaped = true;
+                                    positionBtnIcon = true;
                                     modalReachTop = true;
                                     widget.reachTop(
                                         modalReachTop,
@@ -877,7 +879,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                           context,
                                                           widget,
                                                           appointment.id,
-                                                          refreshAppointments);
+                                                          refreshAppointments,
+                                                          isDocLog);
                                                     },
                                                     child: Icon(
                                                       Icons.delete,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
@@ -13,11 +14,14 @@ class ClientForm extends StatefulWidget {
     bool,
   ) onHideBtnsBottom;
   final void Function(
-      int,
-      bool,
-      ) onFinishedAddClient;
+    int,
+    bool,
+  ) onFinishedAddClient;
 
-  const ClientForm({super.key, required this.onHideBtnsBottom, required this.onFinishedAddClient});
+  const ClientForm(
+      {super.key,
+      required this.onHideBtnsBottom,
+      required this.onFinishedAddClient});
 
   @override
   ClientFormState createState() => ClientFormState();
@@ -41,7 +45,6 @@ class ClientFormState extends State<ClientForm> {
       FocusScope.of(context).unfocus();
     }
   }
-
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -76,7 +79,9 @@ class ClientFormState extends State<ClientForm> {
           focusNodeClient.unfocus();
           focusNodeEmail.unfocus();
           hideKeyBoard();
-          showClienteSuccessfullyAdded(context, widget, () {widget.onFinishedAddClient(1, false);});
+          showClienteSuccessfullyAdded(context, widget, () {
+            widget.onFinishedAddClient(1, false);
+          });
         }
       } else {
         print('Error al crear cliente: ${response.body}');
