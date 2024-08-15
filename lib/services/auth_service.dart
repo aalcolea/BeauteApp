@@ -173,9 +173,9 @@ class PinEntryScreenState extends State<PinEntryScreen> {
     return InkWell(
       onTap: () => onNumberTapped(numK),
       child: Container(
-        margin: const EdgeInsets.all(12),
-        width: MediaQuery.of(context).size.width * 0.17,
-        height: MediaQuery.of(context).size.width * 0.17,
+        margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+        width: MediaQuery.of(context).size.width * 0.182,
+        height: MediaQuery.of(context).size.width * 0.182,
         decoration: BoxDecoration(
           color: col,
           shape: BoxShape.circle,
@@ -186,7 +186,6 @@ class PinEntryScreenState extends State<PinEntryScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: col.withOpacity(0.5),
-                // Ajusta la opacidad según prefieras
                 shape: BoxShape.circle,
               ),
               child: Column(
@@ -194,12 +193,14 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                 children: [
                   Text(
                     numK,
-                    style: TextStyle(fontSize: 30, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.074,
+                        color: Colors.white),
                   ),
                   Text(
                     desc,
                     style: TextStyle(
-                        fontSize: 10,
+                        fontSize: MediaQuery.of(context).size.width * 0.0325,
                         fontWeight: FontWeight.normal,
                         color: Colors.white),
                   ),
@@ -240,7 +241,10 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
   Widget gridView() {
     return Container(
-        padding: EdgeInsets.only(left: 60, right: 60, top: 10),
+        padding: EdgeInsets.only(
+            left: MediaQuery.of(context).size.width * 0.16,
+            right: MediaQuery.of(context).size.width * 0.16,
+            top: MediaQuery.of(context).size.width * 0.03),
         child: GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
@@ -350,7 +354,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
                 gridView(),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 60),
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

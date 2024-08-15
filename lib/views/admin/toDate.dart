@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -921,12 +922,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     ),
                                                   ),
                                                   onPressed: () {
-                                                    showConfirmationDialog(
-                                                        context,
-                                                        appointment,
-                                                        _dateController,
-                                                        _timerController,
-                                                        fetchAppointments);
+                                                    setState(() {
+                                                      showConfirmationDialog(
+                                                          context,
+                                                          appointment,
+                                                          _dateController,
+                                                          _timerController,
+                                                          fetchAppointments);
+                                                      expandedIndex = null;
+                                                      isTaped = false;
+                                                    });
+
                                                     //showEditAppointmentDialog(context, appointment, refreshAppointments);
                                                   },
                                                   child: Icon(
