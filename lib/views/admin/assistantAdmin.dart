@@ -30,6 +30,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   bool _hideBtnsBottom = false;
   int _selectedScreen = 0;
   bool _cancelConfirm = false;
+  double? screenWidth;
+  double? screenHeight;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -48,6 +50,13 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     setState(() {
       _hideBtnsBottom = hideBtnsBottom;
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
   }
 
   @override
@@ -118,7 +127,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                     left: _selectedScreen == 3
                         ? MediaQuery.of(context).size.width * 0.016
                         : MediaQuery.of(context).size.width * 0.045,
-                    right: MediaQuery.of(context).size.width * 0.025),
+                    right: MediaQuery.of(context).size.width * 0.025,
+                    bottom: MediaQuery.of(context).size.width * 0.005),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -151,7 +161,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                       : '',
                           style: TextStyle(
                             color: const Color(0xFF4F2263),
-                            fontSize: MediaQuery.of(context).size.width * 0.082,
+                            fontSize: screenWidth! < 370.00
+                                ? MediaQuery.of(context).size.width * 0.078
+                                : MediaQuery.of(context).size.width * 0.082,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -197,7 +209,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                 child: Container(
                   margin: EdgeInsets.only(
                     bottom: _selectedScreen != 4
-                        ? MediaQuery.of(context).size.width * 0.055
+                        ? MediaQuery.of(context).size.width * 0.04
                         : MediaQuery.of(context).size.width * 0.0,
                   ),
                   decoration: BoxDecoration(
@@ -236,7 +248,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                   child: Container(
                     margin: EdgeInsets.only(
                       top: _selectedScreen == 1
-                          ? MediaQuery.of(context).size.width * 0.06
+                          ? MediaQuery.of(context).size.width * 0.03
                           : MediaQuery.of(context).size.width * 0.0,
                       bottom: MediaQuery.of(context).size.width * 0.06,
                       left: _selectedScreen != 4
@@ -257,7 +269,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                 visible: !_hideBtnsBottom,
                 child: Container(
                   margin: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).size.width * 0.055),
+                      bottom: screenWidth! < 370
+                          ? MediaQuery.of(context).size.width * 0.055
+                          : MediaQuery.of(context).size.width * 0.02),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -329,8 +343,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10),
                             onTap: () {
-                              _selectedScreen = 3;
-                              setState(() {});
+                              setState(() {
+                                if (mounted) {
+                                  _selectedScreen = 3;
+                                }
+                              });
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),

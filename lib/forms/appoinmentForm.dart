@@ -19,6 +19,28 @@ import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
 import '../utils/timer.dart';
 
+class AlfaNumericInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    if (oldValue.text.endsWith(' ') &&
+        !newValue.text.endsWith(' ') &&
+        newValue.text.length == oldValue.text.length - 1 &&
+        oldValue.text.length > 1) {
+      // Permitimos la eliminación del espacio final
+      return newValue;
+    }
+    return FilteringTextInputFormatter.allow(
+      RegExp(r'[a-zA-Z0-9\s]'),
+    ).formatEditUpdate(oldValue, newValue);
+  }
+}
+
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
   final String? dateFromCalendarSchedule;
@@ -126,7 +148,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
               child: Material(
                   color: Colors.transparent,
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04),
                     child: AddClientAndAppointment(
                         clientNamefromAppointmetForm:
                             _clientTextController.text,
@@ -773,6 +796,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           MediaQuery.of(context).size.width *
                                               0.026),
                                   child: FieldsToWrite(
+                                    inputFormatters: [
+                                      AlfaNumericInputFormatter(),
+                                    ],
                                     suffixIcon: Icon(
                                       CupertinoIcons.pencil_ellipsis_rectangle,
                                       size: MediaQuery.of(context).size.width *
