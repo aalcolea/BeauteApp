@@ -74,16 +74,16 @@ Future<void> unReadNotification(int appointmentId) async {
       throw Exception('No token found');
     } else {
       final response = await http.put(
-        Uri.parse('$baseUrl/$appointmentId/read'),
+        Uri.parse('$baseUrl/$appointmentId/unRead'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
       if (response.statusCode == 200) {
-        print('Notificacion marcada como leida');
+        print('Notificacion marcada como desleida');
       } else {
-        throw Exception('Error al marcar la notificacion como leida');
+        throw Exception('Error al marcar la notificacion como desleida');
       }
     }
   } catch (e) {
@@ -146,18 +146,33 @@ class _NotiCardsState extends State<NotiCards> {
                     children: [
                       IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () async {
-                          try {
-                            await readNotification(widget.appointment.id!);
-                            setState(() {
-                              isRead = !isRead;
-                            });
-                          } catch (e) {
-                            print('Error: $e');
-                          }
-                        },
+                        onPressed: isRead == false
+                            ? () async {
+                                try {
+                                  await readNotification(
+                                      widget.appointment.id!);
+                                  setState(() {
+                                    isRead = true;
+                                  });
+                                } catch (e) {
+                                  print('Error: $e');
+                                }
+                              }
+                            : () async {
+                                try {
+                                  await unReadNotification(
+                                      widget.appointment.id!);
+                                  setState(() {
+                                    isRead = false;
+                                  });
+                                } catch (e) {
+                                  print('Error: $e');
+                                }
+                              },
                         icon: Icon(
-                          isRead ? CupertinoIcons.mail_solid : CupertinoIcons.mail_solid,
+                          widget.appointment.notificationRead!
+                              ? CupertinoIcons.mail_solid
+                              : CupertinoIcons.mail,
                           color: Colors.white,
                           size: MediaQuery.of(context).size.width * 0.07,
                         ),
