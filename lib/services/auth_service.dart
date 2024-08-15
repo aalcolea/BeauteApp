@@ -230,7 +230,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           padding: EdgeInsets.zero,
         ),
         child: Text(
-          textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
+          textfield.text.isNotEmpty ? 'Elimi nar' : 'Cancelar',
           style: TextStyle(
               color: Colors.white,
               fontSize: MediaQuery.of(context).size.width * 0.0485),
