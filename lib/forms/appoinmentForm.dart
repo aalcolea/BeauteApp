@@ -95,7 +95,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         print('Error al crear cliente: ${response.body}');
       }
     } catch (e) {
-      print('Error al envir datos: $e');
+      print('Error al enviar datos: $e');
     }
   }
 
@@ -123,17 +123,17 @@ class _AppointmentFormState extends State<AppointmentForm> {
               ),
             ),
             Center(
-              child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04),
-                    child: AddClientAndAppointment(
-                        clientNamefromAppointmetForm:
-                            _clientTextController.text,
-                        onSendDataToAppointmentForm:
-                            _onRecieveDataToAppointmentForm,
-                        onConfirm: _onConfirm),
-                  )),
+              child: AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: AddClientAndAppointment(
+                    clientNamefromAppointmetForm: _clientTextController.text,
+                    onSendDataToAppointmentForm:
+                        _onRecieveDataToAppointmentForm,
+                    onConfirm: _onConfirm),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
           ],
         );
