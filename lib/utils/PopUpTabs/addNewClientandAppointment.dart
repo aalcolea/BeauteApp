@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:beaute_app/models/clientModel.dart';
 
@@ -48,13 +50,11 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.only(
           left: MediaQuery.of(context).size.width * 0.02,
           right: MediaQuery.of(context).size.width * 0.02,
-          top: MediaQuery.of(context).size.width * 0.01,
           bottom: MediaQuery.of(context).size.width * 0.085,
         ),
         decoration: BoxDecoration(
@@ -62,6 +62,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
           color: Colors.white,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

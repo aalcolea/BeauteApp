@@ -16,10 +16,9 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, bool isDo
             ),
           ),
           Center(
-            child: AlertDialog(
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              content: Container(
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.04),
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.08),
                 width: MediaQuery.of(context).size.width,
@@ -33,13 +32,17 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, bool isDo
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      '¡Cita creada!',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.085,
-                        color: const Color(0xFF4F2263),
+                    Material(
+                      color: Colors.transparent,
+                      child: Text(
+                        '¡Cita creada!',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.085,
+                          color: const Color(0xFF4F2263),
+                        ),
                       ),
                     ),
+
                     TextButton(
                       onPressed: () {
                         isDoctorLog == true ?
@@ -63,7 +66,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, bool isDo
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: Colors.black,
+                              color: Color(0xFF4F2263),
                               width: 2.5,
                             ),
                           ),
@@ -80,7 +83,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, bool isDo
                   ],
                 ),
               ),
-            ),
+
           ),
         ],
       );

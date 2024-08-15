@@ -26,7 +26,7 @@ class _AlertCloseDialogState extends State<AlertCloseDialog> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
           child: Container(
-            color: Colors.black54.withOpacity(0.3),
+            color: Colors.white.withOpacity(0.1),
           ),
         ),
         AlertDialog(
