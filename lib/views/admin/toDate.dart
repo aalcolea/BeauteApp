@@ -50,8 +50,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   TextEditingController _timerController = TextEditingController();
   TextEditingController timerControllertoShow = TextEditingController();
   TextEditingController _dateController = TextEditingController();
-  String antiqueHour = '';
-  String antiqueDate = '';
   bool _isTimerShow = false;
   bool modifyAppointment = false;
   int? expandedIndex;
@@ -221,10 +219,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
-
-    keyboardVisibilityController = KeyboardVisibilityController();
-    checkKeyboardVisibility();
-    print(' antiqueHour $antiqueHour');
     positionBtnIcon = widget.btnToReachTop;
     selectedDate2 = widget.selectedDate;
     isDocLog = widget.isDocLog;
@@ -233,26 +227,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     selectedDate2 = widget.selectedDate;
     initializeAppointments(widget.selectedDate);
     dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
-    if (widget.firtsIndexTouchHour != null) {
-      _timerController.text = widget.firtsIndexTouchHour!;
-      antiqueHour = widget.firtsIndexTouchHour!;
-    }
-    if (widget.firtsIndexTouchDate != null) {
-      _dateController.text = widget.firtsIndexTouchDate!;
-      antiqueDate = widget.firtsIndexTouchDate!;
-    }
-/*
     widget.firtsIndexTouchHour != null
         ? _timerController.text = widget.firtsIndexTouchHour!
         : null;
-    widget.firtsIndexTouchHour != null
-        ? antiqueHour = widget.firtsIndexTouchHour!
-        : null;
-*/
-
-/*    widget.firtsIndexTouchDate != null
+    widget.firtsIndexTouchDate != null
         ? _dateController.text = widget.firtsIndexTouchDate!
-        : null;*/
+        : null;
   }
 
   @override
@@ -313,8 +293,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       onTap: () {
                         setState(() {
                           selectedDate2 = date;
-                          dateOnly =
-                              DateFormat('yyyy-MM-dd').format(selectedDate2);
                           initializeAppointments(date);
                         });
                       },
@@ -916,8 +894,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     ),
                                                   ),
                                                 ),
-
-                                                ///boton para modificar
                                                 ElevatedButton(
                                                   style:
                                                       ElevatedButton.styleFrom(
@@ -947,37 +923,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                   ),
                                                   onPressed: () {
                                                     setState(() {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (builder) {
-                                                          return ConfirmationDialog(
-                                                            appointment:
-                                                                appointment,
-                                                            dateController:
-                                                                _dateController,
-                                                            timeController:
-                                                                _timerController,
-                                                            fetchAppointments:
-                                                                fetchAppointments,
-                                                          );
-                                                        },
-                                                      ).then((result) {
-                                                        if (result == true) {
-                                                          expandedIndex = null;
-                                                          isTaped = false;
-                                                          refreshAppointments();
-                                                        } else {
-                                                          _timerController
-                                                                  .text =
-                                                              antiqueHour;
-                                                          _dateController.text =
-                                                              antiqueDate;
-                                                        }
-                                                      });
+                                                      showConfirmationDialog(
+                                                          context,
+                                                          appointment,
+                                                          _dateController,
+                                                          _timerController,
+                                                          fetchAppointments);
+                                                      expandedIndex = null;
+                                                      isTaped = false;
                                                     });
-                                                    },
+
+                                                    //showEditAppointmentDialog(context, appointment, refreshAppointments);
+                                                  },
                                                   child: Icon(
                                                     CupertinoIcons.checkmark,
                                                     color: Colors.white,
@@ -1004,8 +961,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
               ),
-
-              ///boton para agregar cita
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4F2263),

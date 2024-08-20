@@ -170,49 +170,41 @@ class PinEntryScreenState extends State<PinEntryScreen> {
   }
 
   Widget keyField(numK, desc, col, blur) {
-    return ClipOval(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          focusColor: Colors.white,
-          splashColor: Colors.white,
-          onTap: () => onNumberTapped(numK),
-          child: Container(
-            margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.0),
-            width: MediaQuery.of(context).size.width * 0.182,
-            height: MediaQuery.of(context).size.width * 0.182,
-            decoration: BoxDecoration(
-              color: col,
-              shape: BoxShape.circle,
-            ),
-            child: ClipOval(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: col.withOpacity(0.5),
-                    shape: BoxShape.circle,
+    return InkWell(
+      onTap: () => onNumberTapped(numK),
+      child: Container(
+        margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+        width: MediaQuery.of(context).size.width * 0.182,
+        height: MediaQuery.of(context).size.width * 0.182,
+        decoration: BoxDecoration(
+          color: col,
+          shape: BoxShape.circle,
+        ),
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+            child: Container(
+              decoration: BoxDecoration(
+                color: col.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    numK,
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.074,
+                        color: Colors.white),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        numK,
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.074,
-                            color: Colors.white),
-                      ),
-                      Text(
-                        desc,
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0325,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white),
-                      ),
-                    ],
+                  Text(
+                    desc,
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.0325,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white),
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -365,9 +357,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
                 gridView(),
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width * 0.06,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
