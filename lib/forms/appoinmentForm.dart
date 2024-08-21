@@ -117,7 +117,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         print('Error al crear cliente: ${response.body}');
       }
     } catch (e) {
-      print('Error al envir datos: $e');
+      print('Error al enviar datos: $e');
     }
   }
 
