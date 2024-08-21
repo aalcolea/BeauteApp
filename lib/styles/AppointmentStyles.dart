@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
@@ -300,6 +301,7 @@ class FieldsToWrite extends StatelessWidget {
   final void Function()? onTap;
   final void Function()? onEdComplete;
   final void Function(PointerDownEvent)? onTapOutside;
+  final List<TextInputFormatter>? inputFormatters;
 
   const FieldsToWrite({
     super.key,
@@ -316,6 +318,7 @@ class FieldsToWrite extends StatelessWidget {
     this.onEdComplete,
     this.textInputAction,
     this.onTapOutside,
+    this.inputFormatters,
   });
 
   @override
@@ -325,6 +328,7 @@ class FieldsToWrite extends StatelessWidget {
     );
 
     return TextFormField(
+      inputFormatters: inputFormatters,
       textInputAction: textInputAction,
       onEditingComplete: onEdComplete,
       enabled: eneabled,

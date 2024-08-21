@@ -18,13 +18,14 @@ import '../../utils/PopUpTabs/saveAppointment.dart';
 import '../../utils/timer.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  final void Function(bool, int?, String, String, bool) reachTop;
+  final void Function(bool, int?, String, String, bool, String) reachTop;
   final bool isDocLog;
   final DateTime selectedDate;
   final int? expandedIndex;
   final String? firtsIndexTouchHour;
   final String? firtsIndexTouchDate;
   final bool btnToReachTop;
+  final String dateLookandFill;
 
   const AppointmentScreen(
       {Key? key,
@@ -34,7 +35,8 @@ class AppointmentScreen extends StatefulWidget {
       required this.isDocLog,
       this.firtsIndexTouchHour,
       this.firtsIndexTouchDate,
-      required this.btnToReachTop})
+      required this.btnToReachTop,
+      required this.dateLookandFill})
       : super(key: key);
 
   @override
@@ -46,7 +48,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   late Future<List<Appointment>> appointments;
   late bool modalReachTop;
 
-  late DateTime selectedDate2;
+  //late DateTime selectedDate2;
   TextEditingController _timerController = TextEditingController();
   TextEditingController timerControllertoShow = TextEditingController();
   TextEditingController _dateController = TextEditingController();
@@ -65,6 +67,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   bool isHourCorrect = false;
   int _selectedIndexAmPm = 0;
   bool positionBtnIcon = false;
+  int isSelectedHelper = 7;
+  String _dateLookandFill = '';
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -137,6 +141,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 appointment.appointmentDate!.year == selectedDate.year &&
                 appointment.appointmentDate!.month == selectedDate.month &&
                 appointment.appointmentDate!.day == selectedDate.day)
+            /*  appointment.appointmentDate != null &&
+                appointment.appointmentDate!.year == selectedDate.year &&
+                appointment.appointmentDate!.month == selectedDate.month &&
+                appointment.appointmentDate!.day == selectedDate.day)*/
             .toList();
       } else {
         return [];
@@ -148,7 +156,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> refreshAppointments() async {
     setState(() {
-      appointments = fetchAppointments(widget.selectedDate);
+      //appointments = fetchAppointments(widget.selectedDate);
+      appointments = fetchAppointments(dateTimeToinitModal);
     });
   }
 
@@ -217,11 +226,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   late DateTime dateTime;
   late String formattedTime;
+  late DateTime dateTimeToinitModal;
 
   @override
   void initState() {
     super.initState();
-
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     print(' antiqueHour $antiqueHour');
@@ -229,9 +238,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
-    selectedDate2 = widget.selectedDate;
-    initializeAppointments(widget.selectedDate);
-    dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+
+    if (widget.dateLookandFill.length > 4) {
+      dateOnly = widget.dateLookandFill;
+      dateTimeToinitModal = DateTime.parse(dateOnly!);
+      print('dateOnlyPressbtn al presionar el boton de expandir $dateOnly');
+    } else {
+      dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+      dateTimeToinitModal = DateTime.parse(dateOnly!);
+      //selectedDate2 = widget.selectedDate;
+      print('dateOnlyPressbtn $dateOnly');
+    }
+    /* selectedDate2 = widget.selectedDate;
+    initializeAppointments(selectedDate2);*/
+    //selectedDate2 = widget.selectedDate;
+    //print('formatdo que necesito : $selectedDate2');
+    print('formato que tengo : $dateOnly');
+    print('dateTimeToinitModal $dateTimeToinitModal');
+    initializeAppointments(dateTimeToinitModal);
+
     if (widget.firtsIndexTouchHour != null) {
       _timerController.text = widget.firtsIndexTouchHour!;
       antiqueHour = widget.firtsIndexTouchHour!;
@@ -265,6 +290,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorforShadow = Colors.grey.withOpacity(0.5);
     List<BoxShadow> normallyShadow = [
       const BoxShadow(
         color: Colors.black54,
@@ -281,6 +307,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       ),
     ];
 
+    List<BoxShadow> normallyShadowLookandFill = [
+      BoxShadow(
+        color: colorforShadow,
+        spreadRadius: 0,
+        blurRadius: 0,
+        offset: Offset(
+            0,
+            MediaQuery.of(context).size.width *
+                0.007), // Desplazamiento hacia abajo (sombra inferior)
+      ),
+    ];
+
     return Stack(
       children: [
         Container(
@@ -292,112 +330,176 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             color: Colors.white,
+
+            ///white
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.08,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    DateTime date =
-                        widget.selectedDate.add(Duration(days: index - 2));
-                    bool isSelected = selectedDate2.day == date.day &&
-                        selectedDate2.month == date.month &&
-                        selectedDate2.year == date.year;
+              Container(
+                //padding : EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.09),
+                height: MediaQuery.of(context).size.height * 0.12,
+                color: Colors.white,
 
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedDate2 = date;
-                          dateOnly =
-                              DateFormat('yyyy-MM-dd').format(selectedDate2);
-                          initializeAppointments(date);
-                          print('TEST: ${date}');
-                        });
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(0),
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: !isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 5.0,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.003),
-                                  ),
-                                  BoxShadow(
-                                    blurRadius: 25.0,
-                                    color: Colors.white,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.04),
-                                  ),
-                                ]
-                              : [
-                                  BoxShadow(
-                                    color: Colors.black54,
-                                    blurRadius: 5.0,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.002),
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            -0.04),
-                                  ),
-                                ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              DateFormat('EEE', 'es_ES')
-                                  .format(date)
-                                  .toUpperCase(),
-                              style: TextStyle(
-                                color: isSelected
-                                    ? Colors.deepPurple
-                                    : Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isSelected
-                                    ? MediaQuery.of(context).size.width * 0.057
-                                    : MediaQuery.of(context).size.width * 0.035,
-                              ),
-                            ),
-                            Text(
-                              "${date.day}",
-                              style: TextStyle(
-                                color: isSelected
-                                    ? Colors.deepPurple
-                                    : Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isSelected
-                                    ? MediaQuery.of(context).size.width * 0.051
-                                    : MediaQuery.of(context).size.width * 0.033,
-                              ),
-                            ),
-                          ],
-                        ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      width: MediaQuery.of(context).size.width * 0.02,
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.width * 0.06),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                            top: BorderSide(
+                                color: Colors.grey.withOpacity(0.6),
+                                width: isSelectedHelper == 0 ? 1.5 : 3.5),
+                            bottom: BorderSide(
+                                color: Colors.grey.withOpacity(0.6),
+                                width: isSelectedHelper == 0 ? 1.5 : 1.5)),
+                        boxShadow: isSelectedHelper == 0
+                            ? normallyShadowLookandFill
+                            : null,
                       ),
-                    );
-                  },
+                    ),
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final itemWidth = constraints.maxWidth / 5;
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              DateTime date = widget.selectedDate
+                                  .add(Duration(days: index - 2));
+                              bool isSelected = dateTimeToinitModal.day == date.day &&
+                                  dateTimeToinitModal.month == date.month &&
+                                  dateTimeToinitModal.year == date.year;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isSelectedHelper = index;
+                                    dateTimeToinitModal = date;
+                                    dateOnly = DateFormat('yyyy-MM-dd')
+                                        .format(dateTimeToinitModal);
+                                    dateTimeToinitModal =
+                                        DateTime.parse(dateOnly!);
+                                    initializeAppointments(dateTimeToinitModal);
+                                    print('dateOnly $dateOnly');
+                                    //print(${widget.dateLookandFill});
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(context).size.width *
+                                              0.06),
+                                  width: itemWidth,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(0),
+                                    border: index <= 5
+                                        ? Border(
+                                            left: BorderSide(
+                                              color:
+                                                  Colors.grey.withOpacity(0.6),
+                                              width: 1.5,
+                                            ),
+                                            top: BorderSide(
+                                              color:
+                                                  Colors.grey.withOpacity(0.6),
+                                              width:
+                                                  isSelected == true ? 1 : 3.5,
+                                            ),
+                                            bottom: BorderSide(
+                                              color:
+                                                  Colors.grey.withOpacity(0.6),
+                                              width: 1.5,
+                                            ),
+                                          )
+                                        : null,
+                                    boxShadow: isSelected
+                                        ? normallyShadowLookandFill
+                                        : null,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        DateFormat('EEE', 'es_ES')
+                                            .format(date)
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? Colors.deepPurple
+                                              : Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isSelected
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.057
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.038,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${date.day}",
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? Colors.deepPurple
+                                              : Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isSelected
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.051
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.036,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      width: MediaQuery.of(context).size.width * 0.02,
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.width * 0.06),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                          top: BorderSide(
+                              color: Colors.grey.withOpacity(0.6),
+                              width: isSelectedHelper == 4 ? 1.5 : 3.5),
+                          bottom: BorderSide(
+                            width: 1.5,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
+                          left: BorderSide(
+                            width: 1.5,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
+                        ),
+                        boxShadow: isSelectedHelper == 4
+                            ? normallyShadowLookandFill
+                            : null,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
@@ -414,7 +516,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       } else if (snapshot.hasError) {
                         return Text("Error: ${snapshot.error}");
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Text('No se han encontrado appoinments :D');
+                        return const Text('No se han encontrado appoinments');
                       } else {
                         List<Appointment> filteredAppointments = snapshot.data!;
                         return ListView.builder(
@@ -473,7 +575,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         expandedIndex,
                                         _timerController.text,
                                         _dateController.text,
-                                        positionBtnIcon);
+                                        positionBtnIcon,
+                                        _dateLookandFill);
                                   });
                                 }
                               },
@@ -959,40 +1062,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                                 _dateController,
                                                             timeController:
                                                                 _timerController,
+                                                            fetchAppointments:
+                                                                fetchAppointments,
                                                           );
                                                         },
                                                       ).then((result) {
                                                         if (result == true) {
                                                           expandedIndex = null;
                                                           isTaped = false;
-                                                          setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
-                                                          });
+                                                          refreshAppointments();
                                                         } else {
                                                           _timerController
                                                                   .text =
                                                               antiqueHour;
                                                           _dateController.text =
                                                               antiqueDate;
-                                                          setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
-                                                          });
                                                         }
                                                       });
                                                     });
-                                                    },
+                                                  },
                                                   child: Icon(
                                                     CupertinoIcons.checkmark,
                                                     color: Colors.white,
@@ -1034,7 +1122,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 onPressed: () {
-                  dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate2);
+                  dateOnly = DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -1054,17 +1142,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ],
           ),
         ),
+
+        ///btn expandir
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.43,
+          left: MediaQuery.of(context).size.width * 0.445,
           bottom: positionBtnIcon == false
-              ? MediaQuery.of(context).size.height * 0.467
+              ? screenWidth! < 370
+                  ? MediaQuery.of(context).size.height * 0.467
+                  : MediaQuery.of(context).size.height * 0.475 //0.467
               : positionBtnIcon == true
-                  ? MediaQuery.of(context).size.height * 0.905
+                  ? screenWidth! < 370
+                      ? MediaQuery.of(context).size.height * 0.905
+                      : MediaQuery.of(context).size.height * 0.912
                   : null,
           child: IconButton(
             padding: EdgeInsets.zero,
             onPressed: () {
               setState(() {
+                _dateLookandFill = dateOnly!;
+                print('_dateLookandFill $_dateLookandFill');
                 if (positionBtnIcon == false) {
                   positionBtnIcon = true;
                   modalReachTop = true;
@@ -1073,7 +1169,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       expandedIndex,
                       _timerController.text,
                       _dateController.text,
-                      positionBtnIcon);
+                      positionBtnIcon,
+                      _dateLookandFill);
                 } else {
                   positionBtnIcon = false;
                   modalReachTop = false;
@@ -1082,7 +1179,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       expandedIndex,
                       _timerController.text,
                       _dateController.text,
-                      positionBtnIcon);
+                      positionBtnIcon,
+                      _dateLookandFill);
                 }
               });
             },

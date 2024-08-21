@@ -70,12 +70,12 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _showModalCalledscndTime = false;
   String _timerOfTheFstIndexTouched = '';
   String _dateOfTheFstIndexTouched = '';
+  String _dateLookandFill = '';
 
   @override
   void initState() {
     super.initState();
     docLog = widget.isDoctorLog;
-    print(docLog);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -145,6 +145,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     _timerOfTheFstIndexTouched,
     _dateOfTheFstIndexTouched,
     _btnToReachTop,
+    _dateLookandFill,
   ) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
@@ -168,11 +169,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                   firtsIndexTouchHour: _timerOfTheFstIndexTouched,
                   firtsIndexTouchDate: _dateOfTheFstIndexTouched,
                   btnToReachTop: _btnToReachTop,
+                  dateLookandFill: _dateLookandFill,
                   reachTop: (bool reachTop,
                       int? expandedIndex,
                       String timerOfTheFstIndexTouched,
                       String dateOfTheFstIndexTouched,
-                      bool auxToReachTop) {
+                      bool auxToReachTop,
+                      String dateLookandFill) {
                     setState(() {
                       if (!varmodalReachTop) {
                         Navigator.pop(context);
@@ -182,6 +185,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         varmodalReachTop = true;
                         _expandedIndex = expandedIndex;
                         _showModalCalledscndTime = true;
+                        _dateLookandFill = dateLookandFill;
+                        print(
+                            '_dateLookandFill en primer iteracion $_dateLookandFill');
                         _showModaltoDate(
                             context,
                             details,
@@ -189,7 +195,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             _expandedIndex,
                             _timerOfTheFstIndexTouched,
                             _dateOfTheFstIndexTouched,
-                            _btnToReachTop);
+                            _btnToReachTop,
+                            _dateLookandFill);
                       } else {
                         varmodalReachTop = reachTop;
                         if (auxToReachTop == false) {
@@ -299,7 +306,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           null,
                           _timerOfTheFstIndexTouched,
                           _dateOfTheFstIndexTouched,
-                          _btnToReachTop);
+                          _btnToReachTop,
+                          _dateLookandFill);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {

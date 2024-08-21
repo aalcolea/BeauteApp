@@ -29,6 +29,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool _cancelConfirm = false;
+  double? screenWidth;
+  double? screenHeight;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -85,6 +87,13 @@ class _DoctorAdminState extends State<DoctorAdmin> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+  }
+
+  @override
   void initState() {
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
@@ -113,10 +122,11 @@ class _DoctorAdminState extends State<DoctorAdmin> {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: _selectedScreen != 1
+                    left: _selectedScreen == 3
                         ? MediaQuery.of(context).size.width * 0.016
                         : MediaQuery.of(context).size.width * 0.045,
-                    right: MediaQuery.of(context).size.width * 0.025),
+                    right: MediaQuery.of(context).size.width * 0.025,
+                    bottom: MediaQuery.of(context).size.width * 0.007),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -128,6 +138,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                               onPressed: () {
                                 setState(() {
                                   _selectedScreen = 1;
+                                  _hideBtnsBottom = false;
                                 });
                               },
                               padding: EdgeInsets.zero,
@@ -147,7 +158,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                                       : '',
                           style: TextStyle(
                             color: const Color(0xFF4F2263),
-                            fontSize: MediaQuery.of(context).size.width * 0.082,
+                            fontSize: screenWidth! < 370.00
+                                ? MediaQuery.of(context).size.width * 0.078
+                                : MediaQuery.of(context).size.width * 0.082,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -165,9 +178,6 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                                 _selectedScreen = 1;
                                 _hideBtnsBottom = false;
                               }
-                              _hideBtnsBottom = false;
-
-                              //
                             });
                           },
                           icon: Icon(
@@ -192,23 +202,34 @@ class _DoctorAdminState extends State<DoctorAdmin> {
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.width * 0.055,
+                    bottom: _selectedScreen != 4
+                        ? MediaQuery.of(context).size.width * 0.04
+                        : MediaQuery.of(context).size.width * 0.0,
                   ),
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15)),
-                      border: const Border(
-                        bottom: BorderSide(
-                          color: Color(0xFF4F2263),
-                          width: 2.5,
-                        ),
-                      ),
+                      borderRadius: BorderRadius.only(
+                          topLeft: _selectedScreen == 4
+                              ? const Radius.circular(15)
+                              : const Radius.circular(0),
+                          topRight: _selectedScreen == 4
+                              ? const Radius.circular(15)
+                              : const Radius.circular(0),
+                          bottomLeft: const Radius.circular(15),
+                          bottomRight: const Radius.circular(15)),
+                      border: _selectedScreen != 4
+                          ? const Border(
+                          bottom: BorderSide(
+                            color: Color(0xFF4F2263),
+                            width: 2.5,
+                          ))
+                          : null,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black54,
-                          blurRadius: 10.0,
+                          color: _selectedScreen != 4
+                              ? Colors.black54
+                              : Colors.white,
+                          blurRadius: _selectedScreen != 4 ? 10.0 : 0,
                           offset: Offset(
                               0, MediaQuery.of(context).size.width * 0.012),
                         ),
@@ -220,12 +241,17 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                       ]),
                   child: Container(
                     margin: EdgeInsets.only(
-                        top: _selectedScreen == 1
-                            ? MediaQuery.of(context).size.width * 0.06
-                            : MediaQuery.of(context).size.width * 0.0,
-                        bottom: MediaQuery.of(context).size.width * 0.06,
-                        left: MediaQuery.of(context).size.width * 0.045,
-                        right: MediaQuery.of(context).size.width * 0.045),
+                      top: _selectedScreen == 1
+                          ? MediaQuery.of(context).size.width * 0.03
+                          : MediaQuery.of(context).size.width * 0.0,
+                      bottom: MediaQuery.of(context).size.width * 0.06,
+                      left: _selectedScreen != 4
+                          ? MediaQuery.of(context).size.width * 0.045
+                          : MediaQuery.of(context).size.width * 0.0,
+                      right: _selectedScreen != 4
+                          ? MediaQuery.of(context).size.width * 0.045
+                          : MediaQuery.of(context).size.width * 0.0,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -237,7 +263,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                 visible: !_hideBtnsBottom,
                 child: Container(
                   margin: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).size.width * 0.055),
+                      bottom: screenWidth! < 370
+                          ? MediaQuery.of(context).size.width * 0.055
+                          : MediaQuery.of(context).size.width * 0.02),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,

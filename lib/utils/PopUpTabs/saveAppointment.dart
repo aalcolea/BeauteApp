@@ -11,12 +11,14 @@ class ConfirmationDialog extends StatefulWidget {
   final Appointment appointment;
   final TextEditingController dateController;
   final TextEditingController timeController;
+  final Function(DateTime) fetchAppointments;
 
   const ConfirmationDialog({
     super.key,
     required this.appointment,
     required this.dateController,
     required this.timeController,
+    required this.fetchAppointments,
   });
 
   @override
@@ -57,6 +59,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
       print('Response body: ${response.body}');
       if (response.statusCode == 200) {
         setState(() {
+          widget.fetchAppointments(updatedDateTime);
           Navigator.of(context).pop(true);
         });
       } else {

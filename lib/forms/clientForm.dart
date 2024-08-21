@@ -9,26 +9,73 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
 
-/*class CustomTextInputFormatter extends TextInputFormatter {
+class NameInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
+    // Verificar si el nuevo texto comienza con un espacio
+    if (newValue.text.startsWith(' ')) {
+      // Si comienza con un espacio, no permitimos la actualización y devolvemos el valor anterior
+      return oldValue;
+    }
+
+    // Verificar si el texto anterior termina con un espacio y el nuevo texto no
+    // Esto indica que el usuario está intentando eliminar un espacio final
+    if (oldValue.text.endsWith(' ') &&
+        !newValue.text.endsWith(' ') &&
+        newValue.text.length == oldValue.text.length - 1 &&
+        oldValue.text.length > 1) {
+      // Permitimos la eliminación del espacio final
+      return newValue;
+    }
+    return FilteringTextInputFormatter.allow(
+      RegExp(r'[a-zA-Z\s]'), // Expresión regular que permite letras y espacios
+    ).formatEditUpdate(oldValue, newValue);
+  }
+}
+
+class EmailInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // No permitir que el texto comience con un espacio
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }
+
+    // Permitir borrar un espacio intermedio
     if (oldValue.text.endsWith(' ') &&
         !newValue.text.endsWith(' ') &&
         newValue.text.length == oldValue.text.length - 1 &&
         oldValue.text.length > 1) {
       return newValue;
     }
-    return FilteringTextInputFormatter.allow(
-      RegExp(r'[a-zA-Z\s]'),
-    ).formatEditUpdate(oldValue, newValue);
+
+    // Aplicar filtros de caracteres permitidos y denegados
+    String filteredText = newValue.text;
+
+    // Filtrar los caracteres permitidos
+    filteredText = RegExp(r'[a-zA-Z0-9._%-@]')
+        .allMatches(filteredText)
+        .map((match) => match.group(0))
+        .join();
+
+    // Negar los caracteres no permitidos
+    filteredText = filteredText.replaceAll(RegExp(r'[<>?:;/+%]'), '');
+
+    return TextEditingValue(
+      text: filteredText,
+      selection: newValue.selection.copyWith(
+        baseOffset: filteredText.length,
+        extentOffset: filteredText.length,
+      ),
+    );
   }
-}*/
+}
 
 class ClientForm extends StatefulWidget {
   final void Function(
@@ -57,9 +104,12 @@ class ClientFormState extends State<ClientForm> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool hideBtnsBottom = false;
-  FocusNode focusNodeClient = FocusNode();
-  FocusNode focusNodeCel = FocusNode();
-  FocusNode focusNodeEmail = FocusNode();
+  late FocusNode focusNodeClient;
+  late FocusNode focusNodeCel;
+  late FocusNode focusNodeEmail;
+  bool errorInit = false;
+  double? screenWidth;
+  double? screenHeight;
 
   //final RegExp letterRegex = RegExp(r'^[a-zA-Z]+$');
 
@@ -98,9 +148,6 @@ class ClientFormState extends State<ClientForm> {
 
       if (response.statusCode == 201) {
         if (mounted) {
-          focusNodeCel.unfocus();
-          focusNodeClient.unfocus();
-          focusNodeEmail.unfocus();
           hideKeyBoard();
           showClienteSuccessfullyAdded(context, widget, () {
             widget.onFinishedAddClient(1, false);
@@ -121,10 +168,20 @@ class ClientFormState extends State<ClientForm> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+  }
+
+  @override
   void initState() {
     hideKeyBoard();
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
+    focusNodeClient = FocusNode();
+    focusNodeCel = FocusNode();
+    focusNodeEmail = FocusNode();
     super.initState();
   }
 
@@ -160,7 +217,9 @@ class ClientFormState extends State<ClientForm> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.width * 0.01,
+                        vertical: screenWidth! < 370
+                            ? MediaQuery.of(context).size.width * 0.01
+                            : MediaQuery.of(context).size.width * 0.02,
                         horizontal: MediaQuery.of(context).size.width * 0.02),
                     margin: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.0,
@@ -184,14 +243,16 @@ class ClientFormState extends State<ClientForm> {
                         bottom: MediaQuery.of(context).size.width * 0.045,
                         top: 0),
                     child: TextFormField(
-                      /* inputFormatters: [
-                        CustomTextInputFormatter(),
-                      ],*/
+                      inputFormatters: [
+                        NameInputFormatter(),
+                      ],
                       focusNode: focusNodeClient,
                       controller: _nameController,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.width * 0.02,
+                            vertical: screenWidth! < 370
+                                ? MediaQuery.of(context).size.width * 0.02
+                                : MediaQuery.of(context).size.width * 0.0325,
                             horizontal:
                                 MediaQuery.of(context).size.width * 0.02),
                         hintText: 'Nombre completo',
@@ -202,7 +263,7 @@ class ClientFormState extends State<ClientForm> {
                       onTap: () {
                         !visibleKeyboard
                             ? widget.onHideBtnsBottom(!visibleKeyboard)
-                            : print('');
+                            : null;
                       },
                       onEditingComplete: () =>
                           changeFocus(context, focusNodeClient, focusNodeCel),
@@ -210,7 +271,9 @@ class ClientFormState extends State<ClientForm> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.width * 0.01,
+                        vertical: screenWidth! < 370
+                            ? MediaQuery.of(context).size.width * 0.01
+                            : MediaQuery.of(context).size.width * 0.02,
                         horizontal: MediaQuery.of(context).size.width * 0.02),
                     margin: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.0),
@@ -233,15 +296,21 @@ class ClientFormState extends State<ClientForm> {
                         bottom: MediaQuery.of(context).size.width * 0.045,
                         top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
+                      focusNode: focusNodeCel,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(10),
                       ],
                       controller: _numberController,
                       decoration: InputDecoration(
+                        errorText: errorInit
+                            ? 'El número debe ser de 10 dígitos'
+                            : null,
                         hintText: 'No. Celular',
                         contentPadding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.width * 0.02,
+                            vertical: screenWidth! < 370
+                                ? MediaQuery.of(context).size.width * 0.02
+                                : MediaQuery.of(context).size.width * 0.0325,
                             horizontal:
                                 MediaQuery.of(context).size.width * 0.02),
                         border: OutlineInputBorder(
@@ -255,11 +324,22 @@ class ClientFormState extends State<ClientForm> {
                       },
                       onEditingComplete: () =>
                           changeFocus(context, focusNodeCel, focusNodeEmail),
+                      onChanged: (celnumber) {
+                        setState(() {
+                          if (celnumber.length != 10) {
+                            errorInit = true;
+                          } else {
+                            errorInit = false;
+                          }
+                        });
+                      },
                     ),
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.width * 0.01,
+                        vertical: screenWidth! < 370
+                            ? MediaQuery.of(context).size.width * 0.01
+                            : MediaQuery.of(context).size.width * 0.02,
                         horizontal: MediaQuery.of(context).size.width * 0.02),
                     margin: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.0),
@@ -282,11 +362,16 @@ class ClientFormState extends State<ClientForm> {
                         bottom: MediaQuery.of(context).size.width * 0.045,
                         top: MediaQuery.of(context).size.width * 0.0225),
                     child: TextFormField(
+                      inputFormatters: [
+                        EmailInputFormatter(),
+                      ],
                       focusNode: focusNodeEmail,
                       controller: _emailController,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.width * 0.02,
+                            vertical: screenWidth! < 370
+                                ? MediaQuery.of(context).size.width * 0.02
+                                : MediaQuery.of(context).size.width * 0.0325,
                             horizontal:
                                 MediaQuery.of(context).size.width * 0.02),
                         border: OutlineInputBorder(
@@ -308,9 +393,11 @@ class ClientFormState extends State<ClientForm> {
                             ? MediaQuery.of(context).size.width * 0.2
                             : MediaQuery.of(context).size.width * 0.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        createClient();
-                      },
+                      onPressed: errorInit
+                          ? null
+                          : () {
+                              createClient();
+                            },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: EdgeInsets.symmetric(
