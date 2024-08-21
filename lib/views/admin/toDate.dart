@@ -221,6 +221,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   void initState() {
     super.initState();
     positionBtnIcon = widget.btnToReachTop;
+    selectedDate2 = widget.selectedDate;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
@@ -331,6 +332,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               bool isSelected = selectedDate2.day == date.day &&
                                   selectedDate2.month == date.month &&
                                   selectedDate2.year == date.year;
+
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -997,50 +999,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                   ),
                                                   onPressed: () {
                                                     setState(() {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (builder) {
-                                                          return ConfirmationDialog(
-                                                            appointment:
-                                                                appointment,
-                                                            dateController:
-                                                                _dateController,
-                                                            timeController:
-                                                                _timerController,
-                                                          );
-                                                        },
-                                                      ).then((result) {
-                                                        if (result == true) {
-                                                          expandedIndex = null;
-                                                          isTaped = false;
-                                                          setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
-                                                          });
-                                                        } else {
-                                                          _timerController
-                                                                  .text =
-                                                              antiqueHour;
-                                                          _dateController.text =
-                                                              antiqueDate;
-                                                          setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
-                                                          });
-                                                        }
-                                                      });
+                                                      showConfirmationDialog(
+                                                          context,
+                                                          appointment,
+                                                          _dateController,
+                                                          _timerController,
+                                                          fetchAppointments);
+                                                      expandedIndex = null;
+                                                      isTaped = false;
                                                     });
                                                   },
                                                   child: Icon(

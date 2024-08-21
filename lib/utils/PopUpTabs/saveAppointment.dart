@@ -7,23 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/appointmentModel.dart';
 
-class ConfirmationDialog extends StatefulWidget {
-  final Appointment appointment;
-  final TextEditingController dateController;
-  final TextEditingController timeController;
-
-  const ConfirmationDialog({
-    super.key,
-    required this.appointment,
-    required this.dateController,
-    required this.timeController,
-  });
-
-  @override
-  _ConfirmationDialogState createState() => _ConfirmationDialogState();
-}
-
-class _ConfirmationDialogState extends State<ConfirmationDialog> {
+void showConfirmationDialog(BuildContext context, Appointment appointment, TextEditingController dateController, TextEditingController timeController,
+    Function(DateTime) fetchAppointments) {
   Future<void> saveAppointment() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -54,9 +39,8 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
       if (response.statusCode == 200) {
-        setState(() {
-          Navigator.of(context).pop(true);
-        });
+        fetchAppointments(updatedDateTime);
+        Navigator.of(context).pop();
       } else {
         throw Exception('Error al actualizar el appointment');
       }
