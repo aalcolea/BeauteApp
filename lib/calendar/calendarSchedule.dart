@@ -70,7 +70,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _showModalCalledscndTime = false;
   String _timerOfTheFstIndexTouched = '';
   String _dateOfTheFstIndexTouched = '';
-  String _tapedIndexLookandFill = '';
+  String _dateLookandFill = '';
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     _timerOfTheFstIndexTouched,
     _dateOfTheFstIndexTouched,
     _btnToReachTop,
-      String tapedDateLookandFill,
+    _dateLookandFill,
   ) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
@@ -169,12 +169,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                   firtsIndexTouchHour: _timerOfTheFstIndexTouched,
                   firtsIndexTouchDate: _dateOfTheFstIndexTouched,
                   btnToReachTop: _btnToReachTop,
+                  dateLookandFill: _dateLookandFill,
                   reachTop: (bool reachTop,
                       int? expandedIndex,
                       String timerOfTheFstIndexTouched,
                       String dateOfTheFstIndexTouched,
                       bool auxToReachTop,
-                      String tapeddDate) {
+                      String dateLookandFill) {
                     setState(() {
                       if (!varmodalReachTop) {
                         Navigator.pop(context);
@@ -184,6 +185,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         varmodalReachTop = true;
                         _expandedIndex = expandedIndex;
                         _showModalCalledscndTime = true;
+                        _dateLookandFill = dateLookandFill;
+                        print(
+                            '_dateLookandFill en primer iteracion $_dateLookandFill');
                         _showModaltoDate(
                             context,
                             details,
@@ -192,7 +196,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             _timerOfTheFstIndexTouched,
                             _dateOfTheFstIndexTouched,
                             _btnToReachTop,
-                        tapedDateLookandFill,);
+                            _dateLookandFill);
                       } else {
                         varmodalReachTop = reachTop;
                         if (auxToReachTop == false) {
@@ -303,7 +307,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           _timerOfTheFstIndexTouched,
                           _dateOfTheFstIndexTouched,
                           _btnToReachTop,
-                          _tapedIndexLookandFill);
+                          _dateLookandFill);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
