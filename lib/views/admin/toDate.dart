@@ -1071,13 +1071,30 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                         if (result == true) {
                                                           expandedIndex = null;
                                                           isTaped = false;
-                                                          refreshAppointments();
+                                                          setState(() {
+                                                            fetchAppointments(widget.selectedDate);
+                                                            late DateTime dateSelected = widget.selectedDate;
+                                                            DateTime date = widget.selectedDate;
+                                                            dateSelected = date;
+                                                            dateOnly =
+                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                            initializeAppointments(dateSelected);
+                                                          });
                                                         } else {
                                                           _timerController
-                                                                  .text =
+                                                              .text =
                                                               antiqueHour;
                                                           _dateController.text =
                                                               antiqueDate;
+                                                          setState(() {
+                                                            fetchAppointments(widget.selectedDate);
+                                                            late DateTime dateSelected = widget.selectedDate;
+                                                            DateTime date = widget.selectedDate;
+                                                            dateSelected = date;
+                                                            dateOnly =
+                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                            initializeAppointments(dateSelected);
+                                                          });
                                                         }
                                                       });
                                                     });
