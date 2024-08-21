@@ -338,7 +338,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             children: <Widget>[
               Container(
                 //padding : EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.09),
-                height: MediaQuery.of(context).size.height * 0.12,
+                height: MediaQuery.of(context).size.height * 0.08,
                 color: Colors.white,
 
                 child: Row(
@@ -347,7 +347,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       height: MediaQuery.of(context).size.height * 0.12,
                       width: MediaQuery.of(context).size.width * 0.02,
                       margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.width * 0.06),
+                          bottom: MediaQuery.of(context).size.width * 0.01),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border(
@@ -373,9 +373,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             itemBuilder: (context, index) {
                               DateTime date = widget.selectedDate
                                   .add(Duration(days: index - 2));
-                              bool isSelected = dateTimeToinitModal.day == date.day &&
-                                  dateTimeToinitModal.month == date.month &&
-                                  dateTimeToinitModal.year == date.year;
+                              bool isSelected =
+                                  dateTimeToinitModal.day == date.day &&
+                                      dateTimeToinitModal.month == date.month &&
+                                      dateTimeToinitModal.year == date.year;
 
                               return GestureDetector(
                                 onTap: () {
@@ -395,7 +396,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   margin: EdgeInsets.only(
                                       bottom:
                                           MediaQuery.of(context).size.width *
-                                              0.06),
+                                              0.01),
                                   width: itemWidth,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -478,7 +479,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       height: MediaQuery.of(context).size.height * 0.12,
                       width: MediaQuery.of(context).size.width * 0.02,
                       margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.width * 0.06),
+                          bottom: MediaQuery.of(context).size.width * 0.01),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border(
@@ -566,6 +567,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         'appointmetsToModify ${_dateController.text}');
 
                                     ///
+                                    _dateLookandFill = dateOnly!;
                                     expandedIndex = index;
                                     isTaped = true;
                                     positionBtnIcon = true;
@@ -1072,28 +1074,47 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                           expandedIndex = null;
                                                           isTaped = false;
                                                           setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
+                                                            //fetchAppointments(widget.selectedDate);
+                                                            fetchAppointments(
+                                                                dateTimeToinitModal);
+                                                            //late DateTime dateSelected = widget.selectedDate;
+                                                            late DateTime
+                                                                dateSelected =
+                                                                dateTimeToinitModal;
+                                                            //DateTime date = widget.selectedDate;
+                                                            DateTime date =
+                                                                dateTimeToinitModal;
                                                             dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
+                                                            dateOnly = DateFormat(
+                                                                    'yyyy-MM-dd')
+                                                                .format(
+                                                                    dateSelected);
+                                                            initializeAppointments(
+                                                                dateSelected);
                                                           });
                                                         } else {
                                                           _timerController
-                                                              .text =
+                                                                  .text =
                                                               antiqueHour;
                                                           _dateController.text =
                                                               antiqueDate;
                                                           setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
+                                                            fetchAppointments(
+                                                                widget
+                                                                    .selectedDate);
+                                                            late DateTime
+                                                                dateSelected =
+                                                                widget
+                                                                    .selectedDate;
+                                                            DateTime date = widget
+                                                                .selectedDate;
                                                             dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
+                                                            dateOnly = DateFormat(
+                                                                    'yyyy-MM-dd')
+                                                                .format(
+                                                                    dateSelected);
+                                                            initializeAppointments(
+                                                                dateSelected);
                                                           });
                                                         }
                                                       });
@@ -1140,7 +1161,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 onPressed: () {
-                  dateOnly = DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
+                  dateOnly =
+                      DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
