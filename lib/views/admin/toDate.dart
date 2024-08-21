@@ -18,7 +18,7 @@ import '../../utils/PopUpTabs/saveAppointment.dart';
 import '../../utils/timer.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  final void Function(bool, int?, String, String, bool, String) reachTop;
+  final void Function(bool, int?, String, String, bool) reachTop;
   final bool isDocLog;
   final DateTime selectedDate;
   final int? expandedIndex;
@@ -227,6 +227,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     checkKeyboardVisibility();
     print(' antiqueHour $antiqueHour');
     positionBtnIcon = widget.btnToReachTop;
+    selectedDate2 = widget.selectedDate;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
@@ -316,6 +317,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 //padding : EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.09),
                 height: MediaQuery.of(context).size.height * 0.12,
                 color: Colors.white,
+
                 child: Row(
                   children: [
                     Container(
@@ -1032,36 +1034,21 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                                 _dateController,
                                                             timeController:
                                                                 _timerController,
+                                                            fetchAppointments:
+                                                                fetchAppointments,
                                                           );
                                                         },
                                                       ).then((result) {
                                                         if (result == true) {
                                                           expandedIndex = null;
                                                           isTaped = false;
-                                                          setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
-                                                          });
+                                                          refreshAppointments();
                                                         } else {
                                                           _timerController
                                                                   .text =
                                                               antiqueHour;
                                                           _dateController.text =
                                                               antiqueDate;
-                                                          setState(() {
-                                                            fetchAppointments(widget.selectedDate);
-                                                            late DateTime dateSelected = widget.selectedDate;
-                                                            DateTime date = widget.selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly =
-                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                            initializeAppointments(dateSelected);
-                                                          });
                                                         }
                                                       });
                                                     });
