@@ -1067,6 +1067,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                           );
                                                         },
                                                       ).then((result) {
+                                                        //anadir
                                                         if (result == true) {
                                                           expandedIndex = null;
                                                           isTaped = false;
