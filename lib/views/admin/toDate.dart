@@ -226,7 +226,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     checkKeyboardVisibility();
     print(' antiqueHour $antiqueHour');
     positionBtnIcon = widget.btnToReachTop;
-    selectedDate2 = widget.selectedDate;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
@@ -316,6 +315,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           dateOnly =
                               DateFormat('yyyy-MM-dd').format(selectedDate2);
                           initializeAppointments(date);
+                          print('TEST: ${date}');
                         });
                       },
                       child: Container(
@@ -414,7 +414,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       } else if (snapshot.hasError) {
                         return Text("Error: ${snapshot.error}");
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Text('No se han encontrado appoinments');
+                        return Text('No se han encontrado appoinments :D');
                       } else {
                         List<Appointment> filteredAppointments = snapshot.data!;
                         return ListView.builder(
@@ -959,21 +959,36 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                                 _dateController,
                                                             timeController:
                                                                 _timerController,
-                                                            fetchAppointments:
-                                                                fetchAppointments,
                                                           );
                                                         },
                                                       ).then((result) {
                                                         if (result == true) {
                                                           expandedIndex = null;
                                                           isTaped = false;
-                                                          refreshAppointments();
+                                                          setState(() {
+                                                            fetchAppointments(widget.selectedDate);
+                                                            late DateTime dateSelected = widget.selectedDate;
+                                                            DateTime date = widget.selectedDate;
+                                                            dateSelected = date;
+                                                            dateOnly =
+                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                            initializeAppointments(dateSelected);
+                                                          });
                                                         } else {
                                                           _timerController
                                                                   .text =
                                                               antiqueHour;
                                                           _dateController.text =
                                                               antiqueDate;
+                                                          setState(() {
+                                                            fetchAppointments(widget.selectedDate);
+                                                            late DateTime dateSelected = widget.selectedDate;
+                                                            DateTime date = widget.selectedDate;
+                                                            dateSelected = date;
+                                                            dateOnly =
+                                                                DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                            initializeAppointments(dateSelected);
+                                                          });
                                                         }
                                                       });
                                                     });
