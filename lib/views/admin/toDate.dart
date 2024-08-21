@@ -65,6 +65,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   bool isHourCorrect = false;
   int _selectedIndexAmPm = 0;
   bool positionBtnIcon = false;
+  int isSelectedHelper = 7;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -266,6 +267,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorforShadow = Colors.grey.withOpacity(0.5);
     List<BoxShadow> normallyShadow = [
       const BoxShadow(
         color: Colors.black54,
@@ -282,6 +284,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       ),
     ];
 
+    List<BoxShadow> normallyShadowLookandFill = [
+      BoxShadow(
+        color: colorforShadow,
+        spreadRadius: 0,
+        blurRadius: 0,
+        offset: Offset(
+            0,
+            MediaQuery.of(context).size.width *
+                0.007), // Desplazamiento hacia abajo (sombra inferior)
+      ),
+    ];
+
     return Stack(
       children: [
         Container(
@@ -293,111 +307,172 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             color: Colors.white,
+
+            ///white
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.08,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    DateTime date =
-                        widget.selectedDate.add(Duration(days: index - 2));
-                    bool isSelected = selectedDate2.day == date.day &&
-                        selectedDate2.month == date.month &&
-                        selectedDate2.year == date.year;
+              Container(
+                //padding : EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.09),
+                height: MediaQuery.of(context).size.height * 0.12,
+                color: Colors.white,
 
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedDate2 = date;
-                          dateOnly =
-                              DateFormat('yyyy-MM-dd').format(selectedDate2);
-                          initializeAppointments(date);
-                        });
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(0),
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: !isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 5.0,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.003),
-                                  ),
-                                  BoxShadow(
-                                    blurRadius: 25.0,
-                                    color: Colors.white,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.04),
-                                  ),
-                                ]
-                              : [
-                                  BoxShadow(
-                                    color: Colors.black54,
-                                    blurRadius: 5.0,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.002),
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    offset: Offset(
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            -0.04),
-                                  ),
-                                ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              DateFormat('EEE', 'es_ES')
-                                  .format(date)
-                                  .toUpperCase(),
-                              style: TextStyle(
-                                color: isSelected
-                                    ? Colors.deepPurple
-                                    : Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isSelected
-                                    ? MediaQuery.of(context).size.width * 0.057
-                                    : MediaQuery.of(context).size.width * 0.035,
-                              ),
-                            ),
-                            Text(
-                              "${date.day}",
-                              style: TextStyle(
-                                color: isSelected
-                                    ? Colors.deepPurple
-                                    : Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isSelected
-                                    ? MediaQuery.of(context).size.width * 0.051
-                                    : MediaQuery.of(context).size.width * 0.033,
-                              ),
-                            ),
-                          ],
-                        ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      width: MediaQuery.of(context).size.width * 0.02,
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.width * 0.06),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                            top: BorderSide(
+                                color: Colors.grey.withOpacity(0.6),
+                                width: isSelectedHelper == 0 ? 1.5 : 3.5),
+                            bottom: BorderSide(
+                                color: Colors.grey.withOpacity(0.6),
+                                width: isSelectedHelper == 0 ? 1.5 : 1.5)),
+                        boxShadow: isSelectedHelper == 0
+                            ? normallyShadowLookandFill
+                            : null,
                       ),
-                    );
-                  },
+                    ),
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final itemWidth = constraints.maxWidth / 5;
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              DateTime date = widget.selectedDate
+                                  .add(Duration(days: index - 2));
+                              bool isSelected = selectedDate2.day == date.day &&
+                                  selectedDate2.month == date.month &&
+                                  selectedDate2.year == date.year;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isSelectedHelper = index;
+                                    selectedDate2 = date;
+                                    dateOnly = DateFormat('yyyy-MM-dd')
+                                        .format(selectedDate2);
+                                    initializeAppointments(date);
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(context).size.width *
+                                              0.06),
+                                  width: itemWidth,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(0),
+                                    border: index <= 5
+                                        ? Border(
+                                            left: BorderSide(
+                                              color:
+                                                  Colors.grey.withOpacity(0.6),
+                                              width: 1.5,
+                                            ),
+                                            top: BorderSide(
+                                              color:
+                                                  Colors.grey.withOpacity(0.6),
+                                              width:
+                                                  isSelected == true ? 1 : 3.5,
+                                            ),
+                                            bottom: BorderSide(
+                                              color:
+                                                  Colors.grey.withOpacity(0.6),
+                                              width: 1.5,
+                                            ),
+                                          )
+                                        : null,
+                                    boxShadow: isSelected
+                                        ? normallyShadowLookandFill
+                                        : null,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        DateFormat('EEE', 'es_ES')
+                                            .format(date)
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? Colors.deepPurple
+                                              : Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isSelected
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.057
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.038,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${date.day}",
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? Colors.deepPurple
+                                              : Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isSelected
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.051
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.036,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      width: MediaQuery.of(context).size.width * 0.02,
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.width * 0.06),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                          top: BorderSide(
+                              color: Colors.grey.withOpacity(0.6),
+                              width: isSelectedHelper == 4 ? 1.5 : 3.5),
+                          bottom: BorderSide(
+                            width: 1.5,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
+                          left: BorderSide(
+                            width: 1.5,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
+                        ),
+                        boxShadow: isSelectedHelper == 4
+                            ? normallyShadowLookandFill
+                            : null,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
@@ -414,7 +489,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       } else if (snapshot.hasError) {
                         return Text("Error: ${snapshot.error}");
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Text('No se han encontrado appoinments');
+                        return const Text('No se han encontrado appoinments');
                       } else {
                         List<Appointment> filteredAppointments = snapshot.data!;
                         return ListView.builder(
@@ -977,7 +1052,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                         }
                                                       });
                                                     });
-                                                    },
+                                                  },
                                                   child: Icon(
                                                     CupertinoIcons.checkmark,
                                                     color: Colors.white,
@@ -1039,12 +1114,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ],
           ),
         ),
+
+        ///bn
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.43,
+          left: MediaQuery.of(context).size.width * 0.445,
           bottom: positionBtnIcon == false
-              ? MediaQuery.of(context).size.height * 0.467
+              ? screenWidth! < 370
+                  ? MediaQuery.of(context).size.height * 0.467
+                  : MediaQuery.of(context).size.height * 0.475 //0.467
               : positionBtnIcon == true
-                  ? MediaQuery.of(context).size.height * 0.905
+                  ? screenWidth! < 370
+                      ? MediaQuery.of(context).size.height * 0.905
+                      : MediaQuery.of(context).size.height * 0.912
                   : null,
           child: IconButton(
             padding: EdgeInsets.zero,
