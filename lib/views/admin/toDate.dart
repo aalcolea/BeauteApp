@@ -18,7 +18,7 @@ import '../../utils/PopUpTabs/saveAppointment.dart';
 import '../../utils/timer.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  final void Function(bool, int?, String, String, bool, String) reachTop;
+  final void Function(bool, int?, String, String, bool) reachTop;
   final bool isDocLog;
   final DateTime selectedDate;
   final int? expandedIndex;

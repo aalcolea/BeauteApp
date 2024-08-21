@@ -144,9 +144,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     _expandedIndex,
     _timerOfTheFstIndexTouched,
     _dateOfTheFstIndexTouched,
-    _btnToReachTop,
-      String tapedDateLookandFill,
-  ) {
+    _btnToReachTop) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
           ? Colors.transparent
@@ -173,8 +171,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                       int? expandedIndex,
                       String timerOfTheFstIndexTouched,
                       String dateOfTheFstIndexTouched,
-                      bool auxToReachTop,
-                      String tapeddDate) {
+                      bool auxToReachTop) {
                     setState(() {
                       if (!varmodalReachTop) {
                         Navigator.pop(context);
@@ -191,8 +188,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             _expandedIndex,
                             _timerOfTheFstIndexTouched,
                             _dateOfTheFstIndexTouched,
-                            _btnToReachTop,
-                        tapedDateLookandFill,);
+                            _btnToReachTop);
                       } else {
                         varmodalReachTop = reachTop;
                         if (auxToReachTop == false) {
@@ -302,8 +298,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           null,
                           _timerOfTheFstIndexTouched,
                           _dateOfTheFstIndexTouched,
-                          _btnToReachTop,
-                          _tapedIndexLookandFill);
+                          _btnToReachTop);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
