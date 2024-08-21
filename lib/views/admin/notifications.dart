@@ -25,9 +25,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    _todayAppointments = fetchAppointmentsByDate(widget.doctorId, DateTime.now().toString());
-    _yesterdayAppointments = fetchAppointmentsByDate(widget.doctorId, DateTime.now().subtract(Duration(days: 1)).toString());
-    _dayBeforeYesterdayAppointments = fetchAppointmentsByDate(widget.doctorId, DateTime.now().subtract(Duration(days: 2)).toString());
+    _todayAppointments =
+        fetchAppointmentsByDate(widget.doctorId, DateTime.now().toString());
+    _yesterdayAppointments = fetchAppointmentsByDate(
+        widget.doctorId, DateTime.now().subtract(Duration(days: 1)).toString());
+    _dayBeforeYesterdayAppointments = fetchAppointmentsByDate(
+        widget.doctorId, DateTime.now().subtract(Duration(days: 2)).toString());
   }
 
   @override
@@ -43,18 +46,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
       ),
-      width: MediaQuery.of(context).size.width,
-      height: null,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Stack(
           children: [
+            ///este column representa el fondo
             Column(
               children: [
                 SizedBox(
                   height: screenWidth! < 370.00
                       ? MediaQuery.of(context).size.height * 0.027
-                      : MediaQuery.of(context).size.height * 0.0255,
+                      : MediaQuery.of(context).size.height * 0.0252,
                 ),
                 Expanded(
                   child: Container(
@@ -76,8 +78,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   children: [
                     SizedBox(
                       width: screenWidth! < 370.00
-                          ? MediaQuery.of(context).size.width * 0.75
-                          : MediaQuery.of(context).size.width * 0.775,
+                          ? MediaQuery.of(context).size.width *
+                              0.725 //pantallas < 370
+                          : MediaQuery.of(context).size.width *
+                              0.725, //pantallas > 370
                     ),
                     CustomPaint(
                       painter: TrianglePainter(),
@@ -87,15 +91,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ],
                 ),
                 Expanded(
-                  child: Container(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildSection('HOY', _todayAppointments),
-                          _buildSection('AYER', _yesterdayAppointments),
-                          _buildSection('ANTIER', _dayBeforeYesterdayAppointments),
-                        ],
-                      ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildSection('HOY', _todayAppointments),
+                        _buildSection('AYER', _yesterdayAppointments),
+                        _buildSection(
+                            'ANTIER', _dayBeforeYesterdayAppointments),
+                      ],
                     ),
                   ),
                 ),
@@ -107,7 +110,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildSection(String title, Future<List<Appointment2>> appointmentsFuture) {
+  Widget _buildSection(
+      String title, Future<List<Appointment2>> appointmentsFuture) {
     return Column(
       children: [
         Row(

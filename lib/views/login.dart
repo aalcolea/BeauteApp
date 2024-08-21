@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../styles/ladingDraw.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,18 +19,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/imgLog/landingood.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-
-        ///
+        const LadingDraw(),
         Container(
           color: Colors.transparent,
           child: Column(
@@ -40,7 +30,7 @@ class _LoginState extends State<Login> {
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.width * 0.32),
                 child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
                   radius: MediaQuery.of(context).size.height * 0.21,
                   backgroundImage:
                       const AssetImage("assets/imgLog/logoBeauteWhite.png"),

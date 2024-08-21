@@ -70,12 +70,12 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _showModalCalledscndTime = false;
   String _timerOfTheFstIndexTouched = '';
   String _dateOfTheFstIndexTouched = '';
+  String _tapedIndexLookandFill = '';
 
   @override
   void initState() {
     super.initState();
     docLog = widget.isDoctorLog;
-    print(docLog);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -145,6 +145,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     _timerOfTheFstIndexTouched,
     _dateOfTheFstIndexTouched,
     _btnToReachTop,
+      String tapedDateLookandFill,
   ) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
@@ -172,7 +173,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                       int? expandedIndex,
                       String timerOfTheFstIndexTouched,
                       String dateOfTheFstIndexTouched,
-                      bool auxToReachTop) {
+                      bool auxToReachTop,
+                      String tapeddDate) {
                     setState(() {
                       if (!varmodalReachTop) {
                         Navigator.pop(context);
@@ -189,7 +191,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             _expandedIndex,
                             _timerOfTheFstIndexTouched,
                             _dateOfTheFstIndexTouched,
-                            _btnToReachTop);
+                            _btnToReachTop,
+                        tapedDateLookandFill,);
                       } else {
                         varmodalReachTop = reachTop;
                         if (auxToReachTop == false) {
@@ -299,7 +302,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           null,
                           _timerOfTheFstIndexTouched,
                           _dateOfTheFstIndexTouched,
-                          _btnToReachTop);
+                          _btnToReachTop,
+                          _tapedIndexLookandFill);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
