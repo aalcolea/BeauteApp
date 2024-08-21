@@ -25,6 +25,7 @@ class AppointmentScreen extends StatefulWidget {
   final String? firtsIndexTouchHour;
   final String? firtsIndexTouchDate;
   final bool btnToReachTop;
+  final String dateLookandFill;
 
   const AppointmentScreen(
       {Key? key,
@@ -34,7 +35,8 @@ class AppointmentScreen extends StatefulWidget {
       required this.isDocLog,
       this.firtsIndexTouchHour,
       this.firtsIndexTouchDate,
-      required this.btnToReachTop})
+      required this.btnToReachTop,
+      required this.dateLookandFill})
       : super(key: key);
 
   @override
@@ -46,7 +48,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   late Future<List<Appointment>> appointments;
   late bool modalReachTop;
 
-  late DateTime selectedDate2;
+  //late DateTime selectedDate2;
   TextEditingController _timerController = TextEditingController();
   TextEditingController timerControllertoShow = TextEditingController();
   TextEditingController _dateController = TextEditingController();
@@ -66,6 +68,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   int _selectedIndexAmPm = 0;
   bool positionBtnIcon = false;
   int isSelectedHelper = 7;
+  String _dateLookandFill = '';
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -138,6 +141,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 appointment.appointmentDate!.year == selectedDate.year &&
                 appointment.appointmentDate!.month == selectedDate.month &&
                 appointment.appointmentDate!.day == selectedDate.day)
+            /*  appointment.appointmentDate != null &&
+                appointment.appointmentDate!.year == selectedDate.year &&
+                appointment.appointmentDate!.month == selectedDate.month &&
+                appointment.appointmentDate!.day == selectedDate.day)*/
             .toList();
       } else {
         return [];
@@ -149,7 +156,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> refreshAppointments() async {
     setState(() {
-      appointments = fetchAppointments(widget.selectedDate);
+      //appointments = fetchAppointments(widget.selectedDate);
+      appointments = fetchAppointments(dateTimeToinitModal);
     });
   }
 
@@ -218,22 +226,37 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   late DateTime dateTime;
   late String formattedTime;
+  late DateTime dateTimeToinitModal;
 
   @override
   void initState() {
     super.initState();
-
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     print(' antiqueHour $antiqueHour');
     positionBtnIcon = widget.btnToReachTop;
-    selectedDate2 = widget.selectedDate;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
-    selectedDate2 = widget.selectedDate;
-    initializeAppointments(widget.selectedDate);
-    dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+
+    if (widget.dateLookandFill.length > 4) {
+      dateOnly = widget.dateLookandFill;
+      dateTimeToinitModal = DateTime.parse(dateOnly!);
+      print('dateOnlyPressbtn al presionar el boton de expandir $dateOnly');
+    } else {
+      dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+      dateTimeToinitModal = DateTime.parse(dateOnly!);
+      //selectedDate2 = widget.selectedDate;
+      print('dateOnlyPressbtn $dateOnly');
+    }
+    /* selectedDate2 = widget.selectedDate;
+    initializeAppointments(selectedDate2);*/
+    //selectedDate2 = widget.selectedDate;
+    //print('formatdo que necesito : $selectedDate2');
+    print('formato que tengo : $dateOnly');
+    print('dateTimeToinitModal $dateTimeToinitModal');
+    initializeAppointments(dateTimeToinitModal);
+
     if (widget.firtsIndexTouchHour != null) {
       _timerController.text = widget.firtsIndexTouchHour!;
       antiqueHour = widget.firtsIndexTouchHour!;
@@ -350,18 +373,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             itemBuilder: (context, index) {
                               DateTime date = widget.selectedDate
                                   .add(Duration(days: index - 2));
-                              bool isSelected = selectedDate2.day == date.day &&
-                                  selectedDate2.month == date.month &&
-                                  selectedDate2.year == date.year;
+                              bool isSelected = dateTimeToinitModal.day == date.day &&
+                                  dateTimeToinitModal.month == date.month &&
+                                  dateTimeToinitModal.year == date.year;
 
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
                                     isSelectedHelper = index;
-                                    selectedDate2 = date;
+                                    dateTimeToinitModal = date;
                                     dateOnly = DateFormat('yyyy-MM-dd')
-                                        .format(selectedDate2);
-                                    initializeAppointments(date);
+                                        .format(dateTimeToinitModal);
+                                    dateTimeToinitModal =
+                                        DateTime.parse(dateOnly!);
+                                    initializeAppointments(dateTimeToinitModal);
+                                    print('dateOnly $dateOnly');
+                                    //print(${widget.dateLookandFill});
                                   });
                                 },
                                 child: Container(
@@ -548,7 +575,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         expandedIndex,
                                         _timerController.text,
                                         _dateController.text,
-                                        positionBtnIcon);
+                                        positionBtnIcon,
+                                        _dateLookandFill);
                                   });
                                 }
                               },
@@ -1094,7 +1122,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 onPressed: () {
-                  dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate2);
+                  dateOnly = DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -1115,7 +1143,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
         ),
 
-        ///bn
+        ///btn expandir
         Positioned(
           left: MediaQuery.of(context).size.width * 0.445,
           bottom: positionBtnIcon == false
@@ -1131,6 +1159,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             padding: EdgeInsets.zero,
             onPressed: () {
               setState(() {
+                _dateLookandFill = dateOnly!;
+                print('_dateLookandFill $_dateLookandFill');
                 if (positionBtnIcon == false) {
                   positionBtnIcon = true;
                   modalReachTop = true;
@@ -1139,7 +1169,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       expandedIndex,
                       _timerController.text,
                       _dateController.text,
-                      positionBtnIcon);
+                      positionBtnIcon,
+                      _dateLookandFill);
                 } else {
                   positionBtnIcon = false;
                   modalReachTop = false;
@@ -1148,7 +1179,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       expandedIndex,
                       _timerController.text,
                       _dateController.text,
-                      positionBtnIcon);
+                      positionBtnIcon,
+                      _dateLookandFill);
                 }
               });
             },
