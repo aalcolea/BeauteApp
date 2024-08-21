@@ -75,7 +75,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   void initState() {
     super.initState();
     docLog = widget.isDoctorLog;
-    print(docLog);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;

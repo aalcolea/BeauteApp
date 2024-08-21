@@ -31,9 +31,8 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
       if (token == null) {
         throw Exception('No existe el token');
       }
-      DateTime selectedDate =
-          DateFormat('yyyy-MM-dd').parse(widget.dateController.text);
-      DateTime selectedTime = DateFormat.jm().parse(widget.timeController.text);
+      DateTime selectedDate = DateFormat('yyyy-MM-dd').parse(dateController.text);
+      DateTime selectedTime = DateFormat.jm().parse(timeController.text);
       DateTime updatedDateTime = DateTime(
         selectedDate.year,
         selectedDate.month,
@@ -42,8 +41,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
         selectedTime.minute,
       );
       final response = await http.put(
-        Uri.parse(
-            'https://beauteapp-dd0175830cc2.herokuapp.com/api/editAppoinment/${widget.appointment.id}'),
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/editAppoinment/${appointment.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -60,114 +58,34 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
           Navigator.of(context).pop(true);
         });
       } else {
-        Navigator.of(context).pop(false);
         throw Exception('Error al actualizar el appointment');
       }
     } catch (e) {
       print('Error saving appointment: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al guardar la cita')),
+        SnackBar(content: Text('Error al guardar la cita')),
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
-          child: Container(
-            color: Colors.white.withOpacity(0.1),
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Confirmar Edición'),
+        content: Text('¿Está seguro de que desea guardar los cambios?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancelar'),
           ),
-        ),
-        Center(
-          child: Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.04),
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.width * 0.045),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.08,
-                    right: MediaQuery.of(context).size.width * 0.08,
-                    top: MediaQuery.of(context).size.width * 0.08,
-                    bottom: MediaQuery.of(context).size.width * 0.04,
-                  ),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    '¿Seguro que desea guardar los cambios?',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.075,
-                      color: const Color(0xFF4F2263),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.03,
-                        ),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color(0xFF4F2263),
-                              width: 2.0,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'Cancelar',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.055,
-                            color: const Color(0xFF4F2263),
-                          ),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          side: const BorderSide(
-                              color: const Color(0xFF4F2263), width: 1),
-                        ),
-                        backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                      ),
-                      onPressed: saveAppointment,
-                      child: Text(
-                        'Guardar',
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.055),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
+          ElevatedButton(
+            onPressed: saveAppointment,
+            child: Text('Guardar'),
           ),
-        ),
-        // El AlertDialog en primer plano
-      ],
-    );
-  }
+        ],
+      );
+    },
+  );
 }

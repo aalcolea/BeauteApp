@@ -11,13 +11,14 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, VoidCallb
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
             child: Container(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.black54.withOpacity(0.3),
             ),
           ),
           Center(
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.04),
+            child: AlertDialog(
+              backgroundColor: Colors.transparent,
+              contentPadding: EdgeInsets.zero,
+              content: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.25,
                 decoration: BoxDecoration(
@@ -56,7 +57,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, VoidCallb
                   ],
                 ),
               ),
-
+            ),
           ),
         ],
       );
