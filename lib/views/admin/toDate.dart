@@ -1098,24 +1098,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                               antiqueHour;
                                                           _dateController.text =
                                                               antiqueDate;
-                                                          setState(() {
-                                                            fetchAppointments(
-                                                                widget
-                                                                    .selectedDate);
-                                                            late DateTime
-                                                                dateSelected =
-                                                                widget
-                                                                    .selectedDate;
-                                                            DateTime date = widget
-                                                                .selectedDate;
-                                                            dateSelected = date;
-                                                            dateOnly = DateFormat(
-                                                                    'yyyy-MM-dd')
-                                                                .format(
-                                                                    dateSelected);
-                                                            initializeAppointments(
-                                                                dateSelected);
-                                                          });
                                                         }
                                                       });
                                                     });
