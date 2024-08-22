@@ -232,22 +232,25 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: Icon(
-                    CupertinoIcons.back,
-                    color: Colors.white,
-                    size: MediaQuery.of(context).size.width * 0.094,
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    icon: Icon(
+                      CupertinoIcons.back,
+                      color: Colors.white,
+                      size: MediaQuery.of(context).size.width * 0.094,
+                    ),
+                    onPressed: () {
+                      int previousMonth = currentMonth! - 1;
+                      int previousYear = visibleYear!;
+                      if (previousMonth < 1) {
+                        previousMonth = 12;
+                        previousYear--;
+                      }
+                      _calendarController.displayDate =
+                          DateTime(previousYear, previousMonth, 1);
+                    },
                   ),
-                  onPressed: () {
-                    int previousMonth = currentMonth! - 1;
-                    int previousYear = visibleYear!;
-                    if (previousMonth < 1) {
-                      previousMonth = 12;
-                      previousYear--;
-                    }
-                    _calendarController.displayDate =
-                        DateTime(previousYear, previousMonth, 1);
-                  },
                 ),
                 Text(
                   currentMonth != null
@@ -258,23 +261,26 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                       fontSize: MediaQuery.of(context).size.width * 0.078,
                       color: Colors.white),
                 ),
-                IconButton(
-                  icon: Icon(
-                    CupertinoIcons.forward,
-                    color: Colors.white,
-                    size: MediaQuery.of(context).size.width * 0.094,
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    icon: Icon(
+                      CupertinoIcons.forward,
+                      color: Colors.white,
+                      size: MediaQuery.of(context).size.width * 0.094,
+                    ),
+                    onPressed: () {
+                      int nextMonth = currentMonth! + 1;
+                      int nextYear = visibleYear!;
+                      if (nextMonth > 12) {
+                        nextMonth = 1;
+                        nextYear++;
+                      }
+                      _calendarController.displayDate =
+                          DateTime(nextYear, nextMonth, 1);
+                    },
                   ),
-                  onPressed: () {
-                    int nextMonth = currentMonth! + 1;
-                    int nextYear = visibleYear!;
-                    if (nextMonth > 12) {
-                      nextMonth = 1;
-                      nextYear++;
-                    }
-                    _calendarController.displayDate =
-                        DateTime(nextYear, nextMonth, 1);
-                  },
-                ),
+                )
               ],
             ),
           ),
