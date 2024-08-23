@@ -117,7 +117,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
       },
       child: Scaffold(
         body: Container(
-          padding:
+          margin:
               EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
           color: Colors.white,
           child: Column(
@@ -259,6 +259,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           : MediaQuery.of(context).size.width * 0.0,
                     ),
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: _buildBody(),
