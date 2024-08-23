@@ -218,72 +218,72 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(
+           Container(
+             margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.width * 0.035),
-            alignment: Alignment.centerLeft,
-            decoration: BoxDecoration(
-              color: const Color(0xFF4F2263),
-              borderRadius: BorderRadius.circular(10),
+             decoration: BoxDecoration(
+               color: const Color(0xFF4F2263),
+               borderRadius: BorderRadius.circular(10),
+             ),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 IconButton(
+                   //padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.07),
+                     icon: Icon(
+                       CupertinoIcons.back,
+                       color: Colors.white,
+                       size: MediaQuery.of(context).size.width * 0.094,
+                     ),
+                     onPressed: () {
+                       setState(() {
+                         print('object');
+                         int previousMonth = currentMonth! - 1;
+                         int previousYear = visibleYear!;
+                         if (previousMonth < 1) {
+                           previousMonth = 12;
+                           previousYear--;
+                         }
+                         _calendarController.displayDate =
+                             DateTime(previousYear, previousMonth, 1);
+                       });
+
+                     },
+                 ),
+                 Text(
+                   currentMonth != null
+                       ? '${getMonthName(currentMonth!)} $visibleYear'
+                       : '${getMonthName(initMonth)} $visibleYear',
+                   textAlign: TextAlign.center,
+                   style: TextStyle(
+                       fontSize: MediaQuery.of(context).size.width * 0.075,
+                       color: Colors.white),
+                 ),
+           Material(
+                   color: Colors.transparent,
+                   child: IconButton(
+                     icon: Icon(
+                       CupertinoIcons.forward,
+                       color: Colors.white,
+                       size: MediaQuery.of(context).size.width * 0.094,
+                     ),
+                     onPressed: () {
+                       int nextMonth = currentMonth! + 1;
+                       int nextYear = visibleYear!;
+                       if (nextMonth > 12) {
+                         nextMonth = 1;
+                         nextYear++;
+                       }
+                       _calendarController.displayDate =
+                           DateTime(nextYear, nextMonth, 1);
+                     },
+                   ),
+                 )
+               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  child: IconButton(
-                    icon: Icon(
-                      CupertinoIcons.back,
-                      color: Colors.white,
-                      size: MediaQuery.of(context).size.width * 0.094,
-                    ),
-                    onPressed: () {
-                      int previousMonth = currentMonth! - 1;
-                      int previousYear = visibleYear!;
-                      if (previousMonth < 1) {
-                        previousMonth = 12;
-                        previousYear--;
-                      }
-                      _calendarController.displayDate =
-                          DateTime(previousYear, previousMonth, 1);
-                    },
-                  ),
-                ),
-                Text(
-                  currentMonth != null
-                      ? '${getMonthName(currentMonth!)} $visibleYear'
-                      : '${getMonthName(initMonth)} $visibleYear',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.078,
-                      color: Colors.white),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: IconButton(
-                    icon: Icon(
-                      CupertinoIcons.forward,
-                      color: Colors.white,
-                      size: MediaQuery.of(context).size.width * 0.094,
-                    ),
-                    onPressed: () {
-                      int nextMonth = currentMonth! + 1;
-                      int nextYear = visibleYear!;
-                      if (nextMonth > 12) {
-                        nextMonth = 1;
-                        nextYear++;
-                      }
-                      _calendarController.displayDate =
-                          DateTime(nextYear, nextMonth, 1);
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
+           ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -624,8 +624,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }
 
