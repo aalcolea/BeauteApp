@@ -1,6 +1,7 @@
 import 'package:beaute_app/models/notificationsForAssistant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../calendar/calendarSchedule.dart';
 import '../../utils/paintToNotifications.dart';
 import '../../utils/sliverlist/notiCards.dart';
@@ -17,22 +18,27 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   double? screenWidth;
   double? screenHeight;
-
-  late Future<List<Appointment2>> _todayAppointments;
-  late Future<List<Appointment2>> _yesterdayAppointments;
-  late Future<List<Appointment2>> _dayBeforeYesterdayAppointments;
+  int? userId;
+  late Future<List<Appointment2>> todayAppointments;
+  late Future<List<Appointment2>> tomorrowAppointments;
 
   @override
   void initState() {
     super.initState();
-    _todayAppointments =
-        fetchAppointmentsByDate(widget.doctorId, DateTime.now().toString());
-    _yesterdayAppointments = fetchAppointmentsByDate(
-        widget.doctorId, DateTime.now().subtract(Duration(days: 1)).toString());
-    _dayBeforeYesterdayAppointments = fetchAppointmentsByDate(
-        widget.doctorId, DateTime.now().subtract(Duration(days: 2)).toString());
+    todayAppointments = Future.value([]);
+    tomorrowAppointments = Future.value([]);
+    loadUserId();
   }
-
+  Future<void> loadUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getInt('user_id');
+    });
+    if (userId != null) {
+      todayAppointments = fetchAppointmentsByDate(userId!, DateTime.now().toString());
+      tomorrowAppointments = fetchAppointmentsByDate(userId!, DateTime.now().add(Duration(days: 1)).toString());
+    }
+  }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -94,10 +100,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        _buildSection('HOY', _todayAppointments),
-                        _buildSection('AYER', _yesterdayAppointments),
-                        _buildSection(
-                            'ANTIER', _dayBeforeYesterdayAppointments),
+                        _buildSection('HOY', todayAppointments),
+                        _buildSection('MANANA', tomorrowAppointments),
                       ],
                     ),
                   ),
