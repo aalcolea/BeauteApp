@@ -16,12 +16,14 @@ Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
       throw Exception('No token found');
     } else {
       final response = await http.get(
-        Uri.parse('$baseUrl$id/$date'),
+        Uri.parse(baseUrl + '$id' + '/' + '$date'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
+      print(baseUrl + '$id');
+      print(baseUrl + '$id' + '/' + '$date');
       if (response.statusCode == 200) {
         print(jsonDecode(response.body)['appointments']);
         List<dynamic> data = jsonDecode(response.body)['appointments'];
