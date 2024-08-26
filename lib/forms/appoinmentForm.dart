@@ -36,7 +36,7 @@ class AlfaNumericInputFormatter extends TextInputFormatter {
       return newValue;
     }
     return FilteringTextInputFormatter.allow(
-      RegExp(r'[a-zA-Z0-9\s]'),
+      RegExp(r'[a-zA-ZñÑ0-9\s]'),
     ).formatEditUpdate(oldValue, newValue);
   }
 }
@@ -595,6 +595,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     _clientTextController =
                                         fieldTextEditingController;
                                     return FieldsToWrite(
+                                      inputFormatters: [
+                                        AlfaNumericInputFormatter(),
+                                      ],
                                       textInputAction: TextInputAction.done,
                                       readOnly: false,
                                       labelText: 'Cliente',

@@ -239,7 +239,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                      ),
                      onPressed: () {
                        setState(() {
-                         print('object');
                          int previousMonth = currentMonth! - 1;
                          int previousYear = visibleYear!;
                          if (previousMonth < 1) {
@@ -261,9 +260,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                        fontSize: MediaQuery.of(context).size.width * 0.075,
                        color: Colors.white),
                  ),
-           Material(
-                   color: Colors.transparent,
-                   child: IconButton(
+           IconButton(
                      icon: Icon(
                        CupertinoIcons.forward,
                        color: Colors.white,
@@ -280,7 +277,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                            DateTime(nextYear, nextMonth, 1);
                      },
                    ),
-                 )
                ],
             ),
            ),

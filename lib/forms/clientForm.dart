@@ -31,7 +31,7 @@ class NameInputFormatter extends TextInputFormatter {
       return newValue;
     }
     return FilteringTextInputFormatter.allow(
-      RegExp(r'[a-zA-Z\s]'), // Expresión regular que permite letras y espacios
+      RegExp(r'[a-zA-ZñÑ0-9\s]'), // Expresión regular que permite letras y espacios
     ).formatEditUpdate(oldValue, newValue);
   }
 }
