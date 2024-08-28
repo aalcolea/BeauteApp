@@ -18,8 +18,14 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
           'Content-Type': 'application/json',
         },
       );
+
       if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
         print("Appointment eliminado con éxito");
+        if (responseData['fcm_token'] != null) {
+          print("Token FCM del doctor: ${responseData['fcm_token']}");
+        }
+
         refreshAppointments();
       } else {
         print('Error eliminando appointment: ${response.statusCode}');
@@ -29,6 +35,7 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
       print('Error: $e');
     }
   }
+
 
   showDialog(
     context: context,

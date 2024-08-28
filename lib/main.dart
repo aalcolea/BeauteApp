@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'forms/appoinmentForm.dart';
 import 'models/notificationsForAssistant.dart';
@@ -29,23 +30,39 @@ void main() async {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Mensaje recibido en primer plano (app abierta): ${message.notification?.title}');
   });
-
-  ListaSingleton.instance.notiforAssistant
-      .add(NotificationsforAssistant('Valor 1A', 'Valor 2A', DateTime.now()));
-  ListaSingleton.instance.notiforAssistant
-      .add(NotificationsforAssistant('Valor 3A', 'Valor 4A', DateTime.now()));
-  print(ListaSingleton.instance.notiforAssistant[0]);
-
   runApp(const MyApp());
 }
 
-
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    //checkLoginStatus();
+  }
+
+/*  void checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if (token != null) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     bool isDocLog = false;
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -53,16 +70,16 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        body: Login(),
-      ),
+      home: _isLoggedIn
+          ? const DoctorAdmin(docLog: true)
+          : const Login(),
       routes: {
         '/drScreen': (context) => const DoctorAdmin(
-              docLog: true,
-            ),
+          docLog: true,
+        ),
         '/assistantScreen': (context) => const AssistantAdmin(
-              docLog: false,
-            ),
+          docLog: false,
+        ),
         '/citaScreen': (context) => AppointmentForm(isDoctorLog: isDocLog),
       },
       supportedLocales: const [Locale('es', 'ES')],
