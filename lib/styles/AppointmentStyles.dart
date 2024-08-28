@@ -290,6 +290,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
 class FieldsToWrite extends StatelessWidget {
   final String labelText;
   final Icon? suffixIcon;
+  final Icon? preffixIcon;
   final Color? fillColor;
   final EdgeInsetsGeometry? contentPadding;
   final TextEditingController? controller;
@@ -319,6 +320,7 @@ class FieldsToWrite extends StatelessWidget {
     this.textInputAction,
     this.onTapOutside,
     this.inputFormatters,
+    this.preffixIcon,
   });
 
   @override
@@ -339,6 +341,7 @@ class FieldsToWrite extends StatelessWidget {
         hintText: labelText,
         suffixIcon: suffixIcon,
         contentPadding: contentPadding ?? defaultContentPadding,
+        prefixIcon: preffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

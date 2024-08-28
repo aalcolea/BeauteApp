@@ -88,7 +88,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       width: screenWidth! < 370.00
                           ? MediaQuery.of(context).size.width * 0.725 //pantallas < 370
                           : screenWidth! < 391.00 ? MediaQuery.of(context).size.width * 0.7405 :
-                            MediaQuery.of(context).size.width * 0.725, //pantallas > 370
+                            MediaQuery.of(context).size.width * 0.7525, //pantallas > 370
                     ),
                     CustomPaint(
                       painter: TrianglePainter(),
