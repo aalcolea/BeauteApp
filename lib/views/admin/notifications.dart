@@ -27,6 +27,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     super.initState();
     todayAppointments = Future.value([]);
     tomorrowAppointments = Future.value([]);
+    print('screenWidth $screenWidth');
     loadUserId();
   }
   Future<void> loadUserId() async {
@@ -44,6 +45,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+    print('screenWidth $screenWidth');
   }
 
   @override
@@ -84,10 +86,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   children: [
                     SizedBox(
                       width: screenWidth! < 370.00
-                          ? MediaQuery.of(context).size.width *
-                              0.725 //pantallas < 370
-                          : MediaQuery.of(context).size.width *
-                              0.725, //pantallas > 370
+                          ? MediaQuery.of(context).size.width * 0.725 //pantallas < 370
+                          : screenWidth! < 391.00 ? MediaQuery.of(context).size.width * 0.7405 :
+                            MediaQuery.of(context).size.width * 0.725, //pantallas > 370
                     ),
                     CustomPaint(
                       painter: TrianglePainter(),
@@ -101,7 +102,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     child: Column(
                       children: [
                         _buildSection('HOY', todayAppointments),
-                        _buildSection('MANANA', tomorrowAppointments),
+                        _buildSection('MAÑANA', tomorrowAppointments),
                       ],
                     ),
                   ),
@@ -121,8 +122,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         Row(
           children: [
             Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.02),
+              margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.width * 0.04,
+                  left: MediaQuery.of(context).size.width * 0.02,
+                  right: MediaQuery.of(context).size.width * 0.02),
               child: Text(
                 title,
                 style: TextStyle(
