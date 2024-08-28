@@ -194,22 +194,24 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
+                        textAlign: TextAlign.center,
                         numK,
                         style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.074,
+                            fontSize: MediaQuery.of(context).size.width * 0.085,
                             color: Colors.white),
                       ),
                       Text(
-                        desc,
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0325,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white),
-                      ),
+                          textAlign: TextAlign.start,
+                          desc,
+                          style: TextStyle(
+                              fontSize:
+                              MediaQuery.of(context).size.width * 0.0325,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white),
+                        ),
                     ],
                   ),
                 ),
@@ -237,12 +239,17 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         style: TextButton.styleFrom(
           padding: EdgeInsets.zero,
         ),
-        child: Text(
-          textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: MediaQuery.of(context).size.width * 0.0485),
+        child:
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.085),
+          child: Text(
+            textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: MediaQuery.of(context).size.width * 0.0475),
+          ),
         ),
+
       ),
     );
   }
@@ -270,13 +277,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
             keyField(
                 '5', 'J K L', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '6', 'M N Ñ', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '6', 'M N O', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '7', 'O P Q', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '7', 'P Q R', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '8', 'R S T', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '8', 'S T U', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '9', 'U V W', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '9', 'V W X', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             /*    keyField('', '', Colors.transparent, 0.0),
             keyField('0', 'X Y Z', const Color(0xFFA0A0A0).withOpacity(0.2),7.0),
             keyField('', '', Colors.transparent, 0.0),*/
@@ -286,8 +293,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
+    return Stack(
         children: [
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
@@ -366,12 +372,12 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                 gridView(),
                 Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width * 0.06,
+                    top: MediaQuery.of(context).size.width * 0.0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      keyField('0', 'X Y Z',
+                      keyField('0', 'Y Z',
                           const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
                     ],
                   ),
@@ -389,7 +395,6 @@ class PinEntryScreenState extends State<PinEntryScreen> {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }

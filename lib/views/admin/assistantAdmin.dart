@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   bool _cancelConfirm = false;
   double? screenWidth;
   double? screenHeight;
+  late bool platform; //0 IOS 1 Androide
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -62,9 +64,10 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   @override
   void initState() {
     _selectedScreen = 1;
-    print('isDocLog en assistantAdmind: $isDocLog');
     keyboardVisibilityController = KeyboardVisibilityController();
+    Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
+
     super.initState();
   }
 
@@ -117,7 +120,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
       },
       child: Scaffold(
         body: Container(
-          margin:
+          padding:
               EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
           color: Colors.white,
           child: Column(
@@ -136,7 +139,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Visibility(
-                          visible: _selectedScreen != 1,
+                          visible: false,//_selectedScreen != 1,
                           child: IconButton(
                               onPressed: () {
                                 setState(() {
@@ -186,7 +189,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             });
                           },
                           icon: Icon(
-                            Icons.notifications_none_outlined,
+                            CupertinoIcons.calendar_today,
                             size: MediaQuery.of(context).size.width * 0.095,
                             color: const Color(0xFF4F2263),
                           ),
@@ -270,7 +273,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                 visible: !_hideBtnsBottom,
                 child: Container(
                   margin: EdgeInsets.only(
-                      bottom: screenWidth! < 370
+                      bottom: screenWidth! < 391
                           ? MediaQuery.of(context).size.width * 0.055
                           : MediaQuery.of(context).size.width * 0.02),
                   child: Row(
@@ -323,10 +326,10 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  AppointmentForm(isDoctorLog: isDocLog),
-                            ),
-                          );
+                               builder: (context) =>
+                                   AppointmentForm(isDoctorLog: isDocLog),
+                             ),
+                           );
                         },
                         child: Icon(
                           _selectedScreen != 2
@@ -376,8 +379,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
             ],
           ),
         ),
-      ),
-    );
+      ));
   }
 
   void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddclient) {
