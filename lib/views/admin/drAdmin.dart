@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
-
+import 'package:beaute_app/services/auth_service.dart';
 import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
 import 'notifications.dart';
@@ -126,14 +126,15 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                         ? MediaQuery.of(context).size.width * 0.016
                         : MediaQuery.of(context).size.width * 0.045,
                     right: MediaQuery.of(context).size.width * 0.025,
-                    bottom: MediaQuery.of(context).size.width * 0.007),
+                    bottom: MediaQuery.of(context).size.width * 0.005),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Visibility(
-                          visible: _selectedScreen != 1,
+                          visible: false, //_selectedScreen != 1,
                           child: IconButton(
                               onPressed: () {
                                 setState(() {
@@ -167,8 +168,10 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                       ],
                     ),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
+                          padding: EdgeInsets.zero,
                           onPressed: () {
                             setState(() {
                               if (_selectedScreen != 4) {
@@ -181,13 +184,17 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                             });
                           },
                           icon: Icon(
-                            Icons.notifications_none_outlined,
+
+                            CupertinoIcons.calendar_today,
                             size: MediaQuery.of(context).size.width * 0.095,
                             color: const Color(0xFF4F2263),
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            PinEntryScreenState().logout(context);
+                          },
                           icon: Icon(
                             Icons.input_outlined,
                             size: MediaQuery.of(context).size.width * 0.095,
@@ -219,10 +226,10 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                           bottomRight: const Radius.circular(15)),
                       border: _selectedScreen != 4
                           ? const Border(
-                          bottom: BorderSide(
-                            color: Color(0xFF4F2263),
-                            width: 2.5,
-                          ))
+                              bottom: BorderSide(
+                              color: Color(0xFF4F2263),
+                              width: 2.5,
+                            ))
                           : null,
                       boxShadow: [
                         BoxShadow(
@@ -263,7 +270,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                 visible: !_hideBtnsBottom,
                 child: Container(
                   margin: EdgeInsets.only(
-                      bottom: screenWidth! < 370
+                      bottom: screenWidth! < 391
                           ? MediaQuery.of(context).size.width * 0.055
                           : MediaQuery.of(context).size.width * 0.02),
                   child: Row(
