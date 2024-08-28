@@ -6,12 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
-
+import 'package:beaute_app/services/auth_service.dart';
 import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
+import 'notifications.dart';
 
 class DoctorAdmin extends StatefulWidget {
   final bool docLog;
+
   const DoctorAdmin({super.key, required this.docLog});
 
   @override
@@ -27,6 +29,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool _cancelConfirm = false;
+  double? screenWidth;
+  double? screenHeight;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -55,25 +59,38 @@ class _DoctorAdminState extends State<DoctorAdmin> {
 
   onBackPressed(didPop) {
     if (!didPop) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (builder) {
-          return AlertCloseDialog(
-            onCancelConfirm: _onCancelConfirm,
-          );
-        },
-      ).then((_) {
-        if (_cancelConfirm == true) {
-          if (_cancelConfirm) {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              SystemNavigator.pop();
-            });
-          }
-        }
+      setState(() {
+        setState(() {
+          _selectedScreen == 3
+              ? _selectedScreen = 1
+              : showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (builder) {
+                    return AlertCloseDialog(
+                      onCancelConfirm: _onCancelConfirm,
+                    );
+                  },
+                ).then((_) {
+                  if (_cancelConfirm == true) {
+                    if (_cancelConfirm) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        SystemNavigator.pop();
+                      });
+                    }
+                  }
+                });
+        });
       });
       return;
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
   }
 
   @override
@@ -81,6 +98,12 @@ class _DoctorAdminState extends State<DoctorAdmin> {
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    keyboardVisibilitySubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -99,34 +122,79 @@ class _DoctorAdminState extends State<DoctorAdmin> {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.055),
+                    left: _selectedScreen == 3
+                        ? MediaQuery.of(context).size.width * 0.016
+                        : MediaQuery.of(context).size.width * 0.045,
+                    right: MediaQuery.of(context).size.width * 0.025,
+                    bottom: MediaQuery.of(context).size.width * 0.005),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _selectedScreen == 1
-                          ? 'Calendario'
-                          : _selectedScreen == 3
-                              ? 'Nuevo Cliente'
-                              : '',
-                      style: TextStyle(
-                        color: const Color(0xFF4F2263),
-                        fontSize: MediaQuery.of(context).size.width * 0.09,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Visibility(
+                          visible: false, //_selectedScreen != 1,
+                          child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _selectedScreen = 1;
+                                  _hideBtnsBottom = false;
+                                });
+                              },
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                CupertinoIcons.back,
+                                size: MediaQuery.of(context).size.width * 0.08,
+                                color: const Color(0xFF4F2263),
+                              )),
+                        ),
+                        Text(
+                          _selectedScreen == 1
+                              ? 'Calendario'
+                              : _selectedScreen == 3
+                                  ? 'Nuevo Cliente'
+                                  : _selectedScreen == 4
+                                      ? 'Notificaciones'
+                                      : '',
+                          style: TextStyle(
+                            color: const Color(0xFF4F2263),
+                            fontSize: screenWidth! < 370.00
+                                ? MediaQuery.of(context).size.width * 0.078
+                                : MediaQuery.of(context).size.width * 0.082,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          onPressed: () {},
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            setState(() {
+                              if (_selectedScreen != 4) {
+                                _selectedScreen = 4;
+                                _hideBtnsBottom = true;
+                              } else {
+                                _selectedScreen = 1;
+                                _hideBtnsBottom = false;
+                              }
+                            });
+                          },
                           icon: Icon(
-                            Icons.notifications_none_outlined,
+
+                            CupertinoIcons.calendar_today,
                             size: MediaQuery.of(context).size.width * 0.095,
                             color: const Color(0xFF4F2263),
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            PinEntryScreenState().logout(context);
+                          },
                           icon: Icon(
                             Icons.input_outlined,
                             size: MediaQuery.of(context).size.width * 0.095,
@@ -141,23 +209,34 @@ class _DoctorAdminState extends State<DoctorAdmin> {
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.width * 0.055,
+                    bottom: _selectedScreen != 4
+                        ? MediaQuery.of(context).size.width * 0.04
+                        : MediaQuery.of(context).size.width * 0.0,
                   ),
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15)),
-                      border: const Border(
-                        bottom: BorderSide(
-                          color: Color(0xFF4F2263),
-                          width: 2.5,
-                        ),
-                      ),
+                      borderRadius: BorderRadius.only(
+                          topLeft: _selectedScreen == 4
+                              ? const Radius.circular(15)
+                              : const Radius.circular(0),
+                          topRight: _selectedScreen == 4
+                              ? const Radius.circular(15)
+                              : const Radius.circular(0),
+                          bottomLeft: const Radius.circular(15),
+                          bottomRight: const Radius.circular(15)),
+                      border: _selectedScreen != 4
+                          ? const Border(
+                              bottom: BorderSide(
+                              color: Color(0xFF4F2263),
+                              width: 2.5,
+                            ))
+                          : null,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black54,
-                          blurRadius: 10.0,
+                          color: _selectedScreen != 4
+                              ? Colors.black54
+                              : Colors.white,
+                          blurRadius: _selectedScreen != 4 ? 10.0 : 0,
                           offset: Offset(
                               0, MediaQuery.of(context).size.width * 0.012),
                         ),
@@ -169,12 +248,17 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                       ]),
                   child: Container(
                     margin: EdgeInsets.only(
-                        top: _selectedScreen == 1
-                            ? MediaQuery.of(context).size.width * 0.06
-                            : MediaQuery.of(context).size.width * 0.0,
-                        bottom: MediaQuery.of(context).size.width * 0.06,
-                        left: MediaQuery.of(context).size.width * 0.045,
-                        right: MediaQuery.of(context).size.width * 0.045),
+                      top: _selectedScreen == 1
+                          ? MediaQuery.of(context).size.width * 0.03
+                          : MediaQuery.of(context).size.width * 0.0,
+                      bottom: MediaQuery.of(context).size.width * 0.06,
+                      left: _selectedScreen != 4
+                          ? MediaQuery.of(context).size.width * 0.045
+                          : MediaQuery.of(context).size.width * 0.0,
+                      right: _selectedScreen != 4
+                          ? MediaQuery.of(context).size.width * 0.045
+                          : MediaQuery.of(context).size.width * 0.0,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -186,7 +270,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                 visible: !_hideBtnsBottom,
                 child: Container(
                   margin: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).size.width * 0.055),
+                      bottom: screenWidth! < 391
+                          ? MediaQuery.of(context).size.width * 0.055
+                          : MediaQuery.of(context).size.width * 0.02),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -307,6 +393,8 @@ class _DoctorAdminState extends State<DoctorAdmin> {
         return ClientForm(
             onHideBtnsBottom: _onHideBtnsBottom,
             onFinishedAddClient: _onFinishedAddClient);
+      case 4:
+        return const NotificationsScreen(doctorId: 3);
       default:
         return Container();
     }

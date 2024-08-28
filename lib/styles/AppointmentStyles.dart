@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
@@ -185,12 +186,22 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
-                    child: Icon(
+                    child: optSelected == 1
+                        ? Image.asset(
+                            'assets/imgLog/docWhite.png',
+                            width: MediaQuery.of(context).size.width * 0.06,
+                            height: MediaQuery.of(context).size.width * 0.06,
+                          )
+                        : Image.asset(
+                            'assets/imgLog/docPurpleS.png',
+                            width: MediaQuery.of(context).size.width * 0.07,
+                            height: MediaQuery.of(context).size.width * 0.07,
+                          ), /*Icon(
                       CupertinoIcons.person_crop_circle_fill,
                       color: optSelected == 1
                           ? Colors.white
                           : const Color(0xFF4F2263),
-                    ),
+                    ),*/
                   ),
                   Text(
                     'Doctor 1',
@@ -241,12 +252,22 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
-                    child: Icon(
+                    child: optSelected == 2
+                        ? Image.asset(
+                            'assets/imgLog/docWhite.png',
+                            width: MediaQuery.of(context).size.width * 0.06,
+                            height: MediaQuery.of(context).size.width * 0.06,
+                          )
+                        : Image.asset(
+                            'assets/imgLog/docPurpleS.png',
+                            width: MediaQuery.of(context).size.width * 0.07,
+                            height: MediaQuery.of(context).size.width * 0.07,
+                          ), /*Icon(
                       CupertinoIcons.person_crop_circle_fill,
                       color: optSelected == 2
                           ? Colors.white
                           : const Color(0xFF4F2263),
-                    ),
+                    ),*/
                   ),
                   Text(
                     'Doctor 2',
@@ -269,6 +290,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
 class FieldsToWrite extends StatelessWidget {
   final String labelText;
   final Icon? suffixIcon;
+  final Icon? preffixIcon;
   final Color? fillColor;
   final EdgeInsetsGeometry? contentPadding;
   final TextEditingController? controller;
@@ -280,6 +302,7 @@ class FieldsToWrite extends StatelessWidget {
   final void Function()? onTap;
   final void Function()? onEdComplete;
   final void Function(PointerDownEvent)? onTapOutside;
+  final List<TextInputFormatter>? inputFormatters;
 
   const FieldsToWrite({
     super.key,
@@ -289,7 +312,15 @@ class FieldsToWrite extends StatelessWidget {
     this.contentPadding,
     this.controller,
     required this.readOnly,
-    this.focusNode, this.onChanged, this.onTap, this.eneabled, this.onEdComplete, this.textInputAction, this.onTapOutside,
+    this.focusNode,
+    this.onChanged,
+    this.onTap,
+    this.eneabled,
+    this.onEdComplete,
+    this.textInputAction,
+    this.onTapOutside,
+    this.inputFormatters,
+    this.preffixIcon,
   });
 
   @override
@@ -299,6 +330,7 @@ class FieldsToWrite extends StatelessWidget {
     );
 
     return TextFormField(
+      inputFormatters: inputFormatters,
       textInputAction: textInputAction,
       onEditingComplete: onEdComplete,
       enabled: eneabled,
@@ -309,6 +341,7 @@ class FieldsToWrite extends StatelessWidget {
         hintText: labelText,
         suffixIcon: suffixIcon,
         contentPadding: contentPadding ?? defaultContentPadding,
+        prefixIcon: preffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

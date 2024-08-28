@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -69,12 +70,12 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   bool _showModalCalledscndTime = false;
   String _timerOfTheFstIndexTouched = '';
   String _dateOfTheFstIndexTouched = '';
+  String _dateLookandFill = '';
 
   @override
   void initState() {
     super.initState();
     docLog = widget.isDoctorLog;
-    print(docLog);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -136,7 +137,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     }
   }
 
-
   void _showModaltoDate(
     BuildContext context,
     CalendarTapDetails details,
@@ -145,6 +145,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     _timerOfTheFstIndexTouched,
     _dateOfTheFstIndexTouched,
     _btnToReachTop,
+    _dateLookandFill,
   ) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
@@ -168,11 +169,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                   firtsIndexTouchHour: _timerOfTheFstIndexTouched,
                   firtsIndexTouchDate: _dateOfTheFstIndexTouched,
                   btnToReachTop: _btnToReachTop,
+                  dateLookandFill: _dateLookandFill,
                   reachTop: (bool reachTop,
                       int? expandedIndex,
                       String timerOfTheFstIndexTouched,
                       String dateOfTheFstIndexTouched,
-                      bool auxToReachTop) {
+                      bool auxToReachTop,
+                      String dateLookandFill) {
                     setState(() {
                       if (!varmodalReachTop) {
                         Navigator.pop(context);
@@ -182,6 +185,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         varmodalReachTop = true;
                         _expandedIndex = expandedIndex;
                         _showModalCalledscndTime = true;
+                        _dateLookandFill = dateLookandFill;
+                        print(
+                            '_dateLookandFill en primer iteracion $_dateLookandFill');
                         _showModaltoDate(
                             context,
                             details,
@@ -189,7 +195,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                             _expandedIndex,
                             _timerOfTheFstIndexTouched,
                             _dateOfTheFstIndexTouched,
-                            _btnToReachTop);
+                            _btnToReachTop,
+                            _dateLookandFill);
                       } else {
                         varmodalReachTop = reachTop;
                         if (auxToReachTop == false) {
@@ -211,68 +218,68 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(
+           Container(
+             margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.width * 0.035),
-            alignment: Alignment.centerLeft,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.07,
-            decoration: BoxDecoration(
-              color: const Color(0xFF4F2263),
-              borderRadius: BorderRadius.circular(10),
+             decoration: BoxDecoration(
+               color: const Color(0xFF4F2263),
+               borderRadius: BorderRadius.circular(10),
+             ),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 IconButton(
+                   //padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.07),
+                     icon: Icon(
+                       CupertinoIcons.back,
+                       color: Colors.white,
+                       size: MediaQuery.of(context).size.width * 0.094,
+                     ),
+                     onPressed: () {
+                       setState(() {
+                         int previousMonth = currentMonth! - 1;
+                         int previousYear = visibleYear!;
+                         if (previousMonth < 1) {
+                           previousMonth = 12;
+                           previousYear--;
+                         }
+                         _calendarController.displayDate =
+                             DateTime(previousYear, previousMonth, 1);
+                       });
+
+                     },
+                 ),
+                 Text(
+                   currentMonth != null
+                       ? '${getMonthName(currentMonth!)} $visibleYear'
+                       : '${getMonthName(initMonth)} $visibleYear',
+                   textAlign: TextAlign.center,
+                   style: TextStyle(
+                       fontSize: MediaQuery.of(context).size.width * 0.075,
+                       color: Colors.white),
+                 ),
+           IconButton(
+                     icon: Icon(
+                       CupertinoIcons.forward,
+                       color: Colors.white,
+                       size: MediaQuery.of(context).size.width * 0.094,
+                     ),
+                     onPressed: () {
+                       int nextMonth = currentMonth! + 1;
+                       int nextYear = visibleYear!;
+                       if (nextMonth > 12) {
+                         nextMonth = 1;
+                         nextYear++;
+                       }
+                       _calendarController.displayDate =
+                           DateTime(nextYear, nextMonth, 1);
+                     },
+                   ),
+               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: Colors.white,
-                    size: MediaQuery.of(context).size.width * 0.1,
-                  ),
-                  onPressed: () {
-                    int previousMonth = currentMonth! - 1;
-                    int previousYear = visibleYear!;
-                    if (previousMonth < 1) {
-                      previousMonth = 12;
-                      previousYear--;
-                    }
-                    _calendarController.displayDate =
-                        DateTime(previousYear, previousMonth, 1);
-                  },
-                ),
-                Text(
-                  currentMonth != null
-                      ? '${getMonthName(currentMonth!)} $visibleYear'
-                      : '${getMonthName(initMonth)} $visibleYear',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.09,
-                      color: Colors.white),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: Colors.white,
-                    size: MediaQuery.of(context).size.width * 0.1,
-                  ),
-                  onPressed: () {
-                    int nextMonth = currentMonth! + 1;
-                    int nextYear = visibleYear!;
-                    if (nextMonth > 12) {
-                      nextMonth = 1;
-                      nextYear++;
-                    }
-                    _calendarController.displayDate =
-                        DateTime(nextYear, nextMonth, 1);
-                  },
-                ),
-              ],
-            ),
-          ),
+           ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -282,6 +289,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: SfCalendar(
+                  showCurrentTimeIndicator: true,
                   headerHeight: 0,
                   firstDayOfWeek: 1,
                   view: CalendarView.month,
@@ -300,7 +308,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           null,
                           _timerOfTheFstIndexTouched,
                           _dateOfTheFstIndexTouched,
-                          _btnToReachTop);
+                          _btnToReachTop,
+                          _dateLookandFill);
                     }
                   },
                   onViewChanged: (ViewChangedDetails details) {
@@ -356,22 +365,14 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                 appointment.appointmentDate!.year &&
                             appointment.doctorId == 2);
 
-                    /* final bool hasEventSameDay = _appointments.any(
-                            (Appointment2 appointment) =>
-                        appointment.appointmentDate != null &&
-                            details.date.day ==
-                                appointment.appointmentDate!.day &&
-                            details.date.month ==
-                                appointment.appointmentDate!.month &&
-                            details.date.year ==
-                                appointment.appointmentDate!.year &&
-                            appointment.doctorId == 2);*/
-
                     if (isToday && hasEvent) {
-                      return Center(
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.purple.withOpacity(0.35),)
+                        ),
+                        width: null,
+                        height: null,
                         child: Container(
-                          width: null,
-                          height: null,
                           decoration: BoxDecoration(
                             color: Colors.purple[100],
                             shape: BoxShape.circle,
@@ -391,29 +392,28 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                           ),
                         ),
                       );
+
+
                     } else if (isToday) {
                       return Container(
                         width: null,
                         height: null,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.purple,
-                            width: 1.0,
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
                           ),
-                        ),
-                        child: Center(
                           child: Text(
                             details.date.day.toString(),
                             style: TextStyle(
                               color: const Color(0xFF4F2263),
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.07,
+                              fontSize: MediaQuery.of(context).size.width * 0.07,
                             ),
                           ),
                         ),
                       );
+
                     } else {
                       return hasEventDoc1 == true && hasEventDoc2 == false
                           ? Container(
@@ -421,66 +421,183 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               height: null,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.purple.withOpacity(0.35),
                                 border: Border.all(
                                   color: Colors.purple.withOpacity(0.35),
                                 ),
                               ),
-                              child: Text(
-                                details.date.day.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.06,
-                                ),
-                              ),
-                            )
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      details.date.day.toString(),
+                                      style: TextStyle(
+                                        color: const Color(0xFF72A5D0),
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.06,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.01),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: const Color(0xFF9C27B0)),
+                                          color: const Color(0xFFE1BEE7),
+                                          //Colors.purple.withOpacity(0.35),
+                                          shape: BoxShape.circle),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.055,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.055,
+                                    ),
+                                  ),
+                                ],
+                              ))
                           : hasEventDoc1 == false && hasEventDoc2 == true
                               ? Container(
                                   width: null,
                                   height: null,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF8AB6DD)
-                                        .withOpacity(0.35),
                                     //Colors.blue.withOpacity(0.35),
                                     border: Border.all(
                                       color: const Color(0xFF8AB6DD),
                                     ),
                                   ),
-                                  child: Text(
-                                    details.date.day.toString(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.06,
-                                    ),
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          details.date.day.toString(),
+                                          style: TextStyle(
+                                            color: const Color(0xFF72A5D0),
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.06,
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.01),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: const Color(0xFF8AB6DD),
+                                              ),
+                                              color: const Color(0xFF8AB6DD)
+                                                  .withOpacity(0.35),
+                                              shape: BoxShape.circle),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.055,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.055,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 )
                               : hasEventDoc1 && hasEventDoc2
                                   ? Container(
-                                      width: null,
-                                      height: null,
-                                      alignment: Alignment.center,
                                       decoration: BoxDecoration(
-                                        color: Colors.brown.withOpacity(0.35),
-                                        //Colors.blue.withOpacity(0.35),
                                         border: Border.all(
-                                          color: Colors.brown,
-                                        ),
+                                            color: Colors.purple
+                                                .withOpacity(0.35)),
                                       ),
-                                      child: Text(
-                                        details.date.day.toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.06,
-                                        ),
-                                      ),
-                                    )
+                                      child: Stack(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              details.date.day.toString(),
+                                              style: TextStyle(
+                                                color: const Color(0xFF72A5D0),
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.06,
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.01),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0xFF9C27B0)),
+                                                      color: const Color(
+                                                          0xFFE1BEE7),
+                                                      //Colors.purple.withOpacity(0.35),
+                                                      shape: BoxShape.circle),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.01),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFF8AB6DD),
+                                                      ),
+                                                      color: const Color(
+                                                              0xFF8AB6DD)
+                                                          .withOpacity(0.35),
+                                                      shape: BoxShape.circle),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ))
                                   : Container(
                                       width: null,
                                       height: null,
@@ -513,8 +630,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }
 
@@ -535,7 +651,6 @@ class Appointment2 {
   final String? status;
   final String? clientName;
   bool? notificationRead;
-
 
   Appointment2({
     this.id,

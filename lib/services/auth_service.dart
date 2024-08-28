@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,16 +11,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PinEntryScreen extends StatefulWidget {
   final int userId;
   final bool docLog;
+  final void Function(
+    bool,
+  ) onCloseScreeen;
 
-  const PinEntryScreen({super.key, required this.userId, required this.docLog});
+  const PinEntryScreen(
+      {super.key,
+      required this.userId,
+      required this.docLog,
+      required this.onCloseScreeen});
 
   @override
   PinEntryScreenState createState() => PinEntryScreenState();
 }
 
 class PinEntryScreenState extends State<PinEntryScreen> {
-  final TextEditingController pinController = TextEditingController();
+  final pinController = TextEditingController();
   bool isDocLog = false;
+  final textfield = TextEditingController();
 
   @override
   void initState() {
@@ -33,11 +44,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         jsonBody = json.encode({
           'email': 'dulce@test.com',
           'password': pinController.text,
+          'fcm_token': await FirebaseMessaging.instance.getToken(),
         });
       } else {
         jsonBody = json.encode({
           'email': 'doctor${widget.userId}@test.com',
           'password': pinController.text,
+          'fcm_token': await FirebaseMessaging.instance.getToken(),
         });
       }
 
@@ -57,13 +70,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/drScreen',
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         } else {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/assistantScreen',
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         }
       } else {
@@ -87,25 +100,50 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       print("Error $e");
     }
   }
+  void logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if (token != null) {
+      var response = await http.post(
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await prefs.remove('jwt_token');
+        await prefs.remove('user_id');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/',
+              (Route<dynamic> route) => false,
+        );
+      } else {
+        print('Error al cerrar sesión: ${response.body}');
+      }
+    }
+  }
 
   String enteredPin = '';
   bool pinVisible = false;
 
   Widget numBtn(int number) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: 11),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
+            borderRadius: BorderRadius.circular(24.0),
           ),
           padding: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.065,
-              right: MediaQuery.of(context).size.width * 0.065,
+              left: MediaQuery.of(context).size.width * 0.085,
+              right: MediaQuery.of(context).size.width * 0.085,
               top: 10,
               bottom: 10),
           //const EdgeInsets.all(20),
-          backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.7),
+          backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.70),
         ),
         onPressed: () {
           setState(() {
@@ -126,173 +164,265 @@ class PinEntryScreenState extends State<PinEntryScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/imgLog/bgPinentry.jpg"),
-                fit: BoxFit.cover,
+  onNumberTapped(number) {
+    setState(() {
+      if (enteredPin.length < 6) {
+        textfield.text += number;
+        enteredPin += number.toString();
+        pinController.text = enteredPin;
+        enteredPin.length >= 6 ? authenticate() : print(enteredPin);
+      }
+    });
+  }
+
+  onCancelText() {
+    setState(() {
+      if (enteredPin.isNotEmpty) {
+        enteredPin = enteredPin.substring(0, enteredPin.length - 1);
+        textfield.text = enteredPin;
+      }
+    });
+  }
+
+  Widget inputField() {
+    return Container(
+      color: const Color(0xFFA0A0A0).withOpacity(0.7),
+      height: 100,
+      alignment: Alignment.bottomCenter,
+      child: TextFormField(
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        controller: textfield,
+      ),
+    );
+  }
+
+  Widget keyField(numK, desc, col, blur) {
+    return ClipOval(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          focusColor: Colors.white,
+          splashColor: Colors.white,
+          onTap: () => onNumberTapped(numK),
+          child: Container(
+            margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.0),
+            width: MediaQuery.of(context).size.width * 0.182,
+            height: MediaQuery.of(context).size.width * 0.182,
+            decoration: BoxDecoration(
+              color: col,
+              shape: BoxShape.circle,
+            ),
+            child: ClipOval(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: col.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        textAlign: TextAlign.center,
+                        numK,
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.085,
+                            color: Colors.white),
+                      ),
+                      Text(
+                          textAlign: TextAlign.start,
+                          desc,
+                          style: TextStyle(
+                              fontSize:
+                              MediaQuery.of(context).size.width * 0.0325,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget backSpace() {
+    return Container(
+      margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.07),
+      alignment: Alignment.centerRight,
+      //mainAxisAlignment: MainAxisAlignment.end,
+      child: TextButton(
+        onPressed: textfield.text.isNotEmpty
+            ? () {
+                onCancelText();
+              }
+            : () {
+                widget.onCloseScreeen(true);
+              },
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
+        child:
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.085),
+          child: Text(
+            textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: MediaQuery.of(context).size.width * 0.0475),
+          ),
+        ),
+
+      ),
+    );
+  }
+
+  Widget gridView() {
+    return Container(
+        padding: EdgeInsets.only(
+            left: MediaQuery.of(context).size.width * 0.16,
+            right: MediaQuery.of(context).size.width * 0.16,
+            top: MediaQuery.of(context).size.width * 0.03),
+        child: GridView.count(
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: MediaQuery.of(context).size.width * 0.06,
+          mainAxisSpacing: MediaQuery.of(context).size.width * 0.06,
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          children: [
+            keyField('1', '', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '2', 'A B C', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '3', 'D E F', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '4', 'G H I', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '5', 'J K L', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '6', 'M N O', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '7', 'P Q R', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '8', 'S T U', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            keyField(
+                '9', 'V W X', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+            /*    keyField('', '', Colors.transparent, 0.0),
+            keyField('0', 'X Y Z', const Color(0xFFA0A0A0).withOpacity(0.2),7.0),
+            keyField('', '', Colors.transparent, 0.0),*/
+          ],
+        ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            child: Container(),
+          ),
           Container(
-            margin: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height *
-                    0.13),
-            color: Colors.transparent,
-            child: ListView(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05),
-              physics: const BouncingScrollPhysics(),
+            decoration: BoxDecoration(
+              color: const Color(0xFF111111).withOpacity(0.7),
+            ),
+            child: Column(
               children: [
-                const Center(
-                  child: Text(
-                    'Ingrese el pin',
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
+                //inputField(),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.15,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Ingrese el pin',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.065,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.035,
                 ),
 
                 ///codigo para el pin
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    6,
-                    (index) {
-                      return Container(
-                        margin: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.height * 0.014,
-                            right: MediaQuery.of(context).size.height * 0.014),
-                        width: pinVisible
-                            ? 30
-                            : MediaQuery.of(context).size.width * 0.048,
-                        height: pinVisible
-                            ? 40
-                            : MediaQuery.of(context).size.width * 0.048,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(width: 3, color: Colors.white),
-                          color: index < enteredPin.length
-                              ? pinVisible
-                                  ? Colors.black54
-                                  : Colors.white
-                              : Colors.transparent,
-                        ),
-                        child: pinVisible && index < enteredPin.length
-                            ? Center(
-                                child: Text(
-                                enteredPin[index],
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ))
-                            : null,
-                      );
-                    },
-                  ),
-                ),
-
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      pinVisible = !pinVisible;
-                    });
-                  },
-                  icon: Icon(
-                    pinVisible
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                    height: pinVisible
-                        ? MediaQuery.of(context).size.height * 0.02
-                        : MediaQuery.of(context).size.height * 0.02),
-
-                for (var i = 0; i < 3; i++)
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.height * 0.042),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(
-                        3,
-                        (index) => numBtn(1 + 3 * i + index),
-                      ).toList(),
-                    ),
-                  ),
-
                 Padding(
                   padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.height * 0.051),
+                    bottom: MediaQuery.of(context).size.height * 0.04,
+                    top: MediaQuery.of(context).size.height * 0.02,
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text(''), //SizedBox(),
-                      ),
-                      numBtn(0),
-                      Container(
-                        margin: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.height * 0.03,
-                            top: MediaQuery.of(context).size.height * 0.015),
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              if (enteredPin.isNotEmpty) {
-                                enteredPin = enteredPin.substring(
-                                    0, enteredPin.length - 1);
-                              }
-                            });
-                          },
-                          child: Icon(
-                            Icons.backspace_outlined,
-                            color: Colors.white,
-                            size: MediaQuery.of(context).size.height * 0.065,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      4,
+                      (index) {
+                        return Container(
+                          margin: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.height * 0.014,
+                              right:
+                                  MediaQuery.of(context).size.height * 0.014),
+                          width: pinVisible
+                              ? 30
+                              : MediaQuery.of(context).size.width * 0.040,
+                          height: pinVisible
+                              ? 40
+                              : MediaQuery.of(context).size.width * 0.040,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(width: 1.2, color: Colors.white),
+                            color: index < enteredPin.length
+                                ? pinVisible
+                                    ? Colors.black54
+                                    : Colors.white
+                                : Colors.transparent,
                           ),
-                        ),
-                      ),
+                          child: pinVisible && index < enteredPin.length
+                              ? Center(
+                                  child: Text(
+                                  enteredPin[index],
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ))
+                              : null,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                gridView(),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width * 0.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      keyField('0', 'Y Z',
+                          const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
                     ],
                   ),
                 ),
 
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      enteredPin = '';
-                      Navigator.of(context).pop(context);
-                    });
-                  },
-                  child: const Text(
-                    'Cancelar',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      backSpace(),
+                    ],
                   ),
-                )
+                ),
               ],
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }

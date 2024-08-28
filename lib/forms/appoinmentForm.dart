@@ -19,6 +19,28 @@ import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
 import '../utils/timer.dart';
 
+class AlfaNumericInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    if (oldValue.text.endsWith(' ') &&
+        !newValue.text.endsWith(' ') &&
+        newValue.text.length == oldValue.text.length - 1 &&
+        oldValue.text.length > 1) {
+      // Permitimos la eliminación del espacio final
+      return newValue;
+    }
+    return FilteringTextInputFormatter.allow(
+      RegExp(r'[a-zA-ZñÑ0-9\s]'),
+    ).formatEditUpdate(oldValue, newValue);
+  }
+}
+
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
   final String? dateFromCalendarSchedule;
@@ -95,7 +117,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         print('Error al crear cliente: ${response.body}');
       }
     } catch (e) {
-      print('Error al enviar datos: $e');
+      print('Error al envir datos: $e');
     }
   }
 
@@ -103,6 +125,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
       createClient();
+      submitAppointment();
     } else {
       return;
     }
@@ -122,17 +145,18 @@ class _AppointmentFormState extends State<AppointmentForm> {
               ),
             ),
             Center(
-              child: AlertDialog(
-                contentPadding: EdgeInsets.zero,
-                content: AddClientAndAppointment(
-                    clientNamefromAppointmetForm: _clientTextController.text,
-                    onSendDataToAppointmentForm:
-                        _onRecieveDataToAppointmentForm,
-                    onConfirm: _onConfirm),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
+              child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04),
+                    child: AddClientAndAppointment(
+                        clientNamefromAppointmetForm:
+                            _clientTextController.text,
+                        onSendDataToAppointmentForm:
+                            _onRecieveDataToAppointmentForm,
+                        onConfirm: _onConfirm),
+                  )),
             ),
           ],
         );
@@ -385,8 +409,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 Navigator.pop(context);
                               },
                               icon: Icon(
-                                Icons.arrow_back_ios_rounded,
-                                size: MediaQuery.of(context).size.width * 0.082,
+                                CupertinoIcons.back,
+                                size: MediaQuery.of(context).size.width * 0.08,
+                                color: const Color(0xFF4F2263),
                               ),
                             ),
                             Text(
@@ -400,7 +425,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                           ],
                         ),
-                        Row(
+                        /*Row(
                           children: [
                             IconButton(
                               onPressed: () {},
@@ -419,7 +444,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               ),
                             ),
                           ],
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
@@ -521,64 +546,49 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               Visibility(
                                 visible: !_showdrChooseWidget,
                                 child: TitleContainer(
-                                  child: Text(
-                                    'Cliente:',
+                                  child: Text('Cliente:',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.045,
+                                      fontSize: MediaQuery.of(context).size.width * 0.045,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        MediaQuery.of(context).size.width *
-                                            0.02,
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.026),
+                                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                                    horizontal: MediaQuery.of(context).size.width * 0.026),
                                 child: Autocomplete<Client>(
-                                  optionsBuilder:
-                                      (TextEditingValue textEditingValue) {
+                                  optionsBuilder: (TextEditingValue textEditingValue) {
                                     if (textEditingValue.text == '') {
                                       return const Iterable<Client>.empty();
                                     }
-                                    return dropdownDataManager
-                                        .getSuggestions(textEditingValue.text);
+                                    return dropdownDataManager.getSuggestions(textEditingValue.text);
                                   },
-                                  displayStringForOption: (Client option) =>
-                                      option.name,
+                                  displayStringForOption: (Client option) => option.name,
                                   onSelected: (Client selection) {
                                     setState(() {
-                                      _clientTextController.text =
-                                          selection.name;
+                                      _clientTextController.text = selection.name;
                                       nameToCompare = selection.name;
                                       _updateSelectedClient(selection);
                                       fieldClientNode.unfocus();
                                     });
                                   },
-                                  fieldViewBuilder: (BuildContext context,
-                                      TextEditingController
-                                          fieldTextEditingController,
-                                      FocusNode fieldFocusNode,
-                                      VoidCallback onFieldSubmitted) {
+                                  fieldViewBuilder: (BuildContext context, TextEditingController fieldTextEditingController,
+                                      FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
                                     fieldClientNode = fieldFocusNode;
-                                    _clientTextController =
-                                        fieldTextEditingController;
+                                    _clientTextController = fieldTextEditingController;
                                     return FieldsToWrite(
+                                      inputFormatters: [
+                                        AlfaNumericInputFormatter(),
+                                      ],
                                       textInputAction: TextInputAction.done,
                                       readOnly: false,
                                       labelText: 'Cliente',
                                       suffixIcon: Icon(
                                         CupertinoIcons.person,
                                         color: const Color(0xFF4F2263),
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.075,
+                                        size: MediaQuery.of(context).size.width * 0.075,
                                       ),
                                       controller: fieldTextEditingController,
                                       fillColor: Colors.white,
@@ -587,8 +597,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       onEdComplete: () {
                                         setState(() {
                                           clientFieldDone = true;
-                                          nameToCompare ==
-                                                  _clientTextController.text
+                                          nameToCompare == _clientTextController.text
                                               ? null
                                               : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
@@ -597,8 +606,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       onTapOutside: (PointerDownEvent tapout) {
                                         setState(() {
                                           clientFieldDone = true;
-                                          nameToCompare ==
-                                                  _clientTextController.text
+                                          nameToCompare == _clientTextController.text
                                               ? null
                                               : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
@@ -609,19 +617,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 ),
                               ),
                               Visibility(
-                                visible: isTimerShow
-                                    ? true
-                                    : _showCalendar
-                                        ? false
-                                        : true,
+                                visible: isTimerShow ? true : _showCalendar ? false : true,
                                 child: TitleContainer(
-                                  child: Text(
-                                    'Fecha:',
+                                  child: Text('Fecha:',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.045,
+                                      fontSize: MediaQuery.of(context).size.width * 0.045,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -771,6 +772,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           MediaQuery.of(context).size.width *
                                               0.026),
                                   child: FieldsToWrite(
+                                    inputFormatters: [
+                                      AlfaNumericInputFormatter(),
+                                    ],
                                     suffixIcon: Icon(
                                       CupertinoIcons.pencil_ellipsis_rectangle,
                                       size: MediaQuery.of(context).size.width *
