@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:beaute_app/views/admin/clientDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -128,7 +129,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
               Padding(
                 padding: EdgeInsets.only(
                     left: _selectedScreen == 3
-                        ? MediaQuery.of(context).size.width * 0.016
+                        ? MediaQuery.of(context).size.width * 0.045
                         : MediaQuery.of(context).size.width * 0.045,
                     right: MediaQuery.of(context).size.width * 0.025,
                     bottom: MediaQuery.of(context).size.width * 0.005),
@@ -158,7 +159,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           _selectedScreen == 1
                               ? 'Calendario'
                               : _selectedScreen == 3
-                                  ? 'Nuevo Cliente'
+                                  ? 'Clientes'
                                   : _selectedScreen == 4
                                       ? 'Notificaciones'
                                       : '',
@@ -253,11 +254,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                       top: _selectedScreen == 1
                           ? MediaQuery.of(context).size.width * 0.03
                           : MediaQuery.of(context).size.width * 0.0,
-                      bottom: MediaQuery.of(context).size.width * 0.06,
-                      left: _selectedScreen != 4
+                      bottom: _selectedScreen == 4 ? MediaQuery.of(context).size.width * 0.02 : MediaQuery.of(context).size.width * 0.04,
+                      left: _selectedScreen != 4 && _selectedScreen != 3
                           ? MediaQuery.of(context).size.width * 0.045
                           : MediaQuery.of(context).size.width * 0.0,
-                      right: _selectedScreen != 4
+                      right: _selectedScreen != 4 && _selectedScreen != 3
                           ? MediaQuery.of(context).size.width * 0.045
                           : MediaQuery.of(context).size.width * 0.0,
                     ),
@@ -395,11 +396,13 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
+        return const ClientDetials();
+      case 4:
+        return const NotificationsScreen(doctorId: 3);
+      case 5:
         return ClientForm(
             onHideBtnsBottom: _onHideBtnsBottom,
             onFinishedAddClient: _onFinishedAddClient);
-      case 4:
-        return NotificationsScreen(doctorId: 3);
       default:
         return Container();
     }
