@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
-
+import 'package:beaute_app/services/auth_service.dart';
 import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
 import 'notifications.dart';
@@ -192,7 +192,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          onPressed: () {},
+                          onPressed: () {
+                            PinEntryScreenState().logout(context);
+                          },
                           icon: Icon(
                             Icons.input_outlined,
                             size: MediaQuery.of(context).size.width * 0.095,

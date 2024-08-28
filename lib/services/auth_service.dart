@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -43,11 +44,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         jsonBody = json.encode({
           'email': 'dulce@test.com',
           'password': pinController.text,
+          'fcm_token': await FirebaseMessaging.instance.getToken(),
         });
       } else {
         jsonBody = json.encode({
           'email': 'doctor${widget.userId}@test.com',
           'password': pinController.text,
+          'fcm_token': await FirebaseMessaging.instance.getToken(),
         });
       }
 
@@ -67,13 +70,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/drScreen',
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         } else {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/assistantScreen',
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         }
       } else {
@@ -95,6 +98,31 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       }
     } catch (e) {
       print("Error $e");
+    }
+  }
+  void logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if (token != null) {
+      var response = await http.post(
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await prefs.remove('jwt_token');
+        await prefs.remove('user_id');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/',
+              (Route<dynamic> route) => false,
+        );
+      } else {
+        print('Error al cerrar sesión: ${response.body}');
+      }
     }
   }
 
