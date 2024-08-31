@@ -86,6 +86,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
 
   onBackPressed(didPop) {
     if (!didPop) {
+      print('hello');
       setState(() {
         _selectedScreen == 3
             ? _selectedScreen = 1
@@ -324,11 +325,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
+                          Navigator.push(context,
                             MaterialPageRoute(
-                               builder: (context) =>
-                                   AppointmentForm(isDoctorLog: isDocLog),
+                               builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
                              ),
                            );
                         },
