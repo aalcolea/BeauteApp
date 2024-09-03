@@ -361,13 +361,12 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(
-                                _selectedScreen == 3
-                                    ? Icons.person_add_alt_outlined
-                                    : Icons.person_add_alt_outlined,
+                                _selectedScreen == 3 ?
+                                CupertinoIcons.person_fill :CupertinoIcons.person,
                                 color: _selectedScreen == 3
                                     ? const Color(0xFF4F2263)
                                     : const Color(0xFF4F2263).withOpacity(0.2),
-                                size: MediaQuery.of(context).size.width * 0.12,
+                                size: MediaQuery.of(context).size.width * 0.11,
                               ),
                             ),
                           ),
