@@ -1,332 +1,303 @@
-import 'package:beaute_app/styles/AppointmentStyles.dart';
+import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:alphabet_list_view/alphabet_list_view.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
-class ClientDetials extends StatefulWidget {
-  const ClientDetials({super.key});
+import '../../forms/clientForm.dart';
+import '../../styles/AppointmentStyles.dart';
 
-  @override
-  State<ClientDetials> createState() => _ClientDetialsState();
+// Define el modelo de datos para los nombres
+class Person {
+  String name;
+  String tag;
+
+  Person(this.name) : tag = name.isNotEmpty ? name[0].toUpperCase() : '#';
 }
 
-class _ClientDetialsState extends State<ClientDetials> {
+class ClientDetails extends StatefulWidget {
+  final void Function(
+      bool,
+      ) onHideBtnsBottom;  const ClientDetails({super.key, required this.onHideBtnsBottom});
 
-  late ScrollController sController;
-  String currentLetter = '';
-  double? screenWidth;
-  double? screenHeight;
-  int sliverrenderizados = 0;
+  @override
+  State<ClientDetails> createState() => _ClientDetailsState();
+}
+
+class _ClientDetailsState extends State<ClientDetails> {
+
+  late KeyboardVisibilityController keyboardVisibilityController;
+  late StreamSubscription<bool> keyboardVisibilitySubscription;
+  bool visibleKeyboard = false;
+  bool platform = false;
+  double previousOffset = 0;
+
+  void checkKeyboardVisibility() {
+    keyboardVisibilitySubscription =
+        keyboardVisibilityController.onChange.listen((visible) {
+          setState(() {
+            print('estoy en clientdetails');
+            visibleKeyboard = visible;
+            widget.onHideBtnsBottom(visibleKeyboard);
+          });
+        });
+  }
+
+  void hideKeyBoard() {
+    if (visibleKeyboard) {
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddclient) {
+    setState(() {
+    });
+  }
+
+  void _onHideBtnsBottom(bool hideBtnsBottom) {
+    setState(() {
+    });
+  }
+
   List<String> nombres = [
-    'Alan Alcolea',
-    'Banana Barrios',
-    'Banana Barrios',
-    'Colin Colon',
-    'Colin Colon',
-    'Colin Colon',
-    'Colin Colon',
-    'Colin Colon',
-    'Dorito Duran',
-    'Dorito Duran',
-    'Ector Eslobaco',
-    'Ector Eslobaco',
-    'Facundo Ferros',
-    'Facundo Ferros',
-    'Galo Galindo',
-    'Galo Galind',
-    'Galo Galindo',
-    'Galo Galindo',
+    'Alan Alcolea', 'Banana Barrios', 'Colin Colon', 'Dorito Duran', 'Ector Eslobaco',
+    'Facundo Ferros', 'Galo Galindo', 'Hector Horacio', 'Ignacion Indigp', 'Juan Jocoso',
+    'Karmelo Kokoro', 'Luis Lomo', 'Mario Mono', 'Noe Nala', 'Ñoño Ñari', 'Orlando Olgon',
+    'Puerto Pablo', 'Query Quando', 'Ross Roma', 'Saul Sosa', 'Tulip Taran', 'Umberto Ugly',
+    'Victor Vazquez', 'Waldos Wall', 'Xari Xool', 'Yarizta Yale', 'Zarita Zolin'
   ];
-  List<String> letras = [
-    '#',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'Ñ',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z'
-  ];
-  int sliversVisibles = 9;
-  int result = 0;
-  int indexatTop = 0;
-  int indexatTopHelper = 0;
-  int lastrenderIndex = 0;
-  double _previousOffset = 0;
-  bool scrollDirection = false; // false para abajo, true para arriba
 
-  void _onScroll() {
-    ///
-    double currentOffset = sController.offset;
-    if (currentOffset > _previousOffset) {
-      scrollDirection = false;
-    } else if (currentOffset < _previousOffset) {
-      scrollDirection = true;
-    }
-    _previousOffset = currentOffset;
-    ///
+  late List<AlphabetListViewItemGroup> _alphabetizedData;
+  late ScrollController scrollController;
 
-    int index = indexatTop;
-    if(index == 0){
-    }
-    String newLetter = nombres[index][0].toUpperCase();
+  Future<void> addClient() async {
+    return showDialog(
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Stack(
+            children: [
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: Container(
+                  color: Colors.black54.withOpacity(0.3),
+                ),
+              ),
+              Center(
+                child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.04),
+                      child:  ClientForm(
+                          onHideBtnsBottom: _onHideBtnsBottom,
+                          onFinishedAddClient: _onFinishedAddClient),
+                    )),
+              ),
+            ],
+          );
+        });
 
-    if (newLetter != currentLetter) {
-      setState(() {
-        currentLetter = newLetter;
-      });
-    }
-  }
+}
 
-  int totalNamesWhitLetter(String letra) {
-    return nombres.where((nombre) => nombre.startsWith(letra)).length;
-  }
-  
   @override
   void initState() {
-    // TODO: implement initState
-    sController = ScrollController();
-    sController.addListener(_onScroll);
+    super.initState();
+    scrollController = ScrollController();
+    scrollController.addListener(onScroll);
+    _alphabetizedData = _createAlphabetizedData(nombres);
+    keyboardVisibilityController = KeyboardVisibilityController();
+    Platform.isIOS ? platform = false : platform = true;
+    checkKeyboardVisibility();
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    sController.removeListener(_onScroll);
-    sController.dispose();
+    keyboardVisibilitySubscription.cancel();
     super.dispose();
+  }
+
+  void onScroll(){
+    double currentoffset = scrollController.offset;
+    if(currentoffset > previousOffset){
+      setState(() {
+        hideKeyBoard();
+
+      });
+    }else if(currentoffset < previousOffset){
+
+    }
+    previousOffset = currentoffset;
+  }
+
+  // Create alphabetized data
+  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<String> names) {
+    final Map<String, List<Person>> data = {};
+
+    for (String name in names) {
+      Person person = Person(name);
+      final String tag = person.tag;
+      if (!data.containsKey(tag)) {
+        data[tag] = [];
+      }
+      data[tag]!.add(person);
+    }
+
+    // Sort each list of names
+    data.forEach((key, value) {
+      value.sort((a, b) => a.name.compareTo(b.name));
+    });
+
+    // Sort keys and create list of AlphabetListViewItemGroup
+    final sortedKeys = data.keys.toList()..sort();
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
+      return AlphabetListViewItemGroup(
+        tag: key,
+        children: data[key]!.map((person) => ListTile(
+          onTap: (){print('hola ${person.name}');},
+          title: Container(
+            margin: EdgeInsets.only(top: 8, bottom: 8),
+            child: Text(person.name),
+          ),
+          subtitle: Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('9999 XXXX XXXX'),
+                  Text('correogen@gmail.com'),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                height: 2,
+                decoration: const BoxDecoration(color: Color(0xFF4F2263),),
+              ),
+            ],
+          ) ,)).toList(),
+      );
+    }).toList();
+    return groups;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.025,
-                    right: MediaQuery.of(context).size.width * 0.045,
-                  ),
-                  child: FieldsToWrite(
-                    preffixIcon: Icon(
-                      CupertinoIcons.search,
-                      size: MediaQuery.of(context).size.width * 0.07,
-                    ),
-                    labelText: 'Buscar...',
-                    readOnly: false,
-                  ),
+    final AlphabetListViewOptions options = AlphabetListViewOptions(
+      listOptions: ListOptions(
+        listHeaderBuilder: (context, symbol) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF4F2263),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(symbol, style: TextStyle(color: Colors.white, fontSize: 20),),
+          );
+        }
+
+
+
+      ),
+      scrollbarOptions: ScrollbarOptions(
+        jumpToSymbolsWithNoEntries: true,
+        symbolBuilder: (context, symbol, state) {
+          final color = switch (state) {
+            AlphabetScrollbarItemState.active => Colors.white,
+            AlphabetScrollbarItemState.deactivated => const Color(0xFF4F2263),
+            _ => Color(0xFF4F2263).withOpacity(0.6),
+          };
+
+          return Container(
+            padding: const EdgeInsets.only(left: 4, top: 2, bottom: 2),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(100),
+              ),
+              color: state == AlphabetScrollbarItemState.active
+                  ? const Color(0xFF4F2263).withOpacity(0.3)
+                  : null,
+            ),
+            child: Center(
+              child: FittedBox(
+                child: Text(
+                  symbol,
+                  style: TextStyle(color: color, fontSize: 30),
                 ),
               ),
-              Padding(
+            ),
+          );
+        },
+      ),
+      overlayOptions: OverlayOptions(
+        //showOverlay: true,
+        overlayBuilder: (context, symbol){
+          return Container(
+            alignment: Alignment.center,
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.black.withOpacity(0.4),
+            ),
+            child: Text(symbol, style: const TextStyle(color: Colors.white, fontSize: 100),),
+          );
+        }
+      ),
+    );
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
                 padding: EdgeInsets.only(
-                  right: MediaQuery.of(context).size.width * 0.025,
+                  left: MediaQuery.of(context).size.width * 0.025,
+                  right: MediaQuery.of(context).size.width * 0.045,
                 ),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: Icon(Icons.person_add_alt_outlined,
-                      size: MediaQuery.of(context).size.width * 0.11),
+                child: FieldsToWrite(
+                  preffixIcon: Icon(
+                    CupertinoIcons.search,
+                    size: MediaQuery.of(context).size.width * 0.07,
+                  ),
+                  labelText: 'Buscar...',
+                  readOnly: false,
                 ),
               ),
-            ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.025,
+              ),
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  setState(() {
+                    addClient();
+                  });
+                },
+                icon: Icon(Icons.person_add_alt_outlined,
+                    size: MediaQuery.of(context).size.width * 0.11),
+              ),
+            ),
+          ],
+        ),
+        Expanded(child: Container(
+          margin: EdgeInsets.only(top: 20),
+          child: AlphabetListView(
+            scrollController: scrollController,
+            items: _alphabetizedData,
+            options: options,
           ),
+        ),)
+      ],
+    );
 
-          ///
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Expanded(child: Column(
-                    children: [
-                      Container(
-                        //MediaQuery.of(context).size.width * 0.105 // 0.075 + 0.03
-                        margin: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width * 0.025,
-                            right: MediaQuery.of(context).size.width * 0.03,
-                            top: MediaQuery.of(context).size.width * 0.03,
-                            bottom: MediaQuery.of(context).size.width * 0.03
-                            ),
-                        padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.025,
-                          bottom: MediaQuery.of(context).size.width * 0.01,
-                          top: MediaQuery.of(context).size.width * 0.01,
 
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4F2263),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          currentLetter == '' ? 'A' : currentLetter,
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.05,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomScrollView(
-                          //physics: const BouncingScrollPhysics(),
-                          controller: sController,
-                          slivers: [
-                            // false para abajo, true para arriba
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    sliverrenderizados = index;
-                                    result = sliverrenderizados - sliversVisibles;
-                                    //print('sliverrenderizados $sliverrenderizados');
-                                    //print('sliversVisibles $sliversVisibles');
-                                    //print('result $result');
-                                    if (result < 0) {
-                                      indexatTop = 0;
-                                    } else {
-                                      if(scrollDirection == false){
-                                        indexatTop = sliverrenderizados - sliversVisibles;
-                                      } else if(scrollDirection == true){
-                                      }
-
-                                    }
-                                    String currentLetter = nombres[index][0].toUpperCase();
-                                  String previousLetter = index > 0 ? nombres[index - 1][0].toUpperCase() : '';
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      if (currentLetter != previousLetter) ...[
-                                        /// Container de color morado que tiene la letra
-                                        Visibility(
-                                          visible: currentLetter == 'A' ? false : true,
-                                          child: Container(
-                                          //MediaQuery.of(context).size.width * 0.105 // 0.075 + 0.03gi
-                                          margin: EdgeInsets.only(
-                                              left: MediaQuery.of(context).size.width * 0.025,
-                                              right: MediaQuery.of(context).size.width * 0.03,
-                                              bottom: MediaQuery.of(context).size.width * 0.03),
-                                          padding: EdgeInsets.only(
-                                            left: MediaQuery.of(context).size.width * 0.025,
-                                            bottom: MediaQuery.of(context).size.width * 0.01,
-                                            top: MediaQuery.of(context).size.width * 0.01,
-
-                                          ),
-                                          width: MediaQuery.of(context).size.width,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF4F2263).withOpacity(0.7),
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: Text(
-                                            currentLetter,
-                                            style: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width * 0.05,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),),
-
-                                      ],
-                                      ListTile(
-                                        key: ValueKey(nombres[index]),
-                                        title: Text(
-                                          nombres[index],
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width * 0.05,
-                                          ),
-                                        ),
-                                        subtitle: Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  textAlign: TextAlign.end,
-                                                  '9999 XXXX XXXX',
-                                                  style: TextStyle(
-                                                    fontSize: MediaQuery.of(context).size.width * 0.035,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  textAlign: TextAlign.end,
-                                                  'correogen@gmail.com',
-                                                  style: TextStyle(
-                                                    fontSize: MediaQuery.of(context).size.width * 0.035,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              width: MediaQuery.of(context).size.width,
-                                              height: MediaQuery.of(context).size.height * 0.003,
-                                              color: const Color(0xFF4F2263),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  );
-                                },
-                                childCount: nombres.length,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
-
-                  Container(
-                    margin: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.065),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: letras.map((letra) {
-                        return Expanded(child: GestureDetector(
-                            onTap: () {
-                              scrollToLetter(letra);
-                            },
-                            child: Text(
-                              letra,
-                              style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.width * 0.036,
-                                  fontWeight: FontWeight.bold,
-                                  color: currentLetter == letra
-                                      ? const Color(0xFF4F2263)
-                                      : Colors.grey),
-                            )));
-                        }).toList()))
-                  ])))
-        ]));
-  }
-
-  void scrollToLetter(String letra) {
-    // Implementar la lógica para desplazarse a la letra seleccionada.
   }
 }
