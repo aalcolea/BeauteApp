@@ -335,18 +335,20 @@ class PinEntryScreenState extends State<PinEntryScreen> {
               children: [
                 //inputField(),
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.15,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Ingrese el pin',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.065,
-                        color: Colors.white,
-                      ),
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.15,
+                ),
+                child: Center(
+                    child: Material(
+                      color: Colors.transparent,
+                  child: Text(
+                    'Ingrese el pin',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.065,
+                      color: Colors.white,
                     ),
                   ),
+                )),
                 ),
 
                 ///codigo para el pin
