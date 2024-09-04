@@ -115,11 +115,11 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       if (response.statusCode == 200) {
         await prefs.remove('jwt_token');
         await prefs.remove('user_id');
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/',
-              (Route<dynamic> route) => false,
-        );
+          Navigator.pushNamedAndRemoveUntil(
+            context, '/', (Route<dynamic> route) => false,
+          );
+
+
       } else {
         print('Error al cerrar sesión: ${response.body}');
       }

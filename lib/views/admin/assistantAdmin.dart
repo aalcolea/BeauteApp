@@ -10,6 +10,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../calendar/calendarSchedule.dart';
 import '../../forms/appoinmentForm.dart';
 import '../../forms/clientForm.dart';
+import '../../services/auth_service.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
 import 'notifications.dart';
 
@@ -40,7 +41,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
+        print('estoy en clientdetails');
         visibleKeyboard = visible;
+        if(_selectedScreen == 3){
+          print('estoy en clientdetails y saque el teclado');
+        }
       });
     });
   }
@@ -68,7 +73,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
-
     super.initState();
   }
 
@@ -198,7 +202,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          onPressed: () {},
+                          onPressed: () {
+                            PinEntryScreenState().logout(context);},
                           icon: Icon(
                             Icons.input_outlined,
                             size: MediaQuery.of(context).size.width * 0.095,
@@ -394,7 +399,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return const ClientDetials();
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom);
       case 4:
         return const NotificationsScreen(doctorId: 3);
       case 5:

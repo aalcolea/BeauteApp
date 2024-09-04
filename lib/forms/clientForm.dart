@@ -205,6 +205,7 @@ class ClientFormState extends State<ClientForm> {
       ),
       child: Column(
         children: [
+
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: visibleKeyboard
@@ -230,14 +231,22 @@ class ClientFormState extends State<ClientForm> {
                       color: const Color(0xFF4F2263),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Text(
-                      'Nombre del cliente',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Nombre del cliente',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                            onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))
+                      ],
+                    )
                   ),
                   Padding(
                     padding: EdgeInsets.only(
