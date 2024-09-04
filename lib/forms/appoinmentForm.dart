@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 import 'package:beaute_app/forms/clientForm.dart';
 import 'package:flutter/cupertino.dart';
@@ -93,6 +94,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   bool amPm = false;
   int _selectedIndexAmPm = 0;
   int? doctor_id_body = 0;
+  bool platform = false; //ios False androide True
 
   Future<void> createClient() async {
     try {
@@ -366,6 +368,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     if (widget.dateFromCalendarSchedule != null) {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
+    Platform.isIOS ? platform = true : platform = false;
     isDocLog = widget.isDoctorLog;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
@@ -381,7 +384,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: platform,
       onPopInvoked: (didPop) {
         onBackPressed(didPop);
       },

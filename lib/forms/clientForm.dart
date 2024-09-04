@@ -211,6 +211,7 @@ class ClientFormState extends State<ClientForm> {
                 ? MediaQuery.of(context).size.height * 0.47
                 : null,
             child: SingleChildScrollView(
+              physics:  const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
