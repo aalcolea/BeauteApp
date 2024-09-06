@@ -196,20 +196,20 @@ class ClientFormState extends State<ClientForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: null,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
+    return Material(
+      color: Colors.transparent,
+      child: Stack(
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: visibleKeyboard
-                ? MediaQuery.of(context).size.height * 0.47
-                : null,
+          Container(
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.03,
+                right: MediaQuery.of(context).size.width * 0.03,
+            top: visibleKeyboard ? MediaQuery.of(context).size.width * 0.125 : MediaQuery.of(context).size.width * 0.45),
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: SingleChildScrollView(
               physics:  const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
@@ -217,27 +217,35 @@ class ClientFormState extends State<ClientForm> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenWidth! < 370
-                            ? MediaQuery.of(context).size.width * 0.01
-                            : MediaQuery.of(context).size.width * 0.02,
-                        horizontal: MediaQuery.of(context).size.width * 0.02),
-                    margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.0,
-                        vertical: MediaQuery.of(context).size.width * 0.025),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Nombre del cliente',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      padding: EdgeInsets.symmetric(
+                          vertical: screenWidth! < 370
+                              ? MediaQuery.of(context).size.width * 0.01
+                              : MediaQuery.of(context).size.width * 0.02,
+                          horizontal: MediaQuery.of(context).size.width * 0.02),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.0,
+                          vertical: MediaQuery.of(context).size.width * 0.025),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4F2263),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Nombre del cliente',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))
+                        ],
+                      )
                   ),
                   Padding(
                     padding: EdgeInsets.only(
@@ -255,7 +263,7 @@ class ClientFormState extends State<ClientForm> {
                                 ? MediaQuery.of(context).size.width * 0.02
                                 : MediaQuery.of(context).size.width * 0.0325,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.02),
+                            MediaQuery.of(context).size.width * 0.02),
                         hintText: 'Nombre completo',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -313,7 +321,7 @@ class ClientFormState extends State<ClientForm> {
                                 ? MediaQuery.of(context).size.width * 0.02
                                 : MediaQuery.of(context).size.width * 0.0325,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.02),
+                            MediaQuery.of(context).size.width * 0.02),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -374,7 +382,7 @@ class ClientFormState extends State<ClientForm> {
                                 ? MediaQuery.of(context).size.width * 0.02
                                 : MediaQuery.of(context).size.width * 0.0325,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.02),
+                            MediaQuery.of(context).size.width * 0.02),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -390,22 +398,18 @@ class ClientFormState extends State<ClientForm> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        bottom: !visibleKeyboard
-                            ? MediaQuery.of(context).size.width * 0.2
-                            : MediaQuery.of(context).size.width * 0.0),
+                        bottom: MediaQuery.of(context).size.width * 0.03),
                     child: ElevatedButton(
                       onPressed: errorInit
                           ? null
                           : () {
-                              createClient();
-                            },
+                        createClient();
+                      },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,
                         padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.01,
-                            vertical:
-                                MediaQuery.of(context).size.width * 0.0112),
+                            horizontal: MediaQuery.of(context).size.width * 0.01,
+                            vertical: MediaQuery.of(context).size.width * 0.0112),
                         surfaceTintColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -416,23 +420,16 @@ class ClientFormState extends State<ClientForm> {
                           MediaQuery.of(context).size.width * 0.6,
                           MediaQuery.of(context).size.height * 0.075,
                         ),
-                        backgroundColor: Colors.white,
-                      ),
-                      child: Text(
-                        'Agregar Cliente',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.055,
-                          color: const Color(0xFF4F2263),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                                  backgroundColor: Colors.white,
+                                ),
+                                child: Text('Agregar Cliente',
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.055,
+                                      color: const Color(0xFF4F2263),
+                                    ))))
+                      ])))
+        ]));
   }
 }
