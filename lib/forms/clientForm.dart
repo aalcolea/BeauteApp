@@ -204,7 +204,7 @@ class ClientFormState extends State<ClientForm> {
             margin: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.03,
                 right: MediaQuery.of(context).size.width * 0.03,
-            top: visibleKeyboard ? MediaQuery.of(context).size.width * 0.125 : MediaQuery.of(context).size.width * 0.45),
+            top: visibleKeyboard ? MediaQuery.of(context).size.width * 0.045 : MediaQuery.of(context).size.width * 0.45),
             padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -216,6 +216,31 @@ class ClientFormState extends State<ClientForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                            Text(
+                              'Agregar cliente',
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.08,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF4F2263),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 95,
+                            ),
+                            IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                icon: const Icon(Icons.close))
+                          ],
+                  ),
                   Container(
                       padding: EdgeInsets.symmetric(
                           vertical: screenWidth! < 370
@@ -230,10 +255,10 @@ class ClientFormState extends State<ClientForm> {
                         color: const Color(0xFF4F2263),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Nombre del cliente',
                             style: TextStyle(
                               color: Colors.white,
@@ -241,9 +266,9 @@ class ClientFormState extends State<ClientForm> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          IconButton(
+                          /*IconButton(
                               padding: EdgeInsets.zero,
-                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))
+                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))*/
                         ],
                       )
                   ),

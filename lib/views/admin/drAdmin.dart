@@ -9,6 +9,7 @@ import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:beaute_app/services/auth_service.dart';
 import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
+import 'clientDetails.dart';
 import 'notifications.dart';
 
 class DoctorAdmin extends StatefulWidget {
@@ -390,9 +391,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientForm(
-            onHideBtnsBottom: _onHideBtnsBottom,
-            onFinishedAddClient: _onFinishedAddClient);
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog,);
       case 4:
         return const NotificationsScreen(doctorId: 3);
       default:

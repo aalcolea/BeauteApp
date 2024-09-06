@@ -25,8 +25,9 @@ class PinEntryScreen extends StatefulWidget {
   PinEntryScreenState createState() => PinEntryScreenState();
 }
 
-class PinEntryScreenState extends State<PinEntryScreen> {
-  final pinController = TextEditingController();
+class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProviderStateMixin {
+  late AnimationController aniController;
+  late Animation<double> shake;
   bool isDocLog = false;
   final textfield = TextEditingController();
 
@@ -35,6 +36,12 @@ class PinEntryScreenState extends State<PinEntryScreen> {
     // TODO: implement initState
     super.initState();
     isDocLog = widget.docLog;
+    aniController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4000),
+    );
+    //shake = Tween(begin: 0.0, end: 2.0).animate(CurvedAnimation(parent: aniController, curve: Curves.easeOut));
+    shake = Tween(begin: 0.0, end: 2.0).animate(CurvedAnimation(parent: aniController, curve: Curves.easeOut));
   }
 
   void authenticate() async {
@@ -43,13 +50,13 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       if (widget.userId == 3) {
         jsonBody = json.encode({
           'email': 'dulce@test.com',
-          'password': pinController.text,
+          'password': enteredPin,
           'fcm_token': await FirebaseMessaging.instance.getToken(),
         });
       } else {
         jsonBody = json.encode({
           'email': 'doctor${widget.userId}@test.com',
-          'password': pinController.text,
+          'password': enteredPin,
           'fcm_token': await FirebaseMessaging.instance.getToken(),
         });
       }
@@ -80,21 +87,25 @@ class PinEntryScreenState extends State<PinEntryScreen> {
           );
         }
       } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: const Text('Credenciales inválidas'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Cerrar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
+        setState(() {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Error'),
+              content: const Text('Credenciales inválidas'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cerrar'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+          enteredPin = '';
+        });
+
       }
     } catch (e) {
       print("Error $e");
@@ -129,48 +140,12 @@ class PinEntryScreenState extends State<PinEntryScreen> {
   String enteredPin = '';
   bool pinVisible = false;
 
-  Widget numBtn(int number) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 11),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
-          ),
-          padding: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.085,
-              right: MediaQuery.of(context).size.width * 0.085,
-              top: 10,
-              bottom: 10),
-          //const EdgeInsets.all(20),
-          backgroundColor: const Color(0xFFA0A0A0).withOpacity(0.70),
-        ),
-        onPressed: () {
-          setState(() {
-            if (enteredPin.length < 4) {
-              enteredPin += number.toString();
-              pinController.text = enteredPin;
-              enteredPin.length >= 4 ? authenticate() : print(enteredPin);
-            }
-          });
-        },
-        child: Text(
-          number.toString(),
-          style: TextStyle(
-              fontSize: MediaQuery.of(context).size.height * 0.042,
-              color: Colors.white),
-        ),
-      ),
-    );
-  }
-
   onNumberTapped(number) {
     setState(() {
       if (enteredPin.length < 4) {
         textfield.text += number;
         enteredPin += number.toString();
-        pinController.text = enteredPin;
-        enteredPin.length >= 4 ? authenticate() : print(enteredPin);
+        enteredPin.length >= 4 ? authenticate() : null;
       }
     });
   }
@@ -191,7 +166,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       alignment: Alignment.bottomCenter,
       child: TextFormField(
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         controller: textfield,
       ),
     );
@@ -270,7 +245,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
       alignment: Alignment.centerRight,
       //mainAxisAlignment: MainAxisAlignment.end,
       child: TextButton(
-        onPressed: textfield.text.isNotEmpty
+        onPressed: enteredPin.isNotEmpty
             ? () {
                 onCancelText();
               }
@@ -284,7 +259,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         Padding(
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.085),
           child: Text(
-            textfield.text.isNotEmpty ? 'Eliminar' : 'Cancelar',
+            enteredPin.isNotEmpty ? 'Eliminar' : 'Cancelar',
             style: TextStyle(
                 color: Colors.white,
                 fontSize: MediaQuery.of(context).size.width * 0.0475),
@@ -352,19 +327,20 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                   top: MediaQuery.of(context).size.height * 0.15,
                 ),
                 child: Center(
-                    child: Material(
-                      color: Colors.transparent,
-                  child: Text(
-                    'Ingrese el pin',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.065,
-                      color: Colors.white,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Text(
+                      'Ingrese el pin',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.065,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                )),
                 ),
+              ),
 
-                ///codigo para el pin
+              ///codigo para el pin
                 Padding(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.height * 0.04,
@@ -410,6 +386,7 @@ class PinEntryScreenState extends State<PinEntryScreen> {
                     ),
                   ),
                 ),
+                ///termina para el pin
 
                 gridView(),
                 Padding(

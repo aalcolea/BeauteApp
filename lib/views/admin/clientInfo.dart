@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -9,7 +10,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ClientInfo extends StatefulWidget {
-  const ClientInfo({super.key});
+  final bool isDoctorLog;
+  const ClientInfo({super.key, required this.isDoctorLog});
 
   @override
   State<ClientInfo> createState() => _ClientInfoState();
@@ -20,6 +22,7 @@ class _ClientInfoState extends State<ClientInfo> {
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
+  late bool isDocLog;
 
   Future<void> sendWhatsMsg(
       {required String phone, required String bodymsg}) async {
@@ -55,8 +58,17 @@ class _ClientInfoState extends State<ClientInfo> {
   void initState() {
     // TODO: implement initState
     keyboardVisibilityController = KeyboardVisibilityController();
+    isDocLog = widget.isDoctorLog;
     checkKeyboardVisibility();
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    keyboardVisibilitySubscription.cancel();
+    super.dispose();
   }
 
 
@@ -91,7 +103,7 @@ class _ClientInfoState extends State<ClientInfo> {
             child: Column(
               children: [
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 700),
+                  duration: Duration(milliseconds: 550),
                   height: visibleKeyboard ? 0 : 130,
                   child: CircleAvatar(
                     radius: 70,
@@ -201,7 +213,13 @@ class _ClientInfoState extends State<ClientInfo> {
                             child: InkWell(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                               onTap: () {
-                                print('jj');
+                                setState(() {
+                                  Navigator.push(context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                    ),
+                                  );
+                                });
                               },
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
