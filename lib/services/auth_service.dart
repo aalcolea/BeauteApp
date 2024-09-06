@@ -181,40 +181,53 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
           splashColor: Colors.white,
           onTap: () => onNumberTapped(numK),
           child: Container(
-            margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.0),
             width: MediaQuery.of(context).size.width * 0.182,
             height: MediaQuery.of(context).size.width * 0.182,
-            decoration: BoxDecoration(
-              color: col,
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
               shape: BoxShape.circle,
             ),
             child: ClipOval(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
                 child: Container(
+                  padding: EdgeInsets.zero,
                   decoration: BoxDecoration(
                     color: col.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        textAlign: TextAlign.center,
-                        numK,
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.085,
-                            color: Colors.white),
+
+                      Container(
+                        //padding: EdgeInsets.zero,
+                        //color: Colors.red,
+                          child: Text(
+                            numK,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              inherit: false,
+                              fontSize: MediaQuery.of(context).size.width * 0.09,
+                              color: Colors.white,
+                            ),
+                          ),
+
                       ),
-                      Text(
+                      Container(
+                        //color: Colors.black,
+                        child: Text(
                           textAlign: TextAlign.start,
                           desc,
                           style: TextStyle(
+                            inherit: false,
                               fontSize:
-                              MediaQuery.of(context).size.width * 0.0325,
+                              MediaQuery.of(context).size.width * 0.025,
                               fontWeight: FontWeight.normal,
                               color: Colors.white),
                         ),
+                      )
                     ],
                   ),
                 ),
@@ -282,11 +295,11 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
             keyField(
                 '6', 'M N O', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '7', 'P Q R', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '7', 'P Q R S', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '8', 'S T U', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '8', 'T U V', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             keyField(
-                '9', 'V W X', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
+                '9', 'W X Y Z', const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
             /*    keyField('', '', Colors.transparent, 0.0),
             keyField('0', 'X Y Z', const Color(0xFFA0A0A0).withOpacity(0.2),7.0),
             keyField('', '', Colors.transparent, 0.0),*/
@@ -341,14 +354,13 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                         return Container(
                           margin: EdgeInsets.only(
                               left: MediaQuery.of(context).size.height * 0.014,
-                              right:
-                                  MediaQuery.of(context).size.height * 0.014),
+                              right: MediaQuery.of(context).size.height * 0.014),
                           width: pinVisible
                               ? 30
-                              : MediaQuery.of(context).size.width * 0.040,
+                              : MediaQuery.of(context).size.width * 0.03,
                           height: pinVisible
                               ? 40
-                              : MediaQuery.of(context).size.width * 0.040,
+                              : MediaQuery.of(context).size.width * 0.03,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(width: 1.2, color: Colors.white),
@@ -379,12 +391,12 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                 gridView(),
                 Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width * 0.0,
+                    top: MediaQuery.of(context).size.width * 0.055,//0 para iphone
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      keyField('0', 'Y Z',
+                      keyField('0', '',
                           const Color(0xFFA0A0A0).withOpacity(0.2), 7.0),
                     ],
                   ),
