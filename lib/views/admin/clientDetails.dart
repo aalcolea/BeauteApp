@@ -57,8 +57,11 @@ class ClientDetails extends StatefulWidget {
   final void Function(
     bool,
   ) onHideBtnsBottom;
+  final void Function(
+    bool,
+  ) onShowBlur;
 
-  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.isDoctorLog});
+  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.isDoctorLog, required this.onShowBlur});
 
   @override
   State<ClientDetails> createState() => _ClientDetailsState();
@@ -123,18 +126,15 @@ class _ClientDetailsState extends State<ClientDetails> {
         builder: (BuildContext context) {
           return Stack(
             children: [
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                child: Container(
-                  color: Colors.black54.withOpacity(0.3),
-                ),
-              ),
               ClientForm(
                     onHideBtnsBottom: _onHideBtnsBottom,
                     onFinishedAddClient: _onFinishedAddClient),
             ],
           );
-        });
+        }).then((_){
+      widget.onShowBlur(false);
+
+    });
   }
 
   @override
@@ -199,7 +199,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                   onTap: () {
                     Navigator.push(context,
                       CupertinoPageRoute(
-                        builder: (context) => ClientInfo(isDoctorLog: isDocLog),
+                        builder: (context) => ClientInfo(isDoctorLog: isDocLog, name: client.name, phone: client.number, email: client.email),
                       ),
                     );
                   },
@@ -245,9 +245,6 @@ class _ClientDetailsState extends State<ClientDetails> {
             child: Text(symbol, style: const TextStyle(color: Colors.white, fontSize: 20),),
           );
         }
-
-
-
       ),
       scrollbarOptions: ScrollbarOptions(
         jumpToSymbolsWithNoEntries: true,
@@ -307,6 +304,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                 ),
                 child: TextFormField(
                   decoration: InputDecoration(
+                    hintText: 'Buscar...',
                     prefixIcon: Icon(Icons.search),
                     disabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
@@ -333,13 +331,15 @@ class _ClientDetailsState extends State<ClientDetails> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   setState(() {
+                    widget.onShowBlur(true);
                     addClient(
 
                     );
                   });
                 },
                 icon: Icon(Icons.person_add_alt_outlined,
-                    size: MediaQuery.of(context).size.width * 0.11),
+                    size: MediaQuery.of(context).size.width * 0.11,
+                  color: Color(0xFF4F2263),),
               ),
             ),
           ],

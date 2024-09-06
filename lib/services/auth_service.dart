@@ -30,6 +30,16 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
   late Animation<double> shake;
   bool isDocLog = false;
   final textfield = TextEditingController();
+  double? screenWidth;
+  double? screenHeight;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+    print('screenWidth $screenWidth');
+  }
 
   @override
   void initState() {
@@ -200,33 +210,24 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-
-                      Container(
-                        //padding: EdgeInsets.zero,
-                        //color: Colors.red,
-                          child: Text(
-                            numK,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              inherit: false,
-                              fontSize: MediaQuery.of(context).size.width * 0.09,
-                              color: Colors.white,
-                            ),
-                          ),
-
-                      ),
-                      Container(
-                        //color: Colors.black,
-                        child: Text(
-                          textAlign: TextAlign.start,
-                          desc,
-                          style: TextStyle(
-                            inherit: false,
-                              fontSize:
-                              MediaQuery.of(context).size.width * 0.025,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white),
+                      Text(
+                        numK,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          inherit: false,
+                          fontSize: MediaQuery.of(context).size.width * 0.09,
+                          color: Colors.white,
                         ),
+                      ),
+                      Text(
+                        textAlign: TextAlign.start,
+                        desc,
+                        style: TextStyle(
+                          inherit: false,
+                            fontSize:
+                            MediaQuery.of(context).size.width * 0.025,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white),
                       )
                     ],
                   ),
@@ -391,7 +392,7 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                 gridView(),
                 Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width * 0.055,//0 para iphone
+                    top: screenWidth! < 391 ? MediaQuery.of(context).size.width * 0.0:  MediaQuery.of(context).size.width * 0.055,//0 para iphone
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
