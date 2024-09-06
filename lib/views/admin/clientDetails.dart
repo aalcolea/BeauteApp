@@ -18,9 +18,12 @@ class Person {
 }
 
 class ClientDetails extends StatefulWidget {
+  final bool isDoctorLog;
   final void Function(
-      bool,
-      ) onHideBtnsBottom;  const ClientDetails({super.key, required this.onHideBtnsBottom});
+    bool,
+  ) onHideBtnsBottom;
+
+  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.isDoctorLog});
 
   @override
   State<ClientDetails> createState() => _ClientDetailsState();
@@ -30,6 +33,7 @@ class _ClientDetailsState extends State<ClientDetails> {
 
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
+  late bool isDocLog;
   bool visibleKeyboard = false;
   bool platform = false;
   double previousOffset = 0;
@@ -102,6 +106,8 @@ class _ClientDetailsState extends State<ClientDetails> {
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
+    isDocLog = widget.isDoctorLog;
+    print('isDocLog $isDocLog');
     super.initState();
   }
 
@@ -149,10 +155,9 @@ class _ClientDetailsState extends State<ClientDetails> {
         tag: key,
         children: data[key]!.map((person) => ListTile(
                   onTap: () {
-                    print('hola ${person.name}');
                     Navigator.push(context,
                       CupertinoPageRoute(
-                        builder: (context) => ClientInfo(),
+                        builder: (context) => ClientInfo(isDoctorLog: isDocLog),
                       ),
                     );
                   },
@@ -276,7 +281,9 @@ class _ClientDetailsState extends State<ClientDetails> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   setState(() {
-                    addClient();
+                    addClient(
+
+                    );
                   });
                 },
                 icon: Icon(Icons.person_add_alt_outlined,

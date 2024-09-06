@@ -399,13 +399,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom);
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog,);
       case 4:
         return const NotificationsScreen(doctorId: 3);
-      case 5:
-        return ClientForm(
-            onHideBtnsBottom: _onHideBtnsBottom,
-            onFinishedAddClient: _onFinishedAddClient);
       default:
         return Container();
     }
