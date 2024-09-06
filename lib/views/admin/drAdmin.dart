@@ -135,7 +135,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                   Padding(
                     padding: EdgeInsets.only(
                         left: _selectedScreen == 3
-                            ? MediaQuery.of(context).size.width * 0.016
+                            ? MediaQuery.of(context).size.width * 0.045
                             : MediaQuery.of(context).size.width * 0.045,
                         right: MediaQuery.of(context).size.width * 0.025,
                         bottom: MediaQuery.of(context).size.width * 0.005),
@@ -165,7 +165,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                               _selectedScreen == 1
                                   ? 'Calendario'
                                   : _selectedScreen == 3
-                                  ? 'Nuevo Cliente'
+                                  ? 'Clientes'
                                   : _selectedScreen == 4
                                   ? 'Notificaciones'
                                   : '',

@@ -98,7 +98,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
 
   onBackPressed(didPop) {
     if (!didPop) {
-      print('hello');
       setState(() {
         _selectedScreen == 3
             ? _selectedScreen = 1
