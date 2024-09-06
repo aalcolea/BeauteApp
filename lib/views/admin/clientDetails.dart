@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
 import '../../forms/clientForm.dart';
 import '../../styles/AppointmentStyles.dart';
+import 'clientInfo.dart';
 
 // Define el modelo de datos para los nombres
 class Person {
@@ -86,22 +85,13 @@ class _ClientDetailsState extends State<ClientDetails> {
                   color: Colors.black54.withOpacity(0.3),
                 ),
               ),
-              Center(
-                child: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.04),
-                      child:  ClientForm(
-                          onHideBtnsBottom: _onHideBtnsBottom,
-                          onFinishedAddClient: _onFinishedAddClient),
-                    )),
-              ),
+              ClientForm(
+                    onHideBtnsBottom: _onHideBtnsBottom,
+                    onFinishedAddClient: _onFinishedAddClient),
             ],
           );
         });
-
-}
+  }
 
   @override
   void initState() {
@@ -158,27 +148,36 @@ class _ClientDetailsState extends State<ClientDetails> {
       return AlphabetListViewItemGroup(
         tag: key,
         children: data[key]!.map((person) => ListTile(
-          onTap: (){print('hola ${person.name}');},
-          title: Container(
-            margin: EdgeInsets.only(top: 8, bottom: 8),
-            child: Text(person.name),
-          ),
-          subtitle: Column(
-            children: [
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('9999 XXXX XXXX'),
-                  Text('correogen@gmail.com'),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                height: 2,
-                decoration: const BoxDecoration(color: Color(0xFF4F2263),),
-              ),
-            ],
-          ) ,)).toList(),
+                  onTap: () {
+                    print('hola ${person.name}');
+                    Navigator.push(context,
+                      CupertinoPageRoute(
+                        builder: (context) => ClientInfo(),
+                      ),
+                    );
+                  },
+                  title: Container(
+                    margin: EdgeInsets.only(top: 8, bottom: 8),
+                    child: Text(person.name),
+                  ),
+                  subtitle: Column(
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('9999 XXXX XXXX'),
+                          Text('correogen@gmail.com'),
+                        ],
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        height: 2,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF4F2263),
+                        ),
+                      ),
+                    ],
+                  ),)).toList(),
       );
     }).toList();
     return groups;
@@ -190,13 +189,13 @@ class _ClientDetailsState extends State<ClientDetails> {
       listOptions: ListOptions(
         listHeaderBuilder: (context, symbol) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF4F2263),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(symbol, style: TextStyle(color: Colors.white, fontSize: 20),),
+            child: Text(symbol, style: const TextStyle(color: Colors.white, fontSize: 20),),
           );
         }
 
@@ -209,8 +208,7 @@ class _ClientDetailsState extends State<ClientDetails> {
           final color = switch (state) {
             AlphabetScrollbarItemState.active => Colors.white,
             AlphabetScrollbarItemState.deactivated => const Color(0xFF4F2263),
-            _ => Color(0xFF4F2263).withOpacity(0.6),
-          };
+            _ => const Color(0xFF4F2263).withOpacity(0.6)};
 
           return Container(
             padding: const EdgeInsets.only(left: 4, top: 2, bottom: 2),

@@ -147,10 +147,10 @@ class PinEntryScreenState extends State<PinEntryScreen> {
         ),
         onPressed: () {
           setState(() {
-            if (enteredPin.length < 6) {
+            if (enteredPin.length < 4) {
               enteredPin += number.toString();
               pinController.text = enteredPin;
-              enteredPin.length >= 6 ? authenticate() : print(enteredPin);
+              enteredPin.length >= 4 ? authenticate() : print(enteredPin);
             }
           });
         },
@@ -166,11 +166,11 @@ class PinEntryScreenState extends State<PinEntryScreen> {
 
   onNumberTapped(number) {
     setState(() {
-      if (enteredPin.length < 6) {
+      if (enteredPin.length < 4) {
         textfield.text += number;
         enteredPin += number.toString();
         pinController.text = enteredPin;
-        enteredPin.length >= 6 ? authenticate() : print(enteredPin);
+        enteredPin.length >= 4 ? authenticate() : print(enteredPin);
       }
     });
   }
