@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
@@ -6,8 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
+import '../../models/clientModel.dart';
+import '../../services/getClientsService.dart';
 import '../../styles/AppointmentStyles.dart';
 import 'clientInfo.dart';
+import 'package:http/http.dart' as http;
 
 // Define el modelo de datos para los nombres
 class Person {
@@ -16,6 +20,37 @@ class Person {
 
   Person(this.name) : tag = name.isNotEmpty ? name[0].toUpperCase() : '#';
 }
+class DropdownDataManager {
+  List<Client> clients = [];
+  Future<List<Client>> fetchUser() async {
+    List<Client> nombresClientes = [];
+    try {
+      var response = await http.get(
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/clientsAll'),
+      );
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        if (jsonResponse is Map<String, dynamic> && jsonResponse['clients'] is List) {
+          nombresClientes = List<Client>.from(
+            jsonResponse['clients'].map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>)),
+          );
+          clients = List.from(jsonResponse['clients'])
+              .map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>))
+              .toList();
+          print('Nombres de clientes: $clients');
+        } else {
+          print('La respuesta no contiene una lista de clientes.');
+        }
+      } else {
+        print('Error al cargar los clientes: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error al realizar la solicitud: $e');
+    }
+    return nombresClientes;
+  }
+}
+
 
 class ClientDetails extends StatefulWidget {
   final void Function(
@@ -27,18 +62,19 @@ class ClientDetails extends StatefulWidget {
 }
 
 class _ClientDetailsState extends State<ClientDetails> {
-
+  final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool platform = false;
   double previousOffset = 0;
-
+  List<Client> clients = [];
+  late List<AlphabetListViewItemGroup> _alphabetizedData;
+  late ScrollController scrollController;
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
           setState(() {
-            print('estoy en clientdetails');
             visibleKeyboard = visible;
             widget.onHideBtnsBottom(visibleKeyboard);
           });
@@ -61,17 +97,21 @@ class _ClientDetailsState extends State<ClientDetails> {
     });
   }
 
-  List<String> nombres = [
-    'Alan Alcolea', 'Banana Barrios', 'Colin Colon', 'Dorito Duran', 'Ector Eslobaco',
-    'Facundo Ferros', 'Galo Galindo', 'Hector Horacio', 'Ignacion Indigp', 'Juan Jocoso',
-    'Karmelo Kokoro', 'Luis Lomo', 'Mario Mono', 'Noe Nala', 'Ñoño Ñari', 'Orlando Olgon',
-    'Puerto Pablo', 'Query Quando', 'Ross Roma', 'Saul Sosa', 'Tulip Taran', 'Umberto Ugly',
-    'Victor Vazquez', 'Waldos Wall', 'Xari Xool', 'Yarizta Yale', 'Zarita Zolin'
-  ];
+  Future<void> getNombres() async {
+    List<String> fetchedNames = (await dropdownDataManager.fetchUser()).cast<String>();
 
-  late List<AlphabetListViewItemGroup> _alphabetizedData;
-  late ScrollController scrollController;
+    setState(() {
+      clients = fetchedNames.cast<Client>();
+      _alphabetizedData = _createAlphabetizedData(clients);
+    });
+  }
+  Future<void> fetchAndPrintClientDetails() async {
+    await dropdownDataManager.fetchUser();
 
+    for (var client in dropdownDataManager.clients) {
+      print('ID: ${client.id}, Nombre: ${client.name}, Email: ${client.email}, Número: ${client.number}');
+    }
+  }
   Future<void> addClient() async {
     return showDialog(
         context: context,
@@ -98,12 +138,17 @@ class _ClientDetailsState extends State<ClientDetails> {
     super.initState();
     scrollController = ScrollController();
     scrollController.addListener(onScroll);
-    _alphabetizedData = _createAlphabetizedData(nombres);
+    _alphabetizedData = _createAlphabetizedData(clients);
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
+    dropdownDataManager.fetchUser();
+
+    getNombres();
     super.initState();
+
   }
+
 
   @override
   void dispose() {
@@ -125,16 +170,15 @@ class _ClientDetailsState extends State<ClientDetails> {
   }
 
   // Create alphabetized data
-  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<String> names) {
-    final Map<String, List<Person>> data = {};
+  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients) {
+    final Map<String, List<Client>> data = {};
 
-    for (String name in names) {
-      Person person = Person(name);
-      final String tag = person.tag;
+    for (Client client in clients) {
+      final String tag = client.name[0].toUpperCase();
       if (!data.containsKey(tag)) {
         data[tag] = [];
       }
-      data[tag]!.add(person);
+      data[tag]!.add(client);
     }
 
     // Sort each list of names
@@ -147,9 +191,9 @@ class _ClientDetailsState extends State<ClientDetails> {
     final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
       return AlphabetListViewItemGroup(
         tag: key,
-        children: data[key]!.map((person) => ListTile(
+        children: data[key]!.map((client) => ListTile(
                   onTap: () {
-                    print('hola ${person.name}');
+                    print('hola ${client.name}');
                     Navigator.push(context,
                       CupertinoPageRoute(
                         builder: (context) => ClientInfo(),
@@ -158,15 +202,15 @@ class _ClientDetailsState extends State<ClientDetails> {
                   },
                   title: Container(
                     margin: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text(person.name),
+                    child: Text(client.name),
                   ),
                   subtitle: Column(
                     children: [
-                      const Row(
+                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('9999 XXXX XXXX'),
-                          Text('correogen@gmail.com'),
+                          Text('${client.number}'),
+                          Text(client.email),
                         ],
                       ),
                       Container(
@@ -258,13 +302,23 @@ class _ClientDetailsState extends State<ClientDetails> {
                   left: MediaQuery.of(context).size.width * 0.025,
                   right: MediaQuery.of(context).size.width * 0.045,
                 ),
-                child: FieldsToWrite(
-                  preffixIcon: Icon(
-                    CupertinoIcons.search,
-                    size: MediaQuery.of(context).size.width * 0.07,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFF4F2263)),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+
                   ),
-                  labelText: 'Buscar...',
-                  readOnly: false,
                 ),
               ),
             ),
