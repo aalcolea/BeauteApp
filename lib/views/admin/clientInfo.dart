@@ -172,7 +172,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                 setState(() {
                                   setState(() {
                                     String phoneCode = '+52${phoneController.text}';
-                                    sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, Mario. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
+                                    sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, $name. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
                                   });
                                 });
                               },
@@ -245,7 +245,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                 setState(() {
                                   Navigator.push(context,
                                     CupertinoPageRoute(
-                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog, nameClient: name),
                                     ),
                                   );
                                 });
