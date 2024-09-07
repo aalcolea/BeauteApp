@@ -11,7 +11,7 @@ void showClienteSuccessfullyAdded(BuildContext context, Widget widget, VoidCallb
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
             child: Container(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.black54.withOpacity(0.3),
             ),
           ),
           Center(
