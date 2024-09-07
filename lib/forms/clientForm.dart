@@ -149,6 +149,7 @@ class ClientFormState extends State<ClientForm> {
       if (response.statusCode == 201) {
         if (mounted) {
           hideKeyBoard();
+          Navigator.pop(context);
           showClienteSuccessfullyAdded(context, widget, () {
             widget.onFinishedAddClient(1, false);
           });
@@ -196,242 +197,279 @@ class ClientFormState extends State<ClientForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: null,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
+    return Material(
+      color: Colors.transparent,
+      child: Stack(
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: visibleKeyboard
-                ? MediaQuery.of(context).size.height * 0.47
-                : null,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.zero,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenWidth! < 370
-                            ? MediaQuery.of(context).size.width * 0.01
-                            : MediaQuery.of(context).size.width * 0.02,
-                        horizontal: MediaQuery.of(context).size.width * 0.02),
-                    margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.0,
-                        vertical: MediaQuery.of(context).size.width * 0.025),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Nombre del cliente',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.045,
-                        top: 0),
-                    child: TextFormField(
-                      inputFormatters: [
-                        NameInputFormatter(),
-                      ],
-                      focusNode: focusNodeClient,
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: screenWidth! < 370
-                                ? MediaQuery.of(context).size.width * 0.02
-                                : MediaQuery.of(context).size.width * 0.0325,
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.02),
-                        hintText: 'Nombre completo',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onTap: () {
-                        !visibleKeyboard
-                            ? widget.onHideBtnsBottom(!visibleKeyboard)
-                            : null;
-                      },
-                      onEditingComplete: () =>
-                          changeFocus(context, focusNodeClient, focusNodeCel),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenWidth! < 370
-                            ? MediaQuery.of(context).size.width * 0.01
-                            : MediaQuery.of(context).size.width * 0.02,
-                        horizontal: MediaQuery.of(context).size.width * 0.02),
-                    margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.0),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'No. Celular',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.045,
-                        top: MediaQuery.of(context).size.width * 0.0225),
-                    child: TextFormField(
-                      focusNode: focusNodeCel,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(10),
-                      ],
-                      controller: _numberController,
-                      decoration: InputDecoration(
-                        errorText: errorInit
-                            ? 'El número debe ser de 10 dígitos'
-                            : null,
-                        hintText: 'No. Celular',
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: screenWidth! < 370
-                                ? MediaQuery.of(context).size.width * 0.02
-                                : MediaQuery.of(context).size.width * 0.0325,
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.02),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onTap: () {
-                        !visibleKeyboard
-                            ? widget.onHideBtnsBottom(!visibleKeyboard)
-                            : null;
-                      },
-                      onEditingComplete: () =>
-                          changeFocus(context, focusNodeCel, focusNodeEmail),
-                      onChanged: (celnumber) {
-                        setState(() {
-                          if (celnumber.length != 10) {
-                            errorInit = true;
-                          } else {
-                            errorInit = false;
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenWidth! < 370
-                            ? MediaQuery.of(context).size.width * 0.01
-                            : MediaQuery.of(context).size.width * 0.02,
-                        horizontal: MediaQuery.of(context).size.width * 0.02),
-                    margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.0),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F2263),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Correo electrónico',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.045,
-                        top: MediaQuery.of(context).size.width * 0.0225),
-                    child: TextFormField(
-                      inputFormatters: [
-                        EmailInputFormatter(),
-                      ],
-                      focusNode: focusNodeEmail,
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: screenWidth! < 370
-                                ? MediaQuery.of(context).size.width * 0.02
-                                : MediaQuery.of(context).size.width * 0.0325,
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.02),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        hintText: 'Correo electrónico',
-                      ),
-                      onTap: () {
-                        !visibleKeyboard
-                            ? widget.onHideBtnsBottom(!visibleKeyboard)
-                            : null;
-                      },
-                      onEditingComplete: () => focusNodeEmail.unfocus(),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: !visibleKeyboard
-                            ? MediaQuery.of(context).size.width * 0.2
-                            : MediaQuery.of(context).size.width * 0.0),
-                    child: ElevatedButton(
-                      onPressed: errorInit
-                          ? null
-                          : () {
-                              createClient();
-                            },
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: InkRipple.splashFactory,
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.01,
-                            vertical:
-                                MediaQuery.of(context).size.width * 0.0112),
-                        surfaceTintColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: const BorderSide(
-                              color: Color(0xFF4F2263), width: 2),
-                        ),
-                        fixedSize: Size(
-                          MediaQuery.of(context).size.width * 0.6,
-                          MediaQuery.of(context).size.height * 0.075,
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                      child: Text(
-                        'Agregar Cliente',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.055,
-                          color: const Color(0xFF4F2263),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          Container(
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.03,
+                right: MediaQuery.of(context).size.width * 0.03,
+            top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
             ),
-          ),
-        ],
-      ),
-    );
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Agregar cliente',
+                      style: TextStyle(
+                        fontSize:
+                        MediaQuery.of(context).size.width * 0.08,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF4F2263),
+                      ),
+                    ),
+                    SizedBox(
+                      width: screenWidth! < 391.0 ? 70 : 95,
+                    ),
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          setState(() {
+                            Navigator.pop(context);
+                          });
+                        },
+                        icon: const Icon(Icons.close, color: const Color(0xFF4F2263),))
+                  ],
+                ),
+                Container(
+                    height: visibleKeyboard
+                        ? (screenWidth! < 391
+                            ? MediaQuery.of(context).size.height * 0.46
+                            : MediaQuery.of(context).size.height * 0.5)
+                        : screenWidth! < 391.0 ? MediaQuery.of(context).size.height * 0.535
+                  : MediaQuery.of(context).size.height * 0.6,
+                    child: SingleChildScrollView(
+                      physics:  const BouncingScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: screenWidth! < 370
+                                        ? MediaQuery.of(context).size.width * 0.01
+                                        : MediaQuery.of(context).size.width * 0.02,
+                                    horizontal: MediaQuery.of(context).size.width * 0.02),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: MediaQuery.of(context).size.width * 0.0,
+                                    vertical: MediaQuery.of(context).size.width * 0.025),
+                                alignment: Alignment.centerLeft,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4F2263),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Nombre del cliente',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    /*IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))*/
+                                  ],
+                                )
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).size.width * 0.045,
+                                  top: 0),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  NameInputFormatter(),
+                                ],
+                                focusNode: focusNodeClient,
+                                controller: _nameController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: screenWidth! < 370
+                                          ? MediaQuery.of(context).size.width * 0.02
+                                          : MediaQuery.of(context).size.width * 0.0325,
+                                      horizontal:
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  hintText: 'Nombre completo',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                onTap: () {
+                                  !visibleKeyboard
+                                      ? widget.onHideBtnsBottom(!visibleKeyboard)
+                                      : null;
+                                },
+                                onEditingComplete: () =>
+                                    changeFocus(context, focusNodeClient, focusNodeCel),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: screenWidth! < 370
+                                      ? MediaQuery.of(context).size.width * 0.01
+                                      : MediaQuery.of(context).size.width * 0.02,
+                                  horizontal: MediaQuery.of(context).size.width * 0.02),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: MediaQuery.of(context).size.width * 0.0),
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4F2263),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Text(
+                                'No. Celular',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).size.width * 0.045,
+                                  top: MediaQuery.of(context).size.width * 0.0225),
+                              child: TextFormField(
+                                focusNode: focusNodeCel,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
+                                controller: _numberController,
+                                decoration: InputDecoration(
+                                  errorText: errorInit
+                                      ? 'El número debe ser de 10 dígitos'
+                                      : null,
+                                  hintText: 'No. Celular',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: screenWidth! < 370
+                                          ? MediaQuery.of(context).size.width * 0.02
+                                          : MediaQuery.of(context).size.width * 0.0325,
+                                      horizontal:
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                onTap: () {
+                                  !visibleKeyboard
+                                      ? widget.onHideBtnsBottom(!visibleKeyboard)
+                                      : null;
+                                },
+                                onEditingComplete: () =>
+                                    changeFocus(context, focusNodeCel, focusNodeEmail),
+                                onChanged: (celnumber) {
+                                  setState(() {
+                                    if (celnumber.length != 10) {
+                                      errorInit = true;
+                                    } else {
+                                      errorInit = false;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: screenWidth! < 370
+                                      ? MediaQuery.of(context).size.width * 0.01
+                                      : MediaQuery.of(context).size.width * 0.02,
+                                  horizontal: MediaQuery.of(context).size.width * 0.02),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: MediaQuery.of(context).size.width * 0.0),
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4F2263),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Text(
+                                'Correo electrónico',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).size.width * 0.045,
+                                  top: MediaQuery.of(context).size.width * 0.0225),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  EmailInputFormatter(),
+                                ],
+                                focusNode: focusNodeEmail,
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: screenWidth! < 370
+                                          ? MediaQuery.of(context).size.width * 0.02
+                                          : MediaQuery.of(context).size.width * 0.0325,
+                                      horizontal:
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  hintText: 'Correo electrónico',
+                                ),
+                                onTap: () {
+                                  !visibleKeyboard
+                                      ? widget.onHideBtnsBottom(!visibleKeyboard)
+                                      : null;
+                                },
+                                onEditingComplete: () => focusNodeEmail.unfocus(),
+                              ),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context).size.width * 0.03),
+                                child: ElevatedButton(
+                                    onPressed: errorInit
+                                        ? null
+                                        : () {
+                                      createClient();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      splashFactory: InkRipple.splashFactory,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context).size.width * 0.01,
+                                          vertical: MediaQuery.of(context).size.width * 0.0112),
+                                      surfaceTintColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        side: const BorderSide(
+                                            color: Color(0xFF4F2263), width: 2),
+                                      ),
+                                      fixedSize: Size(
+                                        MediaQuery.of(context).size.width * 0.6,
+                                        MediaQuery.of(context).size.height * 0.075,
+                                      ),
+                                      backgroundColor: Colors.white,
+                                    ),
+                                    child: Text('Agregar Cliente',
+                                        style: TextStyle(
+                                          fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.055,
+                                          color: const Color(0xFF4F2263),
+                                        ))))
+                          ])),
+                ),
+
+              ],
+            ))
+        ]));
   }
 }
