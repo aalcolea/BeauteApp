@@ -28,7 +28,12 @@ class _ClientInfoState extends State<ClientInfo> {
   String name = '';
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   bool editInfo = false;
+
+  String? oldNameValue;
+  String? oldPhone;
+  String? oldEmail;
 
   Future<void> sendWhatsMsg(
       {required String phone, required String bodymsg}) async {
@@ -66,6 +71,7 @@ class _ClientInfoState extends State<ClientInfo> {
     keyboardVisibilityController = KeyboardVisibilityController();
     isDocLog = widget.isDoctorLog;
     name = widget.name;
+    nameController.text = widget.name;
     emailController.text = widget.email;
     phoneController.text = widget.phone.toString();
     checkKeyboardVisibility();
@@ -87,42 +93,58 @@ class _ClientInfoState extends State<ClientInfo> {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: !editInfo ? null : 100,
-        backgroundColor: Color(0xFF4F2263),
-          leading: !editInfo ? IconButton(
-        onPressed: () {
-          setState(() {
-            Navigator.of(context).pop();
-          });
-        },
-        icon: const Icon(CupertinoIcons.back,
-        color: Colors.white,),
-      ) : TextButton(onPressed: (){
-        setState(() {
-          editInfo = false;
-        });
-          }, child: Text('Cancelar', style: TextStyle(
-              color: Colors.white,
-              fontSize: MediaQuery.of(context).size.width * 0.045
-          ),)),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  editInfo ==  false ? editInfo = true : editInfo = false;
-                });
-              },
-              child: Text(!editInfo ?'Editar' : 'Guardar', style: TextStyle(
+        backgroundColor: const Color(0xFF4F2263),
+        leading: !editInfo
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context).pop();
+                  });
+                },
+                icon: const Icon(
+                  CupertinoIcons.back,
                   color: Colors.white,
-                  fontSize: MediaQuery.of(context).size.width * 0.045
+                ),
+              )
+            : TextButton(
+                onPressed: () {
+                  setState(() {
+                    emailController.text = oldEmail!;
+                    nameController.text = oldNameValue!;
+                    phoneController.text = oldPhone!;
+                    editInfo = false;
+                  });
+                },
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
+                )),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    editInfo == false ? editInfo = true : editInfo = false;
+                    oldEmail = emailController.text;
+                    oldNameValue = nameController.text;
+                    oldPhone = phoneController.text;
+                  });
+                },
+                child: Text(
+                  !editInfo ? 'Editar' : 'Guardar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
+                ),
               ),
-              ),),
-          ],
-        )
-
-      ],),
+            ],
+          )
+        ],
+      ),
       body: Column(
         children: [
           Container(
@@ -133,7 +155,7 @@ class _ClientInfoState extends State<ClientInfo> {
             child: Column(
               children: [
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 420),
+                  duration: const Duration(milliseconds: 420),
                   height: visibleKeyboard ? 0 : 130,
                   child: CircleAvatar(
                     radius: 70,
@@ -145,11 +167,26 @@ class _ClientInfoState extends State<ClientInfo> {
                   ),
                 ),
                 Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
-                child: Text( name,
+                child: TextFormField(
+                  readOnly: !editInfo,
+                  textAlign: TextAlign.center,
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    filled: editInfo,
+                    fillColor: Colors.grey.withOpacity(0.4),
+                    disabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)
+                    ),
+
+                  ),
                   style: TextStyle(
+                      color: Colors.white,
                     fontSize: MediaQuery.of(context).size.width * 0.065,
-                      color: Colors.white
-                  ),),),
+                  )
+                )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -205,7 +242,7 @@ class _ClientInfoState extends State<ClientInfo> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
                               onTap: () {
                                 setState(() {
                                   callNumber(phone: phoneController.text);
