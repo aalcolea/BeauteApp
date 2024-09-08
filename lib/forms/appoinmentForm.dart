@@ -45,11 +45,13 @@ class AlfaNumericInputFormatter extends TextInputFormatter {
 class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
   final String? dateFromCalendarSchedule;
+  final String? nameClient;
 
   const AppointmentForm({
     super.key,
     required this.isDoctorLog,
     this.dateFromCalendarSchedule,
+    this.nameClient,
   });
 
   @override
@@ -373,11 +375,24 @@ class _AppointmentFormState extends State<AppointmentForm> {
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
+    if (widget.nameClient != null) {
+      print('_clientTextController.text ${_clientTextController.text}');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _clientTextController.text = widget.nameClient!;
+          clientFieldDone = true;
+        });
+      });
+    }
   }
 
   @override
   void dispose() {
     keyboardVisibilitySubscription.cancel();
+    _clientTextController.dispose();
+    _dateController.dispose();
+    _timeController.dispose();
+    treatmentController.dispose();
     super.dispose();
   }
 
@@ -428,26 +443,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                           ],
                         ),
-                        /*Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.notifications_none_outlined,
-                                size: MediaQuery.of(context).size.width * 0.11,
-                                color: const Color(0xFF4F2263),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.home_outlined,
-                                size: MediaQuery.of(context).size.width * 0.11,
-                                color: const Color(0xFF4F2263),
-                              ),
-                            ),
-                          ],
-                        ),*/
                       ],
                     ),
                   ),
@@ -577,23 +572,25 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       fieldClientNode.unfocus();
                                     });
                                   },
-                                  fieldViewBuilder: (BuildContext context, TextEditingController fieldTextEditingController,
+                                  fieldViewBuilder: (BuildContext context, fieldTextEditingController /*TextEditingController fieldTextEditingController*/,
                                       FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
                                     fieldClientNode = fieldFocusNode;
                                     _clientTextController = fieldTextEditingController;
                                     return FieldsToWrite(
+                                      //initVal:  _clientTextController.text,
                                       inputFormatters: [
                                         AlfaNumericInputFormatter(),
                                       ],
+                                      eneabled: widget.nameClient == null ? true : false,
                                       textInputAction: TextInputAction.done,
                                       readOnly: false,
                                       labelText: 'Cliente',
                                       suffixIcon: Icon(
                                         CupertinoIcons.person,
-                                        color: const Color(0xFF4F2263),
+                                        color: widget.nameClient != null ? Colors.grey : const Color(0xFF4F2263),
                                         size: MediaQuery.of(context).size.width * 0.075,
                                       ),
-                                      controller: fieldTextEditingController,
+                                      controller: widget.nameClient != null ? _clientTextController : fieldTextEditingController,
                                       fillColor: Colors.white,
                                       focusNode: fieldFocusNode,
                                       onChanged: (text) {},

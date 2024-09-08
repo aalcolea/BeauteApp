@@ -303,6 +303,7 @@ class FieldsToWrite extends StatelessWidget {
   final void Function()? onEdComplete;
   final void Function(PointerDownEvent)? onTapOutside;
   final List<TextInputFormatter>? inputFormatters;
+  final String? initVal;
 
   const FieldsToWrite({
     super.key,
@@ -321,6 +322,7 @@ class FieldsToWrite extends StatelessWidget {
     this.onTapOutside,
     this.inputFormatters,
     this.preffixIcon,
+    this.initVal,
   });
 
   @override
@@ -330,6 +332,7 @@ class FieldsToWrite extends StatelessWidget {
     );
 
     return TextFormField(
+      initialValue: initVal,
       inputFormatters: inputFormatters,
       textInputAction: textInputAction,
       onEditingComplete: onEdComplete,
