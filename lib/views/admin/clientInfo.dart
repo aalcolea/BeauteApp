@@ -1,20 +1,27 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+
+import '../../utils/showToast.dart';
+import '../../utils/toastWidget.dart';
 
 class ClientInfo extends StatefulWidget {
   final bool isDoctorLog;
   final String name;
   final int phone;
   final String email;
+  final int id;
 
-  const ClientInfo({super.key, required this.isDoctorLog, required this.name, required this.phone, required this.email});
+  const ClientInfo({super.key, required this.id, required this.isDoctorLog, required this.name, required this.phone, required this.email});
 
   @override
   State<ClientInfo> createState() => _ClientInfoState();
@@ -34,6 +41,46 @@ class _ClientInfoState extends State<ClientInfo> {
   String? oldNameValue;
   String? oldPhone;
   String? oldEmail;
+
+  final storage = const FlutterSecureStorage();
+  bool isButtonEnabled = false;
+
+  void updateUserInfo() async {
+    final url = Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/editUserInfo/${widget.id}');
+    final token = await storage.read(key: 'jwt_token');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'name': nameController.text,
+          'number':phoneController.text,
+          'email': emailController.text,
+        }),
+      );
+      setState(() {
+        if (response.statusCode == 200) {
+          showOverlay(
+            context,
+            const CustomToast(
+              message: 'Datos actualizados correctamente',
+            ),
+          );
+          isButtonEnabled = false;
+        } else {
+          CustomToast(
+              message: "Error al actualizar los datos: ${response.body}");
+          print("Error al actualizar los datos: ${response.body}");
+        }
+      });
+    } catch (e) {
+      CustomToast(message: "Error al hacer la solicitud: $e");
+      print("Error al hacer la solicitud: $e");
+    }
+  }
 
   Future<void> sendWhatsMsg(
       {required String phone, required String bodymsg}) async {
@@ -133,6 +180,7 @@ class _ClientInfoState extends State<ClientInfo> {
                     oldNameValue = nameController.text;
                     oldPhone = phoneController.text;
                   });
+                  updateUserInfo();
                 },
                 child: Text(
                   !editInfo ? 'Editar' : 'Guardar',

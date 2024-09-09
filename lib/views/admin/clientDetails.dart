@@ -210,7 +210,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                   onTap: () {
                     Navigator.push(context,
                       CupertinoPageRoute(
-                        builder: (context) => ClientInfo(isDoctorLog: isDocLog, name: client.name, phone: client.number, email: client.email),
+                        builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email),
                       ),
                     );
                   },
