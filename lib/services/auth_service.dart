@@ -27,9 +27,20 @@ class PinEntryScreen extends StatefulWidget {
 
 class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProviderStateMixin {
   late AnimationController aniController;
-  late Animation<double> shake;
+  late Animation<double> shakeX;
   bool isDocLog = false;
   final textfield = TextEditingController();
+  double? screenWidth;
+  double? screenHeight;
+  int count = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+    print('screenWidth $screenWidth');
+  }
 
   @override
   void initState() {
@@ -38,10 +49,9 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
     isDocLog = widget.docLog;
     aniController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 4000),
+      duration: const Duration(milliseconds: 20),
     );
-    //shake = Tween(begin: 0.0, end: 2.0).animate(CurvedAnimation(parent: aniController, curve: Curves.easeOut));
-    shake = Tween(begin: 0.0, end: 2.0).animate(CurvedAnimation(parent: aniController, curve: Curves.easeOut));
+    shakeX = Tween(begin: 0.0, end: 10.5).animate(CurvedAnimation(parent: aniController, curve: Curves.easeOut));
   }
 
   void authenticate() async {
@@ -87,23 +97,34 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
           );
         }
       } else {
+      /*  setState(() {
+          aniController.forward();
+          print('animatiopn');
+
+        });*/
         setState(() {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Error'),
-              content: const Text('Credenciales inválidas'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Cerrar'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
+          aniController.forward();
+          print('no se pudo iniciar sesion');
+          aniController.addListener(() {
+            if (aniController.status == AnimationStatus.completed) {
+              aniController.reverse().then((_){
+                count = count + 1;
+                if(count < 7){
+                  aniController.forward();
+                } else {
+                  setState(() {
+                    aniController.stop();
+                    aniController.reset();
+                    count =0;
+                  });
+                }
+              });
+              //aniController.forward();
+              //aniController.stop();
+            }
+          });
           enteredPin = '';
+          print('entered pin clean');
         });
 
       }
@@ -200,33 +221,24 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-
-                      Container(
-                        //padding: EdgeInsets.zero,
-                        //color: Colors.red,
-                          child: Text(
-                            numK,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              inherit: false,
-                              fontSize: MediaQuery.of(context).size.width * 0.09,
-                              color: Colors.white,
-                            ),
-                          ),
-
-                      ),
-                      Container(
-                        //color: Colors.black,
-                        child: Text(
-                          textAlign: TextAlign.start,
-                          desc,
-                          style: TextStyle(
-                            inherit: false,
-                              fontSize:
-                              MediaQuery.of(context).size.width * 0.025,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white),
+                      Text(
+                        numK,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          inherit: false,
+                          fontSize: MediaQuery.of(context).size.width * 0.09,
+                          color: Colors.white,
                         ),
+                      ),
+                      Text(
+                        textAlign: TextAlign.start,
+                        desc,
+                        style: TextStyle(
+                          inherit: false,
+                            fontSize:
+                            MediaQuery.of(context).size.width * 0.025,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white),
                       )
                     ],
                   ),
@@ -330,7 +342,7 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                   child: Material(
                     color: Colors.transparent,
                     child: Text(
-                      'Ingrese el pin',
+                      aniController.status == AnimationStatus.forward ? 'Pin Incorrecto' : aniController.status == AnimationStatus.completed ? 'Ingrese Pin' : 'Ingrese el pin',
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.065,
                         color: Colors.white,
@@ -341,57 +353,68 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
               ),
 
               ///codigo para el pin
-                Padding(
+              Padding(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.height * 0.04,
                     top: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      4,
-                      (index) {
-                        return Container(
-                          margin: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.height * 0.014,
-                              right: MediaQuery.of(context).size.height * 0.014),
-                          width: pinVisible
-                              ? 30
-                              : MediaQuery.of(context).size.width * 0.03,
-                          height: pinVisible
-                              ? 40
-                              : MediaQuery.of(context).size.width * 0.03,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(width: 1.2, color: Colors.white),
-                            color: index < enteredPin.length
-                                ? pinVisible
-                                    ? Colors.black54
-                                    : Colors.white
-                                : Colors.transparent,
-                          ),
-                          child: pinVisible && index < enteredPin.length
-                              ? Center(
-                                  child: Text(
-                                  enteredPin[index],
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ))
-                              : null,
+                  child: AnimatedBuilder(
+                      animation: aniController,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          4,
+                          (index) {
+                            return Container(
+                              margin: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.height *
+                                      0.014,
+                                  right: MediaQuery.of(context).size.height *
+                                      0.014),
+                              width: pinVisible
+                                  ? 30
+                                  : MediaQuery.of(context).size.width * 0.03,
+                              height: pinVisible
+                                  ? 40
+                                  : MediaQuery.of(context).size.width * 0.03,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border:
+                                    Border.all(width: 1.2, color: Colors.white),
+                                color: index < enteredPin.length
+                                    ? pinVisible
+                                        ? Colors.black54
+                                        : Colors.white
+                                    : Colors.transparent,
+                              ),
+                              child: pinVisible && index < enteredPin.length
+                                  ? Center(
+                                      child: Text(
+                                      enteredPin[index],
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ))
+                                  : null,
+                            );
+                          },
+                        ),
+                      ),
+                      builder: (context, childToShake) {
+                        return Transform.translate(
+                          offset: Offset(shakeX.value, 0),
+                          child: childToShake,
                         );
-                      },
-                    ),
-                  ),
-                ),
-                ///termina para el pin
+                      })),
+
+              ///termina para el pin
 
                 gridView(),
                 Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width * 0.055,//0 para iphone
+                    top: screenWidth! < 391 ? MediaQuery.of(context).size.width * 0.0:  MediaQuery.of(context).size.width * 0.055,//0 para iphone
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

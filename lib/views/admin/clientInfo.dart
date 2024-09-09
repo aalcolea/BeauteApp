@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,18 +10,30 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ClientInfo extends StatefulWidget {
   final bool isDoctorLog;
-  const ClientInfo({super.key, required this.isDoctorLog});
+  final String name;
+  final int phone;
+  final String email;
+
+  const ClientInfo({super.key, required this.isDoctorLog, required this.name, required this.phone, required this.email});
 
   @override
   State<ClientInfo> createState() => _ClientInfoState();
 }
 
 class _ClientInfoState extends State<ClientInfo> {
-
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   late bool isDocLog;
+  String name = '';
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  bool editInfo = false;
+
+  String? oldNameValue;
+  String? oldPhone;
+  String? oldEmail;
 
   Future<void> sendWhatsMsg(
       {required String phone, required String bodymsg}) async {
@@ -59,8 +70,11 @@ class _ClientInfoState extends State<ClientInfo> {
     // TODO: implement initState
     keyboardVisibilityController = KeyboardVisibilityController();
     isDocLog = widget.isDoctorLog;
+    name = widget.name;
+    nameController.text = widget.name;
+    emailController.text = widget.email;
+    phoneController.text = widget.phone.toString();
     checkKeyboardVisibility();
-
     super.initState();
   }
 
@@ -68,6 +82,8 @@ class _ClientInfoState extends State<ClientInfo> {
   void dispose() {
     // TODO: implement dispose
     keyboardVisibilitySubscription.cancel();
+    //emailController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -76,23 +92,59 @@ class _ClientInfoState extends State<ClientInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF4F2263),
-          leading: IconButton(
-        onPressed: () {
-          setState(() {
-            Navigator.of(context).pop();
-          });
-        },
-        icon: const Icon(CupertinoIcons.back,
-        color: Colors.white,),
+        leadingWidth: !editInfo ? null : 100,
+        backgroundColor: const Color(0xFF4F2263),
+        leading: !editInfo
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context).pop();
+                  });
+                },
+                icon: const Icon(
+                  CupertinoIcons.back,
+                  color: Colors.white,
+                ),
+              )
+            : TextButton(
+                onPressed: () {
+                  setState(() {
+                    emailController.text = oldEmail!;
+                    nameController.text = oldNameValue!;
+                    phoneController.text = oldPhone!;
+                    editInfo = false;
+                  });
+                },
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
+                )),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    editInfo == false ? editInfo = true : editInfo = false;
+                    oldEmail = emailController.text;
+                    oldNameValue = nameController.text;
+                    oldPhone = phoneController.text;
+                  });
+                },
+                child: Text(
+                  !editInfo ? 'Editar' : 'Guardar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
+                ),
+              ),
+            ],
+          )
+        ],
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.edit_calendar_sharp,
-          color: Colors.white,),
-        ),
-      ],),
       body: Column(
         children: [
           Container(
@@ -103,7 +155,7 @@ class _ClientInfoState extends State<ClientInfo> {
             child: Column(
               children: [
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 550),
+                  duration: const Duration(milliseconds: 420),
                   height: visibleKeyboard ? 0 : 130,
                   child: CircleAvatar(
                     radius: 70,
@@ -115,11 +167,26 @@ class _ClientInfoState extends State<ClientInfo> {
                   ),
                 ),
                 Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
-                child: Text('Mario Arjona',
+                child: TextFormField(
+                  readOnly: !editInfo,
+                  textAlign: TextAlign.center,
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    filled: editInfo,
+                    fillColor: Colors.grey.withOpacity(0.4),
+                    disabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)
+                    ),
+
+                  ),
                   style: TextStyle(
+                      color: Colors.white,
                     fontSize: MediaQuery.of(context).size.width * 0.065,
-                      color: Colors.white
-                  ),),),
+                  )
+                )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -141,8 +208,8 @@ class _ClientInfoState extends State<ClientInfo> {
                               onTap: () {
                                 setState(() {
                                   setState(() {
-                                    String phoneCode = '+529993863556';
-                                    sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, Mario. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
+                                    String phoneCode = '+52${phoneController.text}';
+                                    sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, $name. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
                                   });
                                 });
                               },
@@ -175,11 +242,10 @@ class _ClientInfoState extends State<ClientInfo> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
                               onTap: () {
                                 setState(() {
-                                  String phoneCode = '9993863556';
-                                  callNumber(phone: phoneCode);
+                                  callNumber(phone: phoneController.text);
                                 });
                               },
                               child: Column(
@@ -216,7 +282,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                 setState(() {
                                   Navigator.push(context,
                                     CupertinoPageRoute(
-                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog, nameClient: name),
                                     ),
                                   );
                                 });
@@ -250,7 +316,11 @@ class _ClientInfoState extends State<ClientInfo> {
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.03),
                     child: TextFormField(
+                      controller: phoneController,
+                      readOnly: !editInfo,
                       decoration: InputDecoration(
+                        filled: editInfo,
+                        fillColor: Colors.grey.withOpacity(0.135),
                         //focus
                         disabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
@@ -276,7 +346,11 @@ class _ClientInfoState extends State<ClientInfo> {
                         horizontal: MediaQuery.of(context).size.width * 0.03,
                         vertical: MediaQuery.of(context).size.width * 0.03),
                     child: TextFormField(
+                      readOnly: !editInfo,
+                      controller: emailController,
                       decoration: InputDecoration(
+                        filled: editInfo,
+                        fillColor: Colors.grey.withOpacity(0.135),
                         //focus
                         disabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
@@ -295,28 +369,22 @@ class _ClientInfoState extends State<ClientInfo> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.03),
-                    child: TextFormField(
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        //focus
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                          borderRadius: BorderRadius.circular(10.0),
+                  const Visibility(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Row(
+                          children: [
+                            Text('Cita proxima el dia 26 de noviembre de 2024'),
+                          ],
                         ),
-                        //unfocus
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 1.0),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        labelText: 'Notas',
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
+                    ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15),
+                    child: Row(
+                      children: [
+                        Text('Cantidad de citas de $name: 30'),
+                      ],
                     ),
                   ),
                 ],
