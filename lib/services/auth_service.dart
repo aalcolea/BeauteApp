@@ -54,6 +54,13 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
     shakeX = Tween(begin: 0.0, end: 10.5).animate(CurvedAnimation(parent: aniController, curve: Curves.easeOut));
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    aniController.dispose();
+    super.dispose();
+  }
+
   void authenticate() async {
     try {
       String jsonBody;
@@ -97,11 +104,6 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
           );
         }
       } else {
-      /*  setState(() {
-          aniController.forward();
-          print('animatiopn');
-
-        });*/
         setState(() {
           aniController.forward();
           print('no se pudo iniciar sesion');

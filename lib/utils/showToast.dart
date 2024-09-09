@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 void showOverlay(BuildContext context, Widget widget) {
   OverlayEntry overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
-      top: MediaQuery.of(context).size.height * 0.8,
+      top: MediaQuery.of(context).size.height * 0.85,
       width: MediaQuery.of(context).size.width,
       child: Material(
         color: Colors.transparent,

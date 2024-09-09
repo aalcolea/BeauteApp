@@ -215,16 +215,28 @@ class _ClientDetailsState extends State<ClientDetails> {
                     );
                   },
                   title: Container(
-                    margin: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text(client.name),
+                    margin: const EdgeInsets.only(top: 8, bottom: 8),
+                    child: Text(client.name, style: TextStyle(
+                        color: const Color(0xFF4F2263), fontSize: MediaQuery.of(context).size.width * 0.055,
+                    ),),
                   ),
                   subtitle: Column(
                     children: [
                        Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('${client.number}'),
-                          Text(client.email),
+                          Expanded(child: Text('${client.number}', style: TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            color: const Color(0xFF4F2263).withOpacity(0.3), fontSize: MediaQuery.of(context).size.width * 0.045,
+                          ),),),
+                          Expanded(child: Text(
+                            textAlign: TextAlign.right,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            client.email, style: TextStyle(
+                            color: Color(0xFF4F2263).withOpacity(0.3), fontSize: MediaQuery.of(context).size.width * 0.045,
+                          ),),),
+
+
                         ],
                       ),
                       Container(
@@ -319,26 +331,32 @@ class _ClientDetailsState extends State<ClientDetails> {
                   left: MediaQuery.of(context).size.width * 0.025,
                   right: MediaQuery.of(context).size.width * 0.045,
                 ),
-                child: TextFormField(
-                  controller: searchController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(
-                    hintText: 'Buscar...',
-                    prefixIcon: const Icon(Icons.search),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
+                child: SizedBox(
+                  height: 37,
+                  child: TextFormField(
+                    controller: searchController,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      hintText: 'Bus..',
+                      prefixIcon: const Icon(Icons.search),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF4F2263)),
-                      borderRadius: BorderRadius.circular(10.0),
+                    style: TextStyle(
                     ),
                   ),
-                ),
+                )
               ),
             ),
             Padding(
