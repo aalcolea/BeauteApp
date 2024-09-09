@@ -46,12 +46,14 @@ class AppointmentForm extends StatefulWidget {
   final bool isDoctorLog;
   final String? dateFromCalendarSchedule;
   final String? nameClient;
+  final int? idScreenInfo;
 
   const AppointmentForm({
     super.key,
     required this.isDoctorLog,
     this.dateFromCalendarSchedule,
     this.nameClient,
+    this.idScreenInfo,
   });
 
   @override
@@ -341,7 +343,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         },
         body: jsonEncode({
           'dr_id': doctor_id_body!,
-          'client_id': _selectedClient?.id.toString(),
+          'client_id': widget.nameClient != null ? widget.idScreenInfo : _selectedClient?.id.toString(),
           'date': _dateController.text,
           'time': _timeController.text,
           'treatment': treatmentController.text,
@@ -376,9 +378,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
     if (widget.nameClient != null) {
-      print('_clientTextController.text ${_clientTextController.text}');
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
+
           _clientTextController.text = widget.nameClient!;
           clientFieldDone = true;
         });
