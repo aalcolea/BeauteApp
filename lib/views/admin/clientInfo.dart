@@ -124,8 +124,6 @@ class _ClientInfoState extends State<ClientInfo> {
     nameController.text = widget.name;
     emailController.text = widget.email;
     phoneController.text = widget.phone.toString();
-    phoneControllerToView.text = 'No.Celular\n${phoneController.text}';
-    emailControllerToView.text = 'Email\n${emailController.text}';
     checkKeyboardVisibility();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
@@ -311,8 +309,7 @@ class _ClientInfoState extends State<ClientInfo> {
                               onTap: !editInfo ? () {
                                 setState(() {
                                   setState(() {
-                                    phoneController.text = phoneController.text.trim();
-                                    String phoneCode = '+52${phoneController.text}';
+                                    String phoneCode = '+52${phoneController.text.trim()}';
                                     sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, $name. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
                                   });
                                 });
