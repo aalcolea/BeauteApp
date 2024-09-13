@@ -1,20 +1,27 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+
+import '../../utils/showToast.dart';
+import '../../utils/toastWidget.dart';
 
 class ClientInfo extends StatefulWidget {
   final bool isDoctorLog;
   final String name;
   final int phone;
   final String email;
+  final int id;
 
-  const ClientInfo({super.key, required this.isDoctorLog, required this.name, required this.phone, required this.email});
+  const ClientInfo({super.key, required this.id, required this.isDoctorLog, required this.name, required this.phone, required this.email});
 
   @override
   State<ClientInfo> createState() => _ClientInfoState();
@@ -28,7 +35,53 @@ class _ClientInfoState extends State<ClientInfo> {
   String name = '';
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   bool editInfo = false;
+  int maxLines = 2;
+
+  String? oldNameValue;
+  String? oldPhone;
+  String? oldEmail;
+
+  final storage = const FlutterSecureStorage();
+  bool isButtonEnabled = false;
+
+  void updateUserInfo() async {
+    final url = Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/editUserInfo/${widget.id}');
+    final token = await storage.read(key: 'jwt_token');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'name': nameController.text,
+          'number':phoneController.text,
+          'email': emailController.text,
+        }),
+      );
+      print('antes del toast');
+        if (response.statusCode == 200) {
+          showOverlay(
+            context,
+            const CustomToast(
+              message: 'Datos actualizados correctamente',
+            ),
+          );
+          isButtonEnabled = false;
+        } else {
+          CustomToast(
+              message: "Error al actualizar los datos: ${response.body}");
+          print("Error al actualizar los datos: ${response.body}");
+        }
+
+    } catch (e) {
+      CustomToast(message: "Error al hacer la solicitud: $e");
+      print("Error al hacer la solicitud: $e");
+    }
+  }
 
   Future<void> sendWhatsMsg(
       {required String phone, required String bodymsg}) async {
@@ -48,7 +101,6 @@ class _ClientInfoState extends State<ClientInfo> {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
           setState(() {
-            print('estoy en clientdetails');
             visibleKeyboard = visible;
           });
         });
@@ -66,9 +118,17 @@ class _ClientInfoState extends State<ClientInfo> {
     keyboardVisibilityController = KeyboardVisibilityController();
     isDocLog = widget.isDoctorLog;
     name = widget.name;
+    nameController.text = widget.name;
     emailController.text = widget.email;
     phoneController.text = widget.phone.toString();
     checkKeyboardVisibility();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+          phoneController.text = '\n${phoneController.text}';
+          emailController.text = '\n${emailController.text}';
+      });
+    });
+
     super.initState();
   }
 
@@ -76,8 +136,9 @@ class _ClientInfoState extends State<ClientInfo> {
   void dispose() {
     // TODO: implement dispose
     keyboardVisibilitySubscription.cancel();
-    //emailController.dispose();
     phoneController.dispose();
+    nameController.dispose();
+    emailController.dispose();
     super.dispose();
   }
 
@@ -87,42 +148,83 @@ class _ClientInfoState extends State<ClientInfo> {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: !editInfo ? null : 100,
-        backgroundColor: Color(0xFF4F2263),
-          leading: !editInfo ? IconButton(
-        onPressed: () {
-          setState(() {
-            Navigator.of(context).pop();
-          });
-        },
-        icon: const Icon(CupertinoIcons.back,
-        color: Colors.white,),
-      ) : TextButton(onPressed: (){
-        setState(() {
-          editInfo = false;
-        });
-          }, child: Text('Cancelar', style: TextStyle(
-              color: Colors.white,
-              fontSize: MediaQuery.of(context).size.width * 0.045
-          ),)),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  editInfo ==  false ? editInfo = true : editInfo = false;
-                });
-              },
-              child: Text(!editInfo ?'Editar' : 'Guardar', style: TextStyle(
+        backgroundColor: const Color(0xFF4F2263),
+        leading: !editInfo
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context).pop();
+                  });
+                },
+                icon: const Icon(
+                  CupertinoIcons.back,
                   color: Colors.white,
-                  fontSize: MediaQuery.of(context).size.width * 0.045
-              ),
-              ),),
-          ],
-        )
+                ),
+              )
+            : TextButton(
+                onPressed: () {
+                  setState(() {
+                    /*emailController.text = oldEmail!;
+                    nameController.text = oldNameValue!;
+                    phoneController.text = oldPhone!;*/
+                    maxLines = 2;
+                    editInfo = false;
+                    phoneController.text = '\n${phoneController.text}';
+                    emailController.text = '\n${emailController.text}';
+                    print('phoneController ${phoneController.text}');
+                    emailController.text = oldEmail!;
+                    nameController.text = oldNameValue!;
+                    phoneController.text = oldPhone!;
+                    print('emailController ${emailController.text}');
+                    print('nameController ${nameController.text}');
+                    print('phoneController ${phoneController.text}');
 
-      ],),
+                  });
+                },
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
+                )),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: editInfo == false
+                    ? () {
+                        setState(() {
+                          editInfo = true;
+                          oldEmail = emailController.text;
+                          oldNameValue = nameController.text;
+                          oldPhone = phoneController.text;
+                          maxLines = 1;
+                          phoneController.text = phoneController.text.trim();
+                          emailController.text = emailController.text.trim();
+                        });
+                      }
+                    : () {
+                        setState(() {
+                          updateUserInfo();
+                          maxLines = 2;
+                          editInfo = false;
+                          phoneController.text = '\n${phoneController.text}';
+                          emailController.text = '\n${emailController.text}';
+                          print('guardar');
+                        });
+                      },
+                child: Text(
+                  !editInfo ? 'Editar' : 'Guardar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
       body: Column(
         children: [
           Container(
@@ -133,7 +235,7 @@ class _ClientInfoState extends State<ClientInfo> {
             child: Column(
               children: [
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 420),
+                  duration: const Duration(milliseconds: 420),
                   height: visibleKeyboard ? 0 : 130,
                   child: CircleAvatar(
                     radius: 70,
@@ -145,11 +247,26 @@ class _ClientInfoState extends State<ClientInfo> {
                   ),
                 ),
                 Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
-                child: Text( name,
+                child: TextFormField(
+                  readOnly: !editInfo,
+                  textAlign: TextAlign.center,
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    filled: editInfo,
+                    fillColor: Colors.grey.withOpacity(0.4),
+                    disabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)
+                    ),
+
+                  ),
                   style: TextStyle(
+                      color: Colors.white,
                     fontSize: MediaQuery.of(context).size.width * 0.065,
-                      color: Colors.white
-                  ),),),
+                  )
+                )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -168,14 +285,14 @@ class _ClientInfoState extends State<ClientInfo> {
                             color: Colors.transparent,
                             child: InkWell(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
-                              onTap: () {
+                              onTap: !editInfo ? () {
                                 setState(() {
                                   setState(() {
                                     String phoneCode = '+52${phoneController.text}';
-                                    sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, Mario. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
+                                    sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, $name. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
                                   });
                                 });
-                              },
+                              } : null,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -205,12 +322,12 @@ class _ClientInfoState extends State<ClientInfo> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              onTap: () {
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              onTap: !editInfo ? () {
                                 setState(() {
                                   callNumber(phone: phoneController.text);
                                 });
-                              },
+                              }: null,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -240,16 +357,16 @@ class _ClientInfoState extends State<ClientInfo> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              onTap: () {
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              onTap: editInfo == false ? () {
                                 setState(() {
                                   Navigator.push(context,
                                     CupertinoPageRoute(
-                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog, nameClient: name, idScreenInfo: widget.id,),
                                     ),
                                   );
                                 });
-                              },
+                              } : null,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -276,42 +393,47 @@ class _ClientInfoState extends State<ClientInfo> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.03),
-                    child: TextFormField(
-                      controller: phoneController,
-                      readOnly: !editInfo,
-                      decoration: InputDecoration(
-                        filled: editInfo,
-                        fillColor: Colors.grey.withOpacity(0.135),
-                        //focus
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                          borderRadius: BorderRadius.circular(10.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.03),
+                      child: TextFormField(
+                        maxLines: maxLines,
+                        controller: phoneController,
+                        readOnly: !editInfo,
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: editInfo ? FloatingLabelBehavior.always : FloatingLabelBehavior.never,
+                          filled: editInfo,
+                          fillColor: Colors.grey.withOpacity(0.135),
+                          //focus
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0xFF4F2263), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          //unfocus
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0xFF4F2263), width: 1.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0xFF4F2263), width: 1),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          labelText: 'No. Celuar',
                         ),
-                        //unfocus
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 1.0),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 1),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        labelText: 'No. Celuar',
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
-
                     ),
-                  ),
-                  Padding(
+                    Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.03,
                         vertical: MediaQuery.of(context).size.width * 0.03),
                     child: TextFormField(
+                      maxLines: maxLines,
                       readOnly: !editInfo,
                       controller: emailController,
                       decoration: InputDecoration(
+                        floatingLabelBehavior: editInfo ? FloatingLabelBehavior.always : FloatingLabelBehavior.never,
                         filled: editInfo,
                         fillColor: Colors.grey.withOpacity(0.135),
                         //focus
@@ -328,7 +450,6 @@ class _ClientInfoState extends State<ClientInfo> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         labelText: 'Correo electrónico',
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
                   ),

@@ -40,14 +40,8 @@ class _CustomToastState extends State<CustomToast>
         _controller.reverse();
       }
     });
-    _controller.addListener(() {
-      setState(() {});
-    });
-
-    Future.delayed(widget.duration + const Duration(milliseconds: 1500), () {
-      _controller.dispose();
-    });
   }
+
 
   @override
   Widget build(BuildContext context) {
