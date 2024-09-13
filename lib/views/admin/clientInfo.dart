@@ -4,6 +4,7 @@ import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -34,6 +35,8 @@ class _ClientInfoState extends State<ClientInfo> {
   late bool isDocLog;
   String name = '';
   TextEditingController phoneController = TextEditingController();
+  TextEditingController phoneControllerToView = TextEditingController();
+  TextEditingController emailControllerToView = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   bool editInfo = false;
@@ -121,6 +124,8 @@ class _ClientInfoState extends State<ClientInfo> {
     nameController.text = widget.name;
     emailController.text = widget.email;
     phoneController.text = widget.phone.toString();
+    phoneControllerToView.text = 'No.Celular\n${phoneController.text}';
+    emailControllerToView.text = 'Email\n${emailController.text}';
     checkKeyboardVisibility();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
@@ -206,12 +211,14 @@ class _ClientInfoState extends State<ClientInfo> {
                       }
                     : () {
                         setState(() {
-                          updateUserInfo();
+
                           maxLines = 2;
                           editInfo = false;
                           phoneController.text = '\n${phoneController.text}';
                           emailController.text = '\n${emailController.text}';
                           print('guardar');
+                          oldPhone == phoneController.text && oldEmail == emailController.text && oldNameValue == nameController.text ?
+                          null : updateUserInfo();
                         });
                       },
                 child: Text(
@@ -246,27 +253,43 @@ class _ClientInfoState extends State<ClientInfo> {
                     ),
                   ),
                 ),
-                Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
-                child: TextFormField(
-                  readOnly: !editInfo,
-                  textAlign: TextAlign.center,
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    filled: editInfo,
-                    fillColor: Colors.grey.withOpacity(0.4),
-                    disabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent)
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent)
-                    ),
-
-                  ),
-                  style: TextStyle(
-                      color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width * 0.065,
-                  )
-                )),
+                Row(
+                    children: [
+                  Expanded(
+                      child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.02,
+                            vertical: MediaQuery.of(context).size.width * 0.02,
+                          ),
+                          decoration: BoxDecoration(
+                            border: !editInfo
+                                ? null
+                                : Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: TextFormField(
+                                  readOnly: !editInfo,
+                                  textAlign: TextAlign.center,
+                                  controller: nameController,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    filled: editInfo,
+                                    fillColor: const Color(0xFF410C58),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: MediaQuery.of(context).size.width *
+                                            0.065,
+                                  )))))
+                ]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -288,6 +311,7 @@ class _ClientInfoState extends State<ClientInfo> {
                               onTap: !editInfo ? () {
                                 setState(() {
                                   setState(() {
+                                    phoneController.text = phoneController.text.trim();
                                     String phoneCode = '+52${phoneController.text}';
                                     sendWhatsMsg(phone: phoneCode, bodymsg: 'Hola, $name. Te mando mensaje para reasignar tu cita en Beaute Clinique.\n');
                                   });
@@ -298,10 +322,10 @@ class _ClientInfoState extends State<ClientInfo> {
                                 children: [
                                   Icon(FontAwesomeIcons.whatsapp,
                                   size: MediaQuery.of(context).size.width * 0.12,
-                                  color: const Color(0xFF4F2263),),
+                                  color: editInfo ? Color(0xFF4F2263).withOpacity(0.3) : Color(0xFF4F2263),),
                                   Text('Mensaje',
                                   style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.055,
-                                    color: Color(0xFF4F2263),),),
+                                    color: editInfo ? Color(0xFF4F2263).withOpacity(0.3) : Color(0xFF4F2263),),),
                                 ],
                               ),
                             ),
@@ -333,10 +357,10 @@ class _ClientInfoState extends State<ClientInfo> {
                                 children: [
                                   Icon(Icons.call,
                                     size: MediaQuery.of(context).size.width * 0.12,
-                                    color: const Color(0xFF4F2263),),
+                                    color: editInfo ? Color(0xFF4F2263).withOpacity(0.3) : Color(0xFF4F2263),),
                                   Text('Llamar',
                                     style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.055,
-                                      color: const Color(0xFF4F2263),),),
+                                      color: editInfo ? Color(0xFF4F2263).withOpacity(0.3) : Color(0xFF4F2263),),),
                                 ],
                               ),
                             ),
@@ -372,10 +396,10 @@ class _ClientInfoState extends State<ClientInfo> {
                                 children: [
                                   Icon(Icons.add_card,
                                     size: MediaQuery.of(context).size.width * 0.12,
-                                    color: const Color(0xFF4F2263),),
+                                    color: editInfo ? Color(0xFF4F2263).withOpacity(0.3) : Color(0xFF4F2263)),
                                   Text('Crear cita',
                                     style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.055,
-                                      color: const Color(0xFF4F2263),),),
+                                      color: editInfo ? Color(0xFF4F2263).withOpacity(0.3) : Color(0xFF4F2263)),),
                                 ],
                               ),
                             ),
@@ -392,66 +416,121 @@ class _ClientInfoState extends State<ClientInfo> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.03),
-                      child: TextFormField(
-                        maxLines: maxLines,
-                        controller: phoneController,
-                        readOnly: !editInfo,
-                        decoration: InputDecoration(
-                          floatingLabelBehavior: editInfo ? FloatingLabelBehavior.always : FloatingLabelBehavior.never,
-                          filled: editInfo,
-                          fillColor: Colors.grey.withOpacity(0.135),
-                          //focus
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Color(0xFF4F2263), width: 2.0),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          //unfocus
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Color(0xFF4F2263), width: 1.0),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Color(0xFF4F2263), width: 1),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          labelText: 'No. Celuar',
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03,
+                          vertical: MediaQuery.of(context).size.width * 0.03),
+                        padding: EdgeInsets.only(left: editInfo ? 0:  MediaQuery.of(context).size.width * 0.03, top: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,
+                        bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            border: editInfo ? null : Border.all(color: Colors.black)
+                        ),
+                            child: !editInfo ? RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'No. Celular',
+                                    style: TextStyle(color: Color(0xFF4F2263),
+                                    fontSize: 22), // Color para "No. Celular"
+                                  ),
+                                  TextSpan(
+                                    text: phoneController.text,
+                                    style: TextStyle(color: Color(0xFF4F2263).withOpacity(0.3),
+                                    fontSize: 20), // Color para el texto del controlador
+                                  ),
+                                ],
+                              ),
+                            ) : TextFormField(
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              maxLines: maxLines,
+                              controller: phoneController,
+                              decoration: InputDecoration(
+                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                                disabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFF4F2263), width: 2.0),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                //unfocus
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFF4F2263), width: 1.0),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFF4F2263), width: 1),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                labelText: 'No. Celuar',
+                              ),
+                              style: TextStyle(fontSize: 20),
+                            ),
                         ),
                       ),
-                    ),
-                    Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.03,
-                        vertical: MediaQuery.of(context).size.width * 0.03),
-                    child: TextFormField(
-                      maxLines: maxLines,
-                      readOnly: !editInfo,
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: editInfo ? FloatingLabelBehavior.always : FloatingLabelBehavior.never,
-                        filled: editInfo,
-                        fillColor: Colors.grey.withOpacity(0.135),
-                        //focus
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                          borderRadius: BorderRadius.circular(10.0),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03,
+                              vertical: MediaQuery.of(context).size.width * 0.03),
+                          padding: EdgeInsets.only(left: editInfo ? 0:  MediaQuery.of(context).size.width * 0.03, top: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,
+                            bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              border: editInfo ? null : Border.all(color: Colors.black)
+                          ),
+                          child: !editInfo ? RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Correo electronico',
+                                  style: TextStyle(color: Color(0xFF4F2263),
+                                      fontSize: 22), // Color para "No. Celular"
+                                ),
+                                TextSpan(
+                                  text: emailController.text,
+                                  style: TextStyle(color: Color(0xFF4F2263).withOpacity(0.3),
+                                      fontSize: 20), // Color para el texto del controlador
+                                ),
+                              ],
+                            ),
+                          ) : TextFormField(
+                            maxLines: maxLines,
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Color(0xFF4F2263), width: 2.0),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              //unfocus
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Color(0xFF4F2263), width: 1.0),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Color(0xFF4F2263), width: 1),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              labelText: 'Correo electronico',
+                            ),
+                            style: TextStyle(fontSize: 20),
+                          ),
                         ),
-                        //unfocus
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF4F2263), width: 1.0),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        labelText: 'Correo electrónico',
                       ),
-                    ),
+                    ],
                   ),
                   const Visibility(
                       child: Padding(
