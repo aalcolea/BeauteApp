@@ -191,7 +191,7 @@ class _ClientDetailsState extends State<ClientDetails> {
     });
   }
   TextSpan highlightOccurrences(String source, String query) {
-    if (query.isEmpty) {
+    if(query.isEmpty){
       return TextSpan(
         text: source,
         style: TextStyle(
@@ -206,8 +206,8 @@ class _ClientDetailsState extends State<ClientDetails> {
     int start = 0;
     int index;
 
-    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1) {
-      if (index > start) {
+    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1){
+      if(index > start){
         matches.add(TextSpan(
           text: source.substring(start, index),
           style: TextStyle(
@@ -227,7 +227,7 @@ class _ClientDetailsState extends State<ClientDetails> {
       start = index + query.length;
     }
 
-    if (start < source.length) {
+    if(start < source.length){
       matches.add(TextSpan(
         text: source.substring(start),
         style: TextStyle(
@@ -240,11 +240,11 @@ class _ClientDetailsState extends State<ClientDetails> {
     return TextSpan(children: matches);
   }
 
-  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients) {
+  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients){
     final Map<String, List<Client>> data = {};
     String query = searchController.text;
 
-    for (Client client in clients) {
+    for(Client client in clients){
       final String tag = client.name[0].toUpperCase();
       if (!data.containsKey(tag)) {
         data[tag] = [];
@@ -257,21 +257,14 @@ class _ClientDetailsState extends State<ClientDetails> {
     });
 
     final sortedKeys = data.keys.toList()..sort();
-    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key){
       return AlphabetListViewItemGroup(
         tag: key,
         children: data[key]!.map((client) => ListTile(
           onTap: () {
-            Navigator.push(
-              context,
+            Navigator.push(context,
               CupertinoPageRoute(
-                builder: (context) => ClientInfo(
-                  isDoctorLog: isDocLog,
-                  id: client.id,
-                  name: client.name,
-                  phone: client.number,
-                  email: client.email,
-                ),
+                builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email,),
               ),
             );
           },
