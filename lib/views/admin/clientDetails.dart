@@ -190,64 +190,128 @@ class _ClientDetailsState extends State<ClientDetails> {
       _alphabetizedData = _createAlphabetizedData(filteredClients);
     });
   }
-  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients) {
+  TextSpan highlightOccurrences(String source, String query) {
+    if(query.isEmpty){
+      return TextSpan(
+        text: source,
+        style: TextStyle(
+          color: const Color(0xFF4F2263),
+          fontSize: MediaQuery.of(context).size.width * 0.055,
+        ),
+      );
+    }
+    var matches = <TextSpan>[];
+    String lowerSource = source.toLowerCase();
+    String lowerQuery = query.toLowerCase();
+    int start = 0;
+    int index;
+
+    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1){
+      if(index > start){
+        matches.add(TextSpan(
+          text: source.substring(start, index),
+          style: TextStyle(
+            color: const Color(0xFF4F2263),
+            fontSize: MediaQuery.of(context).size.width * 0.055,
+          ),
+        ));
+      }
+      matches.add(TextSpan(
+        text: source.substring(index, index + query.length),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF4F2263),
+          fontSize: MediaQuery.of(context).size.width * 0.055,
+        ),
+      ));
+      start = index + query.length;
+    }
+
+    if(start < source.length){
+      matches.add(TextSpan(
+        text: source.substring(start),
+        style: TextStyle(
+          color: const Color(0xFF4F2263),
+          fontSize: MediaQuery.of(context).size.width * 0.055,
+        ),
+      ));
+    }
+
+    return TextSpan(children: matches);
+  }
+
+  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients){
     final Map<String, List<Client>> data = {};
-    for (Client client in clients) {
+    String query = searchController.text;
+
+    for(Client client in clients){
       final String tag = client.name[0].toUpperCase();
       if (!data.containsKey(tag)) {
         data[tag] = [];
       }
       data[tag]!.add(client);
     }
+
     data.forEach((key, value) {
       value.sort((a, b) => a.name.compareTo(b.name));
     });
+
     final sortedKeys = data.keys.toList()..sort();
-    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key){
       return AlphabetListViewItemGroup(
         tag: key,
         children: data[key]!.map((client) => ListTile(
-                  onTap: () {
-                    Navigator.push(context,
-                      CupertinoPageRoute(
-                        builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email),
+          onTap: () {
+            Navigator.push(context,
+              CupertinoPageRoute(
+                builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email,),
+              ),
+            );
+          },
+          title: Container(
+            margin: const EdgeInsets.only(top: 8, bottom: 8),
+            child: RichText(
+              text: highlightOccurrences(client.name, query), // Este método ya regresa un TextSpan con el estilo aplicado
+            ),
+          ),
+          subtitle: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${client.number}',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: const Color(0xFF4F2263).withOpacity(0.3),
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
                       ),
-                    );
-                  },
-                  title: Container(
-                    margin: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text(client.name, style: TextStyle(
-                        color: const Color(0xFF4F2263), fontSize: MediaQuery.of(context).size.width * 0.055,
-                    ),),
+                    ),
                   ),
-                  subtitle: Column(
-                    children: [
-                       Row(
-                        children: [
-                          Expanded(child: Text('${client.number}', style: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            color: const Color(0xFF4F2263).withOpacity(0.3), fontSize: MediaQuery.of(context).size.width * 0.045,
-                          ),),),
-                          Expanded(child: Text(
-                            textAlign: TextAlign.right,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            client.email, style: TextStyle(
-                            color: Color(0xFF4F2263).withOpacity(0.3), fontSize: MediaQuery.of(context).size.width * 0.045,
-                          ),),),
-
-
-                        ],
+                  Expanded(
+                    child: Text(
+                      client.email,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: const Color(0xFF4F2263).withOpacity(0.3),
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        height: 2,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF4F2263),
-                        ),
-                      ),
-                    ],
-                  ),)).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                height: 2,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF4F2263),
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
       );
     }).toList();
     return groups;
