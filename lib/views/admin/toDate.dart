@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -43,7 +42,10 @@ class AppointmentScreen extends StatefulWidget {
   _AppointmentScreenState createState() => _AppointmentScreenState();
 }
 
-class _AppointmentScreenState extends State<AppointmentScreen> {
+class _AppointmentScreenState extends State<AppointmentScreen> with SingleTickerProviderStateMixin{
+
+  late AnimationController _animationController;
+  late Animation<double> movRight;
   bool isDocLog = false;
   late Future<List<Appointment>> appointments;
   late bool modalReachTop;
@@ -69,6 +71,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   bool positionBtnIcon = false;
   int isSelectedHelper = 7;
   String _dateLookandFill = '';
+  double offsetX = 0.0;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -231,6 +234,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1750, ));
+    movRight = Tween(begin: 0.0, end: 30.0,).animate(_animationController);
+
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     print(' antiqueHour $antiqueHour');
@@ -279,6 +285,28 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         : null;*/
   }
 
+  String slideDirection = 'No slide detected';
+
+  void slideRdetector(details){
+    if (details.delta.dx > 5) {
+      // El valor dx > X indica un movimiento hacia la derecha
+      setState(() {
+        _animationController.forward();
+
+        print('slide der ${details.delta.dx}');
+        print('AnimationStatus.values ${_animationController.value}');
+      });
+    } else if (details.delta.dx < -5) {
+      // El valor dx < X indica un movimiento hacia la izquierda
+      setState(() {
+        _animationController.reverse().then((_){
+          _animationController.reset();
+        });
+        print('Slide izq  ${details.delta.dx}');
+      });
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -286,6 +314,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     _dateController.dispose();
     timerControllertoShow.dispose();
     keyboardVisibilitySubscription.cancel();
+    _animationController.stop();
+    _animationController.dispose();
   }
 
   @override
@@ -337,7 +367,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                //padding : EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.09),
                 height: MediaQuery.of(context).size.height * 0.08,
                 color: Colors.white,
 
@@ -371,10 +400,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: 5,
                             itemBuilder: (context, index) {
-                              DateTime date = widget.selectedDate
-                                  .add(Duration(days: index - 2));
-                              bool isSelected =
-                                  dateTimeToinitModal.day == date.day &&
+                              DateTime date = widget.selectedDate.add(Duration(days: index - 2));
+                              bool isSelected = dateTimeToinitModal.day == date.day &&
                                       dateTimeToinitModal.month == date.month &&
                                       dateTimeToinitModal.year == date.year;
 
@@ -394,9 +421,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 },
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      bottom:
-                                          MediaQuery.of(context).size.width *
-                                              0.01),
+                                      bottom: MediaQuery.of(context).size.width * 0.01),
                                   width: itemWidth,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -404,19 +429,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     border: index <= 5
                                         ? Border(
                                             left: BorderSide(
-                                              color:
-                                                  Colors.grey.withOpacity(0.6),
+                                              color: Colors.grey.withOpacity(0.6),
                                               width: 1.5,
                                             ),
                                             top: BorderSide(
-                                              color:
-                                                  Colors.grey.withOpacity(0.6),
-                                              width:
-                                                  isSelected == true ? 1 : 3.5,
+                                              color: Colors.grey.withOpacity(0.6),
+                                              width: isSelected == true ? 1 : 3.5,
                                             ),
                                             bottom: BorderSide(
-                                              color:
-                                                  Colors.grey.withOpacity(0.6),
+                                              color: Colors.grey.withOpacity(0.6),
                                               width: 1.5,
                                             ),
                                           )
@@ -429,23 +450,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        DateFormat('EEE', 'es_ES')
-                                            .format(date)
-                                            .toUpperCase(),
+                                        DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
                                         style: TextStyle(
                                           color: isSelected
                                               ? Colors.deepPurple
                                               : Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.057
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.038,
+                                              ? MediaQuery.of(context).size.width * 0.057
+                                              : MediaQuery.of(context).size.width * 0.038,
                                         ),
                                       ),
                                       Text(
@@ -456,26 +469,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                               : Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.051
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.036,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    Container(
+                                              ? MediaQuery.of(context).size.width * 0.051
+                                              : MediaQuery.of(context).size.width * 0.036,
+                                            ))
+                                      ])));
+                        });
+                  })),
+                  Container(
                       height: MediaQuery.of(context).size.height * 0.12,
                       width: MediaQuery.of(context).size.width * 0.02,
                       margin: EdgeInsets.only(
@@ -537,7 +537,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             String treatmentType =
                                 appointment.treatmentType ?? 'Sin tratamiento';
 
-                            return InkWell(
+                            ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
+                            return GestureDetector(
+                              onPanUpdate: (details) {
+                                setState(() {
+                                  slideRdetector(details);
+                                });
+                              },
                               onTap: () {
                                 if (expandedIndex == index) {
                                   setState(() {
@@ -549,12 +555,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     ///
                                     Appointment appointmetsToModify =
                                         filteredAppointments[index];
-                                    _timerController.text = DateFormat('HH:mm')
-                                        .format(appointmetsToModify
-                                            .appointmentDate!);
+                                    _timerController.text = DateFormat('HH:mm').format(appointmetsToModify.appointmentDate!);
                                     DateTime formattedTime24hrs =
-                                        DateFormat('HH:mm')
-                                            .parse(_timerController.text);
+                                        DateFormat('HH:mm').parse(_timerController.text);
                                     String formattedTime12hrs =
                                         DateFormat('h:mm a')
                                             .format(formattedTime24hrs);
@@ -582,552 +585,388 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   });
                                 }
                               },
+                                ///AQUI
+                                ///container donde esta la info de la cita
                               child: Container(
-                                margin: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height * 0,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  bottom:
-                                      MediaQuery.of(context).size.width * 0.035,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                    color: expandedIndex == index
-                                        ? const Color(0xFF4F2263)
-                                        : !isTaped && expandedIndex != index
-                                            ? const Color(0xFF4F2263)
-                                            : const Color(0xFFC5B6CD),
-                                    width: 1.5,
+                                  margin: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height * 0,
+                                    left: MediaQuery.of(context).size.width * 0.02,
+                                    right: MediaQuery.of(context).size.width * 0.02,
+                                    bottom: MediaQuery.of(context).size.width * 0.035,
                                   ),
-                                  color: expandedIndex == index
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color: expandedIndex == index
+                                          ? const Color(0xFF4F2263)
+                                          : !isTaped && expandedIndex != index
+                                          ? const Color(0xFF4F2263)
+                                          : const Color(0xFFC5B6CD),
+                                      width: 3.5,
+                                    ),
+                                    color: Colors.white,
+                                    /*color: expandedIndex == index
                                       ? Colors.white
                                       : !isTaped && expandedIndex != index
                                           ? Colors.white
-                                          : Colors.white,
-                                  boxShadow: normallyShadow,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment: expandedIndex == index
-                                          ? CrossAxisAlignment.start
-                                          : CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: expandedIndex == index
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.75
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.70,
+                                          : Colors.white,*/
+                                    boxShadow: normallyShadow,
+                                  ),
+                                  child: AnimatedBuilder(
+                                    animation: _animationController,
+                                    child: Container(
+                                        child: Column(
+                                            children: [
+                                              Row(
+                                                  crossAxisAlignment: expandedIndex == index
+                                                      ? CrossAxisAlignment.start
+                                                      : CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                        width: expandedIndex == index
+                                                            ? MediaQuery.of(context).size.width * 0.75
+                                                            : MediaQuery.of(context).size.width * 0.70,
 
-                                          /// Fila de Nombre del doctor Nombre del paciente
-                                          child: ListTile(
-                                            title: Row(
-                                              children: [
-                                                Text(
-                                                  appointment.doctorId == 1
-                                                      ? 'Dr 1'
-                                                      : 'Dr 2',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.05,
-                                                    color: expandedIndex ==
-                                                            index
-                                                        ? const Color(
-                                                            0xFF4F2263)
-                                                        : !isTaped &&
-                                                                expandedIndex !=
-                                                                    index
-                                                            ? const Color(
-                                                                0xFF4F2263)
-                                                            : const Color(
-                                                                0xFFC5B6CD),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  ' $clientName',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.05,
-                                                    color: expandedIndex ==
-                                                            index
-                                                        ? Colors.black
-                                                        : !isTaped &&
-                                                                expandedIndex !=
-                                                                    index
-                                                            ? Colors.black
-                                                            : const Color(
-                                                                0xFFC5B6CD),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                                        /// Fila de Nombre del doctor Nombre del paciente
+                                                        child: ListTile(
+                                                            title: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    appointment.doctorId == 1
+                                                                        ? 'Dr 1'
+                                                                        : 'Dr 2',
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      fontSize:
+                                                                      MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          0.05,
+                                                                      color: expandedIndex ==
+                                                                          index
+                                                                          ? const Color(
+                                                                          0xFF4F2263)
+                                                                          : !isTaped &&
+                                                                          expandedIndex !=
+                                                                              index
+                                                                          ? const Color(
+                                                                          0xFF4F2263)
+                                                                          : const Color(
+                                                                          0xFFC5B6CD),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                      ' $clientName',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                        MediaQuery.of(context).size.width * 0.05,
+                                                                        color: expandedIndex == index
+                                                                            ? Colors.black
+                                                                            : !isTaped && expandedIndex != index
+                                                                            ? Colors.black
+                                                                            : const Color(0xFFC5B6CD),
+                                                                      ))
+                                                                ]),
+                                                            subtitle: Text(
+                                                                treatmentType,
+                                                                style: TextStyle(
+                                                                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                                                                  color: expandedIndex == index
+                                                                      ? Colors.black
+                                                                      : !isTaped && expandedIndex != index
+                                                                      ? Colors.black
+                                                                      : const Color(0xFFC5B6CD),
+                                                                )))),
 
-                                            /*],
-                                            ),*/
-                                            subtitle: Text(
-                                              treatmentType,
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                color: expandedIndex == index
-                                                    ? Colors.black
-                                                    : !isTaped &&
-                                                            expandedIndex !=
-                                                                index
-                                                        ? Colors.black
-                                                        : const Color(
-                                                            0xFFC5B6CD),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        ///cuadrado morado en donde se muestra la hora
-                                        Visibility(
-                                          visible: expandedIndex != index
-                                              ? true
-                                              : false,
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.22,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.0825,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: !isTaped
-                                                  ? const Color(0xFF4F2263)
-                                                  : const Color(0xFFC5B6CD),
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              border: Border.all(
-                                                color: !isTaped
-                                                    ? const Color(0xFF4F2263)
-                                                    : const Color(0xFFC5B6CD),
-                                                width: 1.5,
-                                              ),
-                                            ),
-                                            margin: EdgeInsets.only(
-                                              right: expandedIndex != index
-                                                  ? MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.0
-                                                  : 0,
-                                            ),
-                                            child: RichText(
-                                              textAlign: TextAlign.center,
-                                              text: TextSpan(
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.06,
-                                                  color: Colors.white,
-                                                ),
-                                                children: [
-                                                  TextSpan(
-                                                    text:
-                                                        timeParts[0], // "01:00"
-                                                  ),
-                                                  const TextSpan(
-                                                    text: '\n', // Nueva línea
-                                                  ),
-                                                  TextSpan(
-                                                    text: timeParts[1], // "PM"
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.045,
+                                                    ///cuadrado morado en donde se muestra la hora
+                                                    Visibility(
+                                                        visible: expandedIndex != index
+                                                            ? true
+                                                            : false,
+                                                        child: Container(
+                                                            width: MediaQuery.of(context).size.width * 0.22,
+                                                            height: MediaQuery.of(context).size.height * 0.0675,
+                                                            alignment: Alignment.center,
+                                                            decoration: BoxDecoration(
+                                                              color: !isTaped
+                                                                  ? const Color(0xFF4F2263)
+                                                                  : const Color(0xFFC5B6CD),
+                                                              borderRadius:
+                                                              BorderRadius.circular(15),
+                                                              border: Border.all(
+                                                                color: !isTaped
+                                                                    ? const Color(0xFF4F2263)
+                                                                    : const Color(0xFFC5B6CD),
+                                                                width: 1.5,
+                                                              ),
+                                                            ),
+                                                            margin: EdgeInsets.only(
+                                                              right: expandedIndex != index
+                                                                  ? MediaQuery.of(context).size.width * 0.0 : 0,
+                                                            ),
+                                                            child: RichText(
+                                                                textAlign: TextAlign.center,
+                                                                text: TextSpan(
+                                                                    style: TextStyle(
+                                                                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                                                                      color: Colors.white,
+                                                                    ),
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text: '${timeParts[0]}\n', // "01:00"
+                                                                      ),
+                                                                      TextSpan(
+                                                                          text: timeParts[1], // "PM"
+                                                                          style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                          ))
+                                                                    ])))),
+                                                    ///termina card
+                                                    Visibility(
+                                                      visible: expandedIndex == index,
+                                                      child: SizedBox(
+                                                          width: MediaQuery.of(context).size.width * 0.065),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        ///termina card
-                                        Visibility(
-                                          visible: expandedIndex == index,
-                                          child: SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.065),
-                                        ),
-                                        Visibility(
-                                          visible: expandedIndex == index
-                                              ? true
-                                              : false,
-                                          child: Container(
-                                            alignment: Alignment.topRight,
-                                            color: Colors.transparent,
-                                            child: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              onPressed: () {
-                                                setState(() {
-                                                  expandedIndex = null;
-                                                  isTaped = false;
-                                                });
-                                              },
-                                              icon: Icon(
-                                                CupertinoIcons.minus,
-                                                size: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.09,
-                                                color: const Color(0xFF4F2263),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Visibility(
-                                      visible:
-                                          expandedIndex == index ? true : false,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.026,
-                                            ),
-                                            margin: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.026,
-                                            ),
-                                            alignment: Alignment.centerLeft,
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF4F2263),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: const Text(
-                                              'Fecha:',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.026,
-                                            ),
-                                            child: TextFormField(
-                                              controller: _dateController,
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.03,
-                                                ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                labelText: 'DD/M/AAAA',
-                                                suffixIcon: const Icon(
-                                                    Icons.calendar_today),
-                                              ),
-                                              readOnly: true,
-                                              onTap: () {
-                                                setState(() {
-                                                  isCalendarShow = true;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.024,
-                                            ),
-                                            margin: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.026,
-                                            ),
-                                            alignment: Alignment.centerLeft,
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF4F2263),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: const Text(
-                                              'Hora:',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.024,
-                                            ),
-                                            child: TextFormField(
-                                              controller: _timerController,
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.03,
-                                                ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                labelText: 'HH:MM',
-                                                suffixIcon: const Icon(
-                                                    Icons.access_time),
-                                              ),
-                                              readOnly: true,
-                                              onTap: () {
-                                                setState(() {
-                                                  _isTimerShow == false
-                                                      ? _isTimerShow = true
-                                                      : _isTimerShow = false;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.025,
-                                              bottom: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02,
-                                              right: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.025,
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.05,
-                                                    right:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02,
-                                                  ),
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      elevation: 4,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10.0),
-                                                        side: const BorderSide(
-                                                            color: Colors.red,
-                                                            width: 1),
+                                                    Visibility(
+                                                        visible: expandedIndex == index
+                                                            ? true
+                                                            : false,
+                                                        child: Container(
+                                                            alignment: Alignment.topRight,
+                                                            color: Colors.transparent,
+                                                            child: IconButton(
+                                                                padding: EdgeInsets.zero,
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    expandedIndex = null;
+                                                                    isTaped = false;
+                                                                  });
+                                                                },
+                                                                icon: Icon(
+                                                                  CupertinoIcons.minus,
+                                                                  size: MediaQuery.of(context).size.width * 0.09,
+                                                                  color: const Color(0xFF4F2263),
+                                                                ))))
+                                                  ]),
+                                              Visibility(
+                                                  visible: expandedIndex == index
+                                                      ? true
+                                                      : false,
+                                                  child: Column(children: [
+                                                    Container(
+                                                      padding: EdgeInsets.symmetric(vertical: 8,
+                                                        horizontal: MediaQuery.of(context).size.width * .026,
                                                       ),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      surfaceTintColor:
-                                                          Colors.white,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                        horizontal:
-                                                            MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.05,
+                                                      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.026,
+                                                      ),
+                                                      alignment:
+                                                      Alignment.centerLeft,
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(0xFF4F2263),
+                                                        borderRadius: BorderRadius.circular(
+                                                            10),
+                                                      ),
+                                                      child: const Text(
+                                                        'Fecha:',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
                                                       ),
                                                     ),
-                                                    onPressed: () {
-                                                      showDeleteAppointmentDialog(
-                                                          context,
-                                                          widget,
-                                                          appointment.id,
-                                                          refreshAppointments,
-                                                          isDocLog);
-                                                    },
-                                                    child: Icon(
-                                                      Icons.delete,
-                                                      color: Colors.red,
-                                                      size:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.085,
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                ///boton para modificar
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    elevation: 4,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0),
-                                                      side: const BorderSide(
-                                                          color:
-                                                              Color(0xFF4F2263),
-                                                          width: 1),
-                                                    ),
-                                                    backgroundColor:
-                                                        const Color(0xFF4F2263),
-                                                    surfaceTintColor:
-                                                        const Color(0xFF4F2263),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.05,
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (builder) {
-                                                          return ConfirmationDialog(
-                                                            appointment:
-                                                                appointment,
-                                                            dateController:
-                                                                _dateController,
-                                                            timeController:
-                                                                _timerController,
-                                                            fetchAppointments:
-                                                                fetchAppointments,
-                                                          );
-                                                        },
-                                                      ).then((result) {
-                                                        //anadir
-                                                        if (result == true) {
-                                                          expandedIndex = null;
-                                                          isTaped = false;
+                                                    Padding(
+                                                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.026,
+                                                      ),
+                                                      child: TextFormField(
+                                                        controller: _dateController,
+                                                        decoration: InputDecoration(
+                                                          contentPadding: EdgeInsets.symmetric(
+                                                            horizontal: MediaQuery.of(context).size.width * 0.03,
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                          ),
+                                                          labelText: 'DD/M/AAAA',
+                                                          suffixIcon: const Icon(
+                                                              Icons.calendar_today),
+                                                        ),
+                                                        readOnly: true,
+                                                        onTap: () {
                                                           setState(() {
-                                                            //fetchAppointments(widget.selectedDate);
-                                                            fetchAppointments(
-                                                                dateTimeToinitModal);
-                                                            //late DateTime dateSelected = widget.selectedDate;
-                                                            late DateTime
-                                                                dateSelected =
-                                                                dateTimeToinitModal;
-                                                            //DateTime date = widget.selectedDate;
-                                                            DateTime date =
-                                                                dateTimeToinitModal;
-                                                            dateSelected = date;
-                                                            dateOnly = DateFormat(
-                                                                    'yyyy-MM-dd')
-                                                                .format(
-                                                                    dateSelected);
-                                                            initializeAppointments(
-                                                                dateSelected);
+                                                            isCalendarShow = true;
                                                           });
-                                                        } else {
-                                                          _timerController
-                                                                  .text =
-                                                              antiqueHour;
-                                                          _dateController.text =
-                                                              antiqueDate;
-                                                        }
-                                                      });
-                                                    });
-                                                  },
-                                                  child: Icon(
-                                                    CupertinoIcons.checkmark,
-                                                    color: Colors.white,
-                                                    size: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.09,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding:
+                                                      EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: MediaQuery.of(context).size.width * 0.024,
+                                                      ),
+                                                      margin: EdgeInsets.symmetric(
+                                                        horizontal: MediaQuery.of(context).size.width * 0.026,
+                                                      ),
+                                                      alignment: Alignment.centerLeft,
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(0xFF4F2263),
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      ),
+                                                      child: const Text(
+                                                        'Hora:',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.symmetric(
+                                                        vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.024,
+                                                      ),
+                                                      child: TextFormField(
+                                                        controller: _timerController,
+                                                        decoration: InputDecoration(
+                                                          contentPadding: EdgeInsets.symmetric(
+                                                            horizontal: MediaQuery.of(context).size.width * 0.03,
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                          ),
+                                                          labelText: 'HH:MM',
+                                                          suffixIcon: const Icon(
+                                                              Icons.access_time),
+                                                        ),
+                                                        readOnly: true,
+                                                        onTap: () {
+                                                          setState(() {
+                                                            _isTimerShow == false
+                                                                ? _isTimerShow = true
+                                                                : _isTimerShow = false;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                        padding: EdgeInsets.only(
+                                                          top: MediaQuery.of(
+                                                              context).size.width * 0.025,
+                                                          bottom: MediaQuery.of(context).size.width * 0.02,
+                                                          right: MediaQuery.of(context).size.width * 0.025,
+                                                        ),
+                                                        child: Row(mainAxisAlignment: MainAxisAlignment.end,
+                                                            children: [
+                                                              Padding( padding: EdgeInsets.only(
+                                                                left: MediaQuery.of(context).size.width * 0.05,
+                                                                right: MediaQuery.of(context).size.width * 0.02,
+                                                              ),
+                                                                child: ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    elevation: 4,
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(10.0),
+                                                                      side: const BorderSide(color: Colors.red, width: 1),
+                                                                    ),
+                                                                    backgroundColor: Colors.white,
+                                                                    surfaceTintColor: Colors
+                                                                        .white,
+                                                                    padding:
+                                                                    EdgeInsets
+                                                                        .symmetric(
+                                                                      horizontal: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          0.05,
+                                                                    ),
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    showDeleteAppointmentDialog(
+                                                                        context, widget, appointment.id,
+                                                                        refreshAppointments,
+                                                                        isDocLog);
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.delete,
+                                                                    color: Colors.red,
+                                                                    size: MediaQuery.of(context).size.width * 0.085,
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              ///boton para modificar
+                                                              ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  elevation: 4,
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                    side: const BorderSide(
+                                                                        color: Color(0xFF4F2263),
+                                                                        width: 1),
+                                                                  ),
+                                                                  backgroundColor: const Color(0xFF4F2263),
+                                                                  surfaceTintColor: const Color(0xFF4F2263),
+                                                                  padding: EdgeInsets.symmetric(
+                                                                    horizontal: MediaQuery.of(context).size.width * 0.05,
+                                                                  ),
+                                                                ),
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    showDialog(
+                                                                      barrierDismissible: false,
+                                                                      context: context, builder:
+                                                                        (builder) {
+                                                                      return ConfirmationDialog(
+                                                                        appointment: appointment,
+                                                                        dateController: _dateController,
+                                                                        timeController: _timerController,
+                                                                        fetchAppointments: fetchAppointments,
+                                                                      );
+                                                                    },
+                                                                    ).then(
+                                                                            (result) {
+                                                                          //anadir
+                                                                          if (result == true) {
+                                                                            expandedIndex = null;
+                                                                            isTaped = false;
+                                                                            setState(
+                                                                                    () {
+                                                                                  //fetchAppointments(widget.selectedDate);
+                                                                                  fetchAppointments(dateTimeToinitModal);
+                                                                                  //late DateTime dateSelected = widget.selectedDate;
+                                                                                  late DateTime dateSelected = dateTimeToinitModal;
+                                                                                  //DateTime date = widget.selectedDate;
+                                                                                  DateTime date = dateTimeToinitModal;
+                                                                                  dateSelected = date;dateOnly = DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                                                  initializeAppointments(dateSelected);
+                                                                                });
+                                                                          } else {
+                                                                            _timerController.text = antiqueHour;
+                                                                            _dateController.text = antiqueDate;
+                                                                          }
+                                                                        });
+                                                                  });
+                                                                },
+                                                                child: Icon(
+                                                                  CupertinoIcons.checkmark,
+                                                                  color: Colors.white,
+                                                                  size: MediaQuery.of(context).size.width * 0.09,
+                                                                ),
+                                                              )
+                                                            ]))
+                                                  ]))
+                                            ])),
+                                      builder: (context, infoContainer){
+                                      return Transform.translate(offset: Offset(0, _animationController.value), child: infoContainer);
+                                      }
+                                      ///
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
+                              );
+                                  });
+                            }
+                          }))),
 
               ///boton para agregar cita
               ElevatedButton(
@@ -1145,9 +984,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 onPressed: () {
                   dateOnly =
                       DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
+                  Navigator.push(context, MaterialPageRoute(
                       builder: (context) => AppointmentForm(
                         isDoctorLog: isDocLog,
                         dateFromCalendarSchedule: dateOnly,
@@ -1393,13 +1230,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: TimerFly(onTimeChoose: _onTimeChoose),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+                      )
+                    ],
+                  ))))
+    ]);
   }
 }
