@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
@@ -72,6 +73,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
   int isSelectedHelper = 7;
   String _dateLookandFill = '';
   double offsetX = 0.0;
+  int movIndex = 0;
+  bool dragStatus = false; //false = start
+  late int? _oldIndex;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -144,10 +148,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                 appointment.appointmentDate!.year == selectedDate.year &&
                 appointment.appointmentDate!.month == selectedDate.month &&
                 appointment.appointmentDate!.day == selectedDate.day)
-            /*  appointment.appointmentDate != null &&
-                appointment.appointmentDate!.year == selectedDate.year &&
-                appointment.appointmentDate!.month == selectedDate.month &&
-                appointment.appointmentDate!.day == selectedDate.day)*/
             .toList();
       } else {
         return [];
@@ -159,7 +159,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
 
   Future<void> refreshAppointments() async {
     setState(() {
-      //appointments = fetchAppointments(widget.selectedDate);
       appointments = fetchAppointments(dateTimeToinitModal);
     });
   }
@@ -234,12 +233,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1750, ));
-    movRight = Tween(begin: 0.0, end: 30.0,).animate(_animationController);
-
+    _oldIndex = null;
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
+    movRight = Tween(begin: 0.0, end: -100.0,).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _animationController.addListener((){
+      if(_animationController.status == AnimationStatus.completed){
+        _animationController.stop();
+      }
+    });
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
-    print(' antiqueHour $antiqueHour');
     positionBtnIcon = widget.btnToReachTop;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
@@ -248,21 +251,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
     if (widget.dateLookandFill.length > 4) {
       dateOnly = widget.dateLookandFill;
       dateTimeToinitModal = DateTime.parse(dateOnly!);
-      print('dateOnlyPressbtn al presionar el boton de expandir $dateOnly');
     } else {
       dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
       dateTimeToinitModal = DateTime.parse(dateOnly!);
-      //selectedDate2 = widget.selectedDate;
-      print('dateOnlyPressbtn $dateOnly');
     }
-    /* selectedDate2 = widget.selectedDate;
-    initializeAppointments(selectedDate2);*/
-    //selectedDate2 = widget.selectedDate;
-    //print('formatdo que necesito : $selectedDate2');
-    print('formato que tengo : $dateOnly');
-    print('dateTimeToinitModal $dateTimeToinitModal');
     initializeAppointments(dateTimeToinitModal);
-
     if (widget.firtsIndexTouchHour != null) {
       _timerController.text = widget.firtsIndexTouchHour!;
       antiqueHour = widget.firtsIndexTouchHour!;
@@ -271,38 +264,63 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
       _dateController.text = widget.firtsIndexTouchDate!;
       antiqueDate = widget.firtsIndexTouchDate!;
     }
-/*
-    widget.firtsIndexTouchHour != null
-        ? _timerController.text = widget.firtsIndexTouchHour!
-        : null;
-    widget.firtsIndexTouchHour != null
-        ? antiqueHour = widget.firtsIndexTouchHour!
-        : null;
-*/
-
-/*    widget.firtsIndexTouchDate != null
-        ? _dateController.text = widget.firtsIndexTouchDate!
-        : null;*/
+    _animationController.addListener((){
+      setState(() {
+        //print('lister ${_animationController.status}');
+      });
+    });
   }
 
   String slideDirection = 'No slide detected';
 
-  void slideRdetector(details){
-    if (details.delta.dx > 5) {
-      // El valor dx > X indica un movimiento hacia la derecha
-      setState(() {
-        _animationController.forward();
+  int statusAnimation = 0;
 
-        print('slide der ${details.delta.dx}');
-        print('AnimationStatus.values ${_animationController.value}');
-      });
-    } else if (details.delta.dx < -5) {
-      // El valor dx < X indica un movimiento hacia la izquierda
+  void slideDetector(details, index){
+    //1 indica que termino la animacion, 2 que se hizo un reverse y 3 que se hizo reset
+    if (details.delta.dx < -5) {
+        if(statusAnimation == 0 && _oldIndex == null){
+          setState(() {
+            _oldIndex = index;
+            _animationController.forward().then((_){
+              statusAnimation = 1;
+              print('1fts izqSlide $statusAnimation');
+              print('1fts_oldindex $_oldIndex');
+              print('---------------');
+            });
+          });
+        }
+        if(statusAnimation == 1 && _oldIndex != index){
+            _animationController.reverse().then((_){
+              statusAnimation = 2;
+              _oldIndex = index;
+              if(_animationController.status == AnimationStatus.dismissed){
+                _animationController.forward().then((_){
+                  statusAnimation = 1;
+                });
+              }
+            print('bug');
+            print('just index $index');
+            print('2scd izqSlide $statusAnimation');
+            print('2scd_oldindex $_oldIndex');
+            print('***************');
+          });
+        }
+      ///
+    } else if (details.delta.dx > 5) {
       setState(() {
-        _animationController.reverse().then((_){
-          _animationController.reset();
-        });
-        print('Slide izq  ${details.delta.dx}');
+        if(statusAnimation == 1 ){
+          _animationController.reverse().then((_){
+              statusAnimation = 2;
+              if(statusAnimation == 2){
+                _animationController.reset();
+                statusAnimation = 0;
+                _oldIndex = null;
+                print('1fts derSlider $statusAnimation');
+                print('1fts _oldIndex $_oldIndex');
+                print('///////////');
+              }
+          });
+        }
       });
     }
   }
@@ -344,8 +362,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
         blurRadius: 0,
         offset: Offset(
             0,
-            MediaQuery.of(context).size.width *
-                0.007), // Desplazamiento hacia abajo (sombra inferior)
+            MediaQuery.of(context).size.width * 0.007), // Desplazamiento hacia abajo (sombra inferior)
       ),
     ];
 
@@ -391,6 +408,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                             : null,
                       ),
                     ),
+
                     Expanded(
                       child: LayoutBuilder(
                         builder: (context, constraints) {
@@ -415,8 +433,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                     dateTimeToinitModal =
                                         DateTime.parse(dateOnly!);
                                     initializeAppointments(dateTimeToinitModal);
-                                    print('dateOnly $dateOnly');
-                                    //print(${widget.dateLookandFill});
                                   });
                                 },
                                 child: Container(
@@ -506,467 +522,474 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
               SizedBox(
                 height: MediaQuery.of(context).size.width * 0.03,
               ),
+              ///
               Expanded(
-                child: Container(
-                  color: isTaped ? Colors.white : Colors.white,
-                  child: FutureBuilder<List<Appointment>>(
-                    future: appointments,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Text("Error: ${snapshot.error}");
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No se han encontrado appoinments');
-                      } else {
-                        List<Appointment> filteredAppointments = snapshot.data!;
-                        return ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: filteredAppointments.length,
-                          itemBuilder: (context, index) {
-                            Appointment appointment =
-                                filteredAppointments[index];
-                            String time = (appointment.appointmentDate != null)
-                                ? DateFormat('hh:mm a')
-                                    .format(appointment.appointmentDate!)
-                                : 'Hora desconocida';
-                            List<String> timeParts = time.split(' ');
+                  child: Container(
+                      color: isTaped ? Colors.white : Colors.white,
+                      child: FutureBuilder<List<Appointment>>(
+                          future: appointments,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Text('No se han encontrado appoinments');
+                            } else {
+                              List<Appointment> filteredAppointments = snapshot.data!;
+                              return ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: filteredAppointments.length,
+                                  itemBuilder: (context, index) {
+                                    Appointment appointment =
+                                    filteredAppointments[index];
+                                    String time = (appointment.appointmentDate != null)
+                                        ? DateFormat('hh:mm a')
+                                        .format(appointment.appointmentDate!)
+                                        : 'Hora desconocida';
+                                    List<String> timeParts = time.split(' ');
 
-                            String clientName =
-                                appointment.clientName ?? 'Cliente desconocido';
-                            String treatmentType =
-                                appointment.treatmentType ?? 'Sin tratamiento';
+                                    String clientName =
+                                        appointment.clientName ?? 'Cliente desconocido';
+                                    String treatmentType =
+                                        appointment.treatmentType ?? 'Sin tratamiento';
 
-                            ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
-                            return GestureDetector(
-                              onPanUpdate: (details) {
-                                setState(() {
-                                  slideRdetector(details);
-                                });
-                              },
-                              onTap: () {
-                                if (expandedIndex == index) {
-                                  setState(() {
-                                    expandedIndex = null;
-                                    isTaped = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    ///
-                                    Appointment appointmetsToModify =
-                                        filteredAppointments[index];
-                                    _timerController.text = DateFormat('HH:mm').format(appointmetsToModify.appointmentDate!);
-                                    DateTime formattedTime24hrs =
-                                        DateFormat('HH:mm').parse(_timerController.text);
-                                    String formattedTime12hrs =
-                                        DateFormat('h:mm a')
-                                            .format(formattedTime24hrs);
-                                    _timerController.text = formattedTime12hrs;
-                                    _dateController.text =
-                                        DateFormat('yyyy-MM-dd').format(
-                                            appointmetsToModify
-                                                .appointmentDate!);
-                                    print(
-                                        'appointmetsToModify ${_dateController.text}');
+                                    ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
+                                    return GestureDetector(
+                                      /*onPanUpdate: (details) {
+                                        setState(() {
+                                          movIndex = index;
+                                          slideDetector(details, movIndex);
+                                        });
+                                      },*/
+                                      onHorizontalDragUpdate: (dragDetails){
+                                        setState(() {
+                                          movIndex = index;
+                                          slideDetector(dragDetails, movIndex);
+                                        });
+                                      },
 
-                                    ///
-                                    _dateLookandFill = dateOnly!;
-                                    expandedIndex = index;
-                                    isTaped = true;
-                                    positionBtnIcon = true;
-                                    modalReachTop = true;
-                                    widget.reachTop(
-                                        modalReachTop,
-                                        expandedIndex,
-                                        _timerController.text,
-                                        _dateController.text,
-                                        positionBtnIcon,
-                                        _dateLookandFill);
-                                  });
-                                }
-                              },
-                                ///AQUI
-                                ///container donde esta la info de la cita
-                              child: Container(
-                                  margin: EdgeInsets.only(
-                                    top: MediaQuery.of(context).size.height * 0,
-                                    left: MediaQuery.of(context).size.width * 0.02,
-                                    right: MediaQuery.of(context).size.width * 0.02,
-                                    bottom: MediaQuery.of(context).size.width * 0.035,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(
-                                      color: expandedIndex == index
-                                          ? const Color(0xFF4F2263)
-                                          : !isTaped && expandedIndex != index
-                                          ? const Color(0xFF4F2263)
-                                          : const Color(0xFFC5B6CD),
-                                      width: 3.5,
-                                    ),
-                                    color: Colors.white,
-                                    /*color: expandedIndex == index
-                                      ? Colors.white
-                                      : !isTaped && expandedIndex != index
-                                          ? Colors.white
-                                          : Colors.white,*/
-                                    boxShadow: normallyShadow,
-                                  ),
-                                  child: AnimatedBuilder(
-                                    animation: _animationController,
-                                    child: Container(
-                                        child: Column(
-                                            children: [
-                                              Row(
-                                                  crossAxisAlignment: expandedIndex == index
-                                                      ? CrossAxisAlignment.start
-                                                      : CrossAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                        width: expandedIndex == index
-                                                            ? MediaQuery.of(context).size.width * 0.75
-                                                            : MediaQuery.of(context).size.width * 0.70,
+                                      onHorizontalDragStart: (startDetails){
+                                        setState(() {
+                                          dragStatus = false;
+                                        });
+                                      },
 
-                                                        /// Fila de Nombre del doctor Nombre del paciente
-                                                        child: ListTile(
-                                                            title: Row(
-                                                                children: [
-                                                                  Text(
-                                                                    appointment.doctorId == 1
-                                                                        ? 'Dr 1'
-                                                                        : 'Dr 2',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontSize:
-                                                                      MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          0.05,
-                                                                      color: expandedIndex ==
-                                                                          index
-                                                                          ? const Color(
-                                                                          0xFF4F2263)
-                                                                          : !isTaped &&
-                                                                          expandedIndex !=
-                                                                              index
-                                                                          ? const Color(
-                                                                          0xFF4F2263)
-                                                                          : const Color(
-                                                                          0xFFC5B6CD),
-                                                                    ),
-                                                                  ),
-                                                                  Text(
-                                                                      ' $clientName',
-                                                                      style: TextStyle(
-                                                                        fontSize:
-                                                                        MediaQuery.of(context).size.width * 0.05,
-                                                                        color: expandedIndex == index
-                                                                            ? Colors.black
-                                                                            : !isTaped && expandedIndex != index
-                                                                            ? Colors.black
+                                      onHorizontalDragEnd: (endDetails){
+                                        dragStatus = true;
+                                      },
+                                      onTap: () {
+                                        if (expandedIndex == index) {
+                                          setState(() {
+                                            expandedIndex = null;
+                                            isTaped = false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            ///
+                                            Appointment appointmetsToModify =
+                                            filteredAppointments[index];
+                                            _timerController.text = DateFormat('HH:mm').format(appointmetsToModify.appointmentDate!);
+                                            DateTime formattedTime24hrs =
+                                            DateFormat('HH:mm').parse(_timerController.text);
+                                            String formattedTime12hrs =
+                                            DateFormat('h:mm a')
+                                                .format(formattedTime24hrs);
+                                            _timerController.text = formattedTime12hrs;
+                                            _dateController.text =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    appointmetsToModify
+                                                        .appointmentDate!);
+                                            print(
+                                                'appointmetsToModify ${_dateController.text}');
+
+                                            ///
+                                            _dateLookandFill = dateOnly!;
+                                            expandedIndex = index;
+                                            isTaped = true;
+                                            positionBtnIcon = true;
+                                            modalReachTop = true;
+                                            widget.reachTop(
+                                                modalReachTop,
+                                                expandedIndex,
+                                                _timerController.text,
+                                                _dateController.text,
+                                                positionBtnIcon,
+                                                _dateLookandFill);
+                                          });
+                                        }
+                                      },
+                                      ///AQUI
+                                      ///container donde esta la info de la cita
+                                      child: AnimatedBuilder(
+                                        animation: _animationController,
+                                        child: Container(
+                                        margin: EdgeInsets.only(
+                                          top: MediaQuery.of(context).size.height * 0,
+                                          left: MediaQuery.of(context).size.width * 0.02,
+                                          right: MediaQuery.of(context).size.width * 0.02,
+                                          bottom: MediaQuery.of(context).size.width * 0.035,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          border: Border.all(
+                                            color: expandedIndex == index
+                                                ? const Color(0xFF4F2263)
+                                                : !isTaped && expandedIndex != index
+                                                ? const Color(0xFF4F2263)
+                                                : const Color(0xFFC5B6CD),
+                                            width: 3.5,
+                                          ),
+                                          color: Colors.white,
+                                          boxShadow: normallyShadow,
+                                        ),
+                                        child: Container(
+                                                child: Column(
+                                                    children: [
+                                                      Row(
+                                                          crossAxisAlignment: expandedIndex == index
+                                                              ? CrossAxisAlignment.start
+                                                              : CrossAxisAlignment.center,
+                                                          children: [
+                                                            SizedBox(
+                                                                width: expandedIndex == index
+                                                                    ? MediaQuery.of(context).size.width * 0.75
+                                                                    : MediaQuery.of(context).size.width * 0.70,
+
+                                                                /// Fila de Nombre del doctor Nombre del paciente
+                                                                child: ListTile(
+                                                                    title: Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            appointment.doctorId == 1
+                                                                                ? 'Dr 1'
+                                                                                : 'Dr 2',
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              fontSize:
+                                                                              MediaQuery.of(context).size.width * 0.05,
+                                                                              color: expandedIndex == index
+                                                                                  ? const Color(0xFF4F2263) : !isTaped && expandedIndex != index
+                                                                                  ? const Color(0xFF4F2263)
+                                                                                  : const Color(0xFFC5B6CD),
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                              ' $clientName',
+                                                                              style: TextStyle(
+                                                                                fontSize:
+                                                                                MediaQuery.of(context).size.width * 0.05,
+                                                                                color: expandedIndex == index
+                                                                                    ? Colors.black
+                                                                                    : !isTaped && expandedIndex != index
+                                                                                    ? Colors.black
+                                                                                    : const Color(0xFFC5B6CD),
+                                                                              ))
+                                                                        ]),
+                                                                    subtitle: Text(
+                                                                        treatmentType,
+                                                                        style: TextStyle(
+                                                                          fontSize: MediaQuery.of(context).size.width * 0.05,
+                                                                          color: expandedIndex == index
+                                                                              ? Colors.black
+                                                                              : !isTaped && expandedIndex != index
+                                                                              ? Colors.black
+                                                                              : const Color(0xFFC5B6CD),
+                                                                        )))),
+
+                                                            ///cuadrado morado en donde se muestra la hora
+                                                            Visibility(
+                                                                visible: expandedIndex != index
+                                                                    ? true
+                                                                    : false,
+                                                                child: Container(
+                                                                    width: MediaQuery.of(context).size.width * 0.22,
+                                                                    height: MediaQuery.of(context).size.height * 0.0675,
+                                                                    alignment: Alignment.center,
+                                                                    decoration: BoxDecoration(
+                                                                      color: !isTaped
+                                                                          ? const Color(0xFF4F2263)
+                                                                          : const Color(0xFFC5B6CD),
+                                                                      borderRadius:
+                                                                      BorderRadius.circular(15),
+                                                                      border: Border.all(
+                                                                        color: !isTaped
+                                                                            ? const Color(0xFF4F2263)
                                                                             : const Color(0xFFC5B6CD),
-                                                                      ))
-                                                                ]),
-                                                            subtitle: Text(
-                                                                treatmentType,
-                                                                style: TextStyle(
-                                                                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                                                                  color: expandedIndex == index
-                                                                      ? Colors.black
-                                                                      : !isTaped && expandedIndex != index
-                                                                      ? Colors.black
-                                                                      : const Color(0xFFC5B6CD),
-                                                                )))),
-
-                                                    ///cuadrado morado en donde se muestra la hora
-                                                    Visibility(
-                                                        visible: expandedIndex != index
-                                                            ? true
-                                                            : false,
-                                                        child: Container(
-                                                            width: MediaQuery.of(context).size.width * 0.22,
-                                                            height: MediaQuery.of(context).size.height * 0.0675,
-                                                            alignment: Alignment.center,
-                                                            decoration: BoxDecoration(
-                                                              color: !isTaped
-                                                                  ? const Color(0xFF4F2263)
-                                                                  : const Color(0xFFC5B6CD),
-                                                              borderRadius:
-                                                              BorderRadius.circular(15),
-                                                              border: Border.all(
-                                                                color: !isTaped
-                                                                    ? const Color(0xFF4F2263)
-                                                                    : const Color(0xFFC5B6CD),
-                                                                width: 1.5,
-                                                              ),
-                                                            ),
-                                                            margin: EdgeInsets.only(
-                                                              right: expandedIndex != index
-                                                                  ? MediaQuery.of(context).size.width * 0.0 : 0,
-                                                            ),
-                                                            child: RichText(
-                                                                textAlign: TextAlign.center,
-                                                                text: TextSpan(
-                                                                    style: TextStyle(
-                                                                      fontSize: MediaQuery.of(context).size.width * 0.06,
-                                                                      color: Colors.white,
-                                                                    ),
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text: '${timeParts[0]}\n', // "01:00"
+                                                                        width: 1.5,
                                                                       ),
-                                                                      TextSpan(
-                                                                          text: timeParts[1], // "PM"
-                                                                          style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                                          ))
-                                                                    ])))),
-                                                    ///termina card
-                                                    Visibility(
-                                                      visible: expandedIndex == index,
-                                                      child: SizedBox(
-                                                          width: MediaQuery.of(context).size.width * 0.065),
-                                                    ),
-                                                    Visibility(
-                                                        visible: expandedIndex == index
-                                                            ? true
-                                                            : false,
-                                                        child: Container(
-                                                            alignment: Alignment.topRight,
-                                                            color: Colors.transparent,
-                                                            child: IconButton(
-                                                                padding: EdgeInsets.zero,
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    expandedIndex = null;
-                                                                    isTaped = false;
-                                                                  });
-                                                                },
-                                                                icon: Icon(
-                                                                  CupertinoIcons.minus,
-                                                                  size: MediaQuery.of(context).size.width * 0.09,
-                                                                  color: const Color(0xFF4F2263),
-                                                                ))))
-                                                  ]),
-                                              Visibility(
-                                                  visible: expandedIndex == index
-                                                      ? true
-                                                      : false,
-                                                  child: Column(children: [
-                                                    Container(
-                                                      padding: EdgeInsets.symmetric(vertical: 8,
-                                                        horizontal: MediaQuery.of(context).size.width * .026,
-                                                      ),
-                                                      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.026,
-                                                      ),
-                                                      alignment:
-                                                      Alignment.centerLeft,
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(0xFF4F2263),
-                                                        borderRadius: BorderRadius.circular(
-                                                            10),
-                                                      ),
-                                                      child: const Text(
-                                                        'Fecha:',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.026,
-                                                      ),
-                                                      child: TextFormField(
-                                                        controller: _dateController,
-                                                        decoration: InputDecoration(
-                                                          contentPadding: EdgeInsets.symmetric(
-                                                            horizontal: MediaQuery.of(context).size.width * 0.03,
-                                                          ),
-                                                          border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          labelText: 'DD/M/AAAA',
-                                                          suffixIcon: const Icon(
-                                                              Icons.calendar_today),
-                                                        ),
-                                                        readOnly: true,
-                                                        onTap: () {
-                                                          setState(() {
-                                                            isCalendarShow = true;
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                      EdgeInsets.symmetric(
-                                                        vertical: 8,
-                                                        horizontal: MediaQuery.of(context).size.width * 0.024,
-                                                      ),
-                                                      margin: EdgeInsets.symmetric(
-                                                        horizontal: MediaQuery.of(context).size.width * 0.026,
-                                                      ),
-                                                      alignment: Alignment.centerLeft,
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(0xFF4F2263),
-                                                        borderRadius: BorderRadius.circular(10),
-                                                      ),
-                                                      child: const Text(
-                                                        'Hora:',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                      EdgeInsets.symmetric(
-                                                        vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.024,
-                                                      ),
-                                                      child: TextFormField(
-                                                        controller: _timerController,
-                                                        decoration: InputDecoration(
-                                                          contentPadding: EdgeInsets.symmetric(
-                                                            horizontal: MediaQuery.of(context).size.width * 0.03,
-                                                          ),
-                                                          border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          labelText: 'HH:MM',
-                                                          suffixIcon: const Icon(
-                                                              Icons.access_time),
-                                                        ),
-                                                        readOnly: true,
-                                                        onTap: () {
-                                                          setState(() {
-                                                            _isTimerShow == false
-                                                                ? _isTimerShow = true
-                                                                : _isTimerShow = false;
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                        padding: EdgeInsets.only(
-                                                          top: MediaQuery.of(
-                                                              context).size.width * 0.025,
-                                                          bottom: MediaQuery.of(context).size.width * 0.02,
-                                                          right: MediaQuery.of(context).size.width * 0.025,
-                                                        ),
-                                                        child: Row(mainAxisAlignment: MainAxisAlignment.end,
-                                                            children: [
-                                                              Padding( padding: EdgeInsets.only(
-                                                                left: MediaQuery.of(context).size.width * 0.05,
-                                                                right: MediaQuery.of(context).size.width * 0.02,
-                                                              ),
-                                                                child: ElevatedButton(
-                                                                  style: ElevatedButton.styleFrom(
-                                                                    elevation: 4,
-                                                                    shape: RoundedRectangleBorder(
-                                                                      borderRadius: BorderRadius.circular(10.0),
-                                                                      side: const BorderSide(color: Colors.red, width: 1),
                                                                     ),
-                                                                    backgroundColor: Colors.white,
-                                                                    surfaceTintColor: Colors
-                                                                        .white,
-                                                                    padding:
-                                                                    EdgeInsets
-                                                                        .symmetric(
-                                                                      horizontal: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          0.05,
+                                                                    margin: EdgeInsets.only(
+                                                                      right: expandedIndex != index
+                                                                          ? MediaQuery.of(context).size.width * 0.0 : 0,
                                                                     ),
-                                                                  ),
-                                                                  onPressed: () {
-                                                                    showDeleteAppointmentDialog(
-                                                                        context, widget, appointment.id,
-                                                                        refreshAppointments,
-                                                                        isDocLog);
-                                                                  },
-                                                                  child: Icon(
-                                                                    Icons.delete,
-                                                                    color: Colors.red,
-                                                                    size: MediaQuery.of(context).size.width * 0.085,
-                                                                  ),
-                                                                ),
-                                                              ),
-
-                                                              ///boton para modificar
-                                                              ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                  elevation: 4,
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(10.0),
-                                                                    side: const BorderSide(
-                                                                        color: Color(0xFF4F2263),
-                                                                        width: 1),
-                                                                  ),
-                                                                  backgroundColor: const Color(0xFF4F2263),
-                                                                  surfaceTintColor: const Color(0xFF4F2263),
-                                                                  padding: EdgeInsets.symmetric(
-                                                                    horizontal: MediaQuery.of(context).size.width * 0.05,
-                                                                  ),
-                                                                ),
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    showDialog(
-                                                                      barrierDismissible: false,
-                                                                      context: context, builder:
-                                                                        (builder) {
-                                                                      return ConfirmationDialog(
-                                                                        appointment: appointment,
-                                                                        dateController: _dateController,
-                                                                        timeController: _timerController,
-                                                                        fetchAppointments: fetchAppointments,
-                                                                      );
-                                                                    },
-                                                                    ).then(
-                                                                            (result) {
-                                                                          //anadir
-                                                                          if (result == true) {
+                                                                    child: RichText(
+                                                                        textAlign: TextAlign.center,
+                                                                        text: TextSpan(
+                                                                            style: TextStyle(
+                                                                              fontSize: MediaQuery.of(context).size.width * 0.06,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                            children: [
+                                                                              TextSpan(
+                                                                                text: '${timeParts[0]}\n', // "01:00"
+                                                                              ),
+                                                                              TextSpan(
+                                                                                  text: timeParts[1], // "PM"
+                                                                                  style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                                  ))
+                                                                            ])))),
+                                                            ///termina card
+                                                            Visibility(
+                                                              visible: expandedIndex == index,
+                                                              child: SizedBox(
+                                                                  width: MediaQuery.of(context).size.width * 0.065),
+                                                            ),
+                                                            Visibility(
+                                                                visible: expandedIndex == index
+                                                                    ? true
+                                                                    : false,
+                                                                child: Container(
+                                                                    alignment: Alignment.topRight,
+                                                                    color: Colors.transparent,
+                                                                    child: IconButton(
+                                                                        padding: EdgeInsets.zero,
+                                                                        onPressed: () {
+                                                                          setState(() {
                                                                             expandedIndex = null;
                                                                             isTaped = false;
-                                                                            setState(
-                                                                                    () {
-                                                                                  //fetchAppointments(widget.selectedDate);
-                                                                                  fetchAppointments(dateTimeToinitModal);
-                                                                                  //late DateTime dateSelected = widget.selectedDate;
-                                                                                  late DateTime dateSelected = dateTimeToinitModal;
-                                                                                  //DateTime date = widget.selectedDate;
-                                                                                  DateTime date = dateTimeToinitModal;
-                                                                                  dateSelected = date;dateOnly = DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                                                  initializeAppointments(dateSelected);
-                                                                                });
-                                                                          } else {
-                                                                            _timerController.text = antiqueHour;
-                                                                            _dateController.text = antiqueDate;
-                                                                          }
-                                                                        });
+                                                                          });
+                                                                        },
+                                                                        icon: Icon(
+                                                                          CupertinoIcons.minus,
+                                                                          size: MediaQuery.of(context).size.width * 0.09,
+                                                                          color: const Color(0xFF4F2263),
+                                                                        ))))
+                                                          ]),
+                                                      Visibility(
+                                                          visible: expandedIndex == index
+                                                              ? true
+                                                              : false,
+                                                          child: Column(children: [
+                                                            Container(
+                                                              padding: EdgeInsets.symmetric(vertical: 8,
+                                                                horizontal: MediaQuery.of(context).size.width * .026,
+                                                              ),
+                                                              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.026,
+                                                              ),
+                                                              alignment:
+                                                              Alignment.centerLeft,
+                                                              decoration: BoxDecoration(
+                                                                color: const Color(0xFF4F2263),
+                                                                borderRadius: BorderRadius.circular(
+                                                                    10),
+                                                              ),
+                                                              child: const Text(
+                                                                'Fecha:',
+                                                                style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.026,
+                                                              ),
+                                                              child: TextFormField(
+                                                                controller: _dateController,
+                                                                decoration: InputDecoration(
+                                                                  contentPadding: EdgeInsets.symmetric(
+                                                                    horizontal: MediaQuery.of(context).size.width * 0.03,
+                                                                  ),
+                                                                  border: OutlineInputBorder(
+                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                  ),
+                                                                  labelText: 'DD/M/AAAA',
+                                                                  suffixIcon: const Icon(
+                                                                      Icons.calendar_today),
+                                                                ),
+                                                                readOnly: true,
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    isCalendarShow = true;
                                                                   });
                                                                 },
-                                                                child: Icon(
-                                                                  CupertinoIcons.checkmark,
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              padding:
+                                                              EdgeInsets.symmetric(
+                                                                vertical: 8,
+                                                                horizontal: MediaQuery.of(context).size.width * 0.024,
+                                                              ),
+                                                              margin: EdgeInsets.symmetric(
+                                                                horizontal: MediaQuery.of(context).size.width * 0.026,
+                                                              ),
+                                                              alignment: Alignment.centerLeft,
+                                                              decoration: BoxDecoration(
+                                                                color: const Color(0xFF4F2263),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: const Text(
+                                                                'Hora:',
+                                                                style: TextStyle(
                                                                   color: Colors.white,
-                                                                  size: MediaQuery.of(context).size.width * 0.09,
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.bold,
                                                                 ),
-                                                              )
-                                                            ]))
-                                                  ]))
-                                            ])),
-                                      builder: (context, infoContainer){
-                                      return Transform.translate(offset: Offset(0, _animationController.value), child: infoContainer);
-                                      }
-                                      ///
-                                  ),
-                                ),
-                              );
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                              EdgeInsets.symmetric(
+                                                                vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.024,
+                                                              ),
+                                                              child: TextFormField(
+                                                                controller: _timerController,
+                                                                decoration: InputDecoration(
+                                                                  contentPadding: EdgeInsets.symmetric(
+                                                                    horizontal: MediaQuery.of(context).size.width * 0.03,
+                                                                  ),
+                                                                  border: OutlineInputBorder(
+                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                  ),
+                                                                  labelText: 'HH:MM',
+                                                                  suffixIcon: const Icon(
+                                                                      Icons.access_time),
+                                                                ),
+                                                                readOnly: true,
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    _isTimerShow == false
+                                                                        ? _isTimerShow = true
+                                                                        : _isTimerShow = false;
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                                padding: EdgeInsets.only(
+                                                                  top: MediaQuery.of(
+                                                                      context).size.width * 0.025,
+                                                                  bottom: MediaQuery.of(context).size.width * 0.02,
+                                                                  right: MediaQuery.of(context).size.width * 0.025,
+                                                                ),
+                                                                child: Row(mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      Padding( padding: EdgeInsets.only(
+                                                                        left: MediaQuery.of(context).size.width * 0.05,
+                                                                        right: MediaQuery.of(context).size.width * 0.02,
+                                                                      ),
+                                                                        child: ElevatedButton(
+                                                                          style: ElevatedButton.styleFrom(
+                                                                            elevation: 4,
+                                                                            shape: RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(10.0),
+                                                                              side: const BorderSide(color: Colors.red, width: 1),
+                                                                            ),
+                                                                            backgroundColor: Colors.white,
+                                                                            surfaceTintColor: Colors
+                                                                                .white,
+                                                                            padding:
+                                                                            EdgeInsets
+                                                                                .symmetric(
+                                                                              horizontal: MediaQuery.of(context)
+                                                                                  .size
+                                                                                  .width *
+                                                                                  0.05,
+                                                                            ),
+                                                                          ),
+                                                                          onPressed: () {
+                                                                            showDeleteAppointmentDialog(
+                                                                                context, widget, appointment.id,
+                                                                                refreshAppointments,
+                                                                                isDocLog);
+                                                                          },
+                                                                          child: Icon(
+                                                                            Icons.delete,
+                                                                            color: Colors.red,
+                                                                            size: MediaQuery.of(context).size.width * 0.085,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+
+                                                                      ///boton para modificar
+                                                                      ElevatedButton(
+                                                                        style: ElevatedButton.styleFrom(
+                                                                          elevation: 4,
+                                                                          shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(10.0),
+                                                                            side: const BorderSide(
+                                                                                color: Color(0xFF4F2263),
+                                                                                width: 1),
+                                                                          ),
+                                                                          backgroundColor: const Color(0xFF4F2263),
+                                                                          surfaceTintColor: const Color(0xFF4F2263),
+                                                                          padding: EdgeInsets.symmetric(
+                                                                            horizontal: MediaQuery.of(context).size.width * 0.05,
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          setState(() {
+                                                                            showDialog(
+                                                                              barrierDismissible: false,
+                                                                              context: context, builder:
+                                                                                (builder) {
+                                                                              return ConfirmationDialog(
+                                                                                appointment: appointment,
+                                                                                dateController: _dateController,
+                                                                                timeController: _timerController,
+                                                                                fetchAppointments: fetchAppointments,
+                                                                              );
+                                                                            },
+                                                                            ).then(
+                                                                                    (result) {
+                                                                                  //anadir
+                                                                                  if (result == true) {
+                                                                                    expandedIndex = null;
+                                                                                    isTaped = false;
+                                                                                    setState(
+                                                                                            () {
+                                                                                          //fetchAppointments(widget.selectedDate);
+                                                                                          fetchAppointments(dateTimeToinitModal);
+                                                                                          //late DateTime dateSelected = widget.selectedDate;
+                                                                                          late DateTime dateSelected = dateTimeToinitModal;
+                                                                                          //DateTime date = widget.selectedDate;
+                                                                                          DateTime date = dateTimeToinitModal;
+                                                                                          dateSelected = date;dateOnly = DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                                                          initializeAppointments(dateSelected);
+                                                                                        });
+                                                                                  } else {
+                                                                                    _timerController.text = antiqueHour;
+                                                                                    _dateController.text = antiqueDate;
+                                                                                  }
+                                                                                });
+                                                                          });
+                                                                        },
+                                                                        child: Icon(
+                                                                          CupertinoIcons.checkmark,
+                                                                          color: Colors.white,
+                                                                          size: MediaQuery.of(context).size.width * 0.09,
+                                                                        ),
+                                                                      )
+                                                                    ]))
+                                                          ]))
+                                                    ])),
+                                        ),
+                                          ///
+                                          builder: (context, infoContainer){
+                                            return Transform.translate(offset: Offset(_oldIndex != null && _oldIndex == index ? movRight.value : 0, 0), child: infoContainer);
+                                          }
+                                          ///
+                                      ),
+                                    );
                                   });
                             }
                           }))),
+
+
+
 
               ///boton para agregar cita
               ElevatedButton(
