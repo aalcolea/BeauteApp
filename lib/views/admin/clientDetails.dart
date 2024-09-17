@@ -271,7 +271,7 @@ class _ClientDetailsState extends State<ClientDetails> {
           title: Container(
             margin: const EdgeInsets.only(top: 8, bottom: 8),
             child: RichText(
-              text: highlightOccurrences(client.name, query),
+              text: highlightOccurrences(client.name, query), // Este método ya regresa un TextSpan con el estilo aplicado
             ),
           ),
           subtitle: Column(
