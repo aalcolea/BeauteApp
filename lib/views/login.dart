@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../services/auth_service.dart';
 import '../styles/ladingDraw.dart';
@@ -76,10 +77,8 @@ class _LoginState extends State<Login> {
                         Padding(
                           padding: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.035),
-                          child: Image.asset(
-                            'assets/imgLog/docWhite.png',
-                            width: MediaQuery.of(context).size.width * 0.08,
-                            height: MediaQuery.of(context).size.width * 0.08,
+                          child: SvgPicture.asset(
+                            'assets/imgLog/docVector2.svg'
                           ),
                         ),
                         Container(
@@ -146,8 +145,8 @@ class _LoginState extends State<Login> {
                             padding: EdgeInsets.only(
                                 left:
                                     MediaQuery.of(context).size.width * 0.035),
-                            child: Image.asset(
-                                'assets/imgLog/docWhite.png') /*Icon(
+                            child: SvgPicture.asset(
+                                'assets/imgLog/docVector2.svg') /*Icon(
                             Icons.person,
                             color: Colors.white,
                             size: MediaQuery.of(context).size.width * 0.1,
@@ -215,8 +214,8 @@ class _LoginState extends State<Login> {
                         Padding(
                           padding: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.035),
-                          child: Image.asset('assets/imgLog/assiWhite.png'),
-                        ),
+                          child: SvgPicture.asset(
+                                  'assets/imgLog/asisVector.svg')),
                         Container(
                           margin: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.015,
