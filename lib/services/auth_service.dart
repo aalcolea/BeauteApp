@@ -1,12 +1,15 @@
 import 'dart:ui';
 
+import 'package:beaute_app/views/login.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 class PinEntryScreen extends StatefulWidget {
   final int userId;
@@ -33,6 +36,11 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
   double? screenWidth;
   double? screenHeight;
   int count = 0;
+  final storage = const FlutterSecureStorage();
+  bool isTokenExpired(String token) {
+    final decodedToken = JwtClaim.fromMap(json.decode(B64urlEncRfc7515.decodeUtf8(token.split(".")[1])));
+    return decodedToken.expiry!.isBefore(DateTime.now());
+  }
 
   @override
   void didChangeDependencies() {
@@ -121,8 +129,6 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
                   });
                 }
               });
-              //aniController.forward();
-              //aniController.stop();
             }
           });
           enteredPin = '';
@@ -134,30 +140,68 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
       print("Error $e");
     }
   }
-  void logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt_token');
+  Future<void> logout(BuildContext context) async {
+    await storage.delete(key: 'jwt_token');
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+
+    String? token = await storage.read(key: 'jwt_token');
     if (token != null) {
       var response = await http.post(
         Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/logout'),
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
         },
       );
-
       if (response.statusCode == 200) {
-        await prefs.remove('jwt_token');
-        await prefs.remove('user_id');
-          Navigator.pushNamedAndRemoveUntil(
-            context, '/', (Route<dynamic> route) => false,
-          );
-
-
+        await storage.delete(key: 'jwt_token');
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()),
+              (Route<dynamic> route) => false,
+        );
       } else {
         print('Error al cerrar sesión: ${response.body}');
       }
+    } else {
+      await storage.delete(key: 'jwt_token');
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }
+  }
+  Future<void> refreshToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if(token != null){
+      var response = await http.post(
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/refresh'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        await prefs.setString('jwt_token', data['token']);
+        print("Token actualizado");
+      } else {
+        print('Error al refrescar el token');
+      }
+    }
+  }
+  Future<void> handleToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    if(token != null && isTokenExpired(token)){
+      print("Token vencido, refrescando...");
+      await refreshToken();
+    } else {
+      print("El token es válido.");
+    }
+  }
+  Future<bool> isLoggedIn() async {
+    String? token = await storage.read(key: 'jwt_token');
+    if (token != null && !isTokenExpired(token)) {
+      return true;
+    }
+    return false;
   }
 
   String enteredPin = '';
