@@ -396,12 +396,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
 
                     } else if (isToday) {
                       return Container(
-                        width: null,
-                        height: null,
-                        child: Container(
                           alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            border: Border.all( color: const Color(0xFF4F2263), width: 2),
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -411,8 +408,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               fontSize: MediaQuery.of(context).size.width * 0.07,
                             ),
                           ),
-                        ),
-                      );
+                        );
+
 
                     } else {
                       return hasEventDoc1 == true && hasEventDoc2 == false

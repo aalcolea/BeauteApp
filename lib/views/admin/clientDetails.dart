@@ -12,8 +12,6 @@ import '../../services/getClientsService.dart';
 import '../../styles/AppointmentStyles.dart';
 import 'clientInfo.dart';
 import 'package:http/http.dart' as http;
-
-// Define el modelo de datos para los nombres
 class Person {
   String name;
   String tag;
@@ -68,6 +66,7 @@ class ClientDetails extends StatefulWidget {
 }
 
 class _ClientDetailsState extends State<ClientDetails> {
+  final FocusNode focusNode = FocusNode();
   final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
@@ -76,6 +75,8 @@ class _ClientDetailsState extends State<ClientDetails> {
   bool platform = false;
   double previousOffset = 0;
   List<Client> clients = [];
+  final TextEditingController searchController = TextEditingController();
+  List<Client> filteredClients = [];
   late List<AlphabetListViewItemGroup> _alphabetizedData;
   late ScrollController scrollController;
   void checkKeyboardVisibility() {
@@ -147,16 +148,24 @@ class _ClientDetailsState extends State<ClientDetails> {
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
     isDocLog = widget.isDoctorLog;
-    dropdownDataManager.fetchUser();
+    searchController.addListener(onSearchChanged);
+    dropdownDataManager.fetchUser().then((fetchedClients) {
+      setState(() {
+        clients = fetchedClients;
+        filteredClients = clients;
+        _alphabetizedData = _createAlphabetizedData(filteredClients);
+      });
+    });
     getNombres();
     super.initState();
-
   }
 
 
   @override
   void dispose() {
     keyboardVisibilitySubscription.cancel();
+    searchController.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -172,12 +181,70 @@ class _ClientDetailsState extends State<ClientDetails> {
     }
     previousOffset = currentoffset;
   }
+  void onSearchChanged() {
+    String query = searchController.text.toLowerCase();
+    setState(() {
+      filteredClients = clients.where((client) {
+        return client.name.toLowerCase().contains(query);
+      }).toList();
+      _alphabetizedData = _createAlphabetizedData(filteredClients);
+    });
+  }
+  TextSpan highlightOccurrences(String source, String query) {
+    if(query.isEmpty){
+      return TextSpan(
+        text: source,
+        style: TextStyle(
+          color: const Color(0xFF4F2263),
+          fontSize: MediaQuery.of(context).size.width * 0.055,
+        ),
+      );
+    }
+    var matches = <TextSpan>[];
+    String lowerSource = source.toLowerCase();
+    String lowerQuery = query.toLowerCase();
+    int start = 0;
+    int index;
 
-  // Create alphabetized data
-  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients) {
+    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1){
+      if(index > start){
+        matches.add(TextSpan(
+          text: source.substring(start, index),
+          style: TextStyle(
+            color: const Color(0xFF4F2263),
+            fontSize: MediaQuery.of(context).size.width * 0.055,
+          ),
+        ));
+      }
+      matches.add(TextSpan(
+        text: source.substring(index, index + query.length),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF4F2263),
+          fontSize: MediaQuery.of(context).size.width * 0.055,
+        ),
+      ));
+      start = index + query.length;
+    }
+
+    if(start < source.length){
+      matches.add(TextSpan(
+        text: source.substring(start),
+        style: TextStyle(
+          color: const Color(0xFF4F2263),
+          fontSize: MediaQuery.of(context).size.width * 0.055,
+        ),
+      ));
+    }
+
+    return TextSpan(children: matches);
+  }
+
+  List<AlphabetListViewItemGroup> _createAlphabetizedData(List<Client> clients){
     final Map<String, List<Client>> data = {};
+    String query = searchController.text;
 
-    for (Client client in clients) {
+    for(Client client in clients){
       final String tag = client.name[0].toUpperCase();
       if (!data.containsKey(tag)) {
         data[tag] = [];
@@ -185,46 +252,66 @@ class _ClientDetailsState extends State<ClientDetails> {
       data[tag]!.add(client);
     }
 
-    // Sort each list of names
     data.forEach((key, value) {
       value.sort((a, b) => a.name.compareTo(b.name));
     });
 
-    // Sort keys and create list of AlphabetListViewItemGroup
     final sortedKeys = data.keys.toList()..sort();
-    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key){
       return AlphabetListViewItemGroup(
         tag: key,
         children: data[key]!.map((client) => ListTile(
-                  onTap: () {
-                    Navigator.push(context,
-                      CupertinoPageRoute(
-                        builder: (context) => ClientInfo(isDoctorLog: isDocLog, name: client.name, phone: client.number, email: client.email),
+          onTap: () {
+            Navigator.push(context,
+              CupertinoPageRoute(
+                builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email,),
+              ),
+            );
+          },
+          title: Container(
+            margin: const EdgeInsets.only(top: 8, bottom: 8),
+            child: RichText(
+              text: highlightOccurrences(client.name, query), // Este método ya regresa un TextSpan con el estilo aplicado
+            ),
+          ),
+          subtitle: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${client.number}',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: const Color(0xFF4F2263).withOpacity(0.3),
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
                       ),
-                    );
-                  },
-                  title: Container(
-                    margin: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text(client.name),
+                    ),
                   ),
-                  subtitle: Column(
-                    children: [
-                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('${client.number}'),
-                          Text(client.email),
-                        ],
+                  Expanded(
+                    child: Text(
+                      client.email,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: const Color(0xFF4F2263).withOpacity(0.3),
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        height: 2,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF4F2263),
-                        ),
-                      ),
-                    ],
-                  ),)).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                height: 2,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF4F2263),
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
       );
     }).toList();
     return groups;
@@ -242,9 +329,12 @@ class _ClientDetailsState extends State<ClientDetails> {
               color: const Color(0xFF4F2263),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(symbol, style: const TextStyle(color: Colors.white, fontSize: 20),),
+            child: Text(
+              symbol,
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+            ),
           );
-        }
+        },
       ),
       scrollbarOptions: ScrollbarOptions(
         jumpToSymbolsWithNoEntries: true,
@@ -252,7 +342,8 @@ class _ClientDetailsState extends State<ClientDetails> {
           final color = switch (state) {
             AlphabetScrollbarItemState.active => Colors.white,
             AlphabetScrollbarItemState.deactivated => const Color(0xFF4F2263),
-            _ => const Color(0xFF4F2263).withOpacity(0.6)};
+            _ => const Color(0xFF4F2263).withOpacity(0.6),
+          };
 
           return Container(
             padding: const EdgeInsets.only(left: 4, top: 2, bottom: 2),
@@ -276,8 +367,7 @@ class _ClientDetailsState extends State<ClientDetails> {
         },
       ),
       overlayOptions: OverlayOptions(
-        //showOverlay: true,
-        overlayBuilder: (context, symbol){
+        overlayBuilder: (context, symbol) {
           return Container(
             alignment: Alignment.center,
             width: 150,
@@ -286,9 +376,12 @@ class _ClientDetailsState extends State<ClientDetails> {
               borderRadius: BorderRadius.circular(10),
               color: Colors.black.withOpacity(0.4),
             ),
-            child: Text(symbol, style: const TextStyle(color: Colors.white, fontSize: 100),),
+            child: Text(
+              symbol,
+              style: const TextStyle(color: Colors.white, fontSize: 100),
+            ),
           );
-        }
+        },
       ),
     );
 
@@ -302,25 +395,32 @@ class _ClientDetailsState extends State<ClientDetails> {
                   left: MediaQuery.of(context).size.width * 0.025,
                   right: MediaQuery.of(context).size.width * 0.045,
                 ),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Buscar...',
-                    prefixIcon: Icon(Icons.search),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
+                child: SizedBox(
+                  height: 37,
+                  child: TextFormField(
+                    controller: searchController,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      hintText: 'Bus..',
+                      prefixIcon: const Icon(Icons.search),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF4F2263), width: 2.0),
-                      borderRadius: BorderRadius.circular(10.0),
+                    style: TextStyle(
                     ),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF4F2263)),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-
                   ),
-                ),
+                )
               ),
             ),
             Padding(
@@ -332,29 +432,29 @@ class _ClientDetailsState extends State<ClientDetails> {
                 onPressed: () {
                   setState(() {
                     widget.onShowBlur(true);
-                    addClient(
-
-                    );
+                    addClient();
                   });
                 },
-                icon: Icon(Icons.person_add_alt_outlined,
-                    size: MediaQuery.of(context).size.width * 0.11,
-                  color: Color(0xFF4F2263),),
+                icon: Icon(
+                  Icons.person_add_alt_outlined,
+                  size: MediaQuery.of(context).size.width * 0.11,
+                  color: const Color(0xFF4F2263),
+                ),
               ),
             ),
           ],
         ),
-        Expanded(child: Container(
-          margin: EdgeInsets.only(top: 20),
-          child: AlphabetListView(
-            scrollController: scrollController,
-            items: _alphabetizedData,
-            options: options,
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            child: AlphabetListView(
+              scrollController: scrollController,
+              items: _alphabetizedData,
+              options: options,
+            ),
           ),
-        ),)
+        ),
       ],
     );
-
-
   }
 }

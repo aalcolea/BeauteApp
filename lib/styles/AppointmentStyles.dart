@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
@@ -187,13 +188,14 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
                     child: optSelected == 1
-                        ? Image.asset(
-                            'assets/imgLog/docWhite.png',
+                        ? SvgPicture.asset(
+                            'assets/imgLog/docVector2.svg',
                             width: MediaQuery.of(context).size.width * 0.06,
                             height: MediaQuery.of(context).size.width * 0.06,
                           )
-                        : Image.asset(
-                            'assets/imgLog/docPurpleS.png',
+                        : SvgPicture.asset(
+                            'assets/imgLog/docVector2.svg',
+                            colorFilter: const ColorFilter.mode(Color(0xFF4F2263), BlendMode.srcIn),
                             width: MediaQuery.of(context).size.width * 0.07,
                             height: MediaQuery.of(context).size.width * 0.07,
                           ), /*Icon(
@@ -253,16 +255,17 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
                     child: optSelected == 2
-                        ? Image.asset(
-                            'assets/imgLog/docWhite.png',
-                            width: MediaQuery.of(context).size.width * 0.06,
-                            height: MediaQuery.of(context).size.width * 0.06,
-                          )
-                        : Image.asset(
-                            'assets/imgLog/docPurpleS.png',
-                            width: MediaQuery.of(context).size.width * 0.07,
-                            height: MediaQuery.of(context).size.width * 0.07,
-                          ), /*Icon(
+                        ? SvgPicture.asset(
+                          'assets/imgLog/docVector2.svg',
+                          width: MediaQuery.of(context).size.width * 0.06,
+                          height: MediaQuery.of(context).size.width * 0.06,
+                        )
+                        : SvgPicture.asset(
+                          'assets/imgLog/docVector2.svg',
+                          colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                          width: MediaQuery.of(context).size.width * 0.07,
+                          height: MediaQuery.of(context).size.width * 0.07,
+                        ), /*Icon(
                       CupertinoIcons.person_crop_circle_fill,
                       color: optSelected == 2
                           ? Colors.white
@@ -303,6 +306,7 @@ class FieldsToWrite extends StatelessWidget {
   final void Function()? onEdComplete;
   final void Function(PointerDownEvent)? onTapOutside;
   final List<TextInputFormatter>? inputFormatters;
+  final String? initVal;
 
   const FieldsToWrite({
     super.key,
@@ -321,6 +325,7 @@ class FieldsToWrite extends StatelessWidget {
     this.onTapOutside,
     this.inputFormatters,
     this.preffixIcon,
+    this.initVal,
   });
 
   @override
@@ -330,6 +335,7 @@ class FieldsToWrite extends StatelessWidget {
     );
 
     return TextFormField(
+      initialValue: initVal,
       inputFormatters: inputFormatters,
       textInputAction: textInputAction,
       onEditingComplete: onEdComplete,
