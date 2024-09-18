@@ -26,28 +26,42 @@ class _navBarState extends State<navBar> {
         decoration: BoxDecoration(
             color: Colors.white,
         ),
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.2),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.17),
         child: Column(
           children: [
-            Container(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: MediaQuery.of(context).size.width*0.1,
-                    child: SvgPicture.asset(
-                      'assets/imgLog/drIcon.svg',
-                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                      height: MediaQuery.of(context).size.width*0.13,
+            Padding(
+              padding: EdgeInsets.only(bottom: 30, left: 20),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: MediaQuery.of(context).size.width*0.05,
+                      child: SvgPicture.asset(
+                        'assets/imgLog/drIcon.svg',
+                        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                        height: MediaQuery.of(context).size.width*0.067,
+                      ),
+                      backgroundColor: Color(0XFF4F2263),
                     ),
-                    backgroundColor: Color(0XFF4F2263)),
-                  Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.02, bottom: MediaQuery.of(context).size.width*0.1), child: Text('Asistente', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.08, color: Color(0XFF4F2263)))),
-                ],
-              )
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      child:
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Asistente',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
+                            Text('Slogan here')
+                          ],
+                        )
+                    )
+                  ]
+              ),
             ),
             Container(
               padding: EdgeInsets.only(left: 20),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height*0.1,
+              height: MediaQuery.of(context).size.height*0.07,
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
                   border: Border.all(color: Color(0XFF4F2263)),
@@ -62,15 +76,15 @@ class _navBarState extends State<navBar> {
               ),
               child: InkWell(
                 onTap: (){
-
+                  Navigator.of(context).pop();
                 },
-                child: Text('Agenda', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.08, color: Colors.white)),
+                child: Text('Agenda', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Colors.white)),
               ),
             ),
             Container(
                 padding: EdgeInsets.only(left: 20),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height*0.08,
+                height: MediaQuery.of(context).size.height*0.06,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
                   border: Border(left: BorderSide.none, bottom: BorderSide(color: Color(0XFF4F2263))),
@@ -80,7 +94,7 @@ class _navBarState extends State<navBar> {
                 onTap: (){
 
                 },
-                child: Text('Punto de venta', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.065, color: Color(0XFF4F2263))),
+                child: Text('Punto de venta', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
                 ),
             ),
             Expanded(
