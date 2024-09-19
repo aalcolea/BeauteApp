@@ -36,7 +36,6 @@ class DropdownDataManager {
           clients = List.from(jsonResponse['clients'])
               .map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>))
               .toList();
-          print('Nombres de clientes: $clients');
         } else {
           print('La respuesta no contiene una lista de clientes.');
         }
