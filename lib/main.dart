@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'forms/appoinmentForm.dart';
 import 'models/notificationsForAssistant.dart';
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -42,7 +43,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
-
   @override
   void initState() {
     super.initState();
@@ -92,6 +92,7 @@ void checkLoginStatus() async {
         '/assistantScreen': (context) => const AssistantAdmin(docLog: false),
         '/citaScreen': (context) => AppointmentForm(isDoctorLog: false),
       },
+      navigatorObservers: [routeObserver],
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
+import '../../main.dart';
 import '../../models/clientModel.dart';
 import '../../services/getClientsService.dart';
 import '../../styles/AppointmentStyles.dart';
@@ -65,7 +66,7 @@ class ClientDetails extends StatefulWidget {
   State<ClientDetails> createState() => _ClientDetailsState();
 }
 
-class _ClientDetailsState extends State<ClientDetails> {
+class _ClientDetailsState extends State<ClientDetails> with RouteAware {
   final FocusNode focusNode = FocusNode();
   final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -79,6 +80,11 @@ class _ClientDetailsState extends State<ClientDetails> {
   List<Client> filteredClients = [];
   late List<AlphabetListViewItemGroup> _alphabetizedData;
   late ScrollController scrollController;
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    getNombres();
+  }
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
@@ -157,18 +163,24 @@ class _ClientDetailsState extends State<ClientDetails> {
       });
     });
     getNombres();
-    super.initState();
   }
-
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     keyboardVisibilitySubscription.cancel();
     searchController.dispose();
     focusNode.dispose();
     super.dispose();
   }
-
   void onScroll(){
     double currentoffset = scrollController.offset;
     if(currentoffset > previousOffset){
@@ -185,19 +197,16 @@ class _ClientDetailsState extends State<ClientDetails> {
     String query = searchController.text.toLowerCase();
     setState(() {
       filteredClients = clients.where((client) {
-        return client.name.toLowerCase().contains(query);
+        return client.name.toLowerCase().contains(query) || client.number.toString().contains(query);
       }).toList();
       _alphabetizedData = _createAlphabetizedData(filteredClients);
     });
   }
-  TextSpan highlightOccurrences(String source, String query) {
-    if(query.isEmpty){
+  TextSpan highlightOccurrences(String source, String query, TextStyle baseStyle) {
+    if (query.isEmpty) {
       return TextSpan(
         text: source,
-        style: TextStyle(
-          color: const Color(0xFF4F2263),
-          fontSize: MediaQuery.of(context).size.width * 0.055,
-        ),
+        style: baseStyle,
       );
     }
     var matches = <TextSpan>[];
@@ -206,34 +215,27 @@ class _ClientDetailsState extends State<ClientDetails> {
     int start = 0;
     int index;
 
-    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1){
-      if(index > start){
+    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1) {
+      if (index > start) {
         matches.add(TextSpan(
           text: source.substring(start, index),
-          style: TextStyle(
-            color: const Color(0xFF4F2263),
-            fontSize: MediaQuery.of(context).size.width * 0.055,
-          ),
+          style: baseStyle,
         ));
       }
       matches.add(TextSpan(
         text: source.substring(index, index + query.length),
-        style: TextStyle(
+        style: baseStyle.copyWith(
           fontWeight: FontWeight.bold,
           color: const Color(0xFF4F2263),
-          fontSize: MediaQuery.of(context).size.width * 0.055,
         ),
       ));
       start = index + query.length;
     }
 
-    if(start < source.length){
+    if (start < source.length) {
       matches.add(TextSpan(
         text: source.substring(start),
-        style: TextStyle(
-          color: const Color(0xFF4F2263),
-          fontSize: MediaQuery.of(context).size.width * 0.055,
-        ),
+        style: baseStyle,
       ));
     }
 
@@ -271,7 +273,13 @@ class _ClientDetailsState extends State<ClientDetails> {
           title: Container(
             margin: const EdgeInsets.only(top: 8, bottom: 8),
             child: RichText(
-              text: highlightOccurrences(client.name, query), // Este método ya regresa un TextSpan con el estilo aplicado
+              text: highlightOccurrences(client.name, query,
+                TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  color: const Color(0xFF4F2264),
+                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                ),
+              ),
             ),
           ),
           subtitle: Column(
@@ -279,12 +287,15 @@ class _ClientDetailsState extends State<ClientDetails> {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      '${client.number}',
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: const Color(0xFF4F2263).withOpacity(0.3),
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                    child: RichText(
+                      text: highlightOccurrences(
+                        client.number.toString(),
+                        query,
+                        TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: const Color(0xFF4F2263).withOpacity(0.3),
+                          fontSize: MediaQuery.of(context).size.width * 0.045,
+                        ),
                       ),
                     ),
                   ),
@@ -445,12 +456,15 @@ class _ClientDetailsState extends State<ClientDetails> {
           ],
         ),
         Expanded(
-          child: Container(
+          child: RefreshIndicator(
+          onRefresh: getNombres,
+            child: Container(
             margin: const EdgeInsets.only(top: 20),
             child: AlphabetListView(
-              scrollController: scrollController,
-              items: _alphabetizedData,
-              options: options,
+    scrollController: scrollController,
+            items: _alphabetizedData,
+            options: options,
+            ),
             ),
           ),
         ),

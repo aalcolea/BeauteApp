@@ -142,8 +142,6 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
   }
   Future<void> logout(BuildContext context) async {
     await storage.delete(key: 'jwt_token');
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-
     String? token = await storage.read(key: 'jwt_token');
     if (token != null) {
       var response = await http.post(
@@ -153,20 +151,16 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
           'Content-Type': 'application/json',
         },
       );
+
       if (response.statusCode == 200) {
         await storage.delete(key: 'jwt_token');
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Login()),
-              (Route<dynamic> route) => false,
-        );
       } else {
         print('Error al cerrar sesión: ${response.body}');
       }
-    } else {
-      await storage.delete(key: 'jwt_token');
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
   }
+
   Future<void> refreshToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
