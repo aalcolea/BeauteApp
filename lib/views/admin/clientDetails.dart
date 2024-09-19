@@ -202,7 +202,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
       _alphabetizedData = _createAlphabetizedData(filteredClients);
     });
   }
-  TextSpan highlightOccurrences(String source, String query, TextStyle baseStyle){
+  TextSpan highlightOccurrences(String source, String query, TextStyle baseStyle) {
     if (query.isEmpty) {
       return TextSpan(
         text: source,
@@ -214,7 +214,8 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
     String lowerQuery = query.toLowerCase();
     int start = 0;
     int index;
-    while((index = lowerSource.indexOf(lowerQuery, start)) != -1){
+
+    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1) {
       if (index > start) {
         matches.add(TextSpan(
           text: source.substring(start, index),
@@ -230,7 +231,8 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
       ));
       start = index + query.length;
     }
-    if(start < source.length){
+
+    if (start < source.length) {
       matches.add(TextSpan(
         text: source.substring(start),
         style: baseStyle,
@@ -275,7 +277,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
                 TextStyle(
                   overflow: TextOverflow.ellipsis,
                   color: const Color(0xFF4F2264),
-                  fontSize: MediaQuery.of(context).size.width * 0.05 5,
+                  fontSize: MediaQuery.of(context).size.width * 0.055,
                 ),
               ),
             ),
@@ -411,7 +413,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
                     focusNode: focusNode,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.zero,
-                      hintText: 'Buscar...',
+                      hintText: 'Bus..',
                       prefixIcon: const Icon(Icons.search),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
