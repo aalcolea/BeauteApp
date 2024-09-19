@@ -411,7 +411,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
                     focusNode: focusNode,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.zero,
-                      hintText: 'Bus..',
+                      hintText: 'Buscar...',
                       prefixIcon: const Icon(Icons.search),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
