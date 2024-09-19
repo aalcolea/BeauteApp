@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:beaute_app/views/admin/clientDetails.dart';
+import 'package:beaute_app/views/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../calendar/calendarSchedule.dart';
 import '../../forms/appoinmentForm.dart';
 import '../../forms/clientForm.dart';
@@ -124,6 +126,12 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     }
   }
 
+  void _onItemSelected(int option){
+    setState(() {
+       print(option);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -132,6 +140,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         onBackPressed(didPop);
       },
       child: Scaffold(
+        endDrawer: navBar(onItemSelected: _onItemSelected),
         body: Stack(
           children: [
             Container(
@@ -209,16 +218,16 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 color: const Color(0xFF4F2263),
                               ),
                             ),
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                PinEntryScreenState().logout(context);},
-                              icon: Icon(
-                                Icons.input_outlined,
-                                size: MediaQuery.of(context).size.width * 0.095,
-                                color: const Color(0xFF4F2263),
-                              ),
-                            ),
+                            Builder(builder: (BuildContext context){
+                              return IconButton(
+                                onPressed: (){
+                                  Scaffold.of(context).openEndDrawer();
+                                },
+                                icon: SvgPicture.asset(
+                                  'assets/imgLog/navBar.svg',
+                                  colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                                ),);
+                            }),
                           ],
                         ),
                       ],
