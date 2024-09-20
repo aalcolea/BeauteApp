@@ -619,8 +619,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                           alignment: Alignment.center,
                                         margin: EdgeInsets.only(
                                           top: MediaQuery.of(context).size.height * 0,
-                                          left: MediaQuery.of(context).size.width * 0.00,//controlar,
-                                          right: MediaQuery.of(context).size.width * 0.00,//controlar,
+                                          left: MediaQuery.of(context).size.width * 0.02,//controlar,
+                                          right: MediaQuery.of(context).size.width * 0.02,//controlar,
                                           bottom: MediaQuery.of(context).size.width * 0.035,
                                         ),
                                         decoration: BoxDecoration(

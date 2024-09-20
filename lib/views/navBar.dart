@@ -5,13 +5,8 @@ import '../forms/alertForm.dart';
 import '../services/auth_service.dart';
 
 class navBar extends StatefulWidget {
-
   final bool isDoctorLog;
-
-  final void Function(
-      bool,
-      ) onShowBlur;
-
+  final void Function(bool) onShowBlur;
   final Function(int) onItemSelected;
 
   const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog});
@@ -32,11 +27,7 @@ class _navBarState extends State<navBar> {
         context: context,
         barrierColor: Colors.transparent,
         builder: (BuildContext context) {
-          return Stack(
-            children: [
-              AlertForm(isDoctorLog: widget.isDoctorLog),
-            ],
-          );
+          return AlertForm(isDoctorLog: widget.isDoctorLog);
     }).then((_){
       widget.onShowBlur(false);
     });
