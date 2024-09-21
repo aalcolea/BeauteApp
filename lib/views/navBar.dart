@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import '../forms/alertForm.dart';
 import '../services/auth_service.dart';
-class navBar extends StatefulWidget {
 
+class navBar extends StatefulWidget {
+  final bool isDoctorLog;
+  final void Function(bool) onShowBlur;
   final Function(int) onItemSelected;
 
-  const navBar({super.key, required this.onItemSelected});
+  const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog});
 
   @override
   State<navBar> createState() => _navBarState();
@@ -17,6 +19,18 @@ class _navBarState extends State<navBar> {
 
   void closeMenu(BuildContext context){
     Navigator.of(context).pop();
+  }
+
+  Future<void> createAlert() async {
+    Navigator.of(context).pop();
+    return showDialog(
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return AlertForm(isDoctorLog: widget.isDoctorLog);
+    }).then((_){
+      widget.onShowBlur(false);
+    });
   }
 
   @override
@@ -96,6 +110,34 @@ class _navBarState extends State<navBar> {
                 },
                 child: Text('Punto de venta', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
                 ),
+            ),
+            Container(
+              padding: EdgeInsets.only(top:40),
+              child: ElevatedButton(
+                onPressed: (){
+                  setState(() {
+                    widget.onShowBlur(true);
+                    createAlert();
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Color(0XFF4F2263), width: 1.0),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    minimumSize: Size(170, 55),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    elevation: 5.0,
+                    shadowColor: Colors.black54,
+                ),
+                child: Text(
+                  'Mandar alerta',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.of(context).size.width*0.05,
+                    color: Color(0XFF4F2263)
+                  ),
+                )
+              ),
             ),
             Expanded(
               child: Container(

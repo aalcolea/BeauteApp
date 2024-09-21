@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
@@ -9,8 +8,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
 import '../../main.dart';
 import '../../models/clientModel.dart';
-import '../../services/getClientsService.dart';
-import '../../styles/AppointmentStyles.dart';
 import 'clientInfo.dart';
 import 'package:http/http.dart' as http;
 class Person {
@@ -181,16 +178,19 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
     super.dispose();
   }
   void onScroll(){
-    double currentoffset = scrollController.offset;
-    if(currentoffset > previousOffset){
+    double currentOffset = scrollController.offset;
+    double velocity = (currentOffset - previousOffset).abs();
+    double velocityThreshold = 18.0;
+
+    if (currentOffset > previousOffset && velocity > velocityThreshold) {
       setState(() {
         hideKeyBoard();
-
       });
-    }else if(currentoffset < previousOffset){
-
+    } else if (velocity <= velocityThreshold) {
+      setState(() {
+      });
     }
-    previousOffset = currentoffset;
+    previousOffset = currentOffset;
   }
   void onSearchChanged() {
     String query = searchController.text.toLowerCase();
@@ -333,7 +333,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
       listOptions: ListOptions(
         listHeaderBuilder: (context, symbol) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF4F2263),
@@ -402,7 +402,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.025,
                   right: MediaQuery.of(context).size.width * 0.045,
                 ),
                 child: SizedBox(
