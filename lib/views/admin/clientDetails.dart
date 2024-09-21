@@ -395,78 +395,81 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
       ),
     );
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
+    return Container(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                    padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.045,
+                    ),
+                    child: SizedBox(
+                      height: 37,
+                      child: TextFormField(
+                        controller: searchController,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.zero,
+                          hintText: 'Buscar..',
+                          prefixIcon: const Icon(Icons.search),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        style: TextStyle(
+                        ),
+                      ),
+                    )
+                ),
+              ),
+              Padding(
                 padding: EdgeInsets.only(
-                  right: MediaQuery.of(context).size.width * 0.045,
+                  right: MediaQuery.of(context).size.width * 0.025,
                 ),
-                child: SizedBox(
-                  height: 37,
-                  child: TextFormField(
-                    controller: searchController,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Bus..',
-                      prefixIcon: const Icon(Icons.search),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    style: TextStyle(
-                    ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    setState(() {
+                      widget.onShowBlur(true);
+                      addClient();
+                    });
+                  },
+                  icon: Icon(
+                    Icons.person_add_alt_outlined,
+                    size: MediaQuery.of(context).size.width * 0.11,
+                    color: const Color(0xFF4F2263),
                   ),
-                )
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.025,
-              ),
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  setState(() {
-                    widget.onShowBlur(true);
-                    addClient();
-                  });
-                },
-                icon: Icon(
-                  Icons.person_add_alt_outlined,
-                  size: MediaQuery.of(context).size.width * 0.11,
-                  color: const Color(0xFF4F2263),
                 ),
               ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: RefreshIndicator(
-          onRefresh: getNombres,
-            child: Container(
-            margin: const EdgeInsets.only(top: 20),
-            child: AlphabetListView(
-    scrollController: scrollController,
-            items: _alphabetizedData,
-            options: options,
-            ),
+            ],
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: getNombres,
+              child: Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: AlphabetListView(
+                  scrollController: scrollController,
+                  items: _alphabetizedData,
+                  options: options,
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
