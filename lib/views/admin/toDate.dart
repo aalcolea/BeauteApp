@@ -5,6 +5,7 @@ import 'package:beaute_app/utils/listenerApptm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -387,29 +388,43 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                   ],
                 ),
               ),
+              ///aqui termina el horizontalSelectable de dias
               SizedBox(
                 height: MediaQuery.of(context).size.width * 0.03,
               ),
               ///
-              Expanded(
-                  child: ToDateContainer(reachTop: (bool reachTop,
-                  int? expandedIndex,
-                  String timerOfTheFstIndexTouched,
-                  String dateOfTheFstIndexTouched, bool auxToReachTop, String dateLookandFill){
-                    if(reachTop == true){
-                      positionBtnIcon = true;
-                      modalReachTop = true;
-                      expandedIndex = expandedIndex;
-                      widget.reachTop(
-                          modalReachTop,
-                          expandedIndex,
-                          _timerController.text,
-                          _dateController.text,
-                          positionBtnIcon,
-                          _dateLookandFill);
-                    }
-                  }, dateLookandFill: widget.dateLookandFill, selectedDate: widget.selectedDate, expandedIndexToCharge: expandedIndex, listenerapptm: _listenerapptm,)),
+
     ///boton para agregar cita
+              ///
+              ///
+              Expanded(child: ToDateContainer(
+                reachTop: (bool reachTop,
+                    int? expandedIndex,
+                    String timerOfTheFstIndexTouched,
+                    String dateOfTheFstIndexTouched,
+                    bool auxToReachTop,
+                    String dateLookandFill) {
+                  if (reachTop == true) {
+                    positionBtnIcon = true;
+                    modalReachTop = true;
+                    expandedIndex = expandedIndex;
+                    widget.reachTop(
+                        modalReachTop,
+                        expandedIndex,
+                        _timerController.text,
+                        _dateController.text,
+                        positionBtnIcon,
+                        _dateLookandFill);
+                  }
+                },
+                dateLookandFill: widget.dateLookandFill,
+                selectedDate: widget.selectedDate,
+                expandedIndexToCharge: expandedIndex,
+                listenerapptm: _listenerapptm,
+              ),),
+
+
+            ///
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4F2263),
