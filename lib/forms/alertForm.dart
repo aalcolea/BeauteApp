@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:beaute_app/styles/AppointmentStyles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../services/getClientsService.dart';
 class AlertForm extends StatefulWidget {
   final bool isDoctorLog;
@@ -79,6 +81,34 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
   }
+  Future<void> sendNotification(int id) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/sendNotification/';
+      try {
+        String? token = prefs.getString('jwt_token');
+        final response = await http.post(
+          Uri.parse(baseUrl + '$id'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'message': bodyMessageController.text,
+          }),
+        );
+        if(response.statusCode==200){
+          setState(() {
+            print('hola');
+            Navigator.of(context).pop(true);
+          });
+        }else{
+          Navigator.of(context).pop(false);
+          throw Exception('Error al enviar la notificacion');
+        }
+    }catch(e){
+        print('Error: $e');
+    }
+}
 
   @override
   void initState() {
@@ -275,7 +305,9 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             children: [
                                               Expanded( // Mueve Expanded dentro de Row
                                                 child: ElevatedButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    sendNotification(_optSelected);
+                                                  },
                                                   child: Text('Mandar Alerta',
                                                     style: TextStyle(
                                                         fontSize: 20
