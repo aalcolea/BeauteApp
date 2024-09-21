@@ -8,6 +8,10 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
 import '../../main.dart';
 import '../../models/clientModel.dart';
+import '../../services/clienteService.dart';
+import '../../utils/PopUpTabs/deleteClientDialog.dart';
+import '../../utils/showToast.dart';
+import '../../utils/toastWidget.dart';
 import 'clientInfo.dart';
 import 'package:http/http.dart' as http;
 class Person {
@@ -258,70 +262,108 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
     });
 
     final sortedKeys = data.keys.toList()..sort();
-    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key){
+    final clientService = ClientService();
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
       return AlphabetListViewItemGroup(
         tag: key,
-        children: data[key]!.map((client) => ListTile(
-          onTap: () {
-            Navigator.push(context,
-              CupertinoPageRoute(
-                builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email,),
-              ),
-            );
-          },
-          title: Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
-            child: RichText(
-              text: highlightOccurrences(client.name, query,
-                TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                  color: const Color(0xFF4F2264),
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
-                ),
-              ),
+        children: data[key]!.map((client) {
+          return Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: const Icon(Icons.delete, color: Colors.white),
             ),
-          ),
-          subtitle: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: highlightOccurrences(
-                        client.number.toString(),
-                        query,
-                        TextStyle(
-                          overflow: TextOverflow.ellipsis,
-                          color: const Color(0xFF4F2263).withOpacity(0.3),
-                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                        ),
-                      ),
+            confirmDismiss: (direction) async {
+              bool shouldDelete = await showDeleteConfirmationDialog(context, () async {
+                await clientService.deleteClient(client.id);
+                showOverlay(
+                  context,
+                  const CustomToast(
+                    message: 'Cliente eliminado correctamente',
+                  ),
+                );
+              });
+              if (shouldDelete) {
+                setState(() {
+                  clients.remove(client);
+                });
+                return true;
+              } else {
+                return false;
+              }
+            },
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context,
+                  CupertinoPageRoute(
+                    builder: (context) => ClientInfo(
+                      isDoctorLog: isDocLog,
+                      id: client.id,
+                      name: client.name,
+                      phone: client.number,
+                      email: client.email,
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      client.email,
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
+                );
+              },
+              title: Container(
+                margin: const EdgeInsets.only(top: 8, bottom: 8),
+                child: RichText(
+                  text: highlightOccurrences(client.name, query,
+                    TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: const Color(0xFF4F2263).withOpacity(0.3),
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                      color: const Color(0xFF4F2264),
+                      fontSize: MediaQuery.of(context).size.width * 0.055,
+                    ),
+                  ),
+                ),
+              ),
+              subtitle: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: highlightOccurrences(
+                            client.number.toString(),
+                            query,
+                            TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: const Color(0xFF4F2263).withOpacity(0.3),
+                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                            ),
+                          ),
+                        ),
                       ),
+                      Expanded(
+                        child: Text(
+                          client.email,
+                          textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: const Color(0xFF4F2263).withOpacity(0.3),
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    height: 2,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF4F2263),
                     ),
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                height: 2,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF4F2263),
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+            ),
+          );
+        }).toList(),
       );
     }).toList();
     return groups;
