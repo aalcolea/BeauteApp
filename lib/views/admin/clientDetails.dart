@@ -66,7 +66,11 @@ class ClientDetails extends StatefulWidget {
   State<ClientDetails> createState() => _ClientDetailsState();
 }
 
-class _ClientDetailsState extends State<ClientDetails> with RouteAware {
+class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTickerProviderStateMixin{
+
+  late AnimationController aniController;
+  late Animation<double> movLeftToCenter;
+
   final FocusNode focusNode = FocusNode();
   final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -80,6 +84,11 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
   List<Client> filteredClients = [];
   late List<AlphabetListViewItemGroup> _alphabetizedData;
   late ScrollController scrollController;
+  double progress = 0;
+  double maxOffset = 0;
+  double avance = 0;
+  double sumAvance = 0;
+
   @override
   void didPopNext() {
     super.didPopNext();
@@ -147,6 +156,8 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
   @override
   void initState() {
     super.initState();
+    aniController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    movLeftToCenter = Tween(begin: 0.0, end: 100.0 ).animate(CurvedAnimation(parent: aniController, curve: Curves.easeInOut));
     scrollController = ScrollController();
     scrollController.addListener(onScroll);
     _alphabetizedData = _createAlphabetizedData(clients);
@@ -171,10 +182,13 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
     if (route is PageRoute) {
       routeObserver.subscribe(this, route);
     }
+    maxOffset = (MediaQuery.of(context).size.width - MediaQuery.of(context).size.width * 0.265)/2;
+    avance = maxOffset/100;
   }
 
   @override
   void dispose() {
+    aniController.dispose();
     routeObserver.unsubscribe(this);
     keyboardVisibilitySubscription.cancel();
     searchController.dispose();
@@ -268,23 +282,43 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
         tag: key,
         children: data[key]!.map((client) {
           return Dismissible(
+            onUpdate: (details){
+              setState(() {
+                //aniController.status == AnimationStatus.forward ? null : aniController.forward();
+                progress = details.progress;
+                progress = details.progress * 100;
+                aniController.value = progress;
+                print('progress $progress');
+                sumAvance = avance * progress;
+              });
+            },
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             background: Container(
+              margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
               color: Colors.red,
               alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
+              child: AnimatedBuilder(
+                animation: aniController,
+                child: const Icon(Icons.delete, color: Colors.white),
+                builder: (aniController, iconToMove){
+                  double maxOffset = MediaQuery.of(context).size.width/2;
+                  return Transform.translate(
+                      offset: Offset(-sumAvance, 0), child: Icon(Icons.delete, color: Colors.white, size: MediaQuery.of(context).size.width * 0.07,));
+                }
+              )
             ),
             confirmDismiss: (direction) async {
               bool shouldDelete = await showDeleteConfirmationDialog(context, () async {
                 await clientService.deleteClient(client.id);
-                showOverlay(
-                  context,
-                  const CustomToast(
-                    message: 'Cliente eliminado correctamente',
-                  ),
-                );
+                if(mounted){
+                  showOverlay(
+                    context,
+                    const CustomToast(
+                      message: 'Cliente eliminado correctamente',
+                    ),
+                  );
+                }
               });
               if (shouldDelete) {
                 setState(() {
@@ -469,8 +503,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
                             borderSide: const BorderSide(),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                        ),
-                        style: TextStyle(
                         ),
                       ),
                     )
