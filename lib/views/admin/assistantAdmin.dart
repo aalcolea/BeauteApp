@@ -6,13 +6,10 @@ import 'package:beaute_app/views/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../calendar/calendarSchedule.dart';
 import '../../forms/appoinmentForm.dart';
-import '../../forms/clientForm.dart';
-import '../../services/auth_service.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
 import 'notifications.dart';
 
@@ -140,7 +137,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         onBackPressed(didPop);
       },
       child: Scaffold(
-        endDrawer: navBar(onItemSelected: _onItemSelected),
+        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog,),
         body: Stack(
           children: [
             Container(

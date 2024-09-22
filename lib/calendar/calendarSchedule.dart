@@ -186,8 +186,6 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         _expandedIndex = expandedIndex;
                         _showModalCalledscndTime = true;
                         _dateLookandFill = dateLookandFill;
-                        print(
-                            '_dateLookandFill en primer iteracion $_dateLookandFill');
                         _showModaltoDate(
                             context,
                             details,

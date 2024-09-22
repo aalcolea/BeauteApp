@@ -69,8 +69,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(children: [
+    return Column(children: [
       Container(
         alignment: Alignment.centerLeft,
         width: MediaQuery.of(context).size.width,
@@ -255,6 +254,6 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                           )))));
                         }
                       }))))
-    ]));
+    ]);
   }
 }

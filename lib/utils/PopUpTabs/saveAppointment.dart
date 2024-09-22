@@ -77,15 +77,9 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
-          child: Container(
-            color: Colors.white.withOpacity(0.1),
-          ),
-        ),
-        Center(
-          child: Container(
+         Container(
             margin: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.04),
             padding: EdgeInsets.only(
@@ -168,7 +162,6 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
               ],
             ),
           ),
-        ),
         // El AlertDialog en primer plano
       ],
     );

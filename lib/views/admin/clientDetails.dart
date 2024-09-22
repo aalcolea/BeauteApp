@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
@@ -9,8 +8,10 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
 import '../../main.dart';
 import '../../models/clientModel.dart';
-import '../../services/getClientsService.dart';
-import '../../styles/AppointmentStyles.dart';
+import '../../services/clienteService.dart';
+import '../../utils/PopUpTabs/deleteClientDialog.dart';
+import '../../utils/showToast.dart';
+import '../../utils/toastWidget.dart';
 import 'clientInfo.dart';
 import 'package:http/http.dart' as http;
 class Person {
@@ -181,16 +182,19 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
     super.dispose();
   }
   void onScroll(){
-    double currentoffset = scrollController.offset;
-    if(currentoffset > previousOffset){
+    double currentOffset = scrollController.offset;
+    double velocity = (currentOffset - previousOffset).abs();
+    double velocityThreshold = 18.0;
+
+    if (currentOffset > previousOffset && velocity > velocityThreshold) {
       setState(() {
         hideKeyBoard();
-
       });
-    }else if(currentoffset < previousOffset){
-
+    } else if (velocity <= velocityThreshold) {
+      setState(() {
+      });
     }
-    previousOffset = currentoffset;
+    previousOffset = currentOffset;
   }
   void onSearchChanged() {
     String query = searchController.text.toLowerCase();
@@ -258,70 +262,108 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
     });
 
     final sortedKeys = data.keys.toList()..sort();
-    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key){
+    final clientService = ClientService();
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
       return AlphabetListViewItemGroup(
         tag: key,
-        children: data[key]!.map((client) => ListTile(
-          onTap: () {
-            Navigator.push(context,
-              CupertinoPageRoute(
-                builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email,),
-              ),
-            );
-          },
-          title: Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
-            child: RichText(
-              text: highlightOccurrences(client.name, query,
-                TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                  color: const Color(0xFF4F2264),
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
-                ),
-              ),
+        children: data[key]!.map((client) {
+          return Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: const Icon(Icons.delete, color: Colors.white),
             ),
-          ),
-          subtitle: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: highlightOccurrences(
-                        client.number.toString(),
-                        query,
-                        TextStyle(
-                          overflow: TextOverflow.ellipsis,
-                          color: const Color(0xFF4F2263).withOpacity(0.3),
-                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                        ),
-                      ),
+            confirmDismiss: (direction) async {
+              bool shouldDelete = await showDeleteConfirmationDialog(context, () async {
+                await clientService.deleteClient(client.id);
+                showOverlay(
+                  context,
+                  const CustomToast(
+                    message: 'Cliente eliminado correctamente',
+                  ),
+                );
+              });
+              if (shouldDelete) {
+                setState(() {
+                  clients.remove(client);
+                });
+                return true;
+              } else {
+                return false;
+              }
+            },
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context,
+                  CupertinoPageRoute(
+                    builder: (context) => ClientInfo(
+                      isDoctorLog: isDocLog,
+                      id: client.id,
+                      name: client.name,
+                      phone: client.number,
+                      email: client.email,
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      client.email,
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
+                );
+              },
+              title: Container(
+                margin: const EdgeInsets.only(top: 8, bottom: 8),
+                child: RichText(
+                  text: highlightOccurrences(client.name, query,
+                    TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: const Color(0xFF4F2263).withOpacity(0.3),
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                      color: const Color(0xFF4F2264),
+                      fontSize: MediaQuery.of(context).size.width * 0.055,
+                    ),
+                  ),
+                ),
+              ),
+              subtitle: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: highlightOccurrences(
+                            client.number.toString(),
+                            query,
+                            TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: const Color(0xFF4F2263).withOpacity(0.3),
+                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                            ),
+                          ),
+                        ),
                       ),
+                      Expanded(
+                        child: Text(
+                          client.email,
+                          textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: const Color(0xFF4F2263).withOpacity(0.3),
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    height: 2,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF4F2263),
                     ),
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                height: 2,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF4F2263),
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+            ),
+          );
+        }).toList(),
       );
     }).toList();
     return groups;
@@ -333,7 +375,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
       listOptions: ListOptions(
         listHeaderBuilder: (context, symbol) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF4F2263),
@@ -395,79 +437,81 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware {
       ),
     );
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
+    return Container(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                    padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.045,
+                    ),
+                    child: SizedBox(
+                      height: 37,
+                      child: TextFormField(
+                        controller: searchController,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.zero,
+                          hintText: 'Buscar..',
+                          prefixIcon: const Icon(Icons.search),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        style: TextStyle(
+                        ),
+                      ),
+                    )
+                ),
+              ),
+              Padding(
                 padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  right: MediaQuery.of(context).size.width * 0.045,
+                  right: MediaQuery.of(context).size.width * 0.025,
                 ),
-                child: SizedBox(
-                  height: 37,
-                  child: TextFormField(
-                    controller: searchController,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Bus..',
-                      prefixIcon: const Icon(Icons.search),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    style: TextStyle(
-                    ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    setState(() {
+                      widget.onShowBlur(true);
+                      addClient();
+                    });
+                  },
+                  icon: Icon(
+                    Icons.person_add_alt_outlined,
+                    size: MediaQuery.of(context).size.width * 0.11,
+                    color: const Color(0xFF4F2263),
                   ),
-                )
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.025,
-              ),
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  setState(() {
-                    widget.onShowBlur(true);
-                    addClient();
-                  });
-                },
-                icon: Icon(
-                  Icons.person_add_alt_outlined,
-                  size: MediaQuery.of(context).size.width * 0.11,
-                  color: const Color(0xFF4F2263),
                 ),
               ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: RefreshIndicator(
-          onRefresh: getNombres,
-            child: Container(
-            margin: const EdgeInsets.only(top: 20),
-            child: AlphabetListView(
-    scrollController: scrollController,
-            items: _alphabetizedData,
-            options: options,
-            ),
+            ],
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: getNombres,
+              child: Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: AlphabetListView(
+                  scrollController: scrollController,
+                  items: _alphabetizedData,
+                  options: options,
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

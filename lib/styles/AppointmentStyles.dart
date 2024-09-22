@@ -160,6 +160,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
       child: Column(
         children: [
           InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               setState(() {
                 drSelected.text = 'Doctor1';
@@ -177,7 +178,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
                   color:
-                      optSelected == 1 ? const Color(0xFF4F2263) : Colors.white,
+                      optSelected == 1 || optSelectedToSend == 1 ? const Color(0xFF4F2263) : Colors.white,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
@@ -187,7 +188,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
-                    child: optSelected == 1
+                    child: optSelected == 1 ||  optSelectedToSend == 1
                         ? SvgPicture.asset(
                             'assets/imgLog/docVector2.svg',
                             width: MediaQuery.of(context).size.width * 0.06,
@@ -198,17 +199,12 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                             colorFilter: const ColorFilter.mode(Color(0xFF4F2263), BlendMode.srcIn),
                             width: MediaQuery.of(context).size.width * 0.07,
                             height: MediaQuery.of(context).size.width * 0.07,
-                          ), /*Icon(
-                      CupertinoIcons.person_crop_circle_fill,
-                      color: optSelected == 1
-                          ? Colors.white
-                          : const Color(0xFF4F2263),
-                    ),*/
+                          ),
                   ),
                   Text(
                     'Doctor 1',
                     style: TextStyle(
-                        color: optSelected == 1
+                        color: optSelected == 1 ||  optSelectedToSend == 1
                             ? Colors.white
                             : const Color(0xFF4F2263),
                         fontSize: MediaQuery.of(context).size.width * 0.054),
@@ -227,6 +223,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
             height: MediaQuery.of(context).size.height * 0.0009,
           ),
           InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               setState(() {
                 drSelected.text = 'Doctor2';
@@ -243,8 +240,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
-                  color:
-                      optSelected == 2 ? const Color(0xFF4F2263) : Colors.white,
+                  color: optSelected == 2 ||  optSelectedToSend == 2 ? const Color(0xFF4F2263) : Colors.white,
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
@@ -254,7 +250,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.02),
-                    child: optSelected == 2
+                    child: optSelected == 2 ||  optSelectedToSend == 2
                         ? SvgPicture.asset(
                           'assets/imgLog/docVector2.svg',
                           width: MediaQuery.of(context).size.width * 0.06,
@@ -275,7 +271,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                   Text(
                     'Doctor 2',
                     style: TextStyle(
-                        color: optSelected == 2
+                        color: optSelected == 2 ||  optSelectedToSend == 2
                             ? Colors.white
                             : const Color(0xFF4F2263),
                         fontSize: MediaQuery.of(context).size.width * 0.054),

@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-void showDeleteConfirmationDialog(BuildContext context, Function onDelete) {
-  showDialog(
+Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelete) {
+  return showDialog<bool>(
     context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) {
@@ -60,7 +60,7 @@ void showDeleteConfirmationDialog(BuildContext context, Function onDelete) {
                     children: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop(false);
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -84,9 +84,8 @@ void showDeleteConfirmationDialog(BuildContext context, Function onDelete) {
                       ),
                       TextButton(
                         onPressed: () {
-                          // Llamar la función de eliminar cliente
                           onDelete();
-                          Navigator.of(context).pop(); // Cierra el diálogo
+                          Navigator.of(context).pop(true);
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -117,5 +116,5 @@ void showDeleteConfirmationDialog(BuildContext context, Function onDelete) {
         ],
       );
     },
-  );
+  ).then((value) => value ?? false);
 }
