@@ -292,53 +292,60 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                           child: Slidable(
                             controller: slidableControllers[index],
                             key: ValueKey(index),
-
-
-                            startActionPane: null, /*ActionPane(
-                              motion: const ScrollMotion(
-                              ),
-                              dismissible: DismissiblePane(onDismissed: () {
-                              }),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (details){
-                                  },
-                                  backgroundColor: const Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Delete',
-                                ),
-                                SlidableAction(
-                                  onPressed: (details){},
-                                  backgroundColor: const Color(0xFF21B7CA),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.share,
-                                  label: 'Share',
-                                ),
-                              ],
-                            ),*/
+                            startActionPane: null,
                               endActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              dismissible: DismissiblePane(onDismissed: () {
-                              }),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (details){},
-                                  backgroundColor: const Color(0xFF21B7CA),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.send_and_archive,
-                                  label: 'Noti',
+                                motion: const ScrollMotion(),
+                                dismissible: DismissiblePane(
+                                  confirmDismiss: () async {
+                                    bool result = await showDeleteAppointmentDialog(
+                                      context,
+                                      widget,
+                                      appointment.id,
+                                      refreshAppointments,
+                                      isDocLog,
+                                    );
+                                    if(result){
+                                      return true;
+                                    }else {
+                                      slidableControllers[index].close();
+                                      return false;
+                                    }
+                                  },
+                                  onDismissed: () {
+                                  },
                                 ),
-                                SlidableAction(
-                                  onPressed: (details){},
-                                  backgroundColor: const Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Delete',
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      print('Notificación enviada');
+                                    },
+                                    backgroundColor: const Color(0xFF21B7CA),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.send_and_archive,
+                                    label: 'Noti',
+                                  ),
+                                  SlidableAction(
+                                    onPressed: (context) async {
+                                      bool result = await showDeleteAppointmentDialog(
+                                        context,
+                                        widget,
+                                        appointment.id,
+                                        refreshAppointments,
+                                        isDocLog,
+                                      );
+                                      if (result) {
+                                      } else {
+
+                                      }
+                                    },
+                                    backgroundColor: const Color(0xFFFE4A49),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: 'Eliminar',
+                                  ),
+                                ],
+                              ),
+                              child: GestureDetector(
                                 onTap: () {
                                   if (expandedIndex == index) {
                                     setState(() {
