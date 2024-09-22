@@ -292,13 +292,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 sumAvance = avance * progress;
               });
             },
-            onDismissed: (details){
-              setState(() {
-                //progress = 0;
-                print('end');
-              });
-
-            },
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             background: Container(

@@ -282,9 +282,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                       String treatmentType =
                           appointment.treatmentType ?? 'Sin tratamiento';
                       ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
-                      /////
-
-                      ///
                       return Container(
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * 0,
@@ -297,7 +294,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                             key: ValueKey(index),
 
 
-                            startActionPane: ActionPane(
+                            startActionPane: null, /*ActionPane(
                               motion: const ScrollMotion(
                               ),
                               dismissible: DismissiblePane(onDismissed: () {
@@ -318,9 +315,8 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                   icon: Icons.share,
                                   label: 'Share',
                                 ),
-
                               ],
-                            ),
+                            ),*/
                               endActionPane: ActionPane(
                               motion: const ScrollMotion(),
                               dismissible: DismissiblePane(onDismissed: () {
@@ -378,8 +374,8 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                       borderRadius: BorderRadius.only(
                                         topRight: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
                                         bottomRight: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
-                                        topLeft: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
-                                        bottomLeft: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
+                                        topLeft: const Radius.circular(15),
+                                        bottomLeft: const Radius.circular(15),
                                       ),
                                       border: _oldIndex != index ? Border.all(
                                         color: expandedIndex == index
@@ -387,12 +383,12 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                             : !isTaped && expandedIndex != index
                                             ? const Color(0xFF4F2263)
                                             : const Color(0xFFC5B6CD),
-                                        width: 3.5,
+                                        width: 1.5,
                                       ) : const Border(
-                                        left: BorderSide(color: Color(0xFF4F2263), width: 3.5),
-                                        top: BorderSide(color: Color(0xFF4F2263), width: 3.5),
-                                        bottom: BorderSide(color: Color(0xFF4F2263), width: 3.5),
-                                        right: BorderSide(color: Color(0xFF4F2263), width: 3.5), //change
+                                        left: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                                        top: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                                        bottom: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                                        right: BorderSide(color: Color(0xFF4F2263), width: 1.5), //change
                                       ),
                                       color: Colors.white,
                                       //boxShadow: normallyShadow,
