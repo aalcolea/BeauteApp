@@ -41,10 +41,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
-        print('estoy en clientdetails');
         visibleKeyboard = visible;
         if(_selectedScreen == 3){
-          print('estoy en clientdetails y saque el teclado');
+          //print('estoy en clientdetails y saque el teclado');
         }
       });
     });
