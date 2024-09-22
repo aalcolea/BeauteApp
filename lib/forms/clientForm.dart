@@ -143,9 +143,7 @@ class ClientFormState extends State<ClientForm> {
           'email': _emailController.text,
         }),
       );
-
       print(response.statusCode);
-
       if (response.statusCode == 201) {
         if (mounted) {
           hideKeyBoard();
@@ -154,11 +152,19 @@ class ClientFormState extends State<ClientForm> {
             widget.onFinishedAddClient(1, false);
           });
         }
-      } else {
+      } else if(response.statusCode == 422) {
+        var errorResponse = jsonDecode(response.body);
+        if(errorResponse['errors'] != null && errorResponse['errors']['number'] != null) {
+          showClienteNumberExistsAlert(context, errorResponse['errors']['number'][0]);
+        }else {
+          showClienteNumberExistsAlert(context, 'Error al crear cliente: ${response.body}');
+        }
+      }else {
         print('Error al crear cliente: ${response.body}');
       }
-    } catch (e) {
+    }catch (e) {
       print('Error al enviar datos: $e');
+      showClienteNumberExistsAlert(context, 'Error al enviar datos: $e');
     }
   }
 
