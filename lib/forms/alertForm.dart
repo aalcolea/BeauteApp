@@ -159,13 +159,14 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Mandar alerta',
+                        Expanded(child: Text('Mandar alerta',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.08,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF4F2263),
                           ),
-                        ),
+                        ),),
+
                         IconButton(
                             padding: EdgeInsets.zero,
                             onPressed: () {
@@ -173,7 +174,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                 Navigator.pop(context);
                               });
                             },
-                            icon: const Icon(Icons.close, color: const Color(0xFF4F2263))
+                            icon: const Icon(Icons.close, color: Color(0xFF4F2263))
                         ),
                       ],
                     ),

@@ -143,9 +143,7 @@ class ClientFormState extends State<ClientForm> {
           'email': _emailController.text,
         }),
       );
-
       print(response.statusCode);
-
       if (response.statusCode == 201) {
         if (mounted) {
           hideKeyBoard();
@@ -154,11 +152,19 @@ class ClientFormState extends State<ClientForm> {
             widget.onFinishedAddClient(1, false);
           });
         }
-      } else {
+      } else if(response.statusCode == 422) {
+        var errorResponse = jsonDecode(response.body);
+        if(errorResponse['errors'] != null && errorResponse['errors']['number'] != null) {
+          showClienteNumberExistsAlert(context, errorResponse['errors']['number'][0]);
+        }else {
+          showClienteNumberExistsAlert(context, 'Error al crear cliente: ${response.body}');
+        }
+      }else {
         print('Error al crear cliente: ${response.body}');
       }
-    } catch (e) {
+    }catch (e) {
       print('Error al enviar datos: $e');
+      showClienteNumberExistsAlert(context, 'Error al enviar datos: $e');
     }
   }
 
@@ -206,7 +212,7 @@ class ClientFormState extends State<ClientForm> {
                 left: MediaQuery.of(context).size.width * 0.03,
                 right: MediaQuery.of(context).size.width * 0.03,
             top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
-            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
+            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -226,9 +232,6 @@ class ClientFormState extends State<ClientForm> {
                         color: const Color(0xFF4F2263),
                       ),
                     ),
-                    SizedBox(
-                      width: screenWidth! < 391.0 ? 70 : 95,
-                    ),
                     IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: () {
@@ -240,6 +243,7 @@ class ClientFormState extends State<ClientForm> {
                   ],
                 ),
                 Container(
+                  padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
                     height: visibleKeyboard
                         ? (screenWidth! < 391
                             ? MediaQuery.of(context).size.height * 0.46

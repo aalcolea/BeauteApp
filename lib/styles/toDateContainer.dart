@@ -282,9 +282,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                       String treatmentType =
                           appointment.treatmentType ?? 'Sin tratamiento';
                       ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
-                      /////
-
-                      ///
                       return Container(
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * 0,
@@ -295,54 +292,60 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                           child: Slidable(
                             controller: slidableControllers[index],
                             key: ValueKey(index),
-
-
-                            startActionPane: ActionPane(
-                              motion: const ScrollMotion(
-                              ),
-                              dismissible: DismissiblePane(onDismissed: () {
-                              }),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (details){
-                                  },
-                                  backgroundColor: const Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Delete',
-                                ),
-                                SlidableAction(
-                                  onPressed: (details){},
-                                  backgroundColor: const Color(0xFF21B7CA),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.share,
-                                  label: 'Share',
-                                ),
-
-                              ],
-                            ),
+                            startActionPane: null,
                               endActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              dismissible: DismissiblePane(onDismissed: () {
-                              }),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (details){},
-                                  backgroundColor: const Color(0xFF21B7CA),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.send_and_archive,
-                                  label: 'Noti',
+                                motion: const ScrollMotion(),
+                                dismissible: DismissiblePane(
+                                  confirmDismiss: () async {
+                                    bool result = await showDeleteAppointmentDialog(
+                                      context,
+                                      widget,
+                                      appointment.id,
+                                      refreshAppointments,
+                                      isDocLog,
+                                    );
+                                    if(result){
+                                      return true;
+                                    }else {
+                                      slidableControllers[index].close();
+                                      return false;
+                                    }
+                                  },
+                                  onDismissed: () {
+                                  },
                                 ),
-                                SlidableAction(
-                                  onPressed: (details){},
-                                  backgroundColor: const Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Delete',
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      print('Notificación enviada');
+                                    },
+                                    backgroundColor: const Color(0xFF21B7CA),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.send_and_archive,
+                                    label: 'Noti',
+                                  ),
+                                  SlidableAction(
+                                    onPressed: (context) async {
+                                      bool result = await showDeleteAppointmentDialog(
+                                        context,
+                                        widget,
+                                        appointment.id,
+                                        refreshAppointments,
+                                        isDocLog,
+                                      );
+                                      if (result) {
+                                      } else {
+
+                                      }
+                                    },
+                                    backgroundColor: const Color(0xFFFE4A49),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: 'Eliminar',
+                                  ),
+                                ],
+                              ),
+                              child: GestureDetector(
                                 onTap: () {
                                   if (expandedIndex == index) {
                                     setState(() {
@@ -378,8 +381,8 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                       borderRadius: BorderRadius.only(
                                         topRight: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
                                         bottomRight: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
-                                        topLeft: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
-                                        bottomLeft: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
+                                        topLeft: const Radius.circular(15),
+                                        bottomLeft: const Radius.circular(15),
                                       ),
                                       border: _oldIndex != index ? Border.all(
                                         color: expandedIndex == index
@@ -387,12 +390,12 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                             : !isTaped && expandedIndex != index
                                             ? const Color(0xFF4F2263)
                                             : const Color(0xFFC5B6CD),
-                                        width: 3.5,
+                                        width: 1.5,
                                       ) : const Border(
-                                        left: BorderSide(color: Color(0xFF4F2263), width: 3.5),
-                                        top: BorderSide(color: Color(0xFF4F2263), width: 3.5),
-                                        bottom: BorderSide(color: Color(0xFF4F2263), width: 3.5),
-                                        right: BorderSide(color: Color(0xFF4F2263), width: 3.5), //change
+                                        left: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                                        top: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                                        bottom: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                                        right: BorderSide(color: Color(0xFF4F2263), width: 1.5), //change
                                       ),
                                       color: Colors.white,
                                       //boxShadow: normallyShadow,
