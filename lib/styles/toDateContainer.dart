@@ -191,8 +191,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   @override
   void initState() {
     // TODO: implement initState
-    print('hora ${widget.firtsIndexTouchHour}');
-    print('horadate ${widget.firtsIndexTouchDate}');
    _oldIndex = null;
    expandedIndex = widget.expandedIndexToCharge;
    isTaped = expandedIndex != null;
@@ -235,8 +233,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
            isDragX = false;
          });
        }
-       print('isDrax: $isDragX');
-       print('item: $i');
      });
      slidableControllers.add(controller);
    }
