@@ -303,6 +303,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                     );
                                     if(result){
                                       return true;
+                                      refreshAppointments();
                                     }else {
                                       slidableControllers[index].close();
                                       return false;
@@ -312,7 +313,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                   },
                                 ),
                                 children: [
-                                  SlidableAction(
+                                  /*SlidableAction(
                                     onPressed: (context) {
                                       print('Notificación enviada');
                                     },
@@ -320,7 +321,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                     foregroundColor: Colors.white,
                                     icon: Icons.send_and_archive,
                                     label: 'Noti',
-                                  ),
+                                  ),*/
                                   SlidableAction(
                                     onPressed: (context) async {
                                       bool result = await showDeleteAppointmentDialog(
@@ -331,6 +332,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                         isDocLog,
                                       );
                                       if (result) {
+                                        refreshAppointments();
                                       } else {
 
                                       }
