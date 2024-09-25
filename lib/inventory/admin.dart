@@ -20,6 +20,13 @@ class _adminInvState extends State<adminInv> {
   double? screenWidth;
   double? screenHeight;
   int _selectedScreen = 1;
+  bool _hideBtnsBottom = false;
+
+  void _onHideBtnsBottom(bool hideBtnsBottom) {
+    setState(() {
+      _hideBtnsBottom = hideBtnsBottom;
+    });
+  }
 
   void _onShowBlur(bool showBlur){
     setState(() {
@@ -64,7 +71,11 @@ class _adminInvState extends State<adminInv> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            'Inventario',
+                            _selectedScreen == 1
+                                ? 'Inventario'
+                                : _selectedScreen == 2
+                                ? 'Venta'
+                                : '',
                             style: TextStyle(
                               color: const Color(0xFF4F2263),
                               fontSize: screenWidth! < 370.00
@@ -137,7 +148,7 @@ class _adminInvState extends State<adminInv> {
                   ),
                 ),
                 Visibility(
-                  visible: true,
+                  visible: !_hideBtnsBottom,
                   child: Container(
                     margin: EdgeInsets.only(
                         bottom: screenWidth! < 391
@@ -248,10 +259,10 @@ class _adminInvState extends State<adminInv> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return Categories();
+        return Categories(onHideBtnsBottom: _onHideBtnsBottom,);
       case 2:
         return Container(
-          color: Colors.red,
+          color: Colors.white,
         );
       case 3:
         return Container(
