@@ -36,6 +36,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   double? screenHeight;
   late bool platform; //0 IOS 1 Androide
   bool _showBlurr = false;
+  String currentScreen = "agenda";
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -136,12 +137,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         onBackPressed(didPop);
       },
       child: Scaffold(
-        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog,),
+        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog, currentScreen: currentScreen),
         body: Stack(
           children: [
             Container(
-              padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
               color: Colors.white,
               child: Column(
                 children: [
@@ -180,7 +180,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   : _selectedScreen == 3
                                   ? 'Clientes'
                                   : _selectedScreen == 4
-                                  ? 'Notificaciones'
+                                  ? 'Para hoy'
                                   : '',
                               style: TextStyle(
                                 color: const Color(0xFF4F2263),
@@ -222,6 +222,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 icon: SvgPicture.asset(
                                   'assets/imgLog/navBar.svg',
                                   colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                                  width: MediaQuery.of(context).size.width * 0.105,
                                 ),);
                             }),
                           ],
