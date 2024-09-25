@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:beaute_app/globalVar.dart';
 import 'package:beaute_app/views/admin/clientDetails.dart';
 import 'package:beaute_app/views/navBar.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +28,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool scrollToDayComplete = false;
-  bool isDocLog = false;
+  bool docLog = false;
   bool _showContentToModify = false;
   bool _hideBtnsBottom = false;
   int _selectedScreen = 0;
@@ -76,6 +77,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
 
   @override
   void initState() {
+
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
@@ -347,7 +349,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             onPressed: () {
                               Navigator.push(context,
                                 MaterialPageRoute(
-                                  builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                  builder: (context) => AppointmentForm(docLog: docLog),
                                 ),
                               );
                             },
@@ -422,9 +424,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     switch (_selectedScreen) {
       case 1:
         return AgendaSchedule(
-            isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
+            docLog: docLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog, onShowBlur: _onShowBlur, );
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, docLog: docLog, onShowBlur: _onShowBlur, );
       case 4:
         return const NotificationsScreen(doctorId: 3);
       default:

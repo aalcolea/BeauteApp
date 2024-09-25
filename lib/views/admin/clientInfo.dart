@@ -15,13 +15,13 @@ import '../../utils/showToast.dart';
 import '../../utils/toastWidget.dart';
 
 class ClientInfo extends StatefulWidget {
-  final bool isDoctorLog;
+  final bool docLog;
   final String name;
   final int phone;
   final String email;
   final int id;
 
-  const ClientInfo({super.key, required this.id, required this.isDoctorLog, required this.name, required this.phone, required this.email});
+  const ClientInfo({super.key, required this.id, required this.docLog, required this.name, required this.phone, required this.email});
 
   @override
   State<ClientInfo> createState() => _ClientInfoState();
@@ -136,7 +136,7 @@ class _ClientInfoState extends State<ClientInfo> {
   void initState() {
     // TODO: implement initState
     keyboardVisibilityController = KeyboardVisibilityController();
-    isDocLog = widget.isDoctorLog;
+    isDocLog = widget.docLog;
     name = widget.name;
     nameController.text = widget.name;
     emailController.text = widget.email;
@@ -400,7 +400,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                 setState(() {
                                   Navigator.push(context,
                                     CupertinoPageRoute(
-                                      builder: (context) => AppointmentForm(isDoctorLog: isDocLog, nameClient: name, idScreenInfo: widget.id,),
+                                      builder: (context) => AppointmentForm(docLog: isDocLog, nameClient: name, idScreenInfo: widget.id,),
                                     ),
                                   );
                                 });

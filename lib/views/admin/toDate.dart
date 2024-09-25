@@ -439,7 +439,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                   dateOnly = DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
                   Navigator.push(context, MaterialPageRoute(
                       builder: (context) => AppointmentForm(
-                        isDoctorLog: isDocLog,
+                        docLog: isDocLog,
                         dateFromCalendarSchedule: dateOnly,
                       ),
                     ),

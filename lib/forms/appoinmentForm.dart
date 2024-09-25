@@ -33,7 +33,6 @@ class AlfaNumericInputFormatter extends TextInputFormatter {
         !newValue.text.endsWith(' ') &&
         newValue.text.length == oldValue.text.length - 1 &&
         oldValue.text.length > 1) {
-      // Permitimos la eliminación del espacio final
       return newValue;
     }
     return FilteringTextInputFormatter.allow(
@@ -43,14 +42,14 @@ class AlfaNumericInputFormatter extends TextInputFormatter {
 }
 
 class AppointmentForm extends StatefulWidget {
-  final bool isDoctorLog;
+  final bool docLog;
   final String? dateFromCalendarSchedule;
   final String? nameClient;
   final int? idScreenInfo;
 
   const AppointmentForm({
     super.key,
-    required this.isDoctorLog,
+    required this.docLog,
     this.dateFromCalendarSchedule,
     this.nameClient,
     this.idScreenInfo,
@@ -372,14 +371,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
     Platform.isIOS ? platform = true : platform = false;
-    isDocLog = widget.isDoctorLog;
+    isDocLog = widget.docLog;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
     if (widget.nameClient != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-
           _clientTextController.text = widget.nameClient!;
           clientFieldDone = true;
         });
@@ -549,7 +547,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     fieldClientNode = fieldFocusNode;
                                     _clientTextController = fieldTextEditingController;
                                     return FieldsToWrite(
-                                      //initVal:  _clientTextController.text,
                                       inputFormatters: [
                                         AlfaNumericInputFormatter(),
                                       ],
@@ -1008,8 +1005,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                             readOnly: true,
                             onTap: () {
-                              setState(
-                                () {
+                              setState(() {
                                   _showdrChooseWidget =
                                       _showdrChooseWidget ? false : true;
                                 },
