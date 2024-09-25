@@ -139,7 +139,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         onBackPressed(didPop);
       },
       child: Scaffold(
-        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog, currentScreen: currentScreen),
+        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: docLog, currentScreen: currentScreen),
         body: Stack(
           children: [
             Container(
