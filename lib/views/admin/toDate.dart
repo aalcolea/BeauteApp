@@ -44,14 +44,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
   late Future<List<Appointment>> appointments;
   late bool modalReachTop;
   final Listenerapptm _listenerapptm = Listenerapptm();
-
-  //late DateTime selectedDate2;
   TextEditingController _timerController = TextEditingController();
   TextEditingController timerControllertoShow = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   String antiqueHour = '';
   String antiqueDate = '';
-  bool _isTimerShow = false;
   bool modifyAppointment = false;
   int? expandedIndex;
   bool isTaped = false;
@@ -59,24 +56,27 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
-  String _firtsIndexTouchHour = '`';
   bool isCalendarShow = false;
   bool isHourCorrect = false;
-  int _selectedIndexAmPm = 0;
   bool positionBtnIcon = false;
   int isSelectedHelper = 7;
   String _dateLookandFill = '';
   double offsetX = 0.0;
   int movIndex = 0;
   bool dragStatus = false; //false = start
-  int? _oldIndex;
+  bool lockBtn = false;
+
+  DateTime dateToLockBtn = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
         visibleKeyboard = visible;
-        print(visibleKeyboard);
       });
     });
   }
@@ -103,15 +103,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
 
   @override
   void initState() {
+    widget.selectedDate.isBefore(dateToLockBtn) ? lockBtn = true : lockBtn = false;
     super.initState();
-      _oldIndex = null;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     positionBtnIcon = widget.btnToReachTop;
     isDocLog = widget.isDocLog;
     expandedIndex = widget.expandedIndex;
     isTaped = expandedIndex != null;
-
     if (widget.dateLookandFill.length > 4) {
       dateOnly = widget.dateLookandFill;
       dateTimeToinitModal = DateTime.parse(dateOnly!);
@@ -231,9 +230,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
         color: colorforShadow,
         spreadRadius: 0,
         blurRadius: 0,
-        offset: Offset(
-            0,
-            MediaQuery.of(context).size.width * 0.007), // Desplazamiento hacia abajo (sombra inferior)
+        offset: Offset(0, MediaQuery.of(context).size.width * 0.007), // Desplazamiento hacia abajo (sombra inferior)
       ),
     ];
 
@@ -298,6 +295,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                     isSelectedHelper = index;
                                     dateTimeToinitModal = date;
                                     dateOnly = DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
+                                    dateTimeToinitModal.isBefore(dateToLockBtn) ? lockBtn = true : lockBtn = false;
                                     dateTimeToinitModal = DateTime.parse(dateOnly!);
                                     initializeAppointments(dateTimeToinitModal);
                                     changeAptms();
@@ -392,18 +390,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
               SizedBox(
                 height: MediaQuery.of(context).size.width * 0.03,
               ),
-              ///
-
-    ///boton para agregar cita
-              ///
-              ///
-              Expanded(child: ToDateContainer(
+              Expanded(
+                child: ToDateContainer(
                 reachTop: (bool reachTop,
                     int? expandedIndex,
                     String timerOfTheFstIndexTouched,
                     String dateOfTheFstIndexTouched,
                     bool auxToReachTop,
                     String dateLookandFill) {
+                  _timerController.text = timerOfTheFstIndexTouched;
+                  _dateController.text = dateOfTheFstIndexTouched;
                   if (reachTop == true) {
                     positionBtnIcon = true;
                     modalReachTop = true;
@@ -421,6 +417,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                 selectedDate: widget.selectedDate,
                 expandedIndexToCharge: expandedIndex,
                 listenerapptm: _listenerapptm,
+                  firtsIndexTouchDate: widget.firtsIndexTouchDate,
+                  firtsIndexTouchHour: widget.firtsIndexTouchHour,
               ),),
 
 
@@ -434,10 +432,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                   surfaceTintColor: const Color(0xFF4F2263),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
-                    side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+                    side: BorderSide(color: lockBtn ? Colors.grey.withOpacity(0.3) : const Color(0xFF4F2263), width: 2),
                   ),
                 ),
-                onPressed: () {
+                onPressed: lockBtn ? null : () {
                   dateOnly = DateFormat('yyyy-MM-dd').format(dateTimeToinitModal);
                   Navigator.push(context, MaterialPageRoute(
                       builder: (context) => AppointmentForm(
@@ -474,7 +472,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
             onPressed: () {
               setState(() {
                 _dateLookandFill = dateOnly!;
-                print('_dateLookandFill $_dateLookandFill');
                 if (positionBtnIcon == false) {
                   positionBtnIcon = true;
                   modalReachTop = true;

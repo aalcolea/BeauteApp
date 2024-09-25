@@ -6,7 +6,6 @@ import '../views/admin/toDate.dart';
 
 class CalendarioCita extends StatefulWidget {
   final void Function(String, bool) onDayToAppointFormSelected;
-
   CalendarioCita({Key? key, required this.onDayToAppointFormSelected})
       : super(key: key);
 
@@ -148,13 +147,10 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                           if (selectedDate.isBefore(
                               DateTime(now.year, now.month, now.day))) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'No se pueden seleccionar fechas pasadas')),
+                              const SnackBar(content: Text('No se pueden seleccionar fechas pasadas')),
                             );
                           } else {
-                            String dateOnly =
-                                DateFormat('yyyy-MM-dd').format(selectedDate);
+                            String dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate);
                             widget.onDayToAppointFormSelected(dateOnly, false);
                           }
                         }
