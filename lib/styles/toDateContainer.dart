@@ -20,7 +20,7 @@ class ToDateContainer extends StatefulWidget {
   final String dateLookandFill;
   final DateTime selectedDate;
   final int? expandedIndexToCharge;
-  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm,});
+  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm});
 
   @override
   State<ToDateContainer> createState() => _ToDateContainerState();
@@ -49,7 +49,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   bool isTaped = false;
   String? dateOnly;
   bool visibleKeyboard = false;
-  String _firtsIndexTouchHour = '`';
+  String _firtsIndexTouchHour = '';
   bool isCalendarShow = false;
   bool isHourCorrect = false;
   int _selectedIndexAmPm = 0;
@@ -193,7 +193,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
     // TODO: implement initState
    _oldIndex = null;
    expandedIndex = widget.expandedIndexToCharge;
-   print('expandedInit = $expandedIndex');
    isTaped = expandedIndex != null;
    if (widget.firtsIndexTouchHour != null) {
      _timerController.text = widget.firtsIndexTouchHour!;
@@ -234,8 +233,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
            isDragX = false;
          });
        }
-       print('isDrax: $isDragX');
-       print('item: $i');
      });
      slidableControllers.add(controller);
    }
@@ -252,7 +249,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: Container(
+    return Container(
           alignment: Alignment.center,
         color: Colors.white,
         child: FutureBuilder<List<Appointment>>(
@@ -306,6 +303,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                     );
                                     if(result){
                                       return true;
+                                      refreshAppointments();
                                     }else {
                                       slidableControllers[index].close();
                                       return false;
@@ -315,7 +313,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                   },
                                 ),
                                 children: [
-                                  SlidableAction(
+                                  /*SlidableAction(
                                     onPressed: (context) {
                                       print('Notificación enviada');
                                     },
@@ -323,7 +321,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                     foregroundColor: Colors.white,
                                     icon: Icons.send_and_archive,
                                     label: 'Noti',
-                                  ),
+                                  ),*/
                                   SlidableAction(
                                     onPressed: (context) async {
                                       bool result = await showDeleteAppointmentDialog(
@@ -334,6 +332,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                         isDocLog,
                                       );
                                       if (result) {
+                                        refreshAppointments();
                                       } else {
 
                                       }
@@ -351,6 +350,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                     setState(() {
                                       expandedIndex = null;
                                       isTaped = false;
+                                      //9995140055
                                     });
                                   } else {
                                     setState(() {
@@ -362,7 +362,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                       _dateLookandFill = dateOnly!;
                                       expandedIndex = index;
                                       isTaped = true;
-                                      //positionBtnIcon = true;
+
                                       modalReachTop = true;
                                       widget.reachTop(
                                           modalReachTop,
@@ -735,6 +735,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                             ])))));
                     });
               }
-            })),);
+            }));
   }
 }

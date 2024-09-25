@@ -52,7 +52,7 @@ class DropdownDataManager {
 
 
 class ClientDetails extends StatefulWidget {
-  final bool isDoctorLog;
+  final bool docLog;
   final void Function(
     bool,
   ) onHideBtnsBottom;
@@ -60,7 +60,7 @@ class ClientDetails extends StatefulWidget {
     bool,
   ) onShowBlur;
 
-  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.isDoctorLog, required this.onShowBlur});
+  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.docLog, required this.onShowBlur});
 
   @override
   State<ClientDetails> createState() => _ClientDetailsState();
@@ -164,7 +164,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
-    isDocLog = widget.isDoctorLog;
+    isDocLog = widget.docLog;
     searchController.addListener(onSearchChanged);
     dropdownDataManager.fetchUser().then((fetchedClients) {
       setState(() {
@@ -334,7 +334,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 Navigator.push(context,
                   CupertinoPageRoute(
                     builder: (context) => ClientInfo(
-                      isDoctorLog: isDocLog,
+                      docLog: isDocLog,
                       id: client.id,
                       name: client.name,
                       phone: client.number,

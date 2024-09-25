@@ -1,23 +1,21 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
-import 'customCell.dart';
 
 class AgendaSchedule extends StatefulWidget {
-  final bool isDoctorLog;
+  final bool docLog;
   final void Function(
     bool,
   ) showContentToModify;
 
+
   const AgendaSchedule(
-      {Key? key, required this.isDoctorLog, required this.showContentToModify})
+      {Key? key, required this.docLog, required this.showContentToModify})
       : super(key: key);
 
   @override
@@ -75,7 +73,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   @override
   void initState() {
     super.initState();
-    docLog = widget.isDoctorLog;
+    docLog = widget.docLog;
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -138,15 +136,14 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   }
 
   void _showModaltoDate(
-    BuildContext context,
-    CalendarTapDetails details,
-    bool varmodalReachTop,
-    _expandedIndex,
-    _timerOfTheFstIndexTouched,
-    _dateOfTheFstIndexTouched,
-    _btnToReachTop,
-    _dateLookandFill,
-  ) {
+      BuildContext context,
+      CalendarTapDetails details,
+      bool varmodalReachTop,
+      _expandedIndex,
+      _timerOfTheFstIndexTouched,
+      _dateOfTheFstIndexTouched,
+      _btnToReachTop,
+      _dateLookandFill) {
     showModalBottomSheet(
       backgroundColor: !varmodalReachTop
           ? Colors.transparent
