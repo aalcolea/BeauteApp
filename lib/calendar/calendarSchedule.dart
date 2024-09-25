@@ -11,13 +11,13 @@ import '../views/admin/toDate.dart';
 import 'customCell.dart';
 
 class AgendaSchedule extends StatefulWidget {
-  final bool isDoctorLog;
+  final bool docLog;
   final void Function(
     bool,
   ) showContentToModify;
 
   const AgendaSchedule(
-      {Key? key, required this.isDoctorLog, required this.showContentToModify})
+      {Key? key, required this.docLog, required this.showContentToModify})
       : super(key: key);
 
   @override
@@ -75,7 +75,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   @override
   void initState() {
     super.initState();
-    docLog = widget.isDoctorLog;
+    docLog = widget.docLog;
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;

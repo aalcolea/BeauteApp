@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:beaute_app/views/admin/assistantAdmin.dart';
 import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/admin/toDate.dart';
@@ -6,9 +8,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'forms/appoinmentForm.dart';
+import 'globalVar.dart';
 import 'models/notificationsForAssistant.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -43,11 +48,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
+  final storage = const FlutterSecureStorage();
+
   @override
   void initState() {
     super.initState();
     checkLoginStatus();
   }
+
 void checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
@@ -59,9 +67,18 @@ void checkLoginStatus() async {
         },
       );
       if(response.statusCode == 200){
+        var data = json.decode(response.body);
+        print(data);
+        if(data['user']['id'] == 1 || data['user']['id'] == 2){
+          SessionManager.instance.isDoctor = true;
+        }else{
+          SessionManager.instance.isDoctor = false;
+        }
+        SessionManager.instance.Nombre = data['user']['name'];
         setState(() {
           _isLoggedIn = true;
         });
+
       }else{
         setState(() {
           _isLoggedIn = false;
@@ -85,12 +102,14 @@ void checkLoginStatus() async {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: _isLoggedIn ? const DoctorAdmin(docLog: true) : const Login(),
+      ///pendiente unificacion
+      home: _isLoggedIn ? AssistantAdmin(docLog: SessionManager.instance.isDoctor) : const Login(),
+      //_isLoggedIn ? const AssistantAdmin(docLog: true) : const Login(),
       routes: {
         '/login': (context) => const Login(),
         '/drScreen': (context) => const DoctorAdmin(docLog: true),
         '/assistantScreen': (context) => const AssistantAdmin(docLog: false),
-        '/citaScreen': (context) => AppointmentForm(isDoctorLog: false),
+        '/citaScreen': (context) => AppointmentForm(docLog: false),
       },
       navigatorObservers: [routeObserver],
       supportedLocales: const [Locale('es', 'ES')],
