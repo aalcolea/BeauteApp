@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../forms/alertForm.dart';
+import '../globalVar.dart';
 import '../services/auth_service.dart';
 
 class navBar extends StatefulWidget {
@@ -63,7 +64,7 @@ class _navBarState extends State<navBar> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Asistente',
+                            Text(SessionManager.instance.Nombre,
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
                             Text('Slogan here')
                           ],
