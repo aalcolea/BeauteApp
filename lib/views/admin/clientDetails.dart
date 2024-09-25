@@ -284,7 +284,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
           return Dismissible(
             onUpdate: (details){
               setState(() {
-                //aniController.status == AnimationStatus.forward ? null : aniController.forward();
                 progress = details.progress;
                 progress = details.progress * 100;
                 aniController.value = progress;
@@ -472,7 +471,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
     );
 
     return Container(
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.0),
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.04),
       child: Column(
         children: [
           Row(
@@ -489,7 +488,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                         focusNode: focusNode,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.zero,
-                          hintText: 'Buscar..',
+                          hintText: 'Buscar...',
                           prefixIcon: const Icon(Icons.search),
                           disabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),

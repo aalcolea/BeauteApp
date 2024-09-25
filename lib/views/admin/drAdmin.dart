@@ -108,7 +108,6 @@ class _DoctorAdminState extends State<DoctorAdmin> {
   void initState() {
     SessionManager.instance.isDoctor = true;
     docLog = SessionManager.instance.isDoctor;
-    print('docLog11 $docLog');
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     super.initState();
