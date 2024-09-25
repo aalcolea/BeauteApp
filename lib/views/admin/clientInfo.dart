@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
+import '../../utils/PopUpTabs/deleteClientDialog.dart';
 import '../../utils/showToast.dart';
 import '../../utils/toastWidget.dart';
 
@@ -112,6 +111,24 @@ class _ClientInfoState extends State<ClientInfo> {
   void hideKeyBoard() {
     if (visibleKeyboard) {
       FocusScope.of(context).unfocus();
+    }
+  }
+  Future<void> deleteClient(int id) async{
+    const baseUrl = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/deleteClient/';
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl + '$id'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if(response.statusCode == 200){
+        print('Cliente eleminado con exito');
+      }else{
+        print('Response: ${response.body}');
+      }
+    }catch(e){
+      print('Error: $e');
     }
   }
 
@@ -547,6 +564,22 @@ class _ClientInfoState extends State<ClientInfo> {
                       ],
                     ),
                   ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      showDeleteConfirmationDialog(context, () {
+                        deleteClient(widget.id);
+                        showOverlay(
+                          context,
+                          const CustomToast(
+                            message: 'Cliente eliminado correctamente',
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      });
+                    },
+                    icon: Icon(Icons.delete),
+                    label: Text('Eliminar'),
+                  )
                 ],
               ),
             )

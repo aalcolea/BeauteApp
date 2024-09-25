@@ -1,12 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 
-void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
-    Function refreshAppointments, docLog) {
+Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
+    Function refreshAppointments, docLog) async {
+
   Future<void> deleteAppt(int id) async {
     const baseUrl =
         'https://beauteapp-dd0175830cc2.herokuapp.com/api/deleteAppoinment/';
@@ -36,8 +36,7 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
     }
   }
 
-
-  showDialog(
+  return await showDialog<bool>(
     context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) {
@@ -57,8 +56,6 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
                 top: MediaQuery.of(context).size.height * 0.02,
                 bottom: MediaQuery.of(context).size.height * 0.02,
               ),
-              //width: MediaQuery.of(context).size.width,
-              //height: MediaQuery.of(context).size.height * 0.25,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: Colors.white,
@@ -94,7 +91,7 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(false);
                           },
                           child: Container(
                             margin: EdgeInsets.only(
@@ -102,7 +99,7 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
                             ),
                             padding: EdgeInsets.symmetric(
                               horizontal:
-                                  MediaQuery.of(context).size.width * 0.03,
+                              MediaQuery.of(context).size.width * 0.03,
                             ),
                             decoration: const BoxDecoration(
                               border: Border(
@@ -115,7 +112,7 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
                               'Cancelar',
                               style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.05,
+                                MediaQuery.of(context).size.width * 0.05,
                                 color: const Color(0xFF4F2263),
                               ),
                             ),
@@ -127,35 +124,35 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                               side:
-                                  const BorderSide(color: Colors.red, width: 1),
+                              const BorderSide(color: Colors.red, width: 1),
                             ),
                             backgroundColor: Colors.white,
                             surfaceTintColor: Colors.white,
                             padding: EdgeInsets.symmetric(
                               horizontal:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              MediaQuery.of(context).size.width * 0.05,
                             ),
                           ),
                           onPressed: () {
                             deleteAppt(id!);
                             docLog
-                                ? Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    '/drScreen',
-                                    (Route<dynamic> route) => false,
-                                  )
+                            ? Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/drScreen',
+                            (Route<dynamic> route) => false,
+                            )
                                 : Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    '/assistantScreen',
-                                    (Route<dynamic> route) => false,
-                                  );
-                          },
+                            context,
+                            '/assistantScreen',
+                            (Route<dynamic> route) => false,
+                            );
+                            },
                           child: Text(
                             'Eliminar',
                             style: TextStyle(
                               color: Colors.red,
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.048,
+                              MediaQuery.of(context).size.width * 0.048,
                             ),
                           ),
                         ),
@@ -169,5 +166,5 @@ void showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
         ],
       );
     },
-  );
+  ) ?? false;
 }

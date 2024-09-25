@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
+import '../../main.dart';
 import '../../models/clientModel.dart';
-import '../../services/getClientsService.dart';
-import '../../styles/AppointmentStyles.dart';
+import '../../services/clienteService.dart';
+import '../../utils/PopUpTabs/deleteClientDialog.dart';
+import '../../utils/showToast.dart';
+import '../../utils/toastWidget.dart';
 import 'clientInfo.dart';
 import 'package:http/http.dart' as http;
 class Person {
@@ -35,7 +37,6 @@ class DropdownDataManager {
           clients = List.from(jsonResponse['clients'])
               .map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>))
               .toList();
-          print('Nombres de clientes: $clients');
         } else {
           print('La respuesta no contiene una lista de clientes.');
         }
@@ -65,7 +66,11 @@ class ClientDetails extends StatefulWidget {
   State<ClientDetails> createState() => _ClientDetailsState();
 }
 
-class _ClientDetailsState extends State<ClientDetails> {
+class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTickerProviderStateMixin{
+
+  late AnimationController aniController;
+  late Animation<double> movLeftToCenter;
+
   final FocusNode focusNode = FocusNode();
   final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -79,6 +84,16 @@ class _ClientDetailsState extends State<ClientDetails> {
   List<Client> filteredClients = [];
   late List<AlphabetListViewItemGroup> _alphabetizedData;
   late ScrollController scrollController;
+  double progress = 0;
+  double maxOffset = 0;
+  double avance = 0;
+  double sumAvance = 0;
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    getNombres();
+  }
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
@@ -141,6 +156,8 @@ class _ClientDetailsState extends State<ClientDetails> {
   @override
   void initState() {
     super.initState();
+    aniController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    movLeftToCenter = Tween(begin: 0.0, end: 100.0 ).animate(CurvedAnimation(parent: aniController, curve: Curves.easeInOut));
     scrollController = ScrollController();
     scrollController.addListener(onScroll);
     _alphabetizedData = _createAlphabetizedData(clients);
@@ -157,47 +174,56 @@ class _ClientDetailsState extends State<ClientDetails> {
       });
     });
     getNombres();
-    super.initState();
   }
-
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+    maxOffset = (MediaQuery.of(context).size.width - MediaQuery.of(context).size.width * 0.265)/2;
+    avance = maxOffset/100;
+  }
 
   @override
   void dispose() {
+    aniController.dispose();
+    routeObserver.unsubscribe(this);
     keyboardVisibilitySubscription.cancel();
     searchController.dispose();
     focusNode.dispose();
     super.dispose();
   }
-
   void onScroll(){
-    double currentoffset = scrollController.offset;
-    if(currentoffset > previousOffset){
+    double currentOffset = scrollController.offset;
+    double velocity = (currentOffset - previousOffset).abs();
+    double velocityThreshold = 18.0;
+
+    if (currentOffset > previousOffset && velocity > velocityThreshold) {
       setState(() {
         hideKeyBoard();
-
       });
-    }else if(currentoffset < previousOffset){
-
+    } else if (velocity <= velocityThreshold) {
+      setState(() {
+      });
     }
-    previousOffset = currentoffset;
+    previousOffset = currentOffset;
   }
   void onSearchChanged() {
     String query = searchController.text.toLowerCase();
     setState(() {
       filteredClients = clients.where((client) {
-        return client.name.toLowerCase().contains(query);
+        return client.name.toLowerCase().contains(query) || client.number.toString().contains(query);
       }).toList();
       _alphabetizedData = _createAlphabetizedData(filteredClients);
     });
   }
-  TextSpan highlightOccurrences(String source, String query) {
-    if(query.isEmpty){
+  TextSpan highlightOccurrences(String source, String query, TextStyle baseStyle) {
+    if (query.isEmpty) {
       return TextSpan(
         text: source,
-        style: TextStyle(
-          color: const Color(0xFF4F2263),
-          fontSize: MediaQuery.of(context).size.width * 0.055,
-        ),
+        style: baseStyle,
       );
     }
     var matches = <TextSpan>[];
@@ -206,34 +232,27 @@ class _ClientDetailsState extends State<ClientDetails> {
     int start = 0;
     int index;
 
-    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1){
-      if(index > start){
+    while ((index = lowerSource.indexOf(lowerQuery, start)) != -1) {
+      if (index > start) {
         matches.add(TextSpan(
           text: source.substring(start, index),
-          style: TextStyle(
-            color: const Color(0xFF4F2263),
-            fontSize: MediaQuery.of(context).size.width * 0.055,
-          ),
+          style: baseStyle,
         ));
       }
       matches.add(TextSpan(
         text: source.substring(index, index + query.length),
-        style: TextStyle(
+        style: baseStyle.copyWith(
           fontWeight: FontWeight.bold,
           color: const Color(0xFF4F2263),
-          fontSize: MediaQuery.of(context).size.width * 0.055,
         ),
       ));
       start = index + query.length;
     }
 
-    if(start < source.length){
+    if (start < source.length) {
       matches.add(TextSpan(
         text: source.substring(start),
-        style: TextStyle(
-          color: const Color(0xFF4F2263),
-          fontSize: MediaQuery.of(context).size.width * 0.055,
-        ),
+        style: baseStyle,
       ));
     }
 
@@ -257,61 +276,128 @@ class _ClientDetailsState extends State<ClientDetails> {
     });
 
     final sortedKeys = data.keys.toList()..sort();
-    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key){
+    final clientService = ClientService();
+    final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
       return AlphabetListViewItemGroup(
         tag: key,
-        children: data[key]!.map((client) => ListTile(
-          onTap: () {
-            Navigator.push(context,
-              CupertinoPageRoute(
-                builder: (context) => ClientInfo(isDoctorLog: isDocLog, id: client.id, name: client.name, phone: client.number, email: client.email,),
-              ),
-            );
-          },
-          title: Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
-            child: RichText(
-              text: highlightOccurrences(client.name, query), // Este método ya regresa un TextSpan con el estilo aplicado
+        children: data[key]!.map((client) {
+          return Dismissible(
+            onUpdate: (details){
+              setState(() {
+                //aniController.status == AnimationStatus.forward ? null : aniController.forward();
+                progress = details.progress;
+                progress = details.progress * 100;
+                aniController.value = progress;
+                print('progress $progress');
+                sumAvance = avance * progress;
+              });
+            },
+            key: UniqueKey(),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              child: AnimatedBuilder(
+                animation: aniController,
+                child: const Icon(Icons.delete, color: Colors.white),
+                builder: (aniController, iconToMove){
+                  double maxOffset = MediaQuery.of(context).size.width/2;
+                  return Transform.translate(
+                      offset: Offset(-sumAvance, 0), child: Icon(Icons.delete, color: Colors.white, size: MediaQuery.of(context).size.width * 0.07,));
+                }
+              )
             ),
-          ),
-          subtitle: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${client.number}',
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: const Color(0xFF4F2263).withOpacity(0.3),
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
-                      ),
+            confirmDismiss: (direction) async {
+              bool shouldDelete = await showDeleteConfirmationDialog(context, () async {
+                await clientService.deleteClient(client.id);
+                if(mounted){
+                  showOverlay(
+                    context,
+                    const CustomToast(
+                      message: 'Cliente eliminado correctamente',
+                    ),
+                  );
+                }
+              });
+              if (shouldDelete) {
+                setState(() {
+                  clients.remove(client);
+                });
+                return true;
+              } else {
+                return false;
+              }
+            },
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context,
+                  CupertinoPageRoute(
+                    builder: (context) => ClientInfo(
+                      isDoctorLog: isDocLog,
+                      id: client.id,
+                      name: client.name,
+                      phone: client.number,
+                      email: client.email,
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      client.email,
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
+                );
+              },
+              title: Container(
+                margin: const EdgeInsets.only(top: 8, bottom: 8),
+                child: RichText(
+                  text: highlightOccurrences(client.name, query,
+                    TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: const Color(0xFF4F2263).withOpacity(0.3),
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                      color: const Color(0xFF4F2264),
+                      fontSize: MediaQuery.of(context).size.width * 0.055,
+                    ),
+                  ),
+                ),
+              ),
+              subtitle: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: highlightOccurrences(
+                            client.number.toString(),
+                            query,
+                            TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: const Color(0xFF4F2263).withOpacity(0.3),
+                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                            ),
+                          ),
+                        ),
                       ),
+                      Expanded(
+                        child: Text(
+                          client.email,
+                          textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: const Color(0xFF4F2263).withOpacity(0.3),
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    height: 2,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF4F2263),
                     ),
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                height: 2,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF4F2263),
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+            ),
+          );
+        }).toList(),
       );
     }).toList();
     return groups;
@@ -323,7 +409,7 @@ class _ClientDetailsState extends State<ClientDetails> {
       listOptions: ListOptions(
         listHeaderBuilder: (context, symbol) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF4F2263),
@@ -385,76 +471,79 @@ class _ClientDetailsState extends State<ClientDetails> {
       ),
     );
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
+    return Container(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                    padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.045,
+                    ),
+                    child: SizedBox(
+                      height: 37,
+                      child: TextFormField(
+                        controller: searchController,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.zero,
+                          hintText: 'Buscar..',
+                          prefixIcon: const Icon(Icons.search),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                    )
+                ),
+              ),
+              Padding(
                 padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  right: MediaQuery.of(context).size.width * 0.045,
+                  right: MediaQuery.of(context).size.width * 0.025,
                 ),
-                child: SizedBox(
-                  height: 37,
-                  child: TextFormField(
-                    controller: searchController,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Bus..',
-                      prefixIcon: const Icon(Icons.search),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    style: TextStyle(
-                    ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    setState(() {
+                      widget.onShowBlur(true);
+                      addClient();
+                    });
+                  },
+                  icon: Icon(
+                    Icons.person_add_alt_outlined,
+                    size: MediaQuery.of(context).size.width * 0.11,
+                    color: const Color(0xFF4F2263),
                   ),
-                )
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.025,
-              ),
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  setState(() {
-                    widget.onShowBlur(true);
-                    addClient();
-                  });
-                },
-                icon: Icon(
-                  Icons.person_add_alt_outlined,
-                  size: MediaQuery.of(context).size.width * 0.11,
-                  color: const Color(0xFF4F2263),
                 ),
               ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(top: 20),
-            child: AlphabetListView(
-              scrollController: scrollController,
-              items: _alphabetizedData,
-              options: options,
+            ],
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: getNombres,
+              child: Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: AlphabetListView(
+                  scrollController: scrollController,
+                  items: _alphabetizedData,
+                  options: options,
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
