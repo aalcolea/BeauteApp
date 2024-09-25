@@ -99,6 +99,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   int _selectedIndexAmPm = 0;
   int? doctor_id_body = 0;
   bool platform = false; //ios False androide True
+  String toTime = '';
 
   Future<void> createClient() async {
     try {
@@ -246,8 +247,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       int hourToCompareConvert = int.parse(timeToCompare[0]);
       int minuteToCompareConvert = int.parse(timeToCompare[1]);
       DateTime dateTimeNow = DateTime.now();
-      DateTime selectedDateT =
-          DateFormat('yyyy-MM-dd').parse(_dateController.text);
+      DateTime selectedDateT = DateFormat('yyyy-MM-dd').parse(_dateController.text);
 
       DateTime selectedDateTimeToCompare = DateTime(
           selectedDateT.year,
@@ -271,8 +271,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         isHourCorrect = true;
         String toShow = selectedTime.text;
         DateTime formattedTime24hrs = DateFormat('HH:mm').parse(toShow);
-        String formattedTime12hrs =
-            DateFormat('hh:mm a').format(formattedTime24hrs);
+        String formattedTime12hrs = DateFormat('hh:mm a').format(formattedTime24hrs);
         _timeController.text = formattedTime12hrs;
       }
     });
@@ -317,13 +316,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   Future<void> submitAppointment() async {
-    String toShow = _timeController.text;
+    toTime = _timeController.text;
     DateFormat dateFormat12Hour = DateFormat('hh:mm a');
     DateFormat dateFormat24Hour = DateFormat('HH:mm');
-    DateTime dateTime = dateFormat12Hour.parse(toShow);
+    DateTime dateTime = dateFormat12Hour.parse(toTime);
     String time24HourFormat = dateFormat24Hour.format(dateTime);
-
-    _timeController.text = time24HourFormat;
+    //_timeController.text = time24HourFormat;
+    toTime = time24HourFormat;
+    print('time ${time24HourFormat}');
+    print('timeController ${ _timeController.text}');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
     if (token == null) {
@@ -331,9 +332,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       return;
     }
 
-    String url =
-        'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
-
+    String url = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/createAppoinment';
     try {
       var response = await http.post(
         Uri.parse(url),
@@ -345,7 +344,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'dr_id': doctor_id_body!,
           'client_id': widget.nameClient != null ? widget.idScreenInfo : _selectedClient?.id.toString(),
           'date': _dateController.text,
-          'time': _timeController.text,
+          'time': toTime,
           'treatment': treatmentController.text,
           'name': _clientTextController.text,
         }),
@@ -441,14 +440,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     MediaQuery.of(context).size.width * 0.095,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF4F2263),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
+                            ))
+                      ])
+                    ])),
+            Column(
                     children: [
                       Visibility(
                         visible: _showdrChooseWidget ? true : false,
@@ -457,10 +452,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: visibleKeyboard
-                            ? MediaQuery.of(context).size.height * 0.52
-                            : _showdrChooseWidget
-                                ? MediaQuery.of(context).size.height * 0.7
+                        height: visibleKeyboard ? MediaQuery.of(context).size.height * 0.52
+                            : _showdrChooseWidget ? MediaQuery.of(context).size.height * 0.7
                                 : MediaQuery.of(context).size.height * 0.88,
                         color: Colors.white,
                         child: SingleChildScrollView(
@@ -469,19 +462,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Visibility(
-                                visible: isDocLog
-                                    ? false
-                                    : _showdrChooseWidget
-                                        ? false
-                                        : true,
+                                visible: isDocLog ? false : _showdrChooseWidget ? false : true,
                                 child: TitleContainer(
                                   child: Text(
                                     'Doctor: ',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.045,
+                                      fontSize: MediaQuery.of(context).size.width * 0.045,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -489,37 +476,23 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               ),
 
                               Visibility(
-                                visible: isDocLog
-                                    ? false
-                                    : _showdrChooseWidget
-                                        ? false
-                                        : true,
+                                visible: isDocLog ? false : _showdrChooseWidget ? false : true,
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.width *
-                                              0.02,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.026),
+                                  padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                                      horizontal: MediaQuery.of(context).size.width * 0.026),
                                   child: TextFormField(
                                     controller: _drSelected,
                                     decoration: InputDecoration(
                                       hintText: 'Seleccione una opción...',
                                       contentPadding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.03),
+                                          horizontal: MediaQuery.of(context).size.width * 0.03),
                                       border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10.0),
                                       ),
                                       suffixIcon: Icon(
                                         Icons.arrow_drop_down_circle_outlined,
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.085,
+                                        size: MediaQuery.of(context).size.width * 0.085,
                                         color: const Color(0xFF4F2263),
                                       ),
                                     ),
@@ -527,10 +500,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     onTap: () {
                                       setState(
                                         () {
-                                          _showdrChooseWidget =
-                                              _showdrChooseWidget
-                                                  ? false
-                                                  : true;
+                                          _showdrChooseWidget = _showdrChooseWidget ? false : true;
                                           drFieldDone = true;
                                         },
                                       );
@@ -599,18 +569,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       onEdComplete: () {
                                         setState(() {
                                           clientFieldDone = true;
-                                          nameToCompare == _clientTextController.text
-                                              ? null
-                                              : _updateSelectedClient(null);
+                                          nameToCompare == _clientTextController.text ? null : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
                                         });
                                       },
                                       onTapOutside: (PointerDownEvent tapout) {
                                         setState(() {
-                                          clientFieldDone = true;
-                                          nameToCompare == _clientTextController.text
-                                              ? null
-                                              : _updateSelectedClient(null);
+                                          _clientTextController.text.isEmpty ? clientFieldDone = false : clientFieldDone = true;
+                                          nameToCompare == _clientTextController.text ? null : _updateSelectedClient(null);
                                           fieldFocusNode.unfocus();
                                         });
                                       },
@@ -631,31 +597,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 ),
                               ),
                               Visibility(
-                                visible: isTimerShow
-                                    ? true
-                                    : _showCalendar
-                                        ? false
-                                        : true,
+                                visible: isTimerShow ? true : _showCalendar ? false : true,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.width *
-                                              0.02,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.026),
+                                      vertical: MediaQuery.of(context).size.width * 0.02,
+                                      horizontal: MediaQuery.of(context).size.width * 0.026),
                                   child: FieldsToWrite(
-                                    eneabled: drFieldDone &&
-                                            clientFieldDone &&
-                                            widget.dateFromCalendarSchedule ==
-                                                null
-                                        ? true
-                                        : isDocLog &&
-                                                clientFieldDone &&
-                                                widget.dateFromCalendarSchedule ==
-                                                    null
-                                            ? true
-                                            : false,
+                                    eneabled: drFieldDone && clientFieldDone &&
+                                        widget.dateFromCalendarSchedule == null ? true : isDocLog && clientFieldDone &&
+                                        widget.dateFromCalendarSchedule == null ? true : false,
                                     readOnly: true,
                                     labelText: 'DD/M/AAAA',
                                     controller: _dateController,
@@ -663,25 +613,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       Icons.calendar_today,
                                       color: drFieldDone &&
                                               clientFieldDone &&
-                                              widget.dateFromCalendarSchedule ==
-                                                  null
-                                          ? const Color(0xFF4F2263)
-                                          : isDocLog &&
-                                                  clientFieldDone &&
-                                                  widget.dateFromCalendarSchedule ==
-                                                      null
-                                              ? const Color(0xFF4F2263)
-                                              : const Color(0xFF4F2263)
-                                                  .withOpacity(0.3),
-                                      size: MediaQuery.of(context).size.width *
-                                          0.07,
+                                              widget.dateFromCalendarSchedule == null
+                                          ? const Color(0xFF4F2263) : isDocLog && clientFieldDone &&
+                                          widget.dateFromCalendarSchedule == null ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
+                                      size: MediaQuery.of(context).size.width * 0.07,
                                     ),
                                     onTap: () {
                                       setState(() {
+                                        _clientTextController.text.isNotEmpty ? drFieldDone = true : null;
                                         hideKeyBoard();
-                                        !_showCalendar
-                                            ? _showCalendar = true
-                                            : _showCalendar = false;
+                                        !_showCalendar ? _showCalendar = true : _showCalendar = false;
                                       });
                                     },
                                   ),
@@ -698,9 +639,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     'Hora:',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.045,
+                                      fontSize: MediaQuery.of(context).size.width * 0.045,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -717,9 +656,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           MediaQuery.of(context).size.width *
                                               0.026),
                                   child: FieldsToWrite(
-                                    eneabled: _dateController.text.isNotEmpty
-                                        ? true
-                                        : false,
+                                    eneabled: _dateController.text.isNotEmpty ? true : false,
                                     labelText: 'HH:MM',
                                     readOnly: true,
                                     controller: _timeController,
@@ -729,8 +666,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           ? const Color(0xFF4F2263)
                                           : const Color(0xFF4F2263)
                                               .withOpacity(0.3),
-                                      size: MediaQuery.of(context).size.width *
-                                          0.075,
+                                      size: MediaQuery.of(context).size.width * 0.075,
                                     ),
                                     onTap: () {
                                       setState(() {
@@ -762,7 +698,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 ),
                               ),
 
-                              ///
                               Visibility(
                                 visible: !isTimerShow && !_showCalendar,
                                 child: Padding(
@@ -781,16 +716,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       CupertinoIcons.pencil_ellipsis_rectangle,
                                       size: MediaQuery.of(context).size.width *
                                           0.085,
-                                      color: _timeController.text.isNotEmpty &&
-                                              isHourCorrect
-                                          ? const Color(0xFF4F2263)
-                                          : const Color(0xFF4F2263)
-                                              .withOpacity(0.3),
+                                      color: _timeController.text.isNotEmpty && isHourCorrect ? const Color(0xFF4F2263)
+                                          : const Color(0xFF4F2263).withOpacity(0.3),
                                     ),
-                                    eneabled: _timeController.text.isNotEmpty &&
-                                            isHourCorrect
-                                        ? true
-                                        : false,
+                                    eneabled: _timeController.text.isNotEmpty && isHourCorrect ? true : false,
                                     labelText: 'Tratamiento',
                                     readOnly: false,
                                     controller: treatmentController,
@@ -804,10 +733,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     Checkbox(
                                       checkColor: Colors.white,
                                       value: saveNewClient,
-                                      onChanged: clientInDB == null ||
-                                              clientInDB == true
-                                          ? null
-                                          : (bool? value) {
+                                      onChanged: clientInDB == null || clientInDB == true ? null : (bool? value) {
                                               setState(() {
                                                 saveNewClient = value ?? false;
                                               });
@@ -823,23 +749,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       }),
                                     ),
                                     TextButton(
-                                      onPressed: clientInDB == null ||
-                                              clientInDB == true
-                                          ? null
-                                          : () {
+                                      onPressed: clientInDB == null || clientInDB == true
+                                          ? null : () {
                                               setState(() {
-                                                saveNewClient == false
-                                                    ? saveNewClient = true
-                                                    : saveNewClient = false;
+                                                saveNewClient == false ? saveNewClient = true : saveNewClient = false;
                                               });
                                             },
                                       child: Text(
                                         'Agregar nuevo cliente',
                                         style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.045,
+                                          fontSize: MediaQuery.of(context).size.width * 0.045,
                                           color: clientInDB == null ||
                                                   clientInDB == true
                                               ? const Color(0xFF4F2263)
@@ -858,34 +777,19 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     : false,
                                 child: ElevatedButton(
                                   onPressed:
-                                      treatmentController.text.isNotEmpty &&
-                                              !saveNewClient &&
-                                              isHourCorrect
-                                          ? submitAppointment
-                                          : saveNewClient &&
-                                                  treatmentController
-                                                      .text.isNotEmpty &&
-                                                  isHourCorrect
-                                              ? addClientAndSubmitAppointment
-                                              : null,
+                                      treatmentController.text.isNotEmpty && !saveNewClient && isHourCorrect
+                                          ? submitAppointment : saveNewClient && treatmentController.text.isNotEmpty && isHourCorrect
+                                              ? addClientAndSubmitAppointment : null,
                                   style: ElevatedButton.styleFrom(
                                     surfaceTintColor: Colors.white,
                                     splashFactory: InkRipple.splashFactory,
                                     padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            MediaQuery.of(context).size.height *
-                                                0.0225,
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                        vertical: MediaQuery.of(context).size.height * 0.0225,
+                                        horizontal: MediaQuery.of(context).size.width * 0.2),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25.0),
                                       side: BorderSide(
-                                          color: treatmentController
-                                                  .text.isNotEmpty
-                                              ? const Color(0xFF4F2263)
-                                              : const Color(0xFF4F2263)
-                                                  .withOpacity(0.3),
+                                          color: treatmentController.text.isNotEmpty ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
                                           width: 2),
                                     ),
                                     backgroundColor: Colors.white,
@@ -893,21 +797,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   child: Text(
                                     'Crear cita',
                                     style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.06,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                                        ))))
+                          ])))
+                ])
+              ]),
 
               ///timer
               if (isTimerShow)
@@ -1026,18 +920,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             'Fecha:',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045,
+                              fontSize: MediaQuery.of(context).size.width * 0.045,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.width * 0.02,
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.026),
+                              vertical: MediaQuery.of(context).size.width * 0.02,
+                              horizontal: MediaQuery.of(context).size.width * 0.026),
                           child: FieldsToWrite(
                             fillColor: Colors.white,
                             readOnly: true,
@@ -1055,8 +946,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         ),
                         CalendarContainer(
                           child: CalendarioCita(
-                              onDayToAppointFormSelected:
-                                  _onDateToAppointmentForm),
+                              onDayToAppointFormSelected: _onDateToAppointmentForm),
                         ),
                       ],
                     ),
@@ -1131,19 +1021,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           padding: EdgeInsets.symmetric(
                               horizontal:
                                   MediaQuery.of(context).size.width * 0.025),
-                          child: DoctorsMenu(
-                              onAssignedDoctor: _onAssignedDoctor,
-                              optSelectedToRecieve: _optSelected),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                          child: DoctorsMenu(onAssignedDoctor: _onAssignedDoctor, optSelectedToRecieve: _optSelected),
+                        )
+                      ]))))
+        ]))));
   }
 }

@@ -20,7 +20,7 @@ class ToDateContainer extends StatefulWidget {
   final String dateLookandFill;
   final DateTime selectedDate;
   final int? expandedIndexToCharge;
-  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm,});
+  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm});
 
   @override
   State<ToDateContainer> createState() => _ToDateContainerState();
@@ -49,7 +49,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   bool isTaped = false;
   String? dateOnly;
   bool visibleKeyboard = false;
-  String _firtsIndexTouchHour = '`';
+  String _firtsIndexTouchHour = '';
   bool isCalendarShow = false;
   bool isHourCorrect = false;
   int _selectedIndexAmPm = 0;
@@ -191,9 +191,10 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   @override
   void initState() {
     // TODO: implement initState
+    print('hora ${widget.firtsIndexTouchHour}');
+    print('horadate ${widget.firtsIndexTouchDate}');
    _oldIndex = null;
    expandedIndex = widget.expandedIndexToCharge;
-   print('expandedInit = $expandedIndex');
    isTaped = expandedIndex != null;
    if (widget.firtsIndexTouchHour != null) {
      _timerController.text = widget.firtsIndexTouchHour!;
@@ -252,7 +253,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: Container(
+    return Container(
           alignment: Alignment.center,
         color: Colors.white,
         child: FutureBuilder<List<Appointment>>(
@@ -351,6 +352,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                     setState(() {
                                       expandedIndex = null;
                                       isTaped = false;
+                                      //9995140055
                                     });
                                   } else {
                                     setState(() {
@@ -362,7 +364,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                       _dateLookandFill = dateOnly!;
                                       expandedIndex = index;
                                       isTaped = true;
-                                      //positionBtnIcon = true;
+
                                       modalReachTop = true;
                                       widget.reachTop(
                                           modalReachTop,
@@ -735,6 +737,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                             ])))));
                     });
               }
-            })),);
+            }));
   }
 }
