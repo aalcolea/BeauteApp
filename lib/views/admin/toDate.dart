@@ -128,8 +128,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
   bool isDragginDismisStart = false;
 
   void changeAptms(){
-    _listenerapptm.setChange(true,
-    dateTimeToinitModal,
+    _listenerapptm.setChange(
+      true,
+      dateTimeToinitModal,
       3,
     );
   }
@@ -288,7 +289,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                               bool isSelected = dateTimeToinitModal.day == date.day &&
                                       dateTimeToinitModal.month == date.month &&
                                       dateTimeToinitModal.year == date.year;
-
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
