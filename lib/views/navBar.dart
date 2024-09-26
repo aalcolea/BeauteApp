@@ -160,16 +160,18 @@ class _navBarState extends State<navBar> {
                 ),
               ),
             ),
-            Container(
+            Visibility(
+              visible: !widget.isDoctorLog,
+              child: Container(
               padding: EdgeInsets.only(top:40),
               child: ElevatedButton(
-                onPressed: (){
-                  setState(() {
-                    widget.onShowBlur(true);
-                    createAlert();
-                  });
-                },
-                style: ElevatedButton.styleFrom(
+                  onPressed: (){
+                    setState(() {
+                      widget.onShowBlur(true);
+                      createAlert();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     side: BorderSide(color: Color(0XFF4F2263), width: 1.0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -177,17 +179,17 @@ class _navBarState extends State<navBar> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     elevation: 5.0,
                     shadowColor: Colors.black54,
-                ),
-                child: Text(
-                  'Mandar alerta',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width*0.05,
-                    color: Color(0XFF4F2263)
                   ),
-                )
+                  child: Text(
+                    'Mandar alerta',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width*0.05,
+                        color: Color(0XFF4F2263)
+                    ),
+                  )
               ),
-            ),
+            ),),
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.03),
