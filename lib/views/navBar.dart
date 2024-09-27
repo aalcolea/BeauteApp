@@ -40,7 +40,6 @@ class _navBarState extends State<navBar> {
   @override
   void initState() {
     super.initState();
-    print('currentScreen ${widget.currentScreen}');
   }
 
   @override
