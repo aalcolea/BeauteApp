@@ -184,21 +184,13 @@ class _ClientInfoState extends State<ClientInfo> {
             : TextButton(
                 onPressed: () {
                   setState(() {
-                    /*emailController.text = oldEmail!;
-                    nameController.text = oldNameValue!;
-                    phoneController.text = oldPhone!;*/
                     maxLines = 2;
                     editInfo = false;
                     phoneController.text = '\n${phoneController.text}';
                     emailController.text = '\n${emailController.text}';
-                    print('phoneController ${phoneController.text}');
                     emailController.text = oldEmail!;
                     nameController.text = oldNameValue!;
                     phoneController.text = oldPhone!;
-                    print('emailController ${emailController.text}');
-                    print('nameController ${nameController.text}');
-                    print('phoneController ${phoneController.text}');
-
                   });
                 },
                 child: Text(
