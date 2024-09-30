@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:http/http.dart' as http;
 class Categories extends StatefulWidget {
 
   final void Function(
@@ -49,6 +51,8 @@ class _CategoriesState extends State<Categories> {
     super.initState();
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
+    loadFirstItems();
+    print(offset);
   }
 
   @override
@@ -58,6 +62,52 @@ class _CategoriesState extends State<Categories> {
     focusNode.dispose();
     super.dispose();
   }
+  ///test alan functiosn
+  ///init tiene una function
+  ///TODO ESTO IRA A UN SERVICIO
+  int limit = 6;
+  int offset = 0;
+  List<Map<String, dynamic>> items = [];
+  Future<void> loadFirstItems() async{
+    try{
+      List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
+      setState(() {
+        items = fetchedItems;
+        offset += limit;
+      });
+    }catch(e){
+      print('Error al cargar los items $e');
+    }
+  }
+  Future<void> loadItems() async{
+    try{
+      List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
+      setState(() {
+        items.addAll(fetchedItems);
+        offset += limit;
+      });
+
+      print(offset);
+    }catch(e){
+      print('Error al cargar mas productos $e');
+    }
+  }
+  Future<List<Map<String, dynamic>>> fetchItems({int limit = 6, int offset = 0}) async{
+    final String baseURL = 'http://192.168.101.139:8080/api/categories';
+    final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
+    if(response.statusCode ==200){
+      final List<dynamic> data = json.decode(response.body)['data'];
+      return data.map((item){
+        return {
+          'category': item['nombre'],
+          'image': item['foto'],
+        };
+      }).toList();
+    }else{
+      throw Exception('Error al obtener datos de la API');
+    }
+  }
+  ///termian test alan functions
 
   @override
   Widget build(BuildContext context) {
