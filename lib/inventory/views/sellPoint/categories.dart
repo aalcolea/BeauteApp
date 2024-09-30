@@ -156,13 +156,7 @@ class _CategoriesState extends State<Categories> {
                     ),
                   ),
                 ),
-              ),
-              ///empeiza test alan,
-              ElevatedButton(
-                onPressed: loadItems,
-                child: Text('cargar mas datos'),
-              ),
-            ///termina test alan
+              )
             ],
           ),
           _selectedCategory == null
