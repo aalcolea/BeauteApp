@@ -24,6 +24,7 @@ class _CategoriesState extends State<Categories> {
   bool visibleKeyboard = false;
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
+  String? _selectedCategory;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
