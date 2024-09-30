@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -42,8 +43,9 @@ class _CategoriesState extends State<Categories> {
     }
   }
 
-  void _onHideBtnsBottom(bool hideBtnsBottom) {
+  void _clearSelectedCategory() {
     setState(() {
+      _selectedCategory = null;
     });
   }
 
@@ -109,12 +111,6 @@ class _CategoriesState extends State<Categories> {
     }
   }
   ///termian test alan functions
-
-  List<Map<String, dynamic>> products = [
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 2', 'price': '79', 'cant': '3', 'product_id': '2'},
-    {'product': 'Bloqueador 3', 'price': '99', 'cant': '8', 'product_id': '3'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -264,13 +260,15 @@ class _CategoriesState extends State<Categories> {
                                         ),
 
                                         const SizedBox(height: 8),
-                                        Text(
-                                            "${item['category']}",
-                                            style: TextStyle(
-                                              color: Color(0xFF4F2263),
-                                              fontSize: MediaQuery.of(context).size.width * 0.045,
-                                            )
-                                        ),
+                                        Expanded(
+                                          child: Text(
+                                              "${item['category']}",
+                                              style: TextStyle(
+                                                color: Color(0xFF4F2263),
+                                                fontSize: MediaQuery.of(context).size.height * 0.017,
+                                              )
+                                          ),
+                                        )
                                       ],
                                     ),
                                   )
@@ -284,68 +282,7 @@ class _CategoriesState extends State<Categories> {
                 ),
               ),
             ) : Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(top: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedCategory = null;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Color(0xFF4F2263),
-                          )
-                      ),
-                      Text(
-                        '$_selectedCategory',
-                        style: TextStyle(
-                            fontSize: 28,
-                            color: Color(0xFF4F2263)
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.width * 0.01,
-                        bottom: MediaQuery.of(context).size.width * 0.01,
-                        left: MediaQuery.of(context).size.width * 0.01,
-                        right: MediaQuery.of(context).size.width * 0.01,
-                      ),
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  'Producto $index',
-                                  style: TextStyle(
-                                    color: Color(0xFF4F2263),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  'Precio: 59 MXN' + ' ' + 'Cant.: 5',
-                                  style: TextStyle(color: Color(0xFF4F2263)),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-                              ),
-                            ],
-                          );
-                        }
-                    ),
-                  )
-                ],
-              ),
-            ),
+              child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory),
           )
         ],
       ),
