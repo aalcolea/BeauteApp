@@ -185,14 +185,13 @@ class _CategoriesState extends State<Categories> {
                     ),
                   ),
                 ),
-              )
-              ///empeiza test alan
-              ,
+              ),
+              ///empeiza test alan,
               ElevatedButton(
                 onPressed: loadItems,
                 child: Text('cargar mas datos'),
               ),
-              ///termina test alan
+            ///termina test alan
             ],
           ),
           _selectedCategory == null
@@ -226,22 +225,10 @@ class _CategoriesState extends State<Categories> {
                         return GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.only(
-                            top: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.01,
-                            bottom: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.01,
-                            left: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.01,
-                            right: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.01,
+                            top: MediaQuery.of(context).size.width * 0.01,
+                            bottom: MediaQuery.of(context).size.width * 0.01,
+                            left: MediaQuery.of(context).size.width * 0.01,
+                            right: MediaQuery.of(context).size.width * 0.01,
                           ),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
@@ -262,11 +249,7 @@ class _CategoriesState extends State<Categories> {
                                   color: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: MediaQuery
-                                        .of(context)
-                                        .size
-                                        .width * 0.02, right: MediaQuery
-                                        .of(context)
+                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02,right: MediaQuery.of(context)
                                         .size
                                         .width * 0.02),
                                     child: Column(
@@ -304,35 +287,28 @@ class _CategoriesState extends State<Categories> {
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
 
-                                    const SizedBox(height: 8),
-                                    // Espacio entre imagen y texto
-                                    Text(
-                                        "${item['category']}",
-                                        style: TextStyle(
-                                          color: Color(0xFF4F2263),
-                                          fontSize: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.045,
-                                        )
-                                    ),
-                                  ],
+                                        const SizedBox(height: 8),
+                                        Text(
+                                            "${item['category']}",
+                                            style: TextStyle(
+                                              color: Color(0xFF4F2263),
+                                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                                            )
+                                        ),
+                                      ],
                                 ),
                               )
-                          ),
-                        );
-                      },
+                            ),
+                          );
+                        },
+                      );
+                     }
                     ),
-    ),
                   ),
-
                 ),
               ),
-            ),
-          ) : Expanded(
+            ) : Expanded(
             child: Container(
               padding: const EdgeInsets.only(top: 20),
               child: Column(
