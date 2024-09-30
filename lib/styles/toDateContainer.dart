@@ -240,6 +240,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                       String treatmentType = appointment.treatmentType ?? 'Sin tratamiento';
                       ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
                       return Container(
+                        color: Colors.transparent,
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * 0,
                             left: MediaQuery.of(context).size.width * 0.02,
@@ -276,20 +277,18 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) async {
-                                      bool result = await showDeleteAppointmentDialog(
-                                        context,
-                                        widget,
-                                        appointment.id,
-                                        refreshAppointments,
-                                        isDocLog,
-                                      );
-                                      if (result) {
-                                        refreshAppointments();
-                                      } else {
-
-                                      }
-                                    },
-                                    backgroundColor: const Color(0xFFFE4A49),
+                                        bool result = await showDeleteAppointmentDialog(
+                                          context,
+                                          widget,
+                                          appointment.id,
+                                          refreshAppointments,
+                                          isDocLog,
+                                        );
+                                        if (result) {
+                                          refreshAppointments();
+                                        }
+                                      },
+                                    backgroundColor: const Color(0xFFBC1313),
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,
                                     label: 'Eliminar',
