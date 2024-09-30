@@ -1,16 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 class Categories extends StatefulWidget {
 
   final void Function(
       bool,
-      ) onHideBtnsBottom;
+  ) onHideBtnsBottom;
 
   const Categories({super.key, required this.onHideBtnsBottom});
 
@@ -25,7 +22,6 @@ class _CategoriesState extends State<Categories> {
   bool visibleKeyboard = false;
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
-  String? _selectedCategory;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -44,7 +40,8 @@ class _CategoriesState extends State<Categories> {
   }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
-    setState(() {});
+    setState(() {
+    });
   }
 
   @override
@@ -52,8 +49,6 @@ class _CategoriesState extends State<Categories> {
     super.initState();
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
-    loadFirstItems();
-    print(offset);
   }
 
   @override
@@ -63,83 +58,9 @@ class _CategoriesState extends State<Categories> {
     focusNode.dispose();
     super.dispose();
   }
-  ///test alan functiosn
-  ///init tiene una function
-  ///TODO ESTO IRA A UN SERVICIO
-  int limit = 6;
-  int offset = 0;
-  List<Map<String, dynamic>> items = [];
-  Future<void> loadFirstItems() async{
-    try{
-      List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
-      setState(() {
-        items = fetchedItems;
-        offset += limit;
-      });
-    }catch(e){
-      print('Error al cargar los items $e');
-    }
-  }
-  Future<void> loadItems() async{
-    try{
-      List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
-      setState(() {
-        items.addAll(fetchedItems);
-        offset += limit;
-      });
-      print(offset);
-    }catch(e){
-      print('Error al cargar mas productos $e');
-    }
-  }
-  Future<List<Map<String, dynamic>>> fetchItems({int limit = 6, int offset = 0}) async{
-    final String baseURL = 'http://192.168.101.139:8080/api/categories';
-    final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
-    if(response.statusCode ==200){
-      final List<dynamic> data = json.decode(response.body)['data'];
-      return data.map((item){
-        return {
-          'category': item['nombre'],
-          'image': item['foto'],
-        };
-      }).toList();
-    }else{
-      throw Exception('Error al obtener datos de la API');
-    }
-  }
-///termian test alan functions
 
-  List<Map<String, dynamic>> itemsTest = [
-    {'category': 'Bloqueadores', 'image': 'assets/imgLog/categoriesImgs/bloqueador.png'},
-    {'category': 'Botox', 'image': 'assets/imgLog/categoriesImgs/botox.png'},
-    {'category': 'Cremas antiarrugas', 'image': 'assets/imgLog/categoriesImgs/cremaAnt.png'},
-    {'category': 'Cremas hidratantes', 'image': 'assets/imgLog/categoriesImgs/cremaHidr.png'},
-    {'category': 'Jeringas', 'image': 'assets/imgLog/categoriesImgs/jeringas.png'},
-    {'category': 'Jirafas', 'image': 'assets/imgLog/categoriesImgs/jirafa.png'},
-    {'category': 'Sandwiches', 'image': 'assets/imgLog/categoriesImgs/sandwich.png'},
-    {'category': 'Balones', 'image': 'assets/imgLog/categoriesImgs/balon.png'},
-    {'category': 'Jeringas', 'image': 'assets/imgLog/categoriesImgs/jeringas.png'},
-    {'category': 'Jirafas', 'image': 'assets/imgLog/categoriesImgs/jirafa.png'},
-    {'category': 'Sandwiches', 'image': 'assets/imgLog/categoriesImgs/sandwich.png'},
-    {'category': 'Balones', 'image': 'assets/imgLog/categoriesImgs/balon.png'},
-    {'category': 'Bloqueadores', 'image': 'assets/imgLog/categoriesImgs/bloqueador.png'},
-    {'category': 'Botox', 'image': 'assets/imgLog/categoriesImgs/botox.png'},
-    {'category': 'Cremas antiarrugas', 'image': 'assets/imgLog/categoriesImgs/cremaAnt.png'},
-  ];
-
-  List<Map<String, dynamic>> products = [
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-  ];
   @override
   Widget build(BuildContext context) {
-    int itemsPerPage = 6;
-    int pageCount = (items.length / itemsPerPage).ceil();
     return Container(
       color: Colors.white,
       child: Column(
@@ -148,10 +69,7 @@ class _CategoriesState extends State<Categories> {
             children: [
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.025,
-                      left: MediaQuery.of(context).size.width * 0.025
-                  ),
+                  padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.025, left: MediaQuery.of(context).size.width * 0.025),
                   child: SizedBox(
                     height: 37,
                     child: TextFormField(
@@ -160,21 +78,19 @@ class _CategoriesState extends State<Categories> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.zero,
                         hintText: 'Buscar producto...',
-                        hintStyle: TextStyle(
-                          color: const Color(0xFF4F2263).withOpacity(0.2),
-                        ),
-                        prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263)
-                            .withOpacity(0.2)),
+                        prefixIcon: const Icon(Icons.search),
                         suffixIcon: InkWell(
-                            onTap: () {
-                              print('QR code');
-                            },
-                            child: const Icon(CupertinoIcons.barcode_viewfinder,
-                                color: Color(0xFF4F2263))
+                          onTap: () {
+                            print('QR code');
+                          },
+                            child: Icon(CupertinoIcons.barcode_viewfinder, color: Color(0xFF4F2263))
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: const Color(0xFF4F2263)
-                              .withOpacity(0.2), width: 2.0),
+                          borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         border: OutlineInputBorder(
