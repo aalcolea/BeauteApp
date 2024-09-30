@@ -98,12 +98,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
   int? doctor_id_body = 0;
   bool platform = false; //ios False androide True
   String toTime = '';
-  int? newClientID;
   bool showBlurr = false;
+
   Future<void> createClient() async {
     try {
       var response = await http.post(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
+        Uri.parse(
+            'https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -113,33 +114,29 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'email': emailController.text,
         }),
       );
+
       if (response.statusCode == 201) {
-        final data = jsonDecode(response.body);
         setState(() {
-          newClientID = data['client']['id'];
+          print('Cliente Añadido desde Nueva Cita');
         });
       } else {
         print('Error al crear cliente: ${response.body}');
       }
     } catch (e) {
-      print('Error al enviar datos: $e');
+      print('Error al envir datos: $e');
     }
   }
 
   Future<void> addClientAndSubmitAppointment() async {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
-      await createClient();
-      if (newClientID != null) {
-        print('Test alcance IDnew $newClientID');
-        submitAppointment();
-      } else {
-        print('Error: ID del cliente no está disponible.');
-      }
+      createClient();
+      submitAppointment();
     } else {
       return;
     }
   }
+
   Future<bool?> showAddClientAndAppointment() {
     return showDialog<bool>(
       context: context,
@@ -343,7 +340,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         },
         body: jsonEncode({
           'dr_id': doctor_id_body!,
-          'client_id': newClientID != null ? newClientID : (widget.nameClient != null ? widget.idScreenInfo : _selectedClient?.id.toString()),
+          'client_id': widget.nameClient != null ? widget.idScreenInfo : _selectedClient?.id.toString(),
           'date': _dateController.text,
           'time': toTime,
           'treatment': treatmentController.text,
