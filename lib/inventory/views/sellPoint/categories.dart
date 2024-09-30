@@ -10,7 +10,7 @@ class Categories extends StatefulWidget {
 
   final void Function(
       bool,
-  ) onHideBtnsBottom;
+      ) onHideBtnsBottom;
 
   const Categories({super.key, required this.onHideBtnsBottom});
 
@@ -87,7 +87,6 @@ class _CategoriesState extends State<Categories> {
         items.addAll(fetchedItems);
         offset += limit;
       });
-
       print(offset);
     }catch(e){
       print('Error al cargar mas productos $e');
@@ -109,6 +108,34 @@ class _CategoriesState extends State<Categories> {
     }
   }
 ///termian test alan functions
+
+  List<Map<String, dynamic>> itemsTest = [
+    {'category': 'Bloqueadores', 'image': 'assets/imgLog/categoriesImgs/bloqueador.png'},
+    {'category': 'Botox', 'image': 'assets/imgLog/categoriesImgs/botox.png'},
+    {'category': 'Cremas antiarrugas', 'image': 'assets/imgLog/categoriesImgs/cremaAnt.png'},
+    {'category': 'Cremas hidratantes', 'image': 'assets/imgLog/categoriesImgs/cremaHidr.png'},
+    {'category': 'Jeringas', 'image': 'assets/imgLog/categoriesImgs/jeringas.png'},
+    {'category': 'Jirafas', 'image': 'assets/imgLog/categoriesImgs/jirafa.png'},
+    {'category': 'Sandwiches', 'image': 'assets/imgLog/categoriesImgs/sandwich.png'},
+    {'category': 'Balones', 'image': 'assets/imgLog/categoriesImgs/balon.png'},
+    {'category': 'Jeringas', 'image': 'assets/imgLog/categoriesImgs/jeringas.png'},
+    {'category': 'Jirafas', 'image': 'assets/imgLog/categoriesImgs/jirafa.png'},
+    {'category': 'Sandwiches', 'image': 'assets/imgLog/categoriesImgs/sandwich.png'},
+    {'category': 'Balones', 'image': 'assets/imgLog/categoriesImgs/balon.png'},
+    {'category': 'Bloqueadores', 'image': 'assets/imgLog/categoriesImgs/bloqueador.png'},
+    {'category': 'Botox', 'image': 'assets/imgLog/categoriesImgs/botox.png'},
+    {'category': 'Cremas antiarrugas', 'image': 'assets/imgLog/categoriesImgs/cremaAnt.png'},
+  ];
+
+  List<Map<String, dynamic>> products = [
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+  ];
   @override
   Widget build(BuildContext context) {
     int itemsPerPage = 6;
@@ -277,35 +304,96 @@ class _CategoriesState extends State<Categories> {
                                             ),
                                           ),
                                         ),
-
-                                        const SizedBox(height: 8),
-                                        // Espacio entre imagen y texto
-                                        Text(
-                                            "${item['category']}",
-                                            style: TextStyle(
-                                              color: Color(0xFF4F2263),
-                                              fontSize: MediaQuery
-                                                  .of(context)
-                                                  .size
-                                                  .width * 0.045,
-                                            )
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  )
-                              ),
-                            );
-                          },
+
+                                    const SizedBox(height: 8),
+                                    // Espacio entre imagen y texto
+                                    Text(
+                                        "${item['category']}",
+                                        style: TextStyle(
+                                          color: Color(0xFF4F2263),
+                                          fontSize: MediaQuery
+                                              .of(context)
+                                              .size
+                                              .width * 0.045,
+                                        )
+                                    ),
+                                  ],
+                                ),
+                              )
+                          ),
                         );
                       },
                     ),
     ),
                   ),
+
                 ),
-              ) : Expanded(
+              ),
+            ),
+          ) : Expanded(
             child: Container(
-              padding: const EdgeInsets.all(16.0),
-              color: Colors.purple,
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedCategory = null;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Color(0xFF4F2263),
+                          )
+                      ),
+                      Text(
+                        '$_selectedCategory',
+                        style: TextStyle(
+                            fontSize: 28,
+                            color: Color(0xFF4F2263)
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.width * 0.01,
+                        bottom: MediaQuery.of(context).size.width * 0.01,
+                        left: MediaQuery.of(context).size.width * 0.01,
+                        right: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                        itemCount: 10,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  'Producto $index',
+                                  style: TextStyle(
+                                    color: Color(0xFF4F2263),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  'Precio: 59 MXN' + ' ' + 'Cant.: 5',
+                                  style: TextStyle(color: Color(0xFF4F2263)),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                              ),
+                            ],
+                          );
+                        }
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         ],
