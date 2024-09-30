@@ -69,8 +69,6 @@ class ClientDetails extends StatefulWidget {
 class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTickerProviderStateMixin{
 
   late AnimationController aniController;
-  late Animation<double> movLeftToCenter;
-
   final FocusNode focusNode = FocusNode();
   final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -88,6 +86,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
   double maxOffset = 0;
   double avance = 0;
   double sumAvance = 0;
+  double scaleValue = 0;
 
   @override
   void didPopNext() {
@@ -122,7 +121,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
 
   Future<void> getNombres() async {
     List<String> fetchedNames = (await dropdownDataManager.fetchUser()).cast<String>();
-
     setState(() {
       clients = fetchedNames.cast<Client>();
       _alphabetizedData = _createAlphabetizedData(clients);
@@ -135,21 +133,17 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
       print('ID: ${client.id}, Nombre: ${client.name}, Email: ${client.email}, Número: ${client.number}');
     }
   }
+
   Future<void> addClient() async {
     return showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (BuildContext context) {
-          return Stack(
-            children: [
-              ClientForm(
-                    onHideBtnsBottom: _onHideBtnsBottom,
-                    onFinishedAddClient: _onFinishedAddClient),
-            ],
-          );
-        }).then((_){
+          return ClientForm(
+              onHideBtnsBottom: _onHideBtnsBottom,
+              onFinishedAddClient: _onFinishedAddClient);
+        }).then((_) {
       widget.onShowBlur(false);
-
     });
   }
 
@@ -157,7 +151,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
   void initState() {
     super.initState();
     aniController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
-    movLeftToCenter = Tween(begin: 0.0, end: 100.0 ).animate(CurvedAnimation(parent: aniController, curve: Curves.easeInOut));
     scrollController = ScrollController();
     scrollController.addListener(onScroll);
     _alphabetizedData = _createAlphabetizedData(clients);
@@ -289,6 +282,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 aniController.value = progress;
                 print('progress $progress');
                 sumAvance = avance * progress;
+                scaleValue = 0.6 + (progress/100) * 1.1;
               });
             },
             key: UniqueKey(),
@@ -301,9 +295,9 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 animation: aniController,
                 child: const Icon(Icons.delete, color: Colors.white),
                 builder: (aniController, iconToMove){
-                  double maxOffset = MediaQuery.of(context).size.width/2;
                   return Transform.translate(
-                      offset: Offset(-sumAvance, 0), child: Icon(Icons.delete, color: Colors.white, size: MediaQuery.of(context).size.width * 0.07,));
+                      offset: Offset(-sumAvance, 0),
+                      child: Transform.scale(scale: scaleValue, child: Icon(Icons.delete, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,)));
                 }
               )
             ),

@@ -95,11 +95,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
   late BuildContext dialogforappointment;
   String nameToCompare = '';
   bool amPm = false;
-  int _selectedIndexAmPm = 0;
   int? doctor_id_body = 0;
   bool platform = false; //ios False androide True
   String toTime = '';
   int? newClientID;
+  bool showBlurr = false;
   Future<void> createClient() async {
     try {
       var response = await http.post(
@@ -242,7 +242,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
   void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime,
       int selectedIndexAmPm) {
     setState(() {
-      _selectedIndexAmPm = selectedIndexAmPm;
       isTimerShow = _isTimerShow;
       String toCompare = selectedTime.text;
       List<String> timeToCompare = toCompare.split(':');
@@ -351,11 +350,19 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'name': _clientTextController.text,
         }),
       );
-      print('doctor_id_body: $doctor_id_body');
 
       if (response.statusCode == 201) {
         if (mounted) {
-          showClienteSuccessfullyAdded(context, widget, isDocLog);
+          setState(() {
+            showBlurr = true;
+            showDialog(context: context, builder: (BuildContext context){
+              return ClienteSuccessDialog(docLog: widget.docLog);
+            }).then((_){
+              setState(() {
+                showBlurr = false;
+              });
+            });
+        });
         }
         print('Respuesta del servidor: ${response.body}');
       } else {
@@ -1022,7 +1029,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   MediaQuery.of(context).size.width * 0.025),
                           child: DoctorsMenu(onAssignedDoctor: _onAssignedDoctor, optSelectedToRecieve: _optSelected),
                         )
-                      ]))))
+                      ])))),
+              Visibility(
+            visible: showBlurr,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+              child: Container(
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+          )
         ]))));
   }
 }
