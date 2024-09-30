@@ -94,7 +94,7 @@ class _CategoriesState extends State<Categories> {
     }
   }
   Future<List<Map<String, dynamic>>> fetchItems({int limit = 6, int offset = 0}) async{
-    final String baseURL = 'http://192.168.101.139:8080/api/categories';
+    final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
     final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
     if(response.statusCode ==200){
       final List<dynamic> data = json.decode(response.body)['data'];
@@ -110,8 +110,16 @@ class _CategoriesState extends State<Categories> {
   }
   ///termian test alan functions
 
+  List<Map<String, dynamic>> products = [
+    {'product': 'Bloqueador 1', 'price': '59', 'cant': '5', 'product_id': '1'},
+    {'product': 'Bloqueador 2', 'price': '79', 'cant': '3', 'product_id': '2'},
+    {'product': 'Bloqueador 3', 'price': '99', 'cant': '8', 'product_id': '3'},
+  ];
+
   @override
   Widget build(BuildContext context) {
+    int itemsPerPage = 6;
+    int pageCount = (items.length / itemsPerPage).ceil();
     return Container(
       color: Colors.white,
       child: Column(
@@ -264,13 +272,13 @@ class _CategoriesState extends State<Categories> {
                                             )
                                         ),
                                       ],
-                                ),
-                              )
-                            ),
-                          );
-                        },
-                      );
-                     }
+                                    ),
+                                  )
+                              ),
+                            );
+                          },
+                        );
+                      }
                     ),
                   ),
                 ),
