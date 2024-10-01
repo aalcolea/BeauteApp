@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
+import '../../services/clienteService.dart';
 import '../../utils/PopUpTabs/deleteClientDialog.dart';
 import '../../utils/showToast.dart';
 import '../../utils/toastWidget.dart';
@@ -48,6 +49,20 @@ class _ClientInfoState extends State<ClientInfo> {
   final storage = const FlutterSecureStorage();
   bool isButtonEnabled = false;
 
+  final ClientService _clientService = ClientService();
+  String? errorMessage;
+  Map<String, dynamic>? appointmentData;
+
+  Future<void> fetchAppointment() async {
+    final data = await _clientService.fetchAppointmentByUser(widget.id);
+    setState(() {
+      if (data.containsKey('error')) {
+        errorMessage = data['error'];
+      } else {
+        appointmentData = data;
+      }
+    });
+  }
   void updateUserInfo() async {
     final url = Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/editUserInfo/${widget.id}');
     final token = await storage.read(key: 'jwt_token');
@@ -148,6 +163,7 @@ class _ClientInfoState extends State<ClientInfo> {
           emailController.text = '\n${emailController.text}';
       });
     });
+    fetchAppointment();
 
     super.initState();
   }
@@ -553,46 +569,54 @@ class _ClientInfoState extends State<ClientInfo> {
                               borderRadius: const BorderRadius.all(Radius.circular(10)),
                               border: Border.all(color: Color(0xFF4F2263),)
                           ),
-                          child: Column(
+                          child:Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Citas', style:  TextStyle(color: Color(0xFF4F2263),
-                                  fontSize: 22),),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Proxima: ',
-                                        style: TextStyle(
-                                            color: Color(0xFF4F2263).withOpacity(0.3),
-                                            fontSize: 20),
-                                      ),
-                                      Text(
-                                        '29 de octubre de 1998',
-                                        style: TextStyle(
-                                            color: Color(0xFF4F2263),
-                                            fontSize: 20),
-                                      ),
-                                    ],
+                              const Text(
+                                'Citas',
+                                style: TextStyle(color: Color(0xFF4F2263), fontSize: 22),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Próxima: ',
+                                    style: TextStyle(
+                                      color: Color(0xFF4F2263).withOpacity(0.3),
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                  Row(
+                                  Text(
+                                    appointmentData?['appointment_date'] ?? 'No hay cita proxima',
+                                    style: const TextStyle(
+                                      color: Color(0xFF4F2263),
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Cant. de citas:',
-                                    style: TextStyle(color: Color(0xFF4F2263).withOpacity(0.3),
-                                        fontSize: 20), // Color para el texto del controlador
+                                    style: TextStyle(
+                                      color: Color(0xFF4F2263).withOpacity(0.3),
+                                      fontSize: 20,
+                                    ),
                                   ),
                                   Text(
-                                    '59',
-                                    style: TextStyle(color: Color(0xFF4F2263),
-                                        fontSize: 20), // Color para el texto del controlador
+                                    appointmentData?['visit_count']?.toString() ?? '0',
+                                    style: const TextStyle(
+                                      color: Color(0xFF4F2263),
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           )
-                      ),
+                        ),
                       ),
                     ],
                   ),
@@ -618,7 +642,7 @@ class _ClientInfoState extends State<ClientInfo> {
                           Navigator.of(context).pop();
                         });
                       },
-                      child: Text('Eliminar contacto', style: TextStyle(color: Colors.red),),
+                      child: const Text('Eliminar contacto', style: TextStyle(color: Colors.red),),
                     ),
                   )
 
