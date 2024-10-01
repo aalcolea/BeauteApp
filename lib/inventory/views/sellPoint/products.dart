@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Products extends StatefulWidget {
@@ -28,7 +29,7 @@ class _ProductsState extends State<Products> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.015),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,6 +100,28 @@ class _ProductsState extends State<Products> {
                               ),
                             ),
                           ],
+                        ),
+                        trailing: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4F2263),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: MediaQuery.of(context).size.width * 0.055,
+                              ),
+                              surfaceTintColor: const Color(0xFF4F2263),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: const BorderSide(
+                                    color: Color(0xFF4F2263), width: 2),
+                              ),
+                            ),
+                            onPressed: () {
+                              print('Product added');
+                            },
+                            child: Icon(
+                              CupertinoIcons.add,
+                              color: Colors.white,
+                              size: MediaQuery.of(context).size.width * 0.07,
+                            ),
                         ),
                         contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
                       ),
