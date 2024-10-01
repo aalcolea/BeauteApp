@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:beaute_app/utils/listenerApptm.dart';
+import 'package:beaute_app/utils/listenerSlidable.dart';
 import 'package:beaute_app/views/admin/toDate/apptmInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,8 @@ class ToDateContainer extends StatefulWidget {
 
 class _ToDateContainerState extends State<ToDateContainer> with TickerProviderStateMixin {
   List<SlidableController> slidableControllers = [];
+  final Listenerslidable listenerslidable = Listenerslidable();
+
   //
   bool isDocLog = false;
   late Future<List<Appointment>> appointments;
@@ -62,6 +65,19 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   int? _oldIndex;
   bool isDragX = false;
   int itemDragX = 0;
+
+  void hideBorderRadius(){
+    listenerslidable.setChange(
+      isDragX,
+      itemDragX,
+    );
+  }
+  void showBorderRadius(){
+    listenerslidable.setChange(
+      false,
+      itemDragX,
+    );
+  }
 
   //final void Function(bool, int?, String, String, bool, String) reachTop;
 
@@ -189,11 +205,13 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
          setState(() {
            isDragX = true;
            itemDragX = i;
+           hideBorderRadius();
          });
-
-       }else{
+       }else if(controller.animation.status == AnimationStatus.dismissed){
          setState(() {
+           itemDragX = i;
            isDragX = false;
+           showBorderRadius();
          });
        }
      });
@@ -238,7 +256,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                       List<String> timeParts = time.split(' ');
                       String clientName = appointment.clientName ?? 'Cliente desconocido';
                       String treatmentType = appointment.treatmentType ?? 'Sin tratamiento';
-                      ///este gesture detector le pertenece a al container qye muesta info y sirve para la animacion de borrar
+                      ///este gesture detector le pertenece a al container que muesta info y sirve para la animacion de borrar
                       return Container(
                         color: Colors.transparent,
                           margin: EdgeInsets.only(
@@ -299,7 +317,8 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                 reachTop: reachTop, appointment: appointment, timeParts: timeParts, selectedDate: widget.selectedDate,
                                 firtsIndexTouchHour: widget.firtsIndexTouchHour, firtsIndexTouchDate: widget.firtsIndexTouchDate,
                               listenerapptm: widget.listenerapptm, filteredAppointments: filteredAppointments,
-                              expandedIndexToCharge: expandedIndex, initializateApptm: _initializateApptm,)));
+                              expandedIndexToCharge: expandedIndex, initializateApptm: _initializateApptm, listenerslidable: listenerslidable,
+                              )));
                     });
               }
             }));
