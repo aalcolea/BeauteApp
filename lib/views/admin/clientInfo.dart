@@ -555,7 +555,6 @@ class _ClientInfoState extends State<ClientInfo> {
                               ),
                             ),
                           ),
-                        ],
                     ],
                   ),
                   Row(
@@ -659,9 +658,9 @@ class _ClientInfoState extends State<ClientInfo> {
                       ),),
                     ],
                   ),
+                  ]
                 )
             ),
-          ],
         ),
           Visibility(
             visible: showBlurr,
@@ -671,9 +670,8 @@ class _ClientInfoState extends State<ClientInfo> {
                 color: Colors.black54.withOpacity(0.3),
               ),
             ),
-          )
-        ],
-      )
-    );
+          ),
+          ]),
+        ]));
   }
 }

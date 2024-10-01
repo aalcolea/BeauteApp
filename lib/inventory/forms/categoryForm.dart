@@ -126,7 +126,7 @@ class _CategoryFormState extends State<CategoryForm> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Crear Categoría',
+                  'Crear Categoria',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class _CategoryFormState extends State<CategoryForm> {
                 TextFormField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    labelText: 'Nombre de la Categoría',
+                    labelText: 'Nombre de la Categoria',
                     border: OutlineInputBorder(),
                   ),
                 ),
