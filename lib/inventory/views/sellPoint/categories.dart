@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import '../../forms/categoryForm.dart';
 import 'products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -122,12 +123,27 @@ class _CategoriesState extends State<Categories> {
         children: [
           Row(
             children: [
-              ///empeiza test alan
+              /// Botón para cargar más datos
               ElevatedButton(
                 onPressed: loadItems,
-                child: Text('cargar mas datos'),
+                child: Text('Cargar más datos'),
               ),
-              ///termina test alan
+              SizedBox(width: 10),
+              /// Botón para abrir el modal
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    barrierColor: Colors.transparent,
+                    builder: (BuildContext context) {
+                      return CategoryForm();
+                    },
+                  ).then((_){
+                    //agregar cerrar xd
+                  });
+                },
+                child: Text('Crear Categoriaa'),
+              ),
             ],
           ),
           _selectedCategory == null
