@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:beaute_app/utils/listenerSlidable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import '../../../utils/timer.dart';
 
 class ApptmInfo extends StatefulWidget {
   final Listenerapptm? listenerapptm;
+  final Listenerslidable? listenerslidable;
   final List<String> timeParts;
   final List<Appointment> filteredAppointments;
   final Appointment appointment;
@@ -29,7 +31,7 @@ class ApptmInfo extends StatefulWidget {
   final Function (bool, DateTime) initializateApptm;
   const ApptmInfo({super.key, required this.clientName, required this.treatmentType, required this.index, required this.dateLookandFill, required this.reachTop,
     required this.appointment, required this.timeParts, this.firtsIndexTouchHour, this.firtsIndexTouchDate, this.expandedIndexToCharge,
-    required this.selectedDate, this.listenerapptm, required this.filteredAppointments, required this.initializateApptm});
+    required this.selectedDate, this.listenerapptm, required this.filteredAppointments, required this.initializateApptm, this.listenerslidable});
 
   @override
   State<ApptmInfo> createState() => _ApptmInfoState();
@@ -39,6 +41,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
 
   late Future<List<Appointment>> appointments;
   late List<Appointment> filteredAppointments;
+  List<int> draggedItems = [];
   String _dateLookandFill = '';
   String _dateLookandFillAfterSave = '';
   String? dateOnly;
@@ -197,6 +200,22 @@ class _ApptmInfoState extends State<ApptmInfo> {
           _dateLookandFillAfterSave = formattedDate;
         }
     });
+    widget.listenerslidable!.registrarObservador((newDragStatus, newDragId){
+        if(newDragStatus == true){
+          setState(() {
+            isDragX = newDragStatus;
+            itemDragX = newDragId;
+            if (!draggedItems.contains(itemDragX)) {
+              draggedItems.add(itemDragX);
+            }
+          });
+        }else{
+          setState(() {
+            isDragX = false;
+            draggedItems.remove(newDragId);
+          });
+        }
+    });
     super.initState();
   }
 
@@ -236,8 +255,8 @@ class _ApptmInfoState extends State<ApptmInfo> {
             child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    topRight: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
-                    bottomRight: itemDragX == index && isDragX == true ? const Radius.circular(0): const Radius.circular(15),
+                    topRight: draggedItems.contains(index)  ? const Radius.circular(0): const Radius.circular(15),
+                    bottomRight: draggedItems.contains(index) == true  ? const Radius.circular(0): const Radius.circular(15),
                     topLeft: const Radius.circular(15),
                     bottomLeft: const Radius.circular(15),
                   ),

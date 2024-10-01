@@ -541,7 +541,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     if (textEditingValue.text == '') {
                                       return const Iterable<Client>.empty();
                                     }
-                                    return dropdownDataManager.getSuggestions(textEditingValue.text);
+                                    return dropdownDataManager.getSuggestions(textEditingValue.text).where((Client client) => client.id != 1);;
                                   },
                                   displayStringForOption: (Client option) => option.name,
                                   onSelected: (Client selection) {

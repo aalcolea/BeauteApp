@@ -322,7 +322,9 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 return false;
               }
             },
-            child: ListTile(
+            child: Visibility(
+              visible: client.id != 1,
+              child: ListTile(
               onTap: () {
                 Navigator.push(context,
                   CupertinoPageRoute(
@@ -388,7 +390,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                   ),
                 ],
               ),
-            ),
+            ),)
           );
         }).toList(),
       );
@@ -483,7 +485,10 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.zero,
                           hintText: 'Buscar...',
-                          prefixIcon: const Icon(Icons.search),
+                          hintStyle: TextStyle(
+                            color: Color(0xFF4F2263).withOpacity(0.3)
+                          ),
+                          prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263).withOpacity(0.3)),
                           disabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
                             borderRadius: BorderRadius.circular(10.0),
