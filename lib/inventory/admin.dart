@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:beaute_app/inventory/views/sellPoint/categories.dart';
+import 'package:beaute_app/inventory/views/sellPoint/cart.dart';
 import 'package:beaute_app/views/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ class _adminInvState extends State<adminInv> {
   double? screenHeight;
   int _selectedScreen = 1;
   bool _hideBtnsBottom = false;
+  final TextEditingController searchController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
     setState(() {
@@ -105,6 +108,48 @@ class _adminInvState extends State<adminInv> {
                       )
                     ],
                   ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.045, left: MediaQuery.of(context).size.width * 0.045, bottom: MediaQuery.of(context).size.width * 0.025),
+                        child: SizedBox(
+                          height: 37,
+                          child: TextFormField(
+                            controller: searchController,
+                            focusNode: focusNode,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              hintText: 'Buscar producto...',
+                              hintStyle: TextStyle(
+                                  color: Color(0xFF4F2263).withOpacity(0.3)
+                              ),
+                              prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263).withOpacity(0.3)),
+                              suffixIcon: InkWell(
+                                  onTap: () {
+                                    print('QR code');
+                                  },
+                                  child: Icon(CupertinoIcons.barcode_viewfinder, color: Color(0xFF4F2263))
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
                 Expanded(
                   child: Container(
@@ -193,7 +238,7 @@ class _adminInvState extends State<adminInv> {
                                 MediaQuery.of(context).size.width * 0.06),
                             surfaceTintColor: const Color(0xFF4F2263),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
+                              borderRadius: BorderRadius.circular(10.0),
                               side: const BorderSide(
                                   color: Color(0xFF4F2263), width: 2),
                             ),
@@ -261,9 +306,7 @@ class _adminInvState extends State<adminInv> {
       case 1:
         return Categories(onHideBtnsBottom: _onHideBtnsBottom,);
       case 2:
-        return Container(
-          color: Colors.white,
-        );
+        return Cart();
       case 3:
         return Container(
           color: Colors.green,
