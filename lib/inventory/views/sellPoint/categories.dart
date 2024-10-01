@@ -233,13 +233,28 @@ class _CategoriesState extends State<Categories> {
                                               .width * 0.5,
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(10),
-                                            child: Image.asset(
+                                            child: Image.network(
                                               item['image'],
                                               fit: BoxFit.contain,
+                                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                } else {
+                                                  return Center(
+                                                    child: CircularProgressIndicator(
+                                                      value: loadingProgress.expectedTotalBytes != null
+                                                          ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                                          : null,
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                                return Text('Error al cargar la imagen');
+                                              },
                                             ),
                                           ),
                                         ),
-
                                         const SizedBox(height: 8),
                                         Expanded(
                                           child: Text(
