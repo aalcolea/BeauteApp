@@ -306,7 +306,7 @@ class _adminInvState extends State<adminInv> {
       case 1:
         return Categories(onHideBtnsBottom: _onHideBtnsBottom,);
       case 2:
-        return Cart();
+        return Cart(onHideBtnsBottom: _onHideBtnsBottom);
       case 3:
         return Container(
           color: Colors.green,
