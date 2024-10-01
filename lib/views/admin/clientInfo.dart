@@ -432,7 +432,7 @@ class _ClientInfoState extends State<ClientInfo> {
                         bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
-                            border: editInfo ? null : Border.all(color: Colors.black)
+                            border: editInfo ? null : Border.all(color: const Color(0xFF4F2263),)
                         ),
                             child: !editInfo ? RichText(
                               text: TextSpan(
@@ -492,7 +492,7 @@ class _ClientInfoState extends State<ClientInfo> {
                             bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
                           decoration: BoxDecoration(
                               borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              border: editInfo ? null : Border.all(color: Colors.black)
+                              border: editInfo ? null : Border.all(color: Color(0xFF4F2263),)
                           ),
                           child: !editInfo ? RichText(
                             text: TextSpan(
@@ -538,40 +538,90 @@ class _ClientInfoState extends State<ClientInfo> {
                       ),
                     ],
                   ),
-                  const Visibility(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: Row(
-                          children: [
-                            Text('Cita proxima el dia 26 de noviembre de 2024'),
-                          ],
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03,
+                              vertical: MediaQuery.of(context).size.width * 0.03),
+                          padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.03,
+                            top:MediaQuery.of(context).size.width * 0.03,
+                            right:MediaQuery.of(context).size.width * 0.03,
+                            bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              border: Border.all(color: Color(0xFF4F2263),)
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Citas', style:  TextStyle(color: Color(0xFF4F2263),
+                                  fontSize: 22),),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Proxima: ',
+                                        style: TextStyle(
+                                            color: Color(0xFF4F2263).withOpacity(0.3),
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        '29 de octubre de 1998',
+                                        style: TextStyle(
+                                            color: Color(0xFF4F2263),
+                                            fontSize: 20),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Cant. de citas:',
+                                    style: TextStyle(color: Color(0xFF4F2263).withOpacity(0.3),
+                                        fontSize: 20), // Color para el texto del controlador
+                                  ),
+                                  Text(
+                                    '59',
+                                    style: TextStyle(color: Color(0xFF4F2263),
+                                        fontSize: 20), // Color para el texto del controlador
+                                  ),
+                                ],
+                              )
+                            ],
+                          )
+                      ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
+                    width: MediaQuery.of(context).size.width,
+                    child:  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        side: BorderSide(color: Color(0xFF4F2263),),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10), // Bordes redondeados
                         ),
                       ),
+                      onPressed: () {
+                        showDeleteConfirmationDialog(context, () {
+                          deleteClient(widget.id);
+                          showOverlay(
+                            context,
+                            const CustomToast(
+                              message: 'Cliente eliminado correctamente',
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        });
+                      },
+                      child: Text('Eliminar contacto', style: TextStyle(color: Colors.red),),
                     ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 15),
-                    child: Row(
-                      children: [
-                        Text('Cantidad de citas de $name: 30'),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      showDeleteConfirmationDialog(context, () {
-                        deleteClient(widget.id);
-                        showOverlay(
-                          context,
-                          const CustomToast(
-                            message: 'Cliente eliminado correctamente',
-                          ),
-                        );
-                        Navigator.of(context).pop();
-                      });
-                    },
-                    icon: Icon(Icons.delete),
-                    label: Text('Eliminar'),
                   )
+
                 ],
               ),
             )

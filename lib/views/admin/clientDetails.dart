@@ -322,7 +322,9 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 return false;
               }
             },
-            child: ListTile(
+            child: Visibility(
+              visible: client.id != 1,
+              child: ListTile(
               onTap: () {
                 Navigator.push(context,
                   CupertinoPageRoute(
@@ -388,7 +390,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                   ),
                 ],
               ),
-            ),
+            ),)
           );
         }).toList(),
       );
