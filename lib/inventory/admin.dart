@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:beaute_app/inventory/forms/productForm.dart';
 import 'package:beaute_app/inventory/views/sellPoint/categories.dart';
 import 'package:beaute_app/inventory/views/sellPoint/cart.dart';
 import 'package:beaute_app/views/navBar.dart';
@@ -244,6 +245,11 @@ class _adminInvState extends State<adminInv> {
                             ),
                           ),
                           onPressed: () {
+                            Navigator.push(context,
+                              CupertinoPageRoute(
+                                builder: (context) => ProductForm(),
+                              ),
+                            );
                           },
                           child: Icon(
                             CupertinoIcons.add,

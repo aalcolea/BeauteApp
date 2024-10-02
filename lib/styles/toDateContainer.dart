@@ -65,6 +65,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   int? _oldIndex;
   bool isDragX = false;
   int itemDragX = 0;
+  int helperModalDeleteClient = 0; //1 para complete, 2 para execute 3 para dismmis
 
   void hideBorderRadius(){
     listenerslidable.setChange(
@@ -201,17 +202,38 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
      controller.animation.addListener(() {
        double dragRatio = controller.ratio;
        dragRatio != 0 ? isDragX = true : false;
+       //1 para complete, 2 para execute 3 para dismmis
+       if(controller.animation.status == AnimationStatus.completed){
+         print('complete');
+         setState(() {
+           helperModalDeleteClient = 1;
+         });
+       }
+       if(controller.animation.status == AnimationStatus.forward){
+         print('execute');
+         setState(() {
+           helperModalDeleteClient = 2;
+         });
+       }
+       if(controller.animation.status == AnimationStatus.dismissed){
+         print('dismis');
+         setState(() {
+           helperModalDeleteClient = 3;
+         });
+       }
+       ///
        if(dragRatio != 0){
          setState(() {
            isDragX = true;
            itemDragX = i;
            hideBorderRadius();
          });
-       }else if(controller.animation.status == AnimationStatus.dismissed){
+       }else {
          setState(() {
            itemDragX = i;
            isDragX = false;
            showBorderRadius();
+           print('dismis');
          });
        }
      });
@@ -273,19 +295,22 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                 motion: const ScrollMotion(),
                                 dismissible: DismissiblePane(
                                   confirmDismiss: () async {
-                                    bool result = await showDeleteAppointmentDialog(
-                                      context,
-                                      widget,
-                                      appointment.id,
-                                      refreshAppointments,
-                                      isDocLog,
-                                    );
-                                    if(result){
-                                      refreshAppointments();
-                                      return true;
-
-                                    }else {
-                                      slidableControllers[index].close();
+                                    if (helperModalDeleteClient == 1) {
+                                      bool result = await showDeleteAppointmentDialog(
+                                        context,
+                                        widget,
+                                        appointment.id,
+                                        refreshAppointments,
+                                        isDocLog,
+                                      );
+                                      if (result) {
+                                        refreshAppointments();
+                                        return true;
+                                      } else {
+                                        slidableControllers[index].close();
+                                        return false;
+                                      }
+                                    } else {
                                       return false;
                                     }
                                   },
@@ -305,7 +330,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                         if (result) {
                                           refreshAppointments();
                                         }
-                                      },
+                                    },
                                     backgroundColor: const Color(0xFFBC1313),
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,

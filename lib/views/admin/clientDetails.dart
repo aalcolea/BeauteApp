@@ -280,7 +280,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 progress = details.progress;
                 progress = details.progress * 100;
                 aniController.value = progress;
-                print('progress $progress');
                 sumAvance = avance * progress;
                 scaleValue = 0.6 + (progress/100) * 1.1;
               });
@@ -302,6 +301,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
               )
             ),
             confirmDismiss: (direction) async {
+              widget.onShowBlur(true);
               bool shouldDelete = await showDeleteConfirmationDialog(context, () async {
                 await clientService.deleteClient(client.id);
                 if(mounted){
@@ -317,8 +317,10 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 setState(() {
                   clients.remove(client);
                 });
+                widget.onShowBlur(false);
                 return true;
               } else {
+                widget.onShowBlur(false);
                 return false;
               }
             },

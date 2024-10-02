@@ -81,7 +81,6 @@ class _ClientInfoState extends State<ClientInfo> {
           'email': emailController.text,
         }),
       );
-      print('antes del toast');
         if (response.statusCode == 200) {
           showOverlay(
             context,
@@ -244,7 +243,6 @@ class _ClientInfoState extends State<ClientInfo> {
                           editInfo = false;
                           phoneController.text = '\n${phoneController.text}';
                           emailController.text = '\n${emailController.text}';
-                          print('guardar');
                           oldPhone == phoneController.text && oldEmail == emailController.text && oldNameValue == nameController.text ?
                           null : updateUserInfo();
                         });
@@ -559,105 +557,102 @@ class _ClientInfoState extends State<ClientInfo> {
                   ),
                   Row(
                     children: [
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03,
-                              vertical: MediaQuery.of(context).size.width * 0.03),
-                          padding: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width * 0.03,
-                            top:MediaQuery.of(context).size.width * 0.03,
-                            right:MediaQuery.of(context).size.width * 0.03,
-                            bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
-                          decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              border: Border.all(color: Color(0xFF4F2263),)
-                          ),
-                          child:Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Citas',
-                                style: TextStyle(color: Color(0xFF4F2263), fontSize: 22),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Próxima: ',
-                                    style: TextStyle(
-                                      color: Color(0xFF4F2263).withOpacity(0.3),
-                                      fontSize: 20,
+                        Expanded(child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03,
+                                vertical: MediaQuery.of(context).size.width * 0.03),
+                            padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.03,
+                              top:MediaQuery.of(context).size.width * 0.03,
+                              right:MediaQuery.of(context).size.width * 0.03,
+                              bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                border: Border.all(color: Color(0xFF4F2263),)
+                            ),
+                            child:Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Citas',
+                                  style: TextStyle(color: Color(0xFF4F2263), fontSize: 22),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Próxima: ',
+                                      style: TextStyle(
+                                        color: Color(0xFF4F2263).withOpacity(0.3),
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    appointmentData?['appointment_date'] ?? 'No hay cita proxima',
-                                    style: const TextStyle(
-                                      color: Color(0xFF4F2263),
-                                      fontSize: 20,
+                                    Text(
+                                      appointmentData?['appointment_date'] ?? 'No hay cita proxima',
+                                      style: const TextStyle(
+                                        color: Color(0xFF4F2263),
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Cant. de citas:',
-                                    style: TextStyle(
-                                      color: Color(0xFF4F2263).withOpacity(0.3),
-                                      fontSize: 20,
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Cant. de citas:',
+                                      style: TextStyle(
+                                        color: Color(0xFF4F2263).withOpacity(0.3),
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    appointmentData?['visit_count']?.toString() ?? '0',
-                                    style: const TextStyle(
-                                      color: Color(0xFF4F2263),
-                                      fontSize: 20,
+                                    Text(
+                                      appointmentData?['visit_count']?.toString() ?? '0',
+                                      style: const TextStyle(
+                                        color: Color(0xFF4F2263),
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        ),
-                      ),
-                  
+                                  ],
+                                ),
+                              ],
+                            )
+                        ),),
+                    ],
+                  ),
                       Visibility(
                         visible: editInfo,
                         child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
-                        width: MediaQuery.of(context).size.width,
-                        child:  ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFF4F2263),),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
+                          width: MediaQuery.of(context).size.width,
+                          child:  ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFF4F2263),),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              showBlurr = true;
-                            });
-                            showDeleteConfirmationDialog(context, () {
-                              deleteClient(widget.id);
-                              showOverlay(
-                                context,
-                                const CustomToast(
-                                  message: 'Cliente eliminado correctamente',
-                                ),
-                              );
-                              Navigator.of(context).pop();
-                            }).then((_){
+                            onPressed: () {
                               setState(() {
-                                showBlurr = false;
+                                showBlurr = true;
                               });
-                            });
-                          },
-                          child: Text('Eliminar contacto', style: TextStyle(color: Colors.red),),
-                        ),
-                      ),),
-                    ],
-                  ),
+                              showDeleteConfirmationDialog(context, () {
+                                deleteClient(widget.id);
+                                showOverlay(
+                                  context,
+                                  const CustomToast(
+                                    message: 'Cliente eliminado',
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              }).then((_){
+                                setState(() {
+                                  showBlurr = false;
+                                });
+                              });
+                            },
+                            child: const Text('Eliminar contacto', style: TextStyle(color: Colors.red),),
+                          ),
+                        ),),
                   ]
                 )
             ),
@@ -668,9 +663,9 @@ class _ClientInfoState extends State<ClientInfo> {
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
               child: Container(
                 color: Colors.black54.withOpacity(0.3),
-              ),
-            ),
-          ),
+              )
+            )
+          )
           ]),
         ]));
   }
