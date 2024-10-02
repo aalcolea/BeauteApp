@@ -204,24 +204,20 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
        dragRatio != 0 ? isDragX = true : false;
        //1 para complete, 2 para execute 3 para dismmis
        if(controller.animation.status == AnimationStatus.completed){
-         print('complete');
          setState(() {
            helperModalDeleteClient = 1;
          });
        }
        if(controller.animation.status == AnimationStatus.forward){
-         print('execute');
          setState(() {
            helperModalDeleteClient = 2;
          });
        }
        if(controller.animation.status == AnimationStatus.dismissed){
-         print('dismis');
          setState(() {
            helperModalDeleteClient = 3;
          });
        }
-       ///
        if(dragRatio != 0){
          setState(() {
            isDragX = true;
@@ -233,7 +229,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
            itemDragX = i;
            isDragX = false;
            showBorderRadius();
-           print('dismis');
          });
        }
      });
