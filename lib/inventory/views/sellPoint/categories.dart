@@ -69,7 +69,7 @@ class _CategoriesState extends State<Categories> {
   ///test alan functiosn
   ///init tiene una function
   ///TODO ESTO IRA A UN SERVICIO
-  int limit = 6;
+  int limit = 5;
   int offset = 0;
   List<Map<String, dynamic>> items = [];
   Future<void> loadFirstItems() async{
