@@ -123,9 +123,9 @@ class _adminInvState extends State<adminInv> {
                               contentPadding: EdgeInsets.zero,
                               hintText: 'Buscar producto...',
                               hintStyle: TextStyle(
-                                  color: Color(0xFF4F2263).withOpacity(0.3)
+                                  color: Color(0xFF4F2263).withOpacity(0.2)
                               ),
-                              prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263).withOpacity(0.3)),
+                              prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263).withOpacity(0.2)),
                               suffixIcon: InkWell(
                                   onTap: () {
                                     print('QR code');
@@ -133,11 +133,11 @@ class _adminInvState extends State<adminInv> {
                                   child: Icon(CupertinoIcons.barcode_viewfinder, color: Color(0xFF4F2263))
                               ),
                               disabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                                borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.2), width: 2.0),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                                borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.2), width: 2.0),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               border: OutlineInputBorder(
