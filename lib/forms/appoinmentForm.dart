@@ -618,11 +618,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     controller: _dateController,
                                     suffixIcon: Icon(
                                       Icons.calendar_today,
-                                      color: drFieldDone &&
-                                              clientFieldDone &&
-                                              widget.dateFromCalendarSchedule == null
-                                          ? const Color(0xFF4F2263) : isDocLog && clientFieldDone &&
-                                          widget.dateFromCalendarSchedule == null ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
+                                      color: drFieldDone && clientFieldDone && widget.dateFromCalendarSchedule == null
+                                          ? const Color(0xFF4F2263) : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
+                                      const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
                                       size: MediaQuery.of(context).size.width * 0.07,
                                     ),
                                     onTap: () {
