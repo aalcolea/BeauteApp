@@ -1,15 +1,14 @@
 import 'dart:async';
 
+import 'package:beaute_app/inventory/views/sellPoint/styles/cartStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class Cart extends StatefulWidget {
-
   final void Function(
       bool,
       ) onHideBtnsBottom;
-
   const Cart({super.key, required this.onHideBtnsBottom});
 
   @override
@@ -18,12 +17,28 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
 
+  List<TextEditingController> cantControllers = [];
+  List<int> cantHelper = [];
+
   double totalCart = 0;
+
   final FocusNode focusNode = FocusNode();
   final TextEditingController cantidadController = TextEditingController();
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   late KeyboardVisibilityController keyboardVisibilityController;
   bool visibleKeyboard = false;
+  int oldIndex = 0;
+
+  void itemCount (index, action){
+    if(action == false){
+      cantHelper[index]--;
+      cantHelper[index] < 0 ? cantHelper[index] = 0 : cantControllers[index].text = cantHelper[index].toString();
+    }else{
+      cantHelper[index]++;
+      cantControllers[index].text = cantHelper[index].toString();
+    }
+
+  }
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -35,24 +50,30 @@ class _CartState extends State<Cart> {
         });
   }
 
-  /*void hideKeyBoard() {
+  void hideKeyBoard() {
     if (visibleKeyboard) {
       FocusScope.of(context).unfocus();
     }
-  }*/
+  }
 
   @override
   void initState() {
     super.initState();
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
+    for (int i = 0; i < 10; i++) {
+      cantControllers.add(TextEditingController(text: '1')); // Iniciar con 0
+      cantHelper.add(1); // Valor inicial
+    }
   }
 
   @override
   void dispose() {
     keyboardVisibilitySubscription.cancel();
-    cantidadController.dispose();
     focusNode.dispose();
+    for (var controller in cantControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -64,101 +85,58 @@ class _CartState extends State<Cart> {
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.015),
               margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.width * 0.01,
+                  top: MediaQuery.of(context).size.width * 0.02,
                   bottom: MediaQuery.of(context).size.width * 0.01,
-                  left: MediaQuery.of(context).size.width * 0.03,
-                  right: MediaQuery.of(context).size.width * 0.03
+                  left: MediaQuery.of(context).size.width * 0.01,
+                  right: MediaQuery.of(context).size.width * 0.01
               ),
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: Color(0xFF4F2263).withOpacity(0.1),
+                  color: const Color(0xFF4F2263).withOpacity(0.1),
                   width: 2,
                 ),
               ),
               child: Stack(
                 children: [
                   LayoutBuilder(builder: (context, constraints) {
-                    final widthItem1 = constraints.maxWidth * 0.41;
-                    final widthItem2 = constraints.maxWidth * 0.33;
-                    return Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
-                          width: widthItem1,
-                          decoration: BoxDecoration(
-                              border: Border(right: BorderSide(color: Color(0xFF4F2263).withOpacity(0.1), width: 2))
-                          ),
-                          child: Text(
-                            'Producto',
-                            style: TextStyle(
-                              color: Color(0xFF4F2263),
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.06,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
-                          width: widthItem2,
-                          decoration: BoxDecoration(
-                              border: Border(right: BorderSide(color: Color(0xFF4F2263).withOpacity(0.1), width: 2))
-                          ),
-                          child: Text(
-                            'Cant.',
-                            style: TextStyle(
-                              color: Color(0xFF4F2263),
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.06,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
-                          child: Text(
-                            'Precio',
-                            style: TextStyle(
-                              color: Color(0xFF4F2263),
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.06,
-                            ),
-                          ),
-                        )
-                      ],
-                    );
+                    final widthItem1 = constraints.maxWidth * 0.382;
+                    final widthItem2 = constraints.maxWidth * 0.38;
+                    return Background(widthItem1: widthItem1, widthItem2: widthItem2);/// termina codigo que sirve para el background
                   }
                   ),
                   Container(
                     padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.02, top: MediaQuery.of(context).size.width * 0.1),
                     child: LayoutBuilder(
                         builder: (context, constraints) {
-                          final widthItem1 = constraints.maxWidth * 0.382;
-                          final widthItem2 = constraints.maxWidth * 0.34;
+                          final widthItem1 = constraints.maxWidth * 0.365;
+                          final widthItem2 = constraints.maxWidth * 0.38;
                           return ListView.builder(
+                            itemCount: 3,
                             padding: EdgeInsets.zero,
                             itemBuilder: (context, index) {
                               return Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.06, left: MediaQuery.of(context).size.width * 0.02),
+                                  Container(
+                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02,
+                                    top: MediaQuery.of(context).size.width * 0.03,
+                                    right: MediaQuery.of(context).size.width * 0.02
+                                    ),
                                     child: Row(
                                       children: [
-                                        Container(
+                                        SizedBox(
                                           width: widthItem1,
                                           child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.start,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Producto $index',
                                                 style: TextStyle(
-                                                  color: Color(0xFF4F2263),
+                                                  color: const Color(0xFF4F2263),
                                                   fontSize: MediaQuery.of(context).size.width * 0.05,
                                                 ),
                                               ),
@@ -168,84 +146,92 @@ class _CartState extends State<Cart> {
                                                     color: Color(0xFF4F2263).withOpacity(0.3),
                                                     fontSize: MediaQuery.of(context).size.width * 0.04
                                                 ),
-                                              )
+                                              ),
                                             ],
                                           ),
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.zero,
-                                          width: widthItem2,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
-                                                height: MediaQuery.of(context).size.height * 0.035,
-                                                width: MediaQuery.of(context).size.width * 0.08,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: const Color(0xFF4F2263).withOpacity(0.5),
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: MediaQuery.of(context).size.width * 0.005,
+                                        SizedBox(
+                                            width: widthItem2,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          minimumSize: const Size(0, 0),
+                                                          backgroundColor: const Color(0xFF4F2263).withOpacity(0.5),
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal: MediaQuery.of(context).size.width * 0.02,
+                                                              vertical: MediaQuery.of(context).size.width * 0.02,
+                                                          ),
+                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            bool action = false;
+                                                            itemCount(index, action);
+                                                          });
+                                                        },
+                                                        child: Icon(
+                                                          CupertinoIcons.minus,
+                                                          color: Colors.white,
+                                                          size: MediaQuery.of(context).size.width * 0.04,
+                                                        ),
+                                                      ),
+                                                    SizedBox(
+                                                      width: MediaQuery.of(context).size.width * 0.12,
+                                                      child: TextFormField(
+                                                        style: const TextStyle(
+                                                          fontSize: 25
+                                                        ),
+                                                        keyboardType: TextInputType.number,
+                                                        controller: cantControllers[index],
+                                                        textAlign: TextAlign.center,
+                                                        textAlignVertical: TextAlignVertical.top,
+                                                        decoration: InputDecoration(
+                                                          isCollapsed: true,
+                                                          focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            borderSide: const BorderSide(
+                                                              color: Color(0xFF4F2263),
+                                                              width: 1.5,
+                                                            ),
+                                                          ),
+                                                          enabledBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            borderSide: const BorderSide(
+                                                              color: Colors.black54,
+                                                              width: 1.5,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-
-                                                  },
-                                                  child: Icon(
-                                                    CupertinoIcons.minus,
-                                                    color: Colors.white,
-                                                    size: MediaQuery.of(context).size.width * 0.04,
-                                                  ),
+                                                    ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          minimumSize: const Size(0, 0),
+                                                          backgroundColor: const Color(0xFF4F2263).withOpacity(0.5),
+                                                          padding: EdgeInsets.symmetric(
+                                                            horizontal: MediaQuery.of(context).size.width * 0.02,
+                                                            vertical: MediaQuery.of(context).size.width * 0.02,
+                                                          ),
+                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            bool action = true;
+                                                            itemCount(index, action);
+                                                          });
+                                                        },
+                                                        child: Icon(
+                                                          CupertinoIcons.add,
+                                                          color: Colors.white,
+                                                          size: MediaQuery.of(context).size.width * 0.04,
+                                                        ),
+                                                    )
+                                                  ],
                                                 ),
-                                              ),
-                                              Container(
-                                                alignment: Alignment.center,
-                                                width: MediaQuery.of(context).size.width * 0.07,
-                                                height: MediaQuery.of(context).size.height * 0.035,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(5),
-                                                  border: Border.all(
-                                                      color: Color(0xFF4F2263).withOpacity(0.1),
-                                                      width: 2
-                                                  ),
-                                                ),
-                                                child: TextFormField(
-                                                  controller: cantidadController,
-                                                  focusNode: focusNode,
-                                                  textAlign: TextAlign.center,
-                                                  textAlignVertical: TextAlignVertical.center,
-                                                  //initialValue: '$index',
-                                                ),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
-                                                height: MediaQuery.of(context).size.height * 0.035,
-                                                width: MediaQuery.of(context).size.width * 0.08,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: const Color(0xFF4F2263).withOpacity(0.5),
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: MediaQuery.of(context).size.width * 0.005,
-                                                    ),
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-
-                                                  },
-                                                  child: Icon(
-                                                    CupertinoIcons.add,
-                                                    color: Colors.white,
-                                                    size: MediaQuery.of(context).size.width * 0.045,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
                                         ),
                                         Expanded(
                                           child: Container(
@@ -258,14 +244,14 @@ class _CartState extends State<Cart> {
                                                 Text(
                                                   '\$0',
                                                   style: TextStyle(
-                                                    color: Color(0xFF4F2263),
+                                                    color: const Color(0xFF4F2263),
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
                                                   ),
                                                 ),
                                                 Text(
                                                   'MXN',
                                                   style: TextStyle(
-                                                      color: Color(0xFF4F2263).withOpacity(0.3),
+                                                      color: const Color(0xFF4F2263).withOpacity(0.3),
                                                       fontSize: MediaQuery.of(context).size.width * 0.04
                                                   ),
                                                 )
@@ -275,7 +261,8 @@ class _CartState extends State<Cart> {
                                         )
                                       ],
                                     ),
-                                  )
+                                  ),
+                                  const Divider(),
                                 ],
                               );
                             },
@@ -320,7 +307,7 @@ class _CartState extends State<Cart> {
                     Text(
                       'MXN ',
                       style: TextStyle(
-                        color: Color(0xFF4F2263).withOpacity(0.3),
+                        color: const Color(0xFF4F2263).withOpacity(0.3),
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.04,
                       ),
@@ -340,7 +327,7 @@ class _CartState extends State<Cart> {
                 right: MediaQuery.of(context).size.width * 0.03
             ),
             decoration: BoxDecoration(
-              color: Color(0xFF4F2263),
+              color: const Color(0xFF4F2263),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
