@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import '../../forms/categoryForm.dart';
 import 'products.dart';
@@ -11,8 +12,11 @@ class Categories extends StatefulWidget {
   final void Function(
       bool,
   ) onHideBtnsBottom;
+  final void Function(
+      bool,
+      ) onShowBlur;
 
-  const Categories({super.key, required this.onHideBtnsBottom});
+  const Categories({super.key, required this.onHideBtnsBottom, required this.onShowBlur});
 
   @override
   State<Categories> createState() => _CategoriesState();
@@ -120,53 +124,28 @@ class _CategoriesState extends State<Categories> {
       color: Colors.white,
       child: Column(
         children: [
-          Row(
-            children: [
-              /// Botón para cargar más datos
-              ElevatedButton(
-                onPressed: loadItems,
-                child: Text('Cargar más datos'),
-              ),
-              SizedBox(width: 10),
-              /// Botón para abrir el modal
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    barrierColor: Colors.transparent,
-                    builder: (BuildContext context) {
-                      return CategoryForm();
-                    },
-                  ).then((_){
-                    //agregar cerrar xd
-                  });
-                },
-                child: Text('Crear Categoriaa'),
-              ),
-            ],
-          ),
-          _selectedCategory == null ?
-          Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
-                  child: SizedBox(
-                    height: 580,
-                    ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                          loadItems();
-                        }
-                        return true;
-                      },
-                    child: PageView.builder(
+          _selectedCategory == null
+              ? Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
+              child: SizedBox(
+                height: 580,
+                ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                      loadItems();
+                    }
+                    return true;
+                  },
+                  child: PageView.builder(
                       scrollDirection: Axis.vertical,
                       itemCount: pageCount,
                       itemBuilder: (context, pageIndex) {
                         int startIndex = pageIndex * itemsPerPage;
                         int endIndex = startIndex + itemsPerPage;
                         if (endIndex > items.length) {
-                          endIndex = items.length; // Ajustar el índice si no hay más elementos
+                          endIndex = items.length;
                         }
                         var currentPageItems = items.sublist(startIndex, endIndex);
                         return GridView.builder(
@@ -183,7 +162,62 @@ class _CategoriesState extends State<Categories> {
                           itemCount: currentPageItems.length,
                           itemBuilder: (context, index) {
                             var item = currentPageItems[index];
-                            return InkWell(
+                            return item['category'] == null ?
+                            InkWell(
+                              onTap: () {
+                                widget.onShowBlur(true);
+                                showDialog(
+                                  context: context,
+                                  barrierColor: Colors.transparent,
+                                  builder: (BuildContext context) {
+                                    return CategoryForm();
+                                  },
+                                ).then((_){
+                                  widget.onShowBlur(false);
+                                });
+                              },
+                              child: Card(
+                                color: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: MediaQuery.of(context).size.width * 0.02,
+                                        right: MediaQuery.of(context).size.width * 0.02
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            padding: const EdgeInsets.all(1),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black54.withOpacity(0.3),
+                                                  offset: const Offset(4, 4),
+                                                  blurRadius: 5,
+                                                  spreadRadius: 0.1,
+                                                )
+                                              ],
+                                            ),
+                                            height: MediaQuery.of(context).size.width * 0.35,
+                                            width: MediaQuery.of(context).size.width * 0.5,
+                                            child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(10),
+                                                child: Icon(
+                                                  CupertinoIcons.add,
+                                                  color: const Color(0xFF4F2263).withOpacity(0.3),
+                                                  size: MediaQuery.of(context).size.width * 0.15,
+                                                )
+                                            )
+                                        ),
+                                      ],
+                                    )
+                                ),
+                              ),
+                            ) : InkWell(
                               onTap: () {
                                 setState(() {
                                   if (mounted) {
@@ -196,8 +230,10 @@ class _CategoriesState extends State<Categories> {
                                   color: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02,
-                                        right: MediaQuery.of(context).size.width * 0.02),
+                                    padding: EdgeInsets.only(
+                                        left: MediaQuery.of(context).size.width * 0.02,
+                                        right: MediaQuery.of(context).size.width * 0.02
+                                    ),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,22 +245,15 @@ class _CategoriesState extends State<Categories> {
                                             borderRadius: BorderRadius.circular(10),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black54.withOpacity(
-                                                    0.3),
-                                                offset: Offset(4, 4),
+                                                color: Colors.black54.withOpacity(0.3),
+                                                offset: const Offset(4, 4),
                                                 blurRadius: 5,
                                                 spreadRadius: 0.1,
                                               )
                                             ],
                                           ),
-                                          height: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.35,
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.5,
+                                          height: MediaQuery.of(context).size.width * 0.35,
+                                          width: MediaQuery.of(context).size.width * 0.5,
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(10),
                                             child: Image.network(
@@ -244,7 +273,7 @@ class _CategoriesState extends State<Categories> {
                                                 }
                                               },
                                               errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                                return Text('Error al cargar la imagen');
+                                                return const Text('Error al cargar la imagen');
                                               },
                                             ),
                                           ),
@@ -254,7 +283,7 @@ class _CategoriesState extends State<Categories> {
                                           child: Text(
                                               "${item['category']}",
                                               style: TextStyle(
-                                                color: Color(0xFF4F2263),
+                                                color: const Color(0xFF4F2263),
                                                 fontSize: MediaQuery.of(context).size.height * 0.017,
                                               )
                                           ),
@@ -267,12 +296,12 @@ class _CategoriesState extends State<Categories> {
                           },
                         );
                       }
-                    ),
                   ),
                 ),
               ),
-            ) : Expanded(
-              child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory),
+            ),
+          ) : Expanded(
+            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory),
           )
         ],
       ),

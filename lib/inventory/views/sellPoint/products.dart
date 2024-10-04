@@ -1,5 +1,9 @@
+import 'package:beaute_app/inventory/services/productsService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../cartProvider.dart';
 
 class Products extends StatefulWidget {
 
@@ -11,19 +15,6 @@ class Products extends StatefulWidget {
   @override
   State<Products> createState() => _ProductsState();
 }
-
-List<Map<String, dynamic>> products = [
-  {'product': 'Producto 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-  {'product': 'Producto 2', 'price': '79', 'cant': '3', 'product_id': '2'},
-  {'product': 'Producto 3', 'price': '99', 'cant': '8', 'product_id': '3'},
-  {'product': 'Producto 4', 'price': '199', 'cant': '4', 'product_id': '4'},
-  {'product': 'Producto 5', 'price': '19', 'cant': '22', 'product_id': '5'},
-  {'product': 'Producto 6', 'price': '209', 'cant': '15', 'product_id': '6'},
-  {'product': 'Producto 7', 'price': '49', 'cant': '3', 'product_id': '7'},
-  {'product': 'Producto 8', 'price': '69', 'cant': '1', 'product_id': '8'},
-  {'product': 'Producto 9', 'price': '109', 'cant': '9', 'product_id': '9'},
-  {'product': 'Producto 10', 'price': '99', 'cant': '10', 'product_id': '10'},
-];
 
 class _ProductsState extends State<Products> with TickerProviderStateMixin {
   List<AnimationController> aniControllers = [];
@@ -60,6 +51,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.02),
       child: Column(
@@ -92,7 +84,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                   bottom: MediaQuery.of(context).size.width * 0.01,
                 ),
                 physics: const BouncingScrollPhysics(),
-                itemCount: products.length,
+                itemCount: products_global.length,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: (){},
@@ -107,7 +99,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${products[index]['product']}",
+                                    "${products_global[index]['product']}",
                                     style: TextStyle(
                                       color: const Color(0xFF4F2263),
                                       fontWeight: FontWeight.bold,
@@ -123,7 +115,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                       Container(
                                         padding: const EdgeInsets.only(right: 10),
                                         child: Text(
-                                          "\$${products[index]['price']} MXN",
+                                          "\$${products_global[index]['price']} MXN",
                                           style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
@@ -136,7 +128,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                         style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
                                       ),
                                       Text(
-                                        "${products[index]['cant']}",
+                                        "${products_global[index]['cant']}",
                                         style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
@@ -231,6 +223,8 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                           ),
                                         ),
                                         onPressed: () {
+                                          cartProvider.addElement(products_global[index]['product_id']);
+                                          print('Product added');
                                           setState(() {
                                             bool action = true;
                                             tapedIndex = index;

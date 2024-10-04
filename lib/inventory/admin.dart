@@ -93,6 +93,20 @@ class _adminInvState extends State<adminInv> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(context,
+                                CupertinoPageRoute(
+                                  builder: (context) => ProductForm(),
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              CupertinoIcons.add_circled_solid,
+                              color: Color(0xFF4F2263),
+                              size: MediaQuery.of(context).size.width * 0.1,
+                            ),
+                          ),
                           Builder(builder: (BuildContext context) {
                             return IconButton(
                               onPressed: () {
@@ -201,8 +215,6 @@ class _adminInvState extends State<adminInv> {
                             ? MediaQuery.of(context).size.width * 0.055
                             : MediaQuery.of(context).size.width * 0.02),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Material(
@@ -231,30 +243,12 @@ class _adminInvState extends State<adminInv> {
                             ),
                           ),
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F2263),
-                            padding: EdgeInsets.symmetric(
-                                horizontal:
-                                MediaQuery.of(context).size.width * 0.06),
-                            surfaceTintColor: const Color(0xFF4F2263),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              side: const BorderSide(
-                                  color: Color(0xFF4F2263), width: 2),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(context,
-                              CupertinoPageRoute(
-                                builder: (context) => ProductForm(),
-                              ),
-                            );
-                          },
-                          child: Icon(
-                            CupertinoIcons.add,
-                            color: Colors.white,
-                            size: MediaQuery.of(context).size.width * 0.1,
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.005,
+                          height: MediaQuery.of(context).size.width * 0.15,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1),
+                            color: Color(0xFF4F2263).withOpacity(0.2),
                           ),
                         ),
                         Expanded(
@@ -310,7 +304,7 @@ class _adminInvState extends State<adminInv> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return Categories(onHideBtnsBottom: _onHideBtnsBottom,);
+        return Categories(onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur);
       case 2:
         return Cart(onHideBtnsBottom: _onHideBtnsBottom);
       case 3:

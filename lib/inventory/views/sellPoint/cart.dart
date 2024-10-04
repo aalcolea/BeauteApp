@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:beaute_app/inventory/cartProvider.dart';
 import 'package:beaute_app/inventory/views/sellPoint/styles/cartStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:provider/provider.dart';
+
+import '../../services/productsService.dart';
 
 class Cart extends StatefulWidget {
   final void Function(
@@ -60,10 +64,19 @@ class _CartState extends State<Cart> {
     super.initState();
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
-    for (int i = 0; i < 10; i++) {
+  }
+
+  @override
+  void didChangeDependencies() {
+    final cartProvider = Provider.of<CartProvider>(context);
+    for (int i = 0; i < cartProvider.cart.length; i++) {
       cantControllers.add(TextEditingController(text: '1')); // Iniciar con 0
       cantHelper.add(1); // Valor inicial
     }
+    for (int i = 0; i < cartProvider.cart.length; i++) {
+      totalCart = totalCart + cartProvider.cart[i]['price'];
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -78,6 +91,7 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.015),
       child: Column(
@@ -110,10 +124,10 @@ class _CartState extends State<Cart> {
                     padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.02, top: MediaQuery.of(context).size.width * 0.1),
                     child: LayoutBuilder(
                         builder: (context, constraints) {
-                          final widthItem1 = constraints.maxWidth * 0.365;
-                          final widthItem2 = constraints.maxWidth * 0.38;
+                          final widthItem1 = constraints.maxWidth * 0.352;
+                          final widthItem2 = constraints.maxWidth * 0.4;
                           return ListView.builder(
-                            itemCount: 3,
+                            itemCount: cartProvider.cart.length,
                             padding: EdgeInsets.zero,
                             itemBuilder: (context, index) {
                               return Column(
@@ -133,14 +147,14 @@ class _CartState extends State<Cart> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Producto $index',
+                                                '${cartProvider.cart[index]['product']}',
                                                 style: TextStyle(
                                                   color: const Color(0xFF4F2263),
                                                   fontSize: MediaQuery.of(context).size.width * 0.05,
                                                 ),
                                               ),
                                               Text(
-                                                'Codigo $index',
+                                                'Codigo ${cartProvider.cart[index]['product_id']}',
                                                 style: TextStyle(
                                                     color: Color(0xFF4F2263).withOpacity(0.3),
                                                     fontSize: MediaQuery.of(context).size.width * 0.04
@@ -218,6 +232,7 @@ class _CartState extends State<Cart> {
                                                           ),
                                                         ),
                                                         onPressed: () {
+                                                          cartProvider.addElement(cartProvider.cart[index]['product_id']);
                                                           setState(() {
                                                             bool action = true;
                                                             itemCount(index, action);
@@ -241,7 +256,7 @@ class _CartState extends State<Cart> {
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  '\$0',
+                                                  '\$${cartProvider.total_price}',
                                                   style: TextStyle(
                                                     color: const Color(0xFF4F2263),
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
@@ -261,7 +276,6 @@ class _CartState extends State<Cart> {
                                       ],
                                     ),
                                   ),
-                                  const Divider(),
                                 ],
                               );
                             },
