@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:beaute_app/inventory/cartProvider.dart';
 import 'package:beaute_app/views/admin/assistantAdmin.dart';
 import 'package:beaute_app/views/admin/drAdmin.dart';
 import 'package:beaute_app/views/admin/toDate.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'forms/appoinmentForm.dart';
@@ -36,7 +38,10 @@ void main() async {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Mensaje recibido en primer plano (app abierta): ${message.notification?.title}');
   });
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => CartProvider())],
+    child: const MyApp(),),
+  );
 }
 
 class MyApp extends StatefulWidget {
