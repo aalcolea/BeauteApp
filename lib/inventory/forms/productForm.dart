@@ -6,6 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/productsService.dart';
 
 class ProductForm extends StatefulWidget {
   const ProductForm({super.key});
@@ -29,7 +33,7 @@ class _ProductFormState extends State<ProductForm> {
   TextEditingController barCodeController = TextEditingController();
   FocusNode barCodeFocus = FocusNode();
   //
-
+  bool isLoading = false;
   void changeFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
@@ -66,7 +70,33 @@ class _ProductFormState extends State<ProductForm> {
     super.dispose();
   }
 
+  final productService = ProductService();
 
+  Future<void> createProduct() async {
+    if (nameController.text.isEmpty ||
+        precioController.text.isEmpty ||
+        barCodeController.text.isEmpty) {
+      print("Por favor complete todos los campos obligatorios");
+      return;
+    }
+    setState(() {
+      //colocar isloading true (Mario lo debe ver)
+    });
+    try {
+      await productService.createProduct(nombre: nameController.text, precio: double.parse(precioController.text), codigoBarras: barCodeController.text,
+        descripcion: descriptionController.text, categoryId: 20,
+      );
+      print('Producto creado exitosamente');
+
+      Navigator.pop(context);
+    } catch (e) {
+      print('Error al crear producto');
+    } finally {
+      setState(() {
+        //colordar isloading
+      });
+    }
+  }
 
 
   @override
@@ -179,7 +209,18 @@ class _ProductFormState extends State<ProductForm> {
                    horizontal: MediaQuery.of(context).size.width * 0.03,
                    vertical: MediaQuery.of(context).size.width * 0.03,
                  ),
-                 child: CategoryBox(),),
+                 child: CategoryBox(),
+                 ),
+                 ElevatedButton(
+                   onPressed: createProduct,
+                   style: ElevatedButton.styleFrom(
+                     backgroundColor: const Color(0xFF4F2263),
+                     padding: EdgeInsets.symmetric(
+                       horizontal: MediaQuery.of(context).size.width * 0.2,
+                       vertical: MediaQuery.of(context).size.width * 0.05,
+                     ),
+                   ), child: null,
+                 )
                ],
              )
             ]

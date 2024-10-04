@@ -197,7 +197,9 @@ class _adminInvState extends State<adminInv> {
                         top: MediaQuery.of(context).size.width * 0.0,
                         bottom: MediaQuery.of(context).size.width * 0.02,
                         left: MediaQuery.of(context).size.width * 0.02,
-                        right: _selectedScreen == 1 ?  MediaQuery.of(context).size.width * 0.0 : MediaQuery.of(context).size.width * 0.02,
+                        right: _selectedScreen == 1
+                            ? MediaQuery.of(context).size.width * 0.0
+                            : MediaQuery.of(context).size.width * 0.02,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
