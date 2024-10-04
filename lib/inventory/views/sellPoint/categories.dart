@@ -30,6 +30,8 @@ class _CategoriesState extends State<Categories> {
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
   String? _selectedCategory;
+  List<String> selectedCategories = [];
+  bool isSelecting = false;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -51,6 +53,22 @@ class _CategoriesState extends State<Categories> {
     setState(() {
       _selectedCategory = null;
     });
+  }
+
+  void toggleSelection(String category) {
+    setState(() {
+      if (selectedCategories.contains(category)) {
+        selectedCategories.remove(category);
+        if (selectedCategories.isEmpty) {
+          isSelecting = false; // Salir del modo de selección si no hay ninguna seleccionada
+        }
+      } else {
+        selectedCategories.add(category);
+        isSelecting = true; // Activar el modo de selección
+      }
+    });
+    print("Selected Categories: $selectedCategories");
+    print("Is Selecting: $isSelecting");
   }
 
   @override
@@ -166,16 +184,20 @@ class _CategoriesState extends State<Categories> {
                             return item['category'] == null ?
                             InkWell(
                               onTap: () {
-                                widget.onShowBlur(true);
-                                showDialog(
-                                  context: context,
-                                  barrierColor: Colors.transparent,
-                                  builder: (BuildContext context) {
-                                    return CategoryForm();
-                                  },
-                                ).then((_){
-                                  widget.onShowBlur(false);
-                                });
+                                if (isSelecting) {
+
+                                } else {
+                                  widget.onShowBlur(true);
+                                  showDialog(
+                                    context: context,
+                                    barrierColor: Colors.transparent,
+                                    builder: (BuildContext context) {
+                                      return CategoryForm();
+                                    },
+                                  ).then((_){
+                                    widget.onShowBlur(false);
+                                  });
+                                }
                               },
                               child: Card(
                                 color: Colors.transparent,
@@ -221,11 +243,24 @@ class _CategoriesState extends State<Categories> {
                             ) : InkWell(
                               onTap: () {
                                 setState(() {
-                                  if (mounted) {
-                                    _selectedCategory = "${item['category']}";
+                                  if (isSelecting) {
+                                    if (selectedCategories.contains(item['category'])) {
+                                      selectedCategories.remove(item['category']);
+                                      if (selectedCategories.isEmpty) {
+                                        isSelecting = false;
+                                      }
+                                    } else {
+                                      selectedCategories.add(item['category']);
+                                    }
+                                  } else {
+                                    _selectedCategory = item['category'];
                                   }
                                 });
                                 print("${item['category']}");
+                              },
+                              onLongPress: () {
+                                toggleSelection(item['category']);
+                                print('Long Pressed on: ${item['category']}');
                               },
                               child: Card(
                                   color: Colors.transparent,
@@ -255,29 +290,55 @@ class _CategoriesState extends State<Categories> {
                                           ),
                                           height: MediaQuery.of(context).size.width * 0.35,
                                           width: MediaQuery.of(context).size.width * 0.5,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(10),
-                                            child: Image.network(
-                                              item['image'],
-                                              fit: BoxFit.contain,
-                                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                } else {
-                                                  return Center(
-                                                    child: CircularProgressIndicator(
-                                                      value: loadingProgress.expectedTotalBytes != null
-                                                          ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                                          : null,
-                                                    ),
-                                                  );
-                                                }
-                                              },
-                                              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                                return const Text('Error al cargar la imagen');
-                                              },
-                                            ),
-                                          ),
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.circular(10),
+                                                child: Image.network(
+                                                  item['image'],
+                                                  fit: BoxFit.contain,
+                                                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                                    if (loadingProgress == null) {
+                                                      return child;
+                                                    } else {
+                                                      return Center(
+                                                        child: CircularProgressIndicator(
+                                                          value: loadingProgress.expectedTotalBytes != null
+                                                              ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                                              : null,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                                    return const Text('Error al cargar la imagen');
+                                                  },
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: selectedCategories.contains(item['category']) ? true : false,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01, left: MediaQuery.of(context).size.width * 0.01),
+                                                  alignment: Alignment.topLeft,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black54.withOpacity(0.5),
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: Border.all(
+                                                      color: Color(0xFF4F2263),
+                                                      width: MediaQuery.of(context).size.width * 0.01
+                                                    )
+                                                  ),
+                                                  height: MediaQuery.of(context).size.width * 0.4,
+                                                  width: MediaQuery.of(context).size.width * 0.5,
+                                                  child: Icon(
+                                                    CupertinoIcons.check_mark_circled,
+                                                    color: Color(0xFF4F2263),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
                                         ),
                                         const SizedBox(height: 8),
                                         Expanded(
@@ -303,6 +364,34 @@ class _CategoriesState extends State<Categories> {
             ),
           ) : Expanded(
             child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory),
+          ),
+          if (isSelecting) Container(
+            height: MediaQuery.of(context).size.height * 0.05,
+            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.62, bottom: MediaQuery.of(context).size.width * 0.01),
+            child: Row(
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedCategories.clear();
+                      isSelecting = false;
+                    });
+                  },
+                  backgroundColor: Colors.white,
+                  child: const Icon(Icons.cancel),
+                  heroTag: null,
+                ),
+                const SizedBox(width: 16),
+                FloatingActionButton(
+                  onPressed: () {
+                    print('Eliminar seleccionados');
+                  },
+                  backgroundColor: Colors.white,
+                  child: const Icon(Icons.delete, color: Colors.red,),
+                  heroTag: null,
+                ),
+              ],
+            ),
           )
         ],
       ),
