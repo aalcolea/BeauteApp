@@ -1,5 +1,9 @@
+import 'package:beaute_app/inventory/services/productsService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../cartProvider.dart';
 
 class Products extends StatefulWidget {
 
@@ -12,22 +16,42 @@ class Products extends StatefulWidget {
   State<Products> createState() => _ProductsState();
 }
 
-List<Map<String, dynamic>> products = [
-  {'product': 'Producto 1', 'price': '59', 'cant': '5', 'product_id': '1'},
-  {'product': 'Producto 2', 'price': '79', 'cant': '3', 'product_id': '2'},
-  {'product': 'Producto 3', 'price': '99', 'cant': '8', 'product_id': '3'},
-  {'product': 'Producto 4', 'price': '199', 'cant': '4', 'product_id': '4'},
-  {'product': 'Producto 5', 'price': '19', 'cant': '22', 'product_id': '5'},
-  {'product': 'Producto 6', 'price': '209', 'cant': '15', 'product_id': '6'},
-  {'product': 'Producto 7', 'price': '49', 'cant': '3', 'product_id': '7'},
-  {'product': 'Producto 8', 'price': '69', 'cant': '1', 'product_id': '8'},
-  {'product': 'Producto 9', 'price': '109', 'cant': '9', 'product_id': '9'},
-  {'product': 'Producto 10', 'price': '99', 'cant': '10', 'product_id': '10'},
-];
+class _ProductsState extends State<Products> with TickerProviderStateMixin {
+  List<AnimationController> aniControllers = [];
+  List<int> cantHelper = [];
+  List<int> tapedIndices = [];
+  late Animation<double> movLeft;
+  late Animation<double> movLeftCount;
+  int ? tapedIndex;
 
-class _ProductsState extends State<Products> {
+  void itemCount (index, action){
+    if(action == false){
+      cantHelper[index] > 0 ? cantHelper[index]-- : cantHelper[index] = 0;
+      if(cantHelper[index] == 0){
+        tapedIndices.remove(index);
+        aniControllers[index].reverse().then((_){
+          aniControllers[index].reset();
+        });
+      }
+    }else{
+      cantHelper[index]++;
+    }
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    for (int i = 0; i < 10; i++) {
+      aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
+      cantHelper.add(0);
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.02),
       child: Column(
@@ -48,7 +72,7 @@ class _ProductsState extends State<Products> {
                   widget.selectedCategory,
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.08,
-                      color: Color(0xFF4F2263)
+                      color: const Color(0xFF4F2263)
                   ),
                 ),
               ],
@@ -58,90 +82,182 @@ class _ProductsState extends State<Products> {
             child: ListView.builder(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).size.width * 0.01,
-                  left: MediaQuery.of(context).size.width * 0.01,
-                  right: MediaQuery.of(context).size.width * 0.01,
                 ),
-                itemCount: products.length,
+                physics: const BouncingScrollPhysics(),
+                itemCount: products_global.length,
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                          "${products[index]['product']}",
-                          style: TextStyle(
-                            color: Color(0xFF4F2263),
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                          ),
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Text(
-                              "Precio: ",
-                              style: TextStyle(color: Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.03),
-                            ),
-                            Container(
-                              child: Text(
-                                "\$${products[index]['price']} MXN",
-                                style: TextStyle(
-                                    color: Color(0xFF4F2263),
-                                    fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width * 0.03,
-                                ),
+                  return InkWell(
+                    onTap: (){},
+                    child: Column(
+                      children: [
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                          title: Row(
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${products_global[index]['product']}",
+                                    style: TextStyle(
+                                      color: const Color(0xFF4F2263),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Precio: ",
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(right: 10),
+                                        child: Text(
+                                          "\$${products_global[index]['price']} MXN",
+                                          style: TextStyle(
+                                            color: const Color(0xFF4F2263),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        "Cant.: ",
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                      ),
+                                      Text(
+                                        "${products_global[index]['cant']}",
+                                        style: TextStyle(
+                                            color: const Color(0xFF4F2263),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context).size.width * 0.045
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              padding: EdgeInsets.only(right: 10),
-                            ),
-                            Text(
-                              "Cant.: ",
-                              style: TextStyle(color: Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.03),
-                            ),
-                            Text(
-                              "${products[index]['cant']}",
-                              style: TextStyle(
-                                  color: Color(0xFF4F2263),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width * 0.03
-                              ),
-                            ),
-                          ],
-                        ),
-                        trailing: Container(
-                          width: MediaQuery.of(context).size.width * 0.15,
-                          height: MediaQuery.of(context).size.width * 0.09,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4F2263),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: MediaQuery.of(context).size.width * 0.03,
-                              ),
-                              surfaceTintColor: const Color(0xFF4F2263),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            onPressed: () {
-                              print('Product added');
-                            },
-                            child: Icon(
-                              CupertinoIcons.add,
-                              color: Colors.white,
-                              size: MediaQuery.of(context).size.width * 0.07,
-                            ),
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                      ),
-                      Divider(
-                        indent: MediaQuery.of(context).size.width * 0.05,
-                        endIndent: MediaQuery.of(context).size.width * 0.05,
-                        color: Color(0xFF4F2263).withOpacity(0.1),
-                        thickness: MediaQuery.of(context).size.width * 0.005,
-                      )
-                    ],
+                              Spacer(),
+                              AnimatedContainer(
+                                alignment: Alignment.bottomRight,
+                                duration: const Duration(milliseconds: 225),
+                                  width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.28 : MediaQuery.of(context).size.width * 0.13,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: const Color(0xFF4F2263),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      AnimatedBuilder(animation: aniControllers[index],
+                                          child: Visibility(
+                                            visible:  tapedIndices.contains(index),
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                minimumSize: const Size(0, 0),
+                                                backgroundColor: const Color(0xFF4F2263),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: MediaQuery.of(context).size.width * 0.015,
+                                                  vertical: MediaQuery.of(context).size.width * 0.015,
+                                                ),
+                                                surfaceTintColor: const Color(0xFF4F2263),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5.0),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  bool action = false;
+                                                  itemCount(index, action);
+                                                });
+                                              },
+                                              child: Icon(
+                                                CupertinoIcons.minus,
+                                                color: Colors.white,
+                                                size: MediaQuery.of(context).size.width * 0.07,
+                                              ),
+                                            ),),
+                                          builder: (context, minusMove){
+                                            movLeft = Tween(begin: 0.0, end: MediaQuery.of(context).size.width * 0.023).animate(aniControllers[index]);
+                                            return Transform.translate(offset: Offset(-movLeft.value, 0), child: minusMove);
+                                          }),
+                                      AnimatedBuilder(
+                                          animation: aniControllers[index],
+                                          child: Visibility(
+                                              visible: tapedIndices.contains(index),
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Color(0xFF4F2263),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: MediaQuery.of(context).size.width * 0.0,
+                                                  vertical: MediaQuery.of(context).size.width * 0.015,
+                                                ),
+                                                child: Text(
+                                                  textAlign: TextAlign.center,
+                                                  '${cantHelper[index]}',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                              )),
+                                          builder: (context, countMov){
+                                            movLeftCount = Tween(begin: 0.0, end: MediaQuery.of(context).size.width * 0.012).animate(aniControllers[index]);
+                                            return Transform.translate(offset: Offset(-movLeftCount.value, 0), child: countMov);
+                                          }),
+                                      ///btn mas
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: const Size(0, 0),
+                                          backgroundColor: const Color(0xFF4F2263),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context).size.width * 0.015,
+                                            vertical: MediaQuery.of(context).size.width * 0.015,
+                                          ),
+                                          surfaceTintColor: const Color(0xFF4F2263),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          cartProvider.addElement(products_global[index]['product_id']);
+                                          print('Product added');
+                                          setState(() {
+                                            bool action = true;
+                                            tapedIndex = index;
+                                            if (!tapedIndices.contains(index)) {
+                                              tapedIndices.add(index);
+                                            }
+                                            itemCount(index, action);
+                                            aniControllers[index].forward();
+                                          });
+                                        },
+                                        child: Icon(
+                                          CupertinoIcons.add,
+                                          color: Colors.white,
+                                          size: MediaQuery.of(context).size.width * 0.07,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),),
+                        Divider(
+                          indent: MediaQuery.of(context).size.width * 0.05,
+                          endIndent: MediaQuery.of(context).size.width * 0.05,
+                          color: Color(0xFF4F2263).withOpacity(0.1),
+                          thickness: MediaQuery.of(context).size.width * 0.005,
+                        )
+                      ],
+                    ),
                   );
                 }
             ),
-          )
+          ),
         ],
       ),
     );
