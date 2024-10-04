@@ -12,9 +12,7 @@ class CartProvider extends ChangeNotifier {
     bool check = false;
     for (var item in _cart) {
       if (item['product_id'] == product_id) {
-        //total_price += (price as num).toDouble();
         item['cant_cart'] += 1;
-        print('hola $total_price');
         check = true;
         break;
       }
@@ -25,6 +23,17 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
     print(_cart);
   }
-
-
+  void decrementElement(int product_id) {
+    for (var item in _cart) {
+      if (item['product_id'] == product_id) {
+        if (item['cant_cart'] > 1) {
+          item['cant_cart'] -= 1;
+        } else {
+          _cart.remove(item);
+        }
+        break;
+      }
+    }
+    notifyListeners();
+  }
 }

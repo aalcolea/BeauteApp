@@ -106,6 +106,7 @@ class _CategoriesState extends State<Categories> {
       final List<dynamic> data = json.decode(response.body)['data'];
       return data.map((item){
         return {
+          'id' : item['id'],
           'category': item['nombre'],
           'image': item['foto'],
         };

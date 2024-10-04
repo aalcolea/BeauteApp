@@ -69,12 +69,11 @@ class _CartState extends State<Cart> {
   @override
   void didChangeDependencies() {
     final cartProvider = Provider.of<CartProvider>(context);
+    cantControllers.clear();
+    totalCart = 0;
     for (int i = 0; i < cartProvider.cart.length; i++) {
-      cantControllers.add(TextEditingController(text: '1')); // Iniciar con 0
-      cantHelper.add(1); // Valor inicial
-    }
-    for (int i = 0; i < cartProvider.cart.length; i++) {
-      totalCart = totalCart + cartProvider.cart[i]['price'];
+      cantControllers.add(TextEditingController(text: cartProvider.cart[i]['cant_cart'].toString()));
+      totalCart += cartProvider.cart[i]['price'] * cartProvider.cart[i]['cant_cart'];
     }
     super.didChangeDependencies();
   }
@@ -180,6 +179,7 @@ class _CartState extends State<Cart> {
                                                           ),
                                                         ),
                                                         onPressed: () {
+                                                          cartProvider.decrementElement(cartProvider.cart[index]['product_id']);
                                                           setState(() {
                                                             bool action = false;
                                                             itemCount(index, action);
@@ -256,7 +256,7 @@ class _CartState extends State<Cart> {
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  '\$${cartProvider.total_price}',
+                                                  '\$${cartProvider.cart[index]['cant_cart'] * cartProvider.cart[index]['price']}',
                                                   style: TextStyle(
                                                     color: const Color(0xFF4F2263),
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
