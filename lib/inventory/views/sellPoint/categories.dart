@@ -394,6 +394,23 @@ class _CategoriesState extends State<Categories> {
                 ),
               ],
             ),
+          ) else Container(
+            height: MediaQuery.of(context).size.height * 0.05,
+            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.8, bottom: MediaQuery.of(context).size.width * 0.01),
+            child: Row(
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+
+                    });
+                  },
+                  backgroundColor: Colors.white,
+                  child: const Icon(CupertinoIcons.arrow_2_circlepath, color: Color(0xFF4F2263)),
+                  heroTag: null,
+                ),
+              ],
+            ),
           )
         ],
       ),
