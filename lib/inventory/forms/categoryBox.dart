@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryBox extends StatefulWidget {
-  const CategoryBox({super.key});
+  final int borderType;
+  const CategoryBox({super.key, required this.borderType});
 
   @override
   State<CategoryBox> createState() => _CategoryBoxState();
@@ -43,7 +44,9 @@ class _CategoryBoxState extends State<CategoryBox> {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Map<String, dynamic>>(
       isExpanded: true,
-      hint: const Text('Categoria del producto'),
+      hint: widget.borderType == 2 ? Text('Categoria del producto', style: TextStyle(
+        color: const Color(0xFF4F2263).withOpacity(0.5),
+      ),) : const Text('Categoria del producto'),
       value: categorySel,
       items: items.map((categoryItem) {
         return DropdownMenuItem<Map<String, dynamic>>(
@@ -63,16 +66,39 @@ class _CategoryBoxState extends State<CategoryBox> {
         });
       },
       decoration: InputDecoration(
-        focusedBorder: OutlineInputBorder(
+        contentPadding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02,
+            vertical: widget.borderType == 2 ? MediaQuery.of(context).size.width * 0.02 : 0),
+        constraints: BoxConstraints(
+          maxHeight: widget.borderType == 1 ? MediaQuery.of(context).size.width * 0.11 : MediaQuery.of(context).size.width * 0.5,
+        ),
+        focusedBorder: widget.borderType == 1 ? OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
             color: Color(0xFF4F2263),
-            width: 1.5,
+            width: 0.7,
+          ),
+        ) : const OutlineInputBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+          borderSide: BorderSide(
+            color: Color(0xFF4F2263),
+            width: 0.7,
           ),
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: widget.borderType == 1 ? OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
+            color: Colors.black54,
+            width: 1.5,
+          ),
+        ) : const OutlineInputBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+          borderSide: BorderSide(
             color: Colors.black54,
             width: 1.5,
           ),

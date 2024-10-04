@@ -33,6 +33,16 @@ class _ProductFormState extends State<ProductForm> {
   TextEditingController barCodeController = TextEditingController();
   FocusNode barCodeFocus = FocusNode();
   //
+  double ? screenWidth;
+  double ? screenHeight;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+  }
+
   bool isLoading = false;
   void changeFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
@@ -70,6 +80,7 @@ class _ProductFormState extends State<ProductForm> {
     super.dispose();
   }
 
+
   final productService = ProductService();
 
   Future<void> createProduct() async {
@@ -97,11 +108,10 @@ class _ProductFormState extends State<ProductForm> {
       });
     }
   }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         physics: visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
         slivers: [
@@ -131,27 +141,44 @@ class _ProductFormState extends State<ProductForm> {
                       Text(
                           textAlign: TextAlign.start,
                           'Agregar Producto',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.095,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF4F2263),
-                          ))
+                        style: TextStyle(
+                          color: const Color(0xFF4F2263),
+                          fontSize: screenWidth! < 370.00
+                              ? MediaQuery.of(context).size.width * 0.078
+                              : MediaQuery.of(context).size.width * 0.082,
+                          fontWeight: FontWeight.bold,
+                        ),)
                     ]))
               ],
             ),
              ),
-        SliverList(delegate: SliverChildListDelegate(
+        SliverList(
+
+            delegate: SliverChildListDelegate(
             [
              Column(
                children: [
                  TitleContainer(
+                   margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04,
+                   left: MediaQuery.of(context).size.width * 0.03,
+                   right: MediaQuery.of(context).size.width * 0.03),
                    child: Text('Nombre', style: TextStyle(color: Colors.white, fontSize: MediaQuery.of(context).size.width * 0.045, fontWeight: FontWeight.bold),),
                  ),
-                 Padding(padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03, vertical: MediaQuery.of(context).size.width * 0.03),
+                 Padding(
+                   padding: EdgeInsets.only(
+                       left: MediaQuery.of(context).size.width * 0.03,
+                       right: MediaQuery.of(context).size.width * 0.03,
+                       top: MediaQuery.of(context).size.width * 0.03,
+                       bottom: MediaQuery.of(context).size.width * 0.03,
+                   ),
                      child: TextFormField(
                        focusNode: nameFocus,
                        controller: nameController,
                        decoration: InputDecoration(
+                         constraints: BoxConstraints(
+                           maxHeight: MediaQuery.of(context).size.width * 0.1,
+                         ),
+                         contentPadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
                          hintText: 'Nombre del producto',
                          border: OutlineInputBorder(
                            borderRadius: BorderRadius.circular(10.0),
@@ -168,6 +195,10 @@ class _ProductFormState extends State<ProductForm> {
                        focusNode: descriptionFocus,
                        controller: descriptionController,
                        decoration: InputDecoration(
+                         contentPadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
+                         constraints: BoxConstraints(
+                           maxHeight: MediaQuery.of(context).size.width * 0.1,
+                         ),
                          hintText: 'Descripción del producto',
                          border: OutlineInputBorder(
                            borderRadius: BorderRadius.circular(10.0),
@@ -183,7 +214,11 @@ class _ProductFormState extends State<ProductForm> {
                        focusNode: precioFocus,
                        controller: precioController,
                        decoration: InputDecoration(
-                         hintText: 'Precio del producto',
+                           constraints: BoxConstraints(
+                             maxHeight: MediaQuery.of(context).size.width * 0.1,
+                           ),
+                           contentPadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
+                           hintText: 'Precio del producto',
                          border: OutlineInputBorder(
                            borderRadius: BorderRadius.circular(10.0),
                          )),
@@ -196,6 +231,10 @@ class _ProductFormState extends State<ProductForm> {
                        focusNode: barCodeFocus,
                        controller: barCodeController,
                        decoration: InputDecoration(
+                         constraints: BoxConstraints(
+                           maxHeight: MediaQuery.of(context).size.width * 0.1,
+                         ),
+                         contentPadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
                          hintText: 'Codigo de barras del producto',
                          border: OutlineInputBorder(
                            borderRadius: BorderRadius.circular(10.0),
@@ -209,7 +248,7 @@ class _ProductFormState extends State<ProductForm> {
                    horizontal: MediaQuery.of(context).size.width * 0.03,
                    vertical: MediaQuery.of(context).size.width * 0.03,
                  ),
-                 child: CategoryBox(),
+                 child: CategoryBox(borderType: 1),
                  ),
                  ElevatedButton(
                    onPressed: createProduct,
