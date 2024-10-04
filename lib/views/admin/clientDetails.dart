@@ -87,6 +87,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
   double avance = 0;
   double sumAvance = 0;
   double scaleValue = 0;
+  int letterCherlper = 0;
 
   @override
   void didPopNext() {
@@ -268,6 +269,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
       value.sort((a, b) => a.name.compareTo(b.name));
     });
 
+    letterCherlper = data['C']?.length ?? 0;
     final sortedKeys = data.keys.toList()..sort();
     final clientService = ClientService();
     final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
@@ -399,13 +401,15 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
     }).toList();
     return groups;
   }
-
+//
   @override
   Widget build(BuildContext context) {
     final AlphabetListViewOptions options = AlphabetListViewOptions(
       listOptions: ListOptions(
         listHeaderBuilder: (context, symbol) {
-          return Container(
+          return  Visibility(
+            visible: symbol == 'C' && letterCherlper == 1 ? false : true,
+            child: Container(
             margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
@@ -416,7 +420,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
               symbol,
               style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
-          );
+          ),);
         },
       ),
       scrollbarOptions: ScrollbarOptions(

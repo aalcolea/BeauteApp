@@ -41,7 +41,6 @@ class _CartState extends State<Cart> {
       cantHelper[index]++;
       cantControllers[index].text = cantHelper[index].toString();
     }
-
   }
 
   void checkKeyboardVisibility() {

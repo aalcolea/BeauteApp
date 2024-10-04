@@ -43,6 +43,7 @@ class _ClientInfoState extends State<ClientInfo> {
   bool editInfo = false;
   int maxLines = 2;
   bool showBlurr = false;
+  late String initials;
 
   String? oldNameValue;
   String? oldPhone;
@@ -148,12 +149,20 @@ class _ClientInfoState extends State<ClientInfo> {
     }
   }
 
+  String getInitials(String name) {
+    List<String> nameParts = name.split(' ');
+    String firstInitial = nameParts.isNotEmpty ? nameParts[0][0].toUpperCase() : '';
+    String secondInitial = nameParts.length > 1 ? nameParts[1][0].toUpperCase() : '';
+    return '$firstInitial$secondInitial';
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     keyboardVisibilityController = KeyboardVisibilityController();
     isDocLog = widget.docLog;
     name = widget.name;
+    initials = getInitials(name);
     nameController.text = widget.name;
     emailController.text = widget.email;
     phoneController.text = widget.phone.toString();
@@ -271,7 +280,7 @@ class _ClientInfoState extends State<ClientInfo> {
                     child: CircleAvatar(
                       radius: 70,
                       child: Text(
-                        'MA',
+                        initials,
                         style: TextStyle(
                             fontSize: !visibleKeyboard ? MediaQuery.of(context).size.width * 0.085 : 0),
                       ),

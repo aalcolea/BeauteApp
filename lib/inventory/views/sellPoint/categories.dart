@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 class Categories extends StatefulWidget {
-
   final void Function(
       bool,
   ) onHideBtnsBottom;
@@ -125,31 +124,6 @@ class _CategoriesState extends State<Categories> {
       color: Colors.white,
       child: Column(
         children: [
-          /*Row(
-            children: [
-              /// Botón para cargar más datos
-              ElevatedButton(
-                onPressed: loadItems,
-                child: Text('Cargar más datos'),
-              ),
-              SizedBox(width: 10),
-              /// Botón para abrir el modal
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    barrierColor: Colors.transparent,
-                    builder: (BuildContext context) {
-                      return CategoryForm();
-                    },
-                  ).then((_){
-                    //agregar cerrar xd
-                  });
-                },
-                child: Text('Crear Categoriaa'),
-              ),
-            ],
-          ),*/
           _selectedCategory == null
               ? Expanded(
             child: Padding(
@@ -171,8 +145,7 @@ class _CategoriesState extends State<Categories> {
                         int startIndex = pageIndex * itemsPerPage;
                         int endIndex = startIndex + itemsPerPage;
                         if (endIndex > items.length) {
-                          endIndex = items
-                              .length;
+                          endIndex = items.length;
                         }
                         var currentPageItems = items.sublist(startIndex, endIndex);
                         return GridView.builder(
