@@ -8,9 +8,10 @@ import '../../cartProvider.dart';
 class Products extends StatefulWidget {
 
   final String selectedCategory;
+  final int selectedCategoryId;
   final VoidCallback onBack;
 
-  const Products({super.key, required this.selectedCategory, required this.onBack});
+  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId});
 
   @override
   State<Products> createState() => _ProductsState();
@@ -54,7 +55,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   Future<void> fetchProducts() async {
     try {
       final productService = ProductService();
-      await productService.fetchProducts(int.parse(widget.selectedCategory));
+      await productService.fetchProducts(widget.selectedCategoryId);
       setState(() {
 
         aniControllers = List.generate(

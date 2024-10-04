@@ -30,6 +30,7 @@ class _CategoriesState extends State<Categories> {
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
   String? _selectedCategory;
+  late int selectedCategoryId;
   List<String> selectedCategories = [];
   bool isSelecting = false;
 
@@ -243,6 +244,7 @@ class _CategoriesState extends State<Categories> {
                             ) : InkWell(
                               onTap: () {
                                 setState(() {
+                                  selectedCategoryId = item['id'];
                                   if (isSelecting) {
                                     if (selectedCategories.contains(item['category'])) {
                                       selectedCategories.remove(item['category']);
@@ -363,7 +365,7 @@ class _CategoriesState extends State<Categories> {
               ),
             ),
           ) : Expanded(
-            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory),
+            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId),
           ),
           if (isSelecting) Container(
             height: MediaQuery.of(context).size.height * 0.05,
