@@ -285,9 +285,6 @@ class ClientFormState extends State<ClientForm> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    /*IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))*/
                                   ],
                                 )
                             ),
