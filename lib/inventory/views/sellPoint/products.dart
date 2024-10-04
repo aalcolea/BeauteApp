@@ -9,9 +9,10 @@ import '../../cartProvider.dart';
 class Products extends StatefulWidget {
 
   final String selectedCategory;
+  final int selectedCategoryId;
   final VoidCallback onBack;
 
-  const Products({super.key, required this.selectedCategory, required this.onBack});
+  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId});
 
   @override
   State<Products> createState() => _ProductsState();
@@ -24,6 +25,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   late Animation<double> movLeft;
   late Animation<double> movLeftCount;
   int ? tapedIndex;
+
 
   void itemCount (index, action){
     if(action == false){
@@ -43,13 +45,32 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   @override
   void initState() {
     // TODO: implement initState
-    for (int i = 0; i < 10; i++) {
+    ///RECORDAR QUITAR DEL INIT
+    for (int i = 0; i < products_global.length; i++) {
       aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
       cantHelper.add(0);
     }
     super.initState();
+    fetchProducts();
   }
+  Future<void> fetchProducts() async {
+    try {
+      final productService = ProductService();
+      await productService.fetchProducts(widget.selectedCategoryId);
+      setState(() {
 
+        aniControllers = List.generate(
+            products_global.length,
+                (index) => AnimationController(
+                vsync: this, duration: const Duration(milliseconds: 450)));
+        cantHelper = List.generate(products_global.length, (index) => 0);
+      });
+    } catch (e) {
+      print('Error fetching products: $e');
+      setState(() {
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -148,7 +169,18 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                           ),
                                         ),
                                       ),
-
+                                      Text(
+                                        "Cant.: ",
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                      ),
+                                      Text(
+                                        "${products_global[index]['cant_cart']}",
+                                        style: TextStyle(
+                                            color: const Color(0xFF4F2263),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context).size.width * 0.045
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
