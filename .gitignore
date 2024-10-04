@@ -34,6 +34,9 @@ pubspec.yaml
 /build/
 lib/firebase_options.dart
 
+ios/
+
+
 # Symbolication related
 app.*.symbols
 

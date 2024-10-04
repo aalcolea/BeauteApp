@@ -1,4 +1,5 @@
 import 'package:beaute_app/inventory/services/productsService.dart';
+import 'package:beaute_app/inventory/views/sellPoint/styles/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +9,10 @@ import '../../cartProvider.dart';
 class Products extends StatefulWidget {
 
   final String selectedCategory;
+  final int selectedCategoryId;
   final VoidCallback onBack;
 
-  const Products({super.key, required this.selectedCategory, required this.onBack});
+  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId});
 
   @override
   State<Products> createState() => _ProductsState();
@@ -23,6 +25,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   late Animation<double> movLeft;
   late Animation<double> movLeftCount;
   int ? tapedIndex;
+
 
   void itemCount (index, action){
     if(action == false){
@@ -42,13 +45,32 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   @override
   void initState() {
     // TODO: implement initState
-    for (int i = 0; i < 10; i++) {
+    ///RECORDAR QUITAR DEL INIT
+    for (int i = 0; i < products_global.length; i++) {
       aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
       cantHelper.add(0);
     }
     super.initState();
+    fetchProducts();
   }
+  Future<void> fetchProducts() async {
+    try {
+      final productService = ProductService();
+      await productService.fetchProducts(widget.selectedCategoryId);
+      setState(() {
 
+        aniControllers = List.generate(
+            products_global.length,
+                (index) => AnimationController(
+                vsync: this, duration: const Duration(milliseconds: 450)));
+        cantHelper = List.generate(products_global.length, (index) => 0);
+      });
+    } catch (e) {
+      print('Error fetching products: $e');
+      setState(() {
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -87,7 +109,15 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                 itemCount: products_global.length,
                 itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: (){},
+                    onTap: (){
+                      Navigator.push(context,
+                        CupertinoPageRoute(
+                          builder: (context) => ProductDetails(
+
+                          ),
+                        ),
+                      );
+                    },
                     child: Column(
                       children: [
                         ListTile(
@@ -105,6 +135,22 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                       fontWeight: FontWeight.bold,
                                       fontSize: MediaQuery.of(context).size.width * 0.06,
                                     ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Cant.: ",
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                      ),
+                                      Text(
+                                        "${products_global[index]['cant']}",
+                                        style: TextStyle(
+                                            color: const Color(0xFF4F2263),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context).size.width * 0.045
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   Row(
                                     children: [
@@ -128,7 +174,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                         style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
                                       ),
                                       Text(
-                                        "${products_global[index]['cant']}",
+                                        "${products_global[index]['cant_cart']}",
                                         style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
@@ -143,7 +189,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                               AnimatedContainer(
                                 alignment: Alignment.bottomRight,
                                 duration: const Duration(milliseconds: 225),
-                                  width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.28 : MediaQuery.of(context).size.width * 0.13,
+                                  width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.13,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: const Color(0xFF4F2263),
@@ -163,9 +209,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                                   vertical: MediaQuery.of(context).size.width * 0.015,
                                                 ),
                                                 surfaceTintColor: const Color(0xFF4F2263),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(5.0),
-                                                ),
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -218,9 +261,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                             vertical: MediaQuery.of(context).size.width * 0.015,
                                           ),
                                           surfaceTintColor: const Color(0xFF4F2263),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5.0),
-                                          ),
                                         ),
                                         onPressed: () {
                                           cartProvider.addElement(products_global[index]['product_id']);
