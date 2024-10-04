@@ -201,30 +201,32 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
      final controller = SlidableController(this);
      controller.animation.addListener(() {
        double dragRatio = controller.ratio;
-       dragRatio != 0 ? isDragX = true : false;
-       //1 para complete, 2 para execute 3 para dismmis
-       if(controller.animation.status == AnimationStatus.completed){
-         setState(() {
-           helperModalDeleteClient = 1;
-         });
+       switch (controller.animation.status) {
+         case AnimationStatus.completed:
+           setState(() {
+             helperModalDeleteClient = 1;
+           });
+           break;
+         case AnimationStatus.forward:
+           setState(() {
+             helperModalDeleteClient = 2;
+           });
+           break;
+         case AnimationStatus.dismissed:
+           setState(() {
+             helperModalDeleteClient = 3;
+           });
+           break;
+         default:
+           break;
        }
-       if(controller.animation.status == AnimationStatus.forward){
-         setState(() {
-           helperModalDeleteClient = 2;
-         });
-       }
-       if(controller.animation.status == AnimationStatus.dismissed){
-         setState(() {
-           helperModalDeleteClient = 3;
-         });
-       }
-       if(dragRatio != 0){
+       if (dragRatio != 0) {
          setState(() {
            isDragX = true;
            itemDragX = i;
            hideBorderRadius();
          });
-       }else {
+       } else {
          setState(() {
            itemDragX = i;
            isDragX = false;

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 class Categories extends StatefulWidget {
-
   final void Function(
       bool,
   ) onHideBtnsBottom;
@@ -146,13 +145,10 @@ class _CategoriesState extends State<Categories> {
               ),
             ],
           ),
-          _selectedCategory == null
-              ? Expanded(
+          _selectedCategory == null ?
+          Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(top: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.05),
+                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
                   child: SizedBox(
                     height: 580,
                     ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
@@ -170,8 +166,7 @@ class _CategoriesState extends State<Categories> {
                         int startIndex = pageIndex * itemsPerPage;
                         int endIndex = startIndex + itemsPerPage;
                         if (endIndex > items.length) {
-                          endIndex = items
-                              .length; // Ajustar el índice si no hay más elementos
+                          endIndex = items.length; // Ajustar el índice si no hay más elementos
                         }
                         var currentPageItems = items.sublist(startIndex, endIndex);
                         return GridView.builder(
@@ -201,9 +196,8 @@ class _CategoriesState extends State<Categories> {
                                   color: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02,right: MediaQuery.of(context)
-                                        .size
-                                        .width * 0.02),
+                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02,
+                                        right: MediaQuery.of(context).size.width * 0.02),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.start,
