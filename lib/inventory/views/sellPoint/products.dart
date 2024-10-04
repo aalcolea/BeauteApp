@@ -1,4 +1,5 @@
 import 'package:beaute_app/inventory/services/productsService.dart';
+import 'package:beaute_app/inventory/views/sellPoint/styles/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +88,15 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                 itemCount: products_global.length,
                 itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: (){},
+                    onTap: (){
+                      Navigator.push(context,
+                        CupertinoPageRoute(
+                          builder: (context) => ProductDetails(
+
+                          ),
+                        ),
+                      );
+                    },
                     child: Column(
                       children: [
                         ListTile(
@@ -109,6 +118,22 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                   Row(
                                     children: [
                                       Text(
+                                        "Cant.: ",
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                      ),
+                                      Text(
+                                        "${products_global[index]['cant']}",
+                                        style: TextStyle(
+                                            color: const Color(0xFF4F2263),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context).size.width * 0.045
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
                                         "Precio: ",
                                         style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
                                       ),
@@ -123,18 +148,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                           ),
                                         ),
                                       ),
-                                      Text(
-                                        "Cant.: ",
-                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
-                                      ),
-                                      Text(
-                                        "${products_global[index]['cant']}",
-                                        style: TextStyle(
-                                            color: const Color(0xFF4F2263),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context).size.width * 0.045
-                                        ),
-                                      ),
+
                                     ],
                                   ),
                                 ],
@@ -143,7 +157,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                               AnimatedContainer(
                                 alignment: Alignment.bottomRight,
                                 duration: const Duration(milliseconds: 225),
-                                  width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.28 : MediaQuery.of(context).size.width * 0.13,
+                                  width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.13,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: const Color(0xFF4F2263),
@@ -163,9 +177,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                                   vertical: MediaQuery.of(context).size.width * 0.015,
                                                 ),
                                                 surfaceTintColor: const Color(0xFF4F2263),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(5.0),
-                                                ),
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -218,9 +229,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                             vertical: MediaQuery.of(context).size.width * 0.015,
                                           ),
                                           surfaceTintColor: const Color(0xFF4F2263),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5.0),
-                                          ),
                                         ),
                                         onPressed: () {
                                           cartProvider.addElement(products_global[index]['product_id']);
