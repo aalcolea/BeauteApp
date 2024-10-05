@@ -3,10 +3,17 @@ import 'package:beaute_app/inventory/forms/styles/productFormStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import '../../../../utils/showToast.dart';
+import '../../../../utils/toastWidget.dart';
 import '../../../forms/categoryBox.dart';
 
 class ProductDetails extends StatefulWidget {
-  const ProductDetails({super.key});
+  final String nameProd;
+  final String descriptionProd;
+  final int barCode;
+  final int stock;
+  final double precio;
+  const ProductDetails({super.key, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -24,10 +31,18 @@ class _ProductDetailsState extends State<ProductDetails> {
   FocusNode descriptionFocus = FocusNode();
   TextEditingController precioController = TextEditingController();
   FocusNode precioFocus = FocusNode();
+  TextEditingController stockController = TextEditingController();
+  FocusNode stockFocus = FocusNode();
   TextEditingController barCodeController = TextEditingController();
   FocusNode barCodeFocus = FocusNode();
   //
   bool editProd = false;
+  //
+  String? oldNameProd;
+  String? oldDescriptionProd;
+  String? oldPrecioProd;
+  String? oldBarcode;
+  String? oldStock;
 
   double ? screenWidth;
   double ? screenHeight;
@@ -64,6 +79,11 @@ class _ProductDetailsState extends State<ProductDetails> {
   void initState() {
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
+    nameController.text = widget.nameProd;
+    descriptionController.text = widget.descriptionProd;
+    barCodeController.text = widget.barCode.toString();
+    stockController.text = widget.stock.toString();
+    precioController.text = widget.precio.toString();
     // TODO: implement initState
     super.initState();
   }
@@ -124,7 +144,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                       children: [
                         Text(
                           textAlign: TextAlign.start,
-                          'Producto 1',
+                          'Modificar',
                           style: TextStyle(
                             color: const Color(0xFF4F2263),
                             fontSize: screenWidth! < 370.00
@@ -135,9 +155,30 @@ class _ProductDetailsState extends State<ProductDetails> {
                       ])),),
                   Spacer(),
                   IconButton(
-                      onPressed: () {
+                      onPressed: editProd == false ? () {
                         setState(() {
                           editProd = true;
+                          oldNameProd = nameController.text;
+                          oldDescriptionProd = descriptionController.text;
+                          oldBarcode = barCodeController.text;
+                          oldStock = stockController.text;
+                          oldPrecioProd = precioController.text;
+                        });
+                      } : (){
+                        setState(() {
+                          nameController.text != oldNameProd! || descriptionController.text != oldDescriptionProd! ||
+                              barCodeController.text != oldBarcode! || stockController.text != oldStock! || precioController.text != oldPrecioProd! ?
+                          showOverlay(
+                            context,
+                            const CustomToast(
+                              message: 'Datos actualizados correctamente',
+                            ),
+                          ) :  showOverlay(
+                              context,
+                              const CustomToast(
+                              message: 'No se hicieron cambios',
+                          ));
+                          editProd = false;
                         });
                       },
                       icon: !editProd ? const Icon(
@@ -163,6 +204,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
                               child: TextProdField(
+                                controller: nameController,
                                 enabled: editProd,
                                 text: 'Nombre del producto',
                               )),
@@ -175,6 +217,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
                                   child: TextProdField(
+                                    controller: descriptionController,
                                     enabled: editProd,
                                     text: 'Descripcion del producto',
                                   ))]),
@@ -185,6 +228,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
                                   child: TextProdField(
+                                    controller: barCodeController,
                                     enabled: editProd,
                                     text: 'Codigo del producto',
                                   ))]),
@@ -230,6 +274,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         right: MediaQuery.of(context).size.width * 0.03,
                                       ),
                                     child: TextProdField(
+                                      controller: stockController,
                                       enabled: editProd,
                                       text: 'Piezas',
                                     ))
@@ -268,6 +313,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         right: MediaQuery.of(context).size.width * 0.03,
                                       ),
                                     child: TextProdField(
+                                      controller: precioController,
                                       enabled: editProd,
                                       text: 'MXN',
                                     ),)

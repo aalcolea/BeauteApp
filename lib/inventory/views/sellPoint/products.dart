@@ -113,7 +113,11 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                       Navigator.push(context,
                         CupertinoPageRoute(
                           builder: (context) => ProductDetails(
-
+                            nameProd: products_global[index]['product'],
+                            descriptionProd: '',
+                            barCode: 101010101,
+                            stock: products_global[index]['cant_cart'],
+                            precio: products_global[index]['price'],
                           ),
                         ),
                       );
@@ -133,7 +137,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                     style: TextStyle(
                                       color: const Color(0xFF4F2263),
                                       fontWeight: FontWeight.bold,
-                                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                                      fontSize: MediaQuery.of(context).size.width * 0.05,
                                     ),
                                   ),
                                   Row(
@@ -143,7 +147,8 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                         style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
                                       ),
                                       Text(
-                                        "${products_global[index]['cant']}",
+                                        "${products_global[index]['cant_cart']}",
+
                                         style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
@@ -167,18 +172,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context).size.width * 0.045,
                                           ),
-                                        ),
-                                      ),
-                                      Text(
-                                        "Cant.: ",
-                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
-                                      ),
-                                      Text(
-                                        "${products_global[index]['cant_cart']}",
-                                        style: TextStyle(
-                                            color: const Color(0xFF4F2263),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context).size.width * 0.045
                                         ),
                                       ),
                                     ],
