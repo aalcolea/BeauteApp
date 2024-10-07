@@ -18,7 +18,7 @@ class CartProvider extends ChangeNotifier {
       }
     }
     if (!check) {
-      _cart.add({'product': product['product'], 'price': product['price'].toDouble(), 'cant_cart': product['cant_cart'].toDouble(), 'product_id': product['product_id']});
+      _cart.add({'product': product['product'], 'price': product['price'].toDouble(), 'cant_cart': 1.0, 'product_id': product['product_id']});
     }
     notifyListeners();
     print(_cart);

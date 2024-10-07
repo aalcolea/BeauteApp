@@ -3,10 +3,14 @@ import 'dart:ui';
 import 'package:beaute_app/inventory/forms/productForm.dart';
 import 'package:beaute_app/inventory/views/sellPoint/categories.dart';
 import 'package:beaute_app/inventory/views/sellPoint/cart.dart';
+import 'package:beaute_app/inventory/views/sellPoint/scanBarCode.dart';
 import 'package:beaute_app/views/navBar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:soundpool/soundpool.dart';
 class adminInv extends StatefulWidget {
   const adminInv({super.key});
 
@@ -25,6 +29,9 @@ class _adminInvState extends State<adminInv> {
   bool _hideBtnsBottom = false;
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
+  bool showScaner = false;
+  String? scanedProd;
+  Soundpool? pool;
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
     setState(() {
@@ -32,9 +39,31 @@ class _adminInvState extends State<adminInv> {
     });
   }
 
+  Future<void> soundScaner() async {
+    Soundpool pool = Soundpool.fromOptions(options: SoundpoolOptions.kDefault);
+    int soundId = await rootBundle.load('assets/sounds/store_scan.mp3').then((ByteData soundData){
+      return pool.load(soundData);
+    });
+    int streamId = await pool.play(soundId);
+  }
+
   void _onShowBlur(bool showBlur){
     setState(() {
       _showBlurr = showBlur;
+    });
+  }
+
+  void onShowScan(bool closeScan){
+    setState(() {
+      showScaner = closeScan;
+    });
+  }
+
+  void onScanProd(String? resultScanedProd){
+    setState(() {
+      scanedProd = resultScanedProd;
+      showScaner = false;
+      soundScaner();
     });
   }
 
@@ -49,6 +78,13 @@ class _adminInvState extends State<adminInv> {
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -76,7 +112,7 @@ class _adminInvState extends State<adminInv> {
                         children: [
                           Text(
                             _selectedScreen == 1
-                                ? 'Inventario'
+                                ? 'Inventario'//'$scanedProd'//
                                 : _selectedScreen == 2
                                 ? 'Venta'
                                 : '',
@@ -130,8 +166,8 @@ class _adminInvState extends State<adminInv> {
                       child: Padding(
                         padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.045, left: MediaQuery.of(context).size.width * 0.045, bottom: MediaQuery.of(context).size.width * 0.025),
                         child: SizedBox(
-                          height: 37,
-                          child: TextFormField(
+                          height: showScaner ? MediaQuery.of(context).size.width * 0.18 : 37,//37
+                          child: showScaner ? ScanBarCode(onShowScan: onShowScan, onScanProd: onScanProd) : TextFormField(
                             controller: searchController,
                             focusNode: focusNode,
                             decoration: InputDecoration(
@@ -143,7 +179,9 @@ class _adminInvState extends State<adminInv> {
                               prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263).withOpacity(0.2)),
                               suffixIcon: InkWell(
                                   onTap: () {
-                                    print('QR code');
+                                    setState(() {
+                                      showScaner == false ? showScaner = true : showScaner = false;
+                                    });
                                   },
                                   child: Icon(CupertinoIcons.barcode_viewfinder, color: Color(0xFF4F2263))
                               ),
