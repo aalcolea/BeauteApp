@@ -34,7 +34,7 @@ pubspec.yaml
 /build/
 lib/firebase_options.dart
 ios/Pods/
-ios/Flutter/
+
 
 
 
