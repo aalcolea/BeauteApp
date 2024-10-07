@@ -33,7 +33,6 @@ class AlfaNumericInputFormatter extends TextInputFormatter {
         !newValue.text.endsWith(' ') &&
         newValue.text.length == oldValue.text.length - 1 &&
         oldValue.text.length > 1) {
-      // Permitimos la eliminación del espacio final
       return newValue;
     }
     return FilteringTextInputFormatter.allow(
@@ -43,14 +42,14 @@ class AlfaNumericInputFormatter extends TextInputFormatter {
 }
 
 class AppointmentForm extends StatefulWidget {
-  final bool isDoctorLog;
+  final bool docLog;
   final String? dateFromCalendarSchedule;
   final String? nameClient;
   final int? idScreenInfo;
 
   const AppointmentForm({
     super.key,
-    required this.isDoctorLog,
+    required this.docLog,
     this.dateFromCalendarSchedule,
     this.nameClient,
     this.idScreenInfo,
@@ -96,16 +95,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
   late BuildContext dialogforappointment;
   String nameToCompare = '';
   bool amPm = false;
-  int _selectedIndexAmPm = 0;
   int? doctor_id_body = 0;
   bool platform = false; //ios False androide True
   String toTime = '';
-
+  int? newClientID;
+  bool showBlurr = false;
   Future<void> createClient() async {
     try {
       var response = await http.post(
-        Uri.parse(
-            'https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -115,29 +113,33 @@ class _AppointmentFormState extends State<AppointmentForm> {
           'email': emailController.text,
         }),
       );
-
       if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
         setState(() {
-          print('Cliente Añadido desde Nueva Cita');
+          newClientID = data['client']['id'];
         });
       } else {
         print('Error al crear cliente: ${response.body}');
       }
     } catch (e) {
-      print('Error al envir datos: $e');
+      print('Error al enviar datos: $e');
     }
   }
 
   Future<void> addClientAndSubmitAppointment() async {
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
-      createClient();
-      submitAppointment();
+      await createClient();
+      if (newClientID != null) {
+        print('Test alcance IDnew $newClientID');
+        submitAppointment();
+      } else {
+        print('Error: ID del cliente no está disponible.');
+      }
     } else {
       return;
     }
   }
-
   Future<bool?> showAddClientAndAppointment() {
     return showDialog<bool>(
       context: context,
@@ -240,7 +242,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
   void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime,
       int selectedIndexAmPm) {
     setState(() {
-      _selectedIndexAmPm = selectedIndexAmPm;
       isTimerShow = _isTimerShow;
       String toCompare = selectedTime.text;
       List<String> timeToCompare = toCompare.split(':');
@@ -342,18 +343,26 @@ class _AppointmentFormState extends State<AppointmentForm> {
         },
         body: jsonEncode({
           'dr_id': doctor_id_body!,
-          'client_id': widget.nameClient != null ? widget.idScreenInfo : _selectedClient?.id.toString(),
+          'client_id': newClientID != null ? newClientID : (widget.nameClient != null ? widget.idScreenInfo : _selectedClient?.id.toString()),
           'date': _dateController.text,
           'time': toTime,
           'treatment': treatmentController.text,
           'name': _clientTextController.text,
         }),
       );
-      print('doctor_id_body: $doctor_id_body');
 
       if (response.statusCode == 201) {
         if (mounted) {
-          showClienteSuccessfullyAdded(context, widget, isDocLog);
+          setState(() {
+            showBlurr = true;
+            showDialog(context: context, builder: (BuildContext context){
+              return ClienteSuccessDialog(docLog: widget.docLog);
+            }).then((_){
+              setState(() {
+                showBlurr = false;
+              });
+            });
+        });
         }
         print('Respuesta del servidor: ${response.body}');
       } else {
@@ -372,14 +381,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
     Platform.isIOS ? platform = true : platform = false;
-    isDocLog = widget.isDoctorLog;
+    isDocLog = widget.docLog;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     dropdownDataManager.fetchUser();
     if (widget.nameClient != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-
           _clientTextController.text = widget.nameClient!;
           clientFieldDone = true;
         });
@@ -533,7 +541,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     if (textEditingValue.text == '') {
                                       return const Iterable<Client>.empty();
                                     }
-                                    return dropdownDataManager.getSuggestions(textEditingValue.text);
+                                    return dropdownDataManager.getSuggestions(textEditingValue.text).where((Client client) => client.id != 1);;
                                   },
                                   displayStringForOption: (Client option) => option.name,
                                   onSelected: (Client selection) {
@@ -549,7 +557,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     fieldClientNode = fieldFocusNode;
                                     _clientTextController = fieldTextEditingController;
                                     return FieldsToWrite(
-                                      //initVal:  _clientTextController.text,
                                       inputFormatters: [
                                         AlfaNumericInputFormatter(),
                                       ],
@@ -611,11 +618,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     controller: _dateController,
                                     suffixIcon: Icon(
                                       Icons.calendar_today,
-                                      color: drFieldDone &&
-                                              clientFieldDone &&
-                                              widget.dateFromCalendarSchedule == null
-                                          ? const Color(0xFF4F2263) : isDocLog && clientFieldDone &&
-                                          widget.dateFromCalendarSchedule == null ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
+                                      color: drFieldDone && clientFieldDone && widget.dateFromCalendarSchedule == null
+                                          ? const Color(0xFF4F2263) : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
+                                      const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
                                       size: MediaQuery.of(context).size.width * 0.07,
                                     ),
                                     onTap: () {
@@ -1008,8 +1013,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             ),
                             readOnly: true,
                             onTap: () {
-                              setState(
-                                () {
+                              setState(() {
                                   _showdrChooseWidget =
                                       _showdrChooseWidget ? false : true;
                                 },
@@ -1023,7 +1027,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   MediaQuery.of(context).size.width * 0.025),
                           child: DoctorsMenu(onAssignedDoctor: _onAssignedDoctor, optSelectedToRecieve: _optSelected),
                         )
-                      ]))))
+                      ])))),
+              Visibility(
+            visible: showBlurr,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+              child: Container(
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+          )
         ]))));
   }
 }

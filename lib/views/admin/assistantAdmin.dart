@@ -27,8 +27,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
   bool scrollToDayComplete = false;
-  bool isDocLog = false;
-  bool _showContentToModify = false;
   bool _hideBtnsBottom = false;
   int _selectedScreen = 0;
   bool _cancelConfirm = false;
@@ -36,6 +34,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   double? screenHeight;
   late bool platform; //0 IOS 1 Androide
   bool _showBlurr = false;
+  String currentScreen = "agenda";
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -57,7 +56,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
 
 
   void _onshowContentToModify(bool showContentToModify) {
-    _showContentToModify = showContentToModify;
   }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
@@ -136,12 +134,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         onBackPressed(didPop);
       },
       child: Scaffold(
-        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog,),
+        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: widget.docLog, currentScreen: currentScreen),
         body: Stack(
           children: [
             Container(
-              padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
               color: Colors.white,
               child: Column(
                 children: [
@@ -180,7 +177,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   : _selectedScreen == 3
                                   ? 'Clientes'
                                   : _selectedScreen == 4
-                                  ? 'Notificaciones'
+                                  ? 'Para hoy'
                                   : '',
                               style: TextStyle(
                                 color: const Color(0xFF4F2263),
@@ -222,6 +219,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 icon: SvgPicture.asset(
                                   'assets/imgLog/navBar.svg',
                                   colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                                  width: MediaQuery.of(context).size.width * 0.105,
                                 ),);
                             }),
                           ],
@@ -346,7 +344,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             onPressed: () {
                               Navigator.push(context,
                                 MaterialPageRoute(
-                                  builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                  builder: (context) => AppointmentForm(docLog: widget.docLog),
                                 ),
                               );
                             },
@@ -421,9 +419,9 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     switch (_selectedScreen) {
       case 1:
         return AgendaSchedule(
-            isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
+            docLog: widget.docLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog, onShowBlur: _onShowBlur, );
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, docLog: widget.docLog, onShowBlur: _onShowBlur, );
       case 4:
         return const NotificationsScreen(doctorId: 3);
       default:
