@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
-import '../../services/productsService.dart';
-
 class Cart extends StatefulWidget {
   final void Function(
       bool,
