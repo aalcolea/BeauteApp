@@ -8,14 +8,14 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../views/admin/toDate.dart';
 
 class AgendaSchedule extends StatefulWidget {
-  final bool docLog;
+  final bool isDoctorLog;
   final void Function(
     bool,
   ) showContentToModify;
 
 
   const AgendaSchedule(
-      {Key? key, required this.docLog, required this.showContentToModify})
+      {Key? key, required this.isDoctorLog, required this.showContentToModify})
       : super(key: key);
 
   @override
@@ -73,7 +73,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
   @override
   void initState() {
     super.initState();
-    docLog = widget.docLog;
+    docLog = widget.isDoctorLog;
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;

@@ -9,7 +9,6 @@ import '../../calendar/calendarSchedule.dart';
 import 'package:beaute_app/forms/appoinmentForm.dart';
 import 'package:beaute_app/services/auth_service.dart';
 import '../../forms/clientForm.dart';
-import '../../globalVar.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
 import 'clientDetails.dart';
 import 'notifications.dart';
@@ -24,7 +23,7 @@ class DoctorAdmin extends StatefulWidget {
 }
 
 class _DoctorAdminState extends State<DoctorAdmin> {
-  bool docLog = true;
+  bool isDocLog = true;
   bool _showContentToModify = false;
   int _selectedScreen = 0;
   bool _hideBtnsBottom = false;
@@ -106,8 +105,6 @@ class _DoctorAdminState extends State<DoctorAdmin> {
 
   @override
   void initState() {
-    SessionManager.instance.isDoctor = true;
-    docLog = SessionManager.instance.isDoctor;
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
     super.initState();
@@ -339,7 +336,7 @@ class _DoctorAdminState extends State<DoctorAdmin> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      AppointmentForm(docLog: docLog),
+                                      AppointmentForm(isDoctorLog: isDocLog),
                                 ),
                               );
                             },
@@ -414,9 +411,9 @@ class _DoctorAdminState extends State<DoctorAdmin> {
     switch (_selectedScreen) {
       case 1:
         return AgendaSchedule(
-            docLog: docLog, showContentToModify: _onshowContentToModify);
+            isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, docLog: docLog, onShowBlur: _onShowBlur);
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog, onShowBlur: _onShowBlur);
       case 4:
         return const NotificationsScreen(doctorId: 3);
       default:

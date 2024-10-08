@@ -1,19 +1,15 @@
-import 'package:beaute_app/inventory/admin.dart';
-import 'package:beaute_app/views/admin/assistantAdmin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../forms/alertForm.dart';
-import '../globalVar.dart';
 import '../services/auth_service.dart';
 
 class navBar extends StatefulWidget {
   final bool isDoctorLog;
   final void Function(bool) onShowBlur;
   final Function(int) onItemSelected;
-  final String currentScreen;
 
-  const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog, required this.currentScreen});
+  const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog});
 
   @override
   State<navBar> createState() => _navBarState();
@@ -35,11 +31,6 @@ class _navBarState extends State<navBar> {
     }).then((_){
       widget.onShowBlur(false);
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -72,7 +63,7 @@ class _navBarState extends State<navBar> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(SessionManager.instance.Nombre,
+                            Text('Asistente',
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
                             Text('Slogan here')
                           ],
@@ -81,96 +72,55 @@ class _navBarState extends State<navBar> {
                   ]
               ),
             ),
-            InkWell(
-              onTap: widget.currentScreen == 'agenda' ? Navigator.of(context).pop : (){
-                Navigator.of(context).pushAndRemoveUntil(
-                  CupertinoPageRoute(
-                    builder: (context) => AssistantAdmin(docLog: false),
-                  ),
-                      (Route<dynamic> route) => false,
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.only(left: 20),
-                width: MediaQuery.of(context).size.width,
-                height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.07 : MediaQuery.of(context).size.height*0.06,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  border: widget.currentScreen == 'agenda' ? Border.all(color: Color(0XFF4F2263)) : Border(left: BorderSide.none, top: BorderSide(color: Color(0XFF4F2263))),
-                  color: widget.currentScreen == 'agenda' ? Color(0XFF4F2263) : Colors.transparent,
-                  boxShadow: widget.currentScreen == 'agenda' ? [
+            Container(
+              padding: EdgeInsets.only(left: 20),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height*0.07,
+              alignment: Alignment.centerLeft,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Color(0XFF4F2263)),
+                  color: Color(0XFF4F2263),
+                  boxShadow: [
                     BoxShadow(
                       color: Colors.black54,
                       offset: Offset(0, MediaQuery.of(context).size.width * 0.001),
                       blurRadius: 10,
                     )
-                  ] : null,
-                ),
-                child: Text(
-                    'Agenda',
-                    style: widget.currentScreen == 'agenda' ? TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width*0.05,
-                        color: Colors.white
-                    ) : TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width*0.05,
-                        color: Color(0XFF4F2263)
-                    ),
-                ),
+                  ]
+              ),
+              child: InkWell(
+                onTap: (){
+                  Navigator.of(context).pop();
+                },
+                child: Text('Agenda', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Colors.white)),
               ),
             ),
-            InkWell(
-              onTap: widget.currentScreen == 'inventario' ? Navigator.of(context).pop : (){
-                Navigator.of(context).pushAndRemoveUntil(
-                  CupertinoPageRoute(
-                    builder: (context) => adminInv(),
-                  ),
-                      (Route<dynamic> route) => false,
-                );
-              },
-              child: Container(
+            Container(
                 padding: EdgeInsets.only(left: 20),
                 width: MediaQuery.of(context).size.width,
-                height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.06 : MediaQuery.of(context).size.height*0.07,
+                height: MediaQuery.of(context).size.height*0.06,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
-                  border: widget.currentScreen == 'agenda' ? Border(left: BorderSide.none, bottom: BorderSide(color: Color(0XFF4F2263))) : Border.all(color: Color(0XFF4F2263)),
-                  color: widget.currentScreen == 'agenda' ? Colors.transparent : Color(0XFF4F2263),
-                  boxShadow: widget.currentScreen == 'agenda' ? null : [
-                    BoxShadow(
-                      color: Colors.black54,
-                      offset: Offset(0, MediaQuery.of(context).size.width * 0.001),
-                      blurRadius: 10,
-                    )
-                  ],
+                  border: Border(left: BorderSide.none, bottom: BorderSide(color: Color(0XFF4F2263))),
+                  color: Colors.transparent,
                 ),
-                child: Text(
-                  'Punto de venta',
-                  style: widget.currentScreen == 'agenda' ? TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width*0.05,
-                      color: Color(0XFF4F2263)
-                  ) : TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width*0.05,
-                      color: Colors.white
-                  ),
+                child: InkWell(
+                onTap: (){
+
+                },
+                child: Text('Punto de venta', style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
                 ),
-              ),
             ),
-            Visibility(
-              visible: !widget.isDoctorLog,
-              child: Container(
+            Container(
               padding: EdgeInsets.only(top:40),
               child: ElevatedButton(
-                  onPressed: (){
-                    setState(() {
-                      widget.onShowBlur(true);
-                      createAlert();
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
+                onPressed: (){
+                  setState(() {
+                    widget.onShowBlur(true);
+                    createAlert();
+                  });
+                },
+                style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     side: BorderSide(color: Color(0XFF4F2263), width: 1.0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -178,17 +128,17 @@ class _navBarState extends State<navBar> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     elevation: 5.0,
                     shadowColor: Colors.black54,
+                ),
+                child: Text(
+                  'Mandar alerta',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.of(context).size.width*0.05,
+                    color: Color(0XFF4F2263)
                   ),
-                  child: Text(
-                    'Mandar alerta',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width*0.05,
-                        color: Color(0XFF4F2263)
-                    ),
-                  )
+                )
               ),
-            ),),
+            ),
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.03),

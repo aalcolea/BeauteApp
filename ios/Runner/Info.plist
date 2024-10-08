@@ -57,11 +57,5 @@
       <string>sms</string>
       <string>tel</string>
     </array>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Se necesita acceso a la galería para seleccionar imágenes</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Se necesita acceso a la cámara para capturar fotos</string>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Se necesita acceso para guardar fotos en la galería</string>
 </dict>
 </plist>
