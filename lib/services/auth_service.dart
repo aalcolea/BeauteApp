@@ -1,15 +1,15 @@
 import 'dart:ui';
+
+import 'package:beaute_app/views/login.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
-import '../globalVar.dart';
-import '../views/admin/assistantAdmin.dart';
 
 class PinEntryScreen extends StatefulWidget {
   final int userId;
@@ -37,13 +37,10 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
   double? screenHeight;
   int count = 0;
   final storage = const FlutterSecureStorage();
-
   bool isTokenExpired(String token) {
     final decodedToken = JwtClaim.fromMap(json.decode(B64urlEncRfc7515.decodeUtf8(token.split(".")[1])));
     return decodedToken.expiry!.isBefore(DateTime.now());
   }
-
-  //SessionManager.instance.isDoctor = true;
 
   @override
   void didChangeDependencies() {
@@ -96,31 +93,28 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
       );
 
       if (response.statusCode == 200) {
-        var data = json.decode(response.body);;
+        var data = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
         await prefs.setInt('user_id', data['user']['id']);
-
-        print('testAlan ${data['user']}');
-        if(data['user']['id'] == 1 || data['user']['id'] == 2){
-          SessionManager.instance.isDoctor = true;
-
+        print(data['user']['id']);
+        if (isDocLog == true) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/drScreen',
+                (Route<dynamic> route) => false,
+          );
         } else {
-          SessionManager.instance.isDoctor = false;
-        }
-        SessionManager.instance.Nombre = data['user']['nombre'];
-
-        if(mounted){
-          Navigator.of(context).pushAndRemoveUntil(
-            CupertinoPageRoute(
-              builder: (context) => AssistantAdmin(docLog: SessionManager.instance.isDoctor,),
-            ),
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/assistantScreen',
                 (Route<dynamic> route) => false,
           );
         }
       } else {
         setState(() {
           aniController.forward();
+          print('no se pudo iniciar sesion');
           aniController.addListener(() {
             if (aniController.status == AnimationStatus.completed) {
               aniController.reverse().then((_){
@@ -138,6 +132,7 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
             }
           });
           enteredPin = '';
+          print('entered pin clean');
         });
 
       }

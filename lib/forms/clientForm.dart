@@ -110,7 +110,8 @@ class ClientFormState extends State<ClientForm> {
   bool errorInit = false;
   double? screenWidth;
   double? screenHeight;
-  bool showBlurr = false;
+
+  //final RegExp letterRegex = RegExp(r'^[a-zA-Z]+$');
 
   void hideKeyBoard() {
     if (visibleKeyboard) {
@@ -131,7 +132,8 @@ class ClientFormState extends State<ClientForm> {
   Future<void> createClient() async {
     try {
       var response = await http.post(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
+        Uri.parse(
+            'https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -141,21 +143,15 @@ class ClientFormState extends State<ClientForm> {
           'email': _emailController.text,
         }),
       );
+      print(response.statusCode);
       if (response.statusCode == 201) {
-        setState(() {
-          if (mounted) {
-            showBlurr = true;
-            hideKeyBoard();
-            showDialog(context: context, builder: (BuildContext context){
-              return const ClienteAddedDialog();
-            }).then((_){
-              if(mounted){
-                Navigator.of(context).pop();
-              }
-            });
-          }
-        });
-
+        if (mounted) {
+          hideKeyBoard();
+          Navigator.pop(context);
+          showClienteSuccessfullyAdded(context, widget, () {
+            widget.onFinishedAddClient(1, false);
+          });
+        }
       } else if(response.statusCode == 422) {
         var errorResponse = jsonDecode(response.body);
         if(errorResponse['errors'] != null && errorResponse['errors']['number'] != null) {
@@ -215,7 +211,7 @@ class ClientFormState extends State<ClientForm> {
             margin: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.03,
                 right: MediaQuery.of(context).size.width * 0.03,
-                top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
+            top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
             padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -285,6 +281,9 @@ class ClientFormState extends State<ClientForm> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    /*IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))*/
                                   ],
                                 )
                             ),
@@ -474,15 +473,7 @@ class ClientFormState extends State<ClientForm> {
                 ),
 
               ],
-            )),
-          Visibility(
-              visible: showBlurr,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                  child: Container(
-                    color: Colors.black54.withOpacity(0.01),
-                  ),
-                ),),
+            ))
         ]));
   }
 }

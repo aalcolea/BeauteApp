@@ -35,7 +35,6 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
             backgroundColor: Colors.transparent,
             contentPadding: EdgeInsets.zero,
             content: Container(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.02),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.25,
               decoration: BoxDecoration(
@@ -60,29 +59,28 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.width * 0.028,
+                      top: MediaQuery.of(context).size.width * 0.075,
                     ),
                     child: Text(
-                      textAlign: TextAlign.center,
-                      '¿Deseas salir \nsin guardar?',
+                      '¿Deseas cerrar \nla app?',
                       style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.075,
+                        fontSize: MediaQuery.of(context).size.width * 0.065,
                         color: const Color(0xFF4F2263),
                       ),
                     ),
                   ),
-                  Spacer(),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 0),
-                        child: TextButton(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.zero,
-                            backgroundColor: Colors.white,
+                            backgroundColor: const Color(0xFFE8D3BE),
                             shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
                             ),
                           ),
                           onPressed: () {
@@ -93,37 +91,31 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                             print(cancelConfirm);
                             Navigator.of(context).pop();
                           },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(bottom: BorderSide(color: Colors.red, width: 2))
-                            ),
-                            child: const Text(
-                              'Salir',
-                              style: TextStyle(color: Colors.red, fontSize: 20),
-                            ),
-                          )
+                          child: const Text(
+                            'Salir',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
-                      TextButton(
+                      ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.all(4),
-                          backgroundColor: Colors.white,
+                          backgroundColor: const Color(0xFFE8D3BE),
                           shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
                           ),
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: const Color(0xFF4F2263), width: 2))
-                          ),
-                          child: const Text(
-                            'Cancelar',
-                            style: TextStyle(color: Color(0xFF4F2263), fontSize: 20),
-                          ),
-                        )
+                        child: const Text(
+                          'Cancelar',
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
