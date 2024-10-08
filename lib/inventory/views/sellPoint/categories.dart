@@ -33,6 +33,7 @@ class _CategoriesState extends State<Categories> {
   late int selectedCategoryId;
   List<String> selectedCategories = [];
   bool isSelecting = false;
+  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -61,11 +62,11 @@ class _CategoriesState extends State<Categories> {
       if (selectedCategories.contains(category)) {
         selectedCategories.remove(category);
         if (selectedCategories.isEmpty) {
-          isSelecting = false; // Salir del modo de selección si no hay ninguna seleccionada
+          isSelecting = false;
         }
       } else {
         selectedCategories.add(category);
-        isSelecting = true; // Activar el modo de selección
+        isSelecting = true;
       }
     });
     print("Selected Categories: $selectedCategories");
@@ -96,6 +97,10 @@ class _CategoriesState extends State<Categories> {
   List<Map<String, dynamic>> items = [];
   Future<void> loadFirstItems() async{
     try{
+      setState(() {
+        items.clear();
+        offset = 0;
+      });
       List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
       setState(() {
         items = fetchedItems;
@@ -112,14 +117,12 @@ class _CategoriesState extends State<Categories> {
         items.addAll(fetchedItems);
         offset += limit;
       });
-
       print(offset);
     }catch(e){
       print('Error al cargar mas productos $e');
     }
   }
   Future<List<Map<String, dynamic>>> fetchItems({int limit = 6, int offset = 0}) async{
-    final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
     final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
     if(response.statusCode ==200){
       final List<dynamic> data = json.decode(response.body)['data'];
@@ -132,6 +135,28 @@ class _CategoriesState extends State<Categories> {
       }).toList();
     }else{
       throw Exception('Error al obtener datos de la API');
+    }
+  }
+  Future<void> deleteItem(String categoryId) async {
+    try {
+      final String deleteUrl = '$baseURL/$categoryId';
+      print('Intentando eliminar la categoría con ID: $categoryId');
+      print('URL para eliminar: $deleteUrl');
+      final response = await http.delete(Uri.parse(deleteUrl));
+      if (response.statusCode == 204) {
+        setState(() {
+          items.removeWhere((item) => item['id'] == categoryId);
+          selectedCategories.remove(categoryId);
+        });
+        print('Categoría con ID: $categoryId eliminada exitosamente');
+        await loadFirstItems();
+        isSelecting = false;
+        selectedCategories.clear();
+      } else {
+        print('Error al eliminar la categoría $categoryId: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error al eliminar la categoría $categoryId: $e');
     }
   }
   ///termian test alan functions
@@ -147,7 +172,7 @@ class _CategoriesState extends State<Categories> {
           _selectedCategory == null
               ? Expanded(
             child: Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.025),
               child: SizedBox(
                 height: 580,
                 ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
@@ -182,7 +207,7 @@ class _CategoriesState extends State<Categories> {
                           itemCount: currentPageItems.length,
                           itemBuilder: (context, index) {
                             var item = currentPageItems[index];
-                            return item['category'] == null ?
+                            return item['category'] == 'addCat' ?
                             InkWell(
                               onTap: () {
                                 if (isSelecting) {
@@ -196,6 +221,7 @@ class _CategoriesState extends State<Categories> {
                                       return CategoryForm();
                                     },
                                   ).then((_){
+                                    loadFirstItems();
                                     widget.onShowBlur(false);
                                   });
                                 }
@@ -246,23 +272,23 @@ class _CategoriesState extends State<Categories> {
                                 setState(() {
                                   selectedCategoryId = item['id'];
                                   if (isSelecting) {
-                                    if (selectedCategories.contains(item['category'])) {
-                                      selectedCategories.remove(item['category']);
+                                    if (selectedCategories.contains(item['id'].toString())) {
+                                      selectedCategories.remove(item['id'].toString());
                                       if (selectedCategories.isEmpty) {
                                         isSelecting = false;
                                       }
                                     } else {
-                                      selectedCategories.add(item['category']);
+                                      selectedCategories.add(item['id'].toString());
                                     }
                                   } else {
-                                    _selectedCategory = item['category'];
+                                    _selectedCategory = item['id'].toString();
                                   }
                                 });
                                 print("${item['category']}");
                               },
                               onLongPress: () {
-                                toggleSelection(item['category']);
-                                print('Long Pressed on: ${item['category']}');
+                                toggleSelection(item['id'].toString());
+                                print('Long Pressed on: ${item['id']}');
                               },
                               child: Card(
                                   color: Colors.transparent,
@@ -319,7 +345,7 @@ class _CategoriesState extends State<Categories> {
                                                 ),
                                               ),
                                               Visibility(
-                                                visible: selectedCategories.contains(item['category']) ? true : false,
+                                                visible: selectedCategories.contains(item['id'].toString()) ? true : false,
                                                 child: Container(
                                                   padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01, left: MediaQuery.of(context).size.width * 0.01),
                                                   alignment: Alignment.topLeft,
@@ -386,7 +412,12 @@ class _CategoriesState extends State<Categories> {
                 const SizedBox(width: 16),
                 FloatingActionButton(
                   onPressed: () {
-                    print('Eliminar seleccionados');
+                    setState(() {
+                      List<String> categoriesToDelete = List.from(selectedCategories);
+                      for (String categoryId in categoriesToDelete) {
+                        deleteItem(categoryId);
+                      }
+                    });
                   },
                   backgroundColor: Colors.white,
                   child: const Icon(Icons.delete, color: Colors.red,),
@@ -401,13 +432,11 @@ class _CategoriesState extends State<Categories> {
               children: [
                 FloatingActionButton(
                   onPressed: () {
-                    setState(() {
-
-                    });
+                    loadItems();
                   },
                   backgroundColor: Colors.white,
-                  child: const Icon(CupertinoIcons.arrow_2_circlepath, color: Color(0xFF4F2263)),
                   heroTag: null,
+                  child: const Icon(CupertinoIcons.arrow_2_circlepath, color: Color(0xFF4F2263)),
                 ),
               ],
             ),
