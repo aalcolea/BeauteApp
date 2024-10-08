@@ -4,10 +4,7 @@ import 'package:beaute_app/inventory/forms/categoryBox.dart';
 import 'package:beaute_app/inventory/forms/styles/productFormStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/productsService.dart';
 
@@ -79,7 +76,6 @@ class _ProductFormState extends State<ProductForm> {
     keyboardVisibilitySubscription.cancel();
     super.dispose();
   }
-
 
   final productService = ProductService();
 

@@ -3,8 +3,8 @@ import 'package:beaute_app/inventory/forms/styles/productFormStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import '../../../../utils/showToast.dart';
-import '../../../../utils/toastWidget.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
 import '../../../forms/categoryBox.dart';
 
 class ProductDetails extends StatefulWidget {

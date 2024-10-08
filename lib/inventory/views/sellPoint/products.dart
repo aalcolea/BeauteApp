@@ -137,22 +137,21 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                     style: TextStyle(
                                       color: const Color(0xFF4F2263),
                                       fontWeight: FontWeight.bold,
-                                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                                      fontSize: MediaQuery.of(context).size.width * 0.04,
                                     ),
                                   ),
                                   Row(
                                     children: [
                                       Text(
                                         "Cant.: ",
-                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                       ),
                                       Text(
                                         "${products_global[index]['cant_cart']}",
-
                                         style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context).size.width * 0.045
+                                            fontSize: MediaQuery.of(context).size.width * 0.035
                                         ),
                                       ),
                                     ],
@@ -161,7 +160,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                     children: [
                                       Text(
                                         "Precio: ",
-                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.045),
+                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                       ),
                                       Container(
                                         padding: const EdgeInsets.only(right: 10),
@@ -170,7 +169,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                           style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                                            fontSize: MediaQuery.of(context).size.width * 0.035,
                                           ),
                                         ),
                                       ),
@@ -196,12 +195,12 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                 minimumSize: const Size(0, 0),
-                                                backgroundColor: const Color(0xFF4F2263),
+                                                backgroundColor: Colors.transparent,
                                                 padding: EdgeInsets.symmetric(
                                                   horizontal: MediaQuery.of(context).size.width * 0.015,
                                                   vertical: MediaQuery.of(context).size.width * 0.015,
                                                 ),
-                                                surfaceTintColor: const Color(0xFF4F2263),
+                                                shadowColor: Colors.transparent
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -248,16 +247,15 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           minimumSize: const Size(0, 0),
-                                          backgroundColor: const Color(0xFF4F2263),
+                                          backgroundColor: Colors.transparent,
                                           padding: EdgeInsets.symmetric(
                                             horizontal: MediaQuery.of(context).size.width * 0.015,
                                             vertical: MediaQuery.of(context).size.width * 0.015,
                                           ),
-                                          surfaceTintColor: const Color(0xFF4F2263),
+                                          shadowColor: Colors.transparent
                                         ),
                                         onPressed: () {
                                           cartProvider.addElement(products_global[index]['product_id']);
-                                          print('Product added');
                                           setState(() {
                                             bool action = true;
                                             tapedIndex = index;
