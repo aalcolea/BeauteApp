@@ -1,9 +1,7 @@
 import 'dart:convert';
-
-import 'package:beaute_app/inventory/cartProvider.dart';
-import 'package:beaute_app/views/admin/assistantAdmin.dart';
-import 'package:beaute_app/views/admin/drAdmin.dart';
-import 'package:beaute_app/views/login.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
+import 'package:beaute_app/agenda/views/admin/admin.dart';
+import 'package:beaute_app/agenda/views/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +9,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'forms/appoinmentForm.dart';
 import 'globalVar.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -61,14 +58,7 @@ class _MyAppState extends State<MyApp> {
       ),
       debugShowCheckedModeBanner: false,
       ///pendiente unificacion
-      home: SplashScreen(),//_isLoggedIn ? AssistantAdmin(docLog: SessionManager.instance.isDoctor) : const Login(),
-      //_isLoggedIn ? const AssistantAdmin(docLog: true) : const Login(),
-      routes: {
-        '/login': (context) => const Login(),
-        '/drScreen': (context) => const DoctorAdmin(docLog: true),
-        '/assistantScreen': (context) => const AssistantAdmin(docLog: false),
-        '/citaScreen': (context) => AppointmentForm(docLog: false),
-      },
+      home: SplashScreen(),
       navigatorObservers: [routeObserver],
       supportedLocales: const [Locale('es', 'ES')],
       localizationsDelegates: const [
@@ -130,7 +120,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,12 +1,11 @@
 import 'dart:ui';
 
-import 'package:beaute_app/inventory/forms/productForm.dart';
-import 'package:beaute_app/inventory/views/sellPoint/categories.dart';
-import 'package:beaute_app/inventory/views/sellPoint/cart.dart';
-import 'package:beaute_app/inventory/views/sellPoint/scanBarCode.dart';
-import 'package:beaute_app/views/navBar.dart';
+import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
+import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/views/cart.dart';
+import 'package:beaute_app/inventory/scanBarCode.dart';
+import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
