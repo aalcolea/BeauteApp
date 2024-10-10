@@ -98,4 +98,19 @@ class ProductService {
     }
   }
 
+  Future<void> deleteProduct(int id) async{
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseURL/$id'),
+      );
+      if(response.statusCode == 204){
+        print('Producto eliminado con exito');
+      }else{
+        print(response.statusCode);
+        print('Response: ${response.body}');
+      }
+    }catch(e){
+      print('Error: $e');
+    }
+  }
 }
