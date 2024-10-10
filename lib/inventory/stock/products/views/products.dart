@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../sellpoint/cart/services/cartService.dart';
+import '../utils/productOptions.dart';
 
 class Products extends StatefulWidget {
 
@@ -22,13 +23,17 @@ class Products extends StatefulWidget {
 }
 
 class _ProductsState extends State<Products> with TickerProviderStateMixin {
+
+  List<GlobalKey> productKeys = [];
+  OverlayEntry? overlayEntry;
+
   List<AnimationController> aniControllers = [];
   List<int> cantHelper = [];
   List<int> tapedIndices = [];
   late Animation<double> movLeft;
   late Animation<double> movLeftCount;
   int ? tapedIndex;
-  bool editProductWidget = false;
+  double widgetHeight = 0.0;
 
 
   void itemCount (index, action){
@@ -50,11 +55,12 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     ///RECORDAR QUITAR DEL INIT
+    super.initState();
+    productKeys = List.generate(products_global.length, (index) => GlobalKey());
     for (int i = 0; i < products_global.length; i++) {
       aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
       cantHelper.add(0);
     }
-    super.initState();
     fetchProducts();
   }
   Future<void> fetchProducts() async {
@@ -62,12 +68,12 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       final productService = ProductService();
       await productService.fetchProducts(widget.selectedCategoryId);
       setState(() {
-
         aniControllers = List.generate(
             products_global.length,
                 (index) => AnimationController(
                 vsync: this, duration: const Duration(milliseconds: 450)));
         cantHelper = List.generate(products_global.length, (index) => 0);
+        productKeys = List.generate(products_global.length, (index) => GlobalKey());
       });
     } catch (e) {
       print('Error fetching products: $e');
@@ -75,6 +81,73 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       });
     }
   }
+
+  void colHeight (double _colHeight) {
+    widgetHeight = _colHeight;
+  }
+
+  void showProductOptions(int index) {
+    removeOverlay();
+    if (index >= 0 && index < productKeys.length) {
+      final key = productKeys[index];
+      final RenderBox renderBox = key.currentContext
+          ?.findRenderObject() as RenderBox;
+
+      if (renderBox == null) {
+        print('RenderBox is null, unable to calculate options height.');
+        return;
+      }
+
+      final size = renderBox.size;
+      final position = renderBox.localToGlobal(Offset.zero);
+
+      final screenHeight = MediaQuery.of(context).size.height;
+      final availableSpaceBelow = screenHeight - position.dy;
+
+      double topPosition;
+
+      if (availableSpaceBelow >= widgetHeight) {
+        topPosition = position.dy;
+      } else {
+        topPosition = screenHeight - widgetHeight - MediaQuery.of(context).size.height*0.03;
+      }
+
+      overlayEntry = OverlayEntry(
+        builder: (context) {
+          return Positioned(
+            top: topPosition,
+            left: position.dx,
+            width: size.width,
+            child: IntrinsicHeight(
+              child: ProductOptions(
+                onClose: removeOverlay,
+                nombre: products_global[index]['product'] ??
+                    "El producto no existe",
+                cant: products_global[index]['cant_cart'] == null
+                    ? 'Agotado'
+                    : '${products_global[index]['cant_cart']['cantidad']}',
+                precio: products_global[index]['price'],
+                columnHeight: colHeight,
+              ),
+            ),
+          );
+        },
+      );
+      Overlay.of(context).insert(overlayEntry!);
+      widget.onShowBlur(true);
+    } else {
+      print("Invalid index: $index");
+    }
+  }
+
+  void removeOverlay() {
+    if (overlayEntry != null) {
+      overlayEntry!.remove();
+      overlayEntry = null;
+    }
+    widget.onShowBlur(false); // Elimina el blur si estaba activo
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -113,6 +186,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                 itemCount: products_global.length,
                 itemBuilder: (context, index) {
                   return InkWell(
+                    key: productKeys[index],
                     onTap: (){
                       Navigator.push(context,
                         CupertinoPageRoute(
@@ -129,12 +203,17 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                       );
                     },
                     onLongPress: () {
-                      editProductWidget = true;
+                      if (index >= 0 && index < products_global.length) {
+                        widget.onShowBlur(true);
+                        showProductOptions(index);
+                      } else {
+                        print("Invalid product index: $index");
+                      }
                     },
                     child: Column(
                       children: [
                         ListTile(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                          contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.0075, horizontal: MediaQuery.of(context).size.width * 0.0247),
                           title: Row(
                             children: [
                               Column(
