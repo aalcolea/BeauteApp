@@ -8,11 +8,15 @@ import '../../cartProvider.dart';
 
 class Products extends StatefulWidget {
 
+  final void Function(
+      bool
+  ) onShowBlur;
+
   final String selectedCategory;
   final int selectedCategoryId;
   final VoidCallback onBack;
 
-  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId});
+  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId, required this.onShowBlur});
 
   @override
   State<Products> createState() => _ProductsState();
@@ -25,6 +29,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
   late Animation<double> movLeft;
   late Animation<double> movLeftCount;
   int ? tapedIndex;
+  bool editProductWidget = false;
 
 
   void itemCount (index, action){
@@ -123,7 +128,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                       );
                     },
                     onLongPress: () {
-
+                      editProductWidget = true;
                     },
                     child: Column(
                       children: [
