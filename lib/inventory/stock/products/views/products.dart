@@ -121,13 +121,22 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
             child: IntrinsicHeight(
               child: ProductOptions(
                 onClose: removeOverlay,
-                nombre: products_global[index]['product'] ??
-                    "El producto no existe",
+                nombre: products_global[index]['product'] ?? "El producto no existe",
                 cant: products_global[index]['cant_cart'] == null
                     ? 'Agotado'
                     : '${products_global[index]['cant_cart']['cantidad']}',
                 precio: products_global[index]['price'],
+                stock: products_global[index]['cant_cart'] == null ? 0 : products_global[index]['cant_cart']['cantidad'],
+                barCode: products_global[index]['barCod'],
+                catId: products_global[index]['catId'],
+                id: products_global[index]['id'],
+                descripcion: products_global[index]['descripcion'],
                 columnHeight: colHeight,
+                onProductDeleted: () async {
+                  await ProductService().fetchProducts(widget.selectedCategoryId);
+                  removeOverlay();
+                  setState(() {});
+                }
               ),
             ),
           );

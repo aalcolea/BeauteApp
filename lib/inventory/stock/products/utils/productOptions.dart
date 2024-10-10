@@ -1,8 +1,12 @@
 import 'dart:ffi';
 
+import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/deleteProductDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
 import '../views/productDetails.dart';
+import '../services/productsService.dart';
 
 class ProductOptions extends StatefulWidget {
 
@@ -10,9 +14,15 @@ class ProductOptions extends StatefulWidget {
   final String nombre;
   final String cant;
   final double precio;
+  final int id;
+  final String barCode;
+  final String descripcion;
+  final int stock;
+  final int catId;
   final Function(double) columnHeight;
+  final VoidCallback onProductDeleted;
 
-  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight});
+  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted});
 
   @override
   State<ProductOptions> createState() => _ProductOptionsState();
@@ -22,6 +32,7 @@ class _ProductOptionsState extends State<ProductOptions> {
 
   final GlobalKey _columnKey = GlobalKey();
   double _columnHeight = 0.0;
+  final productService = ProductService();
 
   @override
   void initState() {
@@ -147,10 +158,12 @@ class _ProductOptionsState extends State<ProductOptions> {
                             Navigator.push(context,
                               CupertinoPageRoute(
                                 builder: (context) => ProductDetails(
+                                  idProduct: widget.id,
                                   nameProd: widget.nombre,
-                                  descriptionProd: '',
-                                  barCode: 101010101,
-                                  stock: widget.cant,
+                                  descriptionProd: widget.descripcion,
+                                  catId: widget.catId,
+                                  barCode: widget.barCode,
+                                  stock: widget.stock,
                                   precio: widget.precio,
                                 ),
                               ),
@@ -206,16 +219,31 @@ class _ProductOptionsState extends State<ProductOptions> {
                       Expanded(
                         child: TextButton(
                           onPressed: () {
-
+                            widget.onClose();
+                            showDeleteProductConfirmationDialog(context, () async {
+                              productService.deleteProduct(widget.id);
+                              if (mounted) {
+                                showOverlay(
+                                  context,
+                                  const CustomToast(
+                                    message: 'Producto eliminado',
+                                  ),
+                                );
+                                widget.onProductDeleted();
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.of(context).pop();
+                                }
+                              }
+                            });
                           },
-                          child: Text(
+                          style: const ButtonStyle(
+                              alignment: Alignment.centerLeft
+                          ),
+                          child: const Text(
                             'Eliminar',
                             style: TextStyle(
                                 color: Colors.red
                             ),
-                          ),
-                          style: ButtonStyle(
-                              alignment: Alignment.centerLeft
                           ),
                         ),
                       )

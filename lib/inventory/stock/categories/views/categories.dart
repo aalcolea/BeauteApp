@@ -151,7 +151,7 @@ class _CategoriesState extends State<Categories> {
         isSelecting = false;
         selectedCategories.clear();
       } else {
-        print('1Error al eliminar la categoría $categoryId: ${response.statusCode}');
+        print('Error al eliminar la categoría $categoryId: ${response.statusCode}');
       }
     } catch (e) {
       print('Error al eliminar la categoría $categoryId: $e');
