@@ -1,5 +1,6 @@
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
+import 'package:beaute_app/inventory/printer/print.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -159,6 +160,14 @@ class _navBarState extends State<navBar> {
                 ),
               ),
             ),
+            IconButton(onPressed: (){
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => HomeScreen(),
+                ),
+              );
+
+            }, icon: Icon(Icons.ac_unit, size: 30,),),
             Visibility(
               visible: !widget.isDoctorLog,
               child: Container(
