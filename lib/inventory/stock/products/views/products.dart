@@ -117,10 +117,12 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                       Navigator.push(context,
                         CupertinoPageRoute(
                           builder: (context) => ProductDetails(
+                            idProduct: products_global[index]['id'],
                             nameProd: products_global[index]['product'],
-                            descriptionProd: '',
-                            barCode: 101010101,
-                            stock: products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
+                            descriptionProd: products_global[index]['descripcion'],
+                            catId: products_global[index]['catId'],
+                            barCode: products_global[index]['barCod'],
+                            stock: products_global[index]['cant_cart'] == null ? 0 : products_global[index]['cant_cart']['cantidad'],
                             precio: products_global[index]['price'],
                           ),
                         ),

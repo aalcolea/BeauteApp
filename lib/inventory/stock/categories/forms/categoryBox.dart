@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 class CategoryBox extends StatefulWidget {
   final int borderType;
   final Function(int)? onSelectedCat;
-  const CategoryBox({super.key, required this.borderType, required this.onSelectedCat});
+  final int? selectedCatId;
+  const CategoryBox({super.key, required this.borderType, required this.onSelectedCat, this.selectedCatId});
 
   @override
   State<CategoryBox> createState() => _CategoryBoxState();
@@ -36,6 +37,13 @@ class _CategoryBoxState extends State<CategoryBox> {
             'image': item['foto'],
           };
         }).where((item) => item['category'] != null).toList();
+
+        if (widget.selectedCatId != null) {
+          categorySel = items.firstWhere(
+                (item) => item['id'] == widget.selectedCatId,
+            orElse: () => items.isNotEmpty ? items[0] : {},
+          );
+        }
       });
     } else {
       throw Exception('Error al obtener datos de la API');
@@ -45,9 +53,14 @@ class _CategoryBoxState extends State<CategoryBox> {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Map<String, dynamic>>(
       isExpanded: true,
-      hint: widget.borderType == 2 ? Text('Categoria del producto', style: TextStyle(
-        color: const Color(0xFF4F2263).withOpacity(0.5),
-      ),) : const Text('Categoria del producto'),
+      hint: widget.borderType == 2
+          ? Text(
+        'Categoria del producto',
+        style: TextStyle(
+          color: const Color(0xFF4F2263).withOpacity(0.5),
+        ),
+      )
+          : const Text('Categoria del producto'),
       value: categorySel,
       items: items.map((categoryItem) {
         return DropdownMenuItem<Map<String, dynamic>>(
@@ -64,8 +77,10 @@ class _CategoryBoxState extends State<CategoryBox> {
       onChanged: (selectedCategory) {
         setState(() {
           categorySel = selectedCategory;
-          final int catID = categorySel?['id'];
-          widget.onSelectedCat!(catID);
+          if (widget.onSelectedCat != null && selectedCategory != null) {
+            final int catID = selectedCategory['id'];
+            widget.onSelectedCat!(catID);
+          }
         });
       },
       decoration: InputDecoration(
