@@ -1,7 +1,6 @@
 import 'dart:async';
-
-import 'package:beaute_app/inventory/cartProvider.dart';
-import 'package:beaute_app/inventory/views/sellPoint/styles/cartStyles.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';

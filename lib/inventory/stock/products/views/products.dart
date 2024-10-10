@@ -1,10 +1,9 @@
-import 'package:beaute_app/inventory/services/productsService.dart';
-import 'package:beaute_app/inventory/views/sellPoint/styles/productDetails.dart';
+import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
+import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../cartProvider.dart';
+import '../../../sellpoint/cart/services/cartService.dart';
 
 class Products extends StatefulWidget {
 

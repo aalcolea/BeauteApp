@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:beaute_app/inventory/cartProvider.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:beaute_app/agenda/views/login.dart';
 import 'package:firebase_core/firebase_core.dart';
