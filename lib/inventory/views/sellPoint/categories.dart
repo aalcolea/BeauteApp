@@ -91,7 +91,7 @@ class _CategoriesState extends State<Categories> {
   ///test alan functiosn
   ///init tiene una function
   ///TODO ESTO IRA A UN SERVICIO
-  int limit = 5;
+  int limit = 6;
   int offset = 0;
   List<Map<String, dynamic>> items = [];
   Future<void> loadFirstItems() async{
@@ -123,7 +123,7 @@ class _CategoriesState extends State<Categories> {
   }
   Future<List<Map<String, dynamic>>> fetchItems({int limit = 6, int offset = 0}) async{
     final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
-    if(response.statusCode ==200){
+    if(response.statusCode == 200){
       final List<dynamic> data = json.decode(response.body)['data'];
       return data.map((item){
         return {
@@ -152,7 +152,7 @@ class _CategoriesState extends State<Categories> {
         isSelecting = false;
         selectedCategories.clear();
       } else {
-        print('Error al eliminar la categoría $categoryId: ${response.statusCode}');
+        print('1Error al eliminar la categoría $categoryId: ${response.statusCode}');
       }
     } catch (e) {
       print('Error al eliminar la categoría $categoryId: $e');

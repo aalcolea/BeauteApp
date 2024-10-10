@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 
 class CategoryBox extends StatefulWidget {
   final int borderType;
-  const CategoryBox({super.key, required this.borderType});
+  final Function(int)? onSelectedCat;
+  const CategoryBox({super.key, required this.borderType, required this.onSelectedCat});
 
   @override
   State<CategoryBox> createState() => _CategoryBoxState();
@@ -63,6 +64,8 @@ class _CategoryBoxState extends State<CategoryBox> {
       onChanged: (selectedCategory) {
         setState(() {
           categorySel = selectedCategory;
+          final int catID = categorySel?['id'];
+          widget.onSelectedCat!(catID);
         });
       },
       decoration: InputDecoration(

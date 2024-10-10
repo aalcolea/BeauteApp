@@ -11,7 +11,7 @@ class ProductDetails extends StatefulWidget {
   final String nameProd;
   final String descriptionProd;
   final int barCode;
-  final int stock;
+  final String stock;
   final double precio;
   const ProductDetails({super.key, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio});
 
@@ -238,7 +238,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               Padding(padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
-                                  child: const CategoryBox(borderType: 2,))]),
+                                  child: CategoryBox(borderType: 2, onSelectedCat: null))]),
                           Row(
                             children: [
                               Expanded(
