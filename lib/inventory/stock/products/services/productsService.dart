@@ -23,7 +23,11 @@ class ProductService {
         }
 
         return {
+          'id' : product['id'],
           'product': product['nombre'],
+          'catId': product['category_id'],
+          'barCod': product['codigo_barras'],
+          'descripcion': product['descripcion'],
           'price': price,
           'cant_cart': product['stock'],
           'product_id': product['id'],
@@ -64,4 +68,34 @@ class ProductService {
       throw Exception('Error al crear el producto: $e');
     }
   }
+  Future<void> updateProductInfo({required int idProduct, required String name, required double price, required String barCod, String? desc, required catId, required int cant}) async{
+    final url = Uri.parse(baseURL + '/$idProduct');
+    print(barCod);
+    try{
+      final response = await http.put(
+        url,
+        headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'nombre': name,
+          'precio': price,
+          'codigo_barras': barCod,
+          'descripcion': desc,
+          'category_id': catId,
+          'cant': cant,
+        }),
+      );
+      if(response.statusCode == 200){
+        print('Producto Actualizado con exito');
+      }else{
+        print('Error al actualizar, código: ${response.statusCode}, error: ${response.body}');
+
+      }
+    }catch(e){
+      print('Error al editar el pructo');
+    }
+  }
+
 }
