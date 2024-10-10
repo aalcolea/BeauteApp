@@ -1,7 +1,6 @@
 import 'dart:async';
-
-import 'package:beaute_app/inventory/forms/categoryBox.dart';
-import 'package:beaute_app/inventory/forms/styles/productFormStyles.dart';
+import 'package:beaute_app/inventory/stock/categories/forms/categoryBox.dart';
+import 'package:beaute_app/inventory/stock/products/styles/productFormStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';

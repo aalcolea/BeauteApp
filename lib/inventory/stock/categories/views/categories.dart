@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
-import '../../forms/categoryForm.dart';
-import 'products.dart';
+import '../forms/categoryForm.dart';
+import '../../products/views/products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';

@@ -1,4 +1,4 @@
-import 'package:beaute_app/inventory/services/productsService.dart';
+import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
 import 'package:flutter/material.dart';
 
 class CartProvider extends ChangeNotifier {
