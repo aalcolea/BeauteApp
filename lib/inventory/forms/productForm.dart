@@ -9,6 +9,9 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../services/productsService.dart';
 
 class ProductForm extends StatefulWidget {
+
+
+
   const ProductForm({super.key});
 
   @override
@@ -32,6 +35,7 @@ class _ProductFormState extends State<ProductForm> {
   //
   double ? screenWidth;
   double ? screenHeight;
+  int _catID = 0;
 
   @override
   void didChangeDependencies() {
@@ -91,7 +95,7 @@ class _ProductFormState extends State<ProductForm> {
     });
     try {
       await productService.createProduct(nombre: nameController.text, precio: double.parse(precioController.text), codigoBarras: barCodeController.text,
-        descripcion: descriptionController.text, categoryId: 20,
+        descripcion: descriptionController.text, categoryId: _catID,
       );
       print('Producto creado exitosamente');
 
@@ -103,6 +107,9 @@ class _ProductFormState extends State<ProductForm> {
         //colordar isloading
       });
     }
+  }
+  void onSelectedCat (int catID) {
+    _catID = catID;
   }
   @override
   Widget build(BuildContext context) {
@@ -244,7 +251,7 @@ class _ProductFormState extends State<ProductForm> {
                    horizontal: MediaQuery.of(context).size.width * 0.03,
                    vertical: MediaQuery.of(context).size.width * 0.03,
                  ),
-                 child: CategoryBox(borderType: 1),
+                 child: CategoryBox(borderType: 1, onSelectedCat: onSelectedCat),
                  ),
                  ElevatedButton(
                    onPressed: createProduct,

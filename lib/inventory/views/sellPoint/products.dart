@@ -116,11 +116,14 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                             nameProd: products_global[index]['product'],
                             descriptionProd: '',
                             barCode: 101010101,
-                            stock: products_global[index]['cant_cart'],
+                            stock: '${products_global[index]['cant_cart']['cantidad']}' ?? '0',
                             precio: products_global[index]['price'],
                           ),
                         ),
                       );
+                    },
+                    onLongPress: () {
+
                     },
                     child: Column(
                       children: [
@@ -147,7 +150,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                                         style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                       ),
                                       Text(
-                                        "${products_global[index]['cant_cart']}",
+                                        products_global[index]['cant_cart'] == null ? '0' : '${products_global[index]['cant_cart']['cantidad']}',
                                         style: TextStyle(
                                             color: const Color(0xFF4F2263),
                                             fontWeight: FontWeight.bold,
