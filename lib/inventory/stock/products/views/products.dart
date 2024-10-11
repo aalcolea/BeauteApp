@@ -21,11 +21,10 @@ class Products extends StatefulWidget {
   const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId, required this.onShowBlur, required this.listenerblurr});
 
   @override
-  State<Products> createState() => _ProductsState();
+  ProductsState createState() => ProductsState();
 }
 
-class _ProductsState extends State<Products> with TickerProviderStateMixin {
-
+class ProductsState extends State<Products> with TickerProviderStateMixin {
   List<GlobalKey> productKeys = [];
   OverlayEntry? overlayEntry;
 
@@ -79,18 +78,20 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       await productService.fetchProducts(widget.selectedCategoryId);
       setState(() {
         aniControllers = List.generate(
-            products_global.length,
-                (index) => AnimationController(
-                vsync: this, duration: const Duration(milliseconds: 450)));
+          products_global.length,
+              (index) => AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 450),
+          ),
+        );
         cantHelper = List.generate(products_global.length, (index) => 0);
         productKeys = List.generate(products_global.length, (index) => GlobalKey());
       });
     } catch (e) {
-      print('Error fetching products: $e');
-      setState(() {
-      });
+      print('Error fetching productos: $e');
     }
   }
+
 
   void colHeight (double _colHeight) {
     widgetHeight = _colHeight;
