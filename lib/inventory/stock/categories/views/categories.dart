@@ -32,13 +32,6 @@ class _CategoriesState extends State<Categories> {
   List<String> selectedCategories = [];
   bool isSelecting = false;
   final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
-  bool _showBlurr = false;
-
-  void _onShowBlur(bool showBlur){
-    setState(() {
-      _showBlurr = showBlur;
-    });
-  }
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -158,7 +151,7 @@ class _CategoriesState extends State<Categories> {
         isSelecting = false;
         selectedCategories.clear();
       } else {
-        print('1Error al eliminar la categoría $categoryId: ${response.statusCode}');
+        print('Error al eliminar la categoría $categoryId: ${response.statusCode}');
       }
     } catch (e) {
       print('Error al eliminar la categoría $categoryId: $e');
@@ -396,7 +389,7 @@ class _CategoriesState extends State<Categories> {
               ),
             ),
           ) : Expanded(
-            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: _onShowBlur,),
+            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur),
           ),
           if (isSelecting) Container(
             height: MediaQuery.of(context).size.height * 0.05,

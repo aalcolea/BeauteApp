@@ -6,14 +6,17 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../categories/forms/categoryBox.dart';
+import '../services/productsService.dart';
 
 class ProductDetails extends StatefulWidget {
+  final int idProduct;
   final String nameProd;
   final String descriptionProd;
-  final int barCode;
-  final String stock;
+  final String barCode;
+  final int stock;
   final double precio;
-  const ProductDetails({super.key, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio});
+  final int catId;
+  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -43,9 +46,22 @@ class _ProductDetailsState extends State<ProductDetails> {
   String? oldPrecioProd;
   String? oldBarcode;
   String? oldStock;
-
+  int _catID = 0;
   double ? screenWidth;
   double ? screenHeight;
+  final productService = ProductService();
+  Future<void> updateProduct() async {
+    try{
+      int? stock = int.tryParse(stockController.text);
+      await productService.updateProductInfo(idProduct: widget.idProduct, name: nameController.text, price: widget.precio , barCod: barCodeController.text, catId: _catID, desc : widget.descriptionProd , cant: stock ?? 0);
+    }catch(e){
+      print('Error al crear producto');
+    } finally {
+      setState(() {
+        //colordar isloading
+      });
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -84,6 +100,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     barCodeController.text = widget.barCode.toString();
     stockController.text = widget.stock.toString();
     precioController.text = widget.precio.toString();
+    _catID =  widget.catId;
     // TODO: implement initState
     super.initState();
   }
@@ -94,7 +111,9 @@ class _ProductDetailsState extends State<ProductDetails> {
     keyboardVisibilitySubscription.cancel();
     super.dispose();
   }
-
+  void onSelectedCat (int catID) {
+    _catID = catID;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,14 +185,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                         });
                       } : (){
                         setState(() {
-                          nameController.text != oldNameProd! || descriptionController.text != oldDescriptionProd! ||
+                          _catID != widget.catId || nameController.text != oldNameProd! || descriptionController.text != oldDescriptionProd! ||
                               barCodeController.text != oldBarcode! || stockController.text != oldStock! || precioController.text != oldPrecioProd! ?
-                          showOverlay(
-                            context,
-                            const CustomToast(
-                              message: 'Datos actualizados correctamente',
-                            ),
-                          ) :  showOverlay(
+                          updateProduct() :  showOverlay(
                               context,
                               const CustomToast(
                               message: 'No se hicieron cambios',
@@ -238,7 +252,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               Padding(padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
-                                  child: CategoryBox(borderType: 2, onSelectedCat: null))]),
+                                  child: CategoryBox(  borderType: 2, onSelectedCat: onSelectedCat,selectedCatId: widget.catId))]),
                           Row(
                             children: [
                               Expanded(

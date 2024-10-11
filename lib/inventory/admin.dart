@@ -331,6 +331,8 @@ class _adminInvState extends State<adminInv> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
               child: Container(
+                width: double.infinity,
+                height: double.infinity,
                 color: Colors.black54.withOpacity(0.3),
               ),
             ),
