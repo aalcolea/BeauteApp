@@ -19,9 +19,6 @@ Future<bool> showDeleteProductConfirmationDialog(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               color: Colors.white,
-              boxShadow: const [
-                BoxShadow(blurRadius: 3.5, offset: Offset(0, 0))
-              ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
