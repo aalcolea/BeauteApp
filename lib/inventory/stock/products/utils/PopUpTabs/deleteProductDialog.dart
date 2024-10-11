@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-Future<bool> showDeleteProductConfirmationDialog(BuildContext context, Function onDelete) {
+Future<bool> showDeleteProductConfirmationDialog(
+    BuildContext context, Future<void> Function() onDelete) {
   return showDialog<bool>(
     context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) {
       return Material(
         color: Colors.transparent,
-        child:
-        Center(
+        child: Center(
           child: Container(
             margin: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.04),
@@ -19,9 +19,6 @@ Future<bool> showDeleteProductConfirmationDialog(BuildContext context, Function 
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               color: Colors.white,
-              boxShadow: const [
-                BoxShadow(blurRadius: 3.5, offset: Offset(0, 0))
-              ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -78,8 +75,8 @@ Future<bool> showDeleteProductConfirmationDialog(BuildContext context, Function 
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
-                        onDelete();
+                      onPressed: () async {
+                        await onDelete();
                         Navigator.of(context).pop(true);
                       },
                       child: Container(

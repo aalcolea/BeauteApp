@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:beaute_app/agenda/models/clientModel.dart';
+import 'package:flutter/services.dart';
+import '../../../regEx.dart';
 
 class AddClientAndAppointment extends StatefulWidget {
   final String clientNamefromAppointmetForm;
@@ -8,6 +9,7 @@ class AddClientAndAppointment extends StatefulWidget {
     String,
     String,
     int,
+      bool,
   ) onSendDataToAppointmentForm;
 
   const AddClientAndAppointment(
@@ -26,7 +28,11 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
       TextEditingController();
   TextEditingController numberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  Client? _selectedClient;
+  //errores
+  bool nameError = false;
+  bool celError = false;
+  bool emailError = false;
+  //
 
   @override
   void initState() {
@@ -36,18 +42,27 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
 
   void onSendDataToAppointmentForm() {
     setState(() {
-      widget.onSendDataToAppointmentForm(
-        _clientNamefromAppointmetForm.text,
-        emailController.text,
-        int.parse(numberController.text),
-      );
+        emailController.text.isEmpty ? emailError = true : emailError = false;
+        numberController.text.isEmpty || numberController.text.length < 10 ? celError = true : celError = false;
+      if(emailError == false && celError == false && emailController.text.isNotEmpty && numberController.text.isNotEmpty){
+        widget.onSendDataToAppointmentForm(
+          _clientNamefromAppointmetForm.text,
+          emailController.text,
+          int.parse(numberController.text),
+          false,
+        );
+        print(_clientNamefromAppointmetForm.text);
+        print(emailController.text);
+        print('${int.parse(numberController.text)}');
+        Navigator.of(context).pop(true);
+      }else {
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
+    return Container(
         padding: EdgeInsets.only(
           left: MediaQuery.of(context).size.width * 0.02,
           right: MediaQuery.of(context).size.width * 0.02,
@@ -106,7 +121,13 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
             ),
             TextFormField(
               controller: _clientNamefromAppointmetForm,
+              inputFormatters: [
+                RegEx(type: InputFormatterType.alphanumeric),
+              ],
               decoration: InputDecoration(
+                error: nameError ? const Text('Agregar nombre', style: TextStyle(
+                  color: Colors.red,
+                ),) : null,
                 contentPadding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.03),
                 hintText: 'Nombre completo',
@@ -140,7 +161,17 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
             ),
             TextFormField(
               controller: numberController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(10),
+                RegEx(type: InputFormatterType.numeric),
+              ],
               decoration: InputDecoration(
+                error: celError && numberController.text.isEmpty? const Text('Agregar número', style: TextStyle(
+                  color: Colors.red,
+                ),) : celError && numberController.text.length < 10 ? const Text('El número debe tener 10 digitos', style: TextStyle(
+                  color: Colors.red,
+                ),) : null,
                 contentPadding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.03),
                 hintText: 'No. Celular',
@@ -174,10 +205,14 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
             ),
             Padding(
               padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.width * 0.07),
+                  bottom: MediaQuery.of(context).size.width * 0.05),
               child: TextFormField(
                 controller: emailController,
+                inputFormatters: [
+                  RegEx(type: InputFormatterType.email),
+                ],
                 decoration: InputDecoration(
+                  error: emailError ? const Text('Agregar correo', style: TextStyle(color: Colors.red),) : null,
                   contentPadding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.03),
                   hintText: 'Correo electrónico',
@@ -191,33 +226,32 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
             ElevatedButton(
               onPressed: () {
                 onSendDataToAppointmentForm();
-                Navigator.of(context).pop(true);
               },
               style: ElevatedButton.styleFrom(
                 elevation: 8,
                 surfaceTintColor: Colors.white,
                 splashFactory: InkRipple.splashFactory,
+                minimumSize: const Size(double.infinity, 0),
                 padding: EdgeInsets.symmetric(
                     vertical: MediaQuery.of(context).size.height * 0.0225,
                     horizontal: MediaQuery.of(context).size.width * 0.1),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+                  borderRadius: BorderRadius.circular(10.0),
                   side: const BorderSide(color: Color(0xFF4F2263), width: 2),
                 ),
                 backgroundColor: Colors.white,
               ),
               child: Text(
                 textAlign: TextAlign.center,
-                'Agregar cliente \n y crear cita',
+                'Agregar cliente y crear cita',
                 style: TextStyle(
                   color: const Color(0xFF4F2263),
-                  fontSize: MediaQuery.of(context).size.width * 0.06,
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
                 ),
               ),
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

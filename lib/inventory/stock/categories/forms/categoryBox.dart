@@ -16,6 +16,7 @@ class CategoryBox extends StatefulWidget {
 class _CategoryBoxState extends State<CategoryBox> {
   Map<String, dynamic>? categorySel;
   List<Map<String, dynamic>> items = [];
+  bool lock = false;
 
   @override
   void initState() {
@@ -74,7 +75,7 @@ class _CategoryBoxState extends State<CategoryBox> {
           ),
         );
       }).toList(),
-      onChanged: (selectedCategory) {
+      onChanged: !lock ? (selectedCategory) {
         setState(() {
           categorySel = selectedCategory;
           if (widget.onSelectedCat != null && selectedCategory != null) {
@@ -82,7 +83,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             widget.onSelectedCat!(catID);
           }
         });
-      },
+      } : null,
       decoration: InputDecoration(
         contentPadding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02,
             vertical: widget.borderType == 2 ? MediaQuery.of(context).size.width * 0.02 : 0),
