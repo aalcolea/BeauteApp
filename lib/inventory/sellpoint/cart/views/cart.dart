@@ -69,7 +69,7 @@ class _CartState extends State<Cart> {
     cantControllers.clear();
     totalCart = 0;
     for (int i = 0; i < cartProvider.cart.length; i++) {
-      cantControllers.add(TextEditingController(text: cartProvider.cart[i]['cant_cart'].toString()));
+      cantControllers.add(TextEditingController(text: cartProvider.cart[i]['cant_cart'].toStringAsFixed(0)));
       totalCart += cartProvider.cart[i]['price'] * cartProvider.cart[i]['cant_cart'];
     }
     super.didChangeDependencies();
@@ -253,7 +253,7 @@ class _CartState extends State<Cart> {
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  '\$${cartProvider.cart[index]['cant_cart'] * cartProvider.cart[index]['price']}',
+                                                  '\$${(cartProvider.cart[index]['cant_cart'] * cartProvider.cart[index]['price']).toStringAsFixed(2)}',
                                                   style: TextStyle(
                                                     color: const Color(0xFF4F2263),
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
@@ -307,7 +307,7 @@ class _CartState extends State<Cart> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '\$$totalCart',
+                      '\$${totalCart.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Color(0xFF4F2263),
                         fontWeight: FontWeight.bold,
