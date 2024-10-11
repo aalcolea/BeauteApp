@@ -151,6 +151,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                   removeOverlay();
                   setState(() {});
                 },
+                onShowBlur: widget.onShowBlur,
               ),
             ),
           );

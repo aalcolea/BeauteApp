@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/deleteProductDialog.dart';
+import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/modifyStockDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../agenda/utils/showToast.dart';
@@ -21,8 +22,11 @@ class ProductOptions extends StatefulWidget {
   final int catId;
   final Function(double) columnHeight;
   final Future<void> Function() onProductDeleted;
+  final void Function(
+      bool
+      ) onShowBlur;
 
-  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted,
+  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted, required this.onShowBlur,
   });
 
   @override
@@ -169,48 +173,22 @@ class _ProductOptionsState extends State<ProductOptions> {
                               ),
                             );
                           },
-                          child: Text(
+                          style: const ButtonStyle(
+                            alignment: Alignment.centerLeft,
+                          ),
+                          child: const Text(
                             'Editar producto',
                             style: TextStyle(
                                 color: Color(0xFF4F2263)
                             ),
                           ),
-                          style: ButtonStyle(
-                            alignment: Alignment.centerLeft,
-                          ),
                         ),
                       )
                     ],
                   ),
                 ),
                 Divider(
-                  color: Color(0xFF4F2263).withOpacity(0.1),
-                  thickness: MediaQuery.of(context).size.width * 0.004,
-                ),
-                Flexible(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-
-                          },
-                          child: Text(
-                            'Modificar stock',
-                            style: TextStyle(
-                                color: Color(0xFF4F2263)
-                            ),
-                          ),
-                          style: ButtonStyle(
-                              alignment: Alignment.centerLeft
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Divider(
-                  color: Color(0xFF4F2263).withOpacity(0.1),
+                  color: const Color(0xFF4F2263).withOpacity(0.1),
                   thickness: MediaQuery.of(context).size.width * 0.004,
                 ),
                 Flexible(
@@ -220,6 +198,39 @@ class _ProductOptionsState extends State<ProductOptions> {
                         child: TextButton(
                           onPressed: () {
                             widget.onClose();
+                            widget.onShowBlur(true);
+                            showModifyproductStockDialog(context, widget.nombre, widget.stock, () async {
+
+                            }).then((_) {
+                              widget.onShowBlur(false);
+                            });
+                          },
+                          style: const ButtonStyle(
+                              alignment: Alignment.centerLeft
+                          ),
+                          child: const Text(
+                            'Modificar stock',
+                            style: TextStyle(
+                                color: Color(0xFF4F2263)
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Divider(
+                  color: const Color(0xFF4F2263).withOpacity(0.1),
+                  thickness: MediaQuery.of(context).size.width * 0.004,
+                ),
+                Flexible(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            widget.onClose();
+                            widget.onShowBlur(true);
                             showDeleteProductConfirmationDialog(context, () async {
                               await productService.deleteProduct(widget.id);
                               if (mounted) {
@@ -231,6 +242,8 @@ class _ProductOptionsState extends State<ProductOptions> {
                                 );
                               }
                               await widget.onProductDeleted();
+                            }).then((_) {
+                              widget.onShowBlur(false);
                             });
                           },
                           style: const ButtonStyle(
