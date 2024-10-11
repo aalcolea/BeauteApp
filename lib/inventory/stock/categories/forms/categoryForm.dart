@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:beaute_app/regEx.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -182,6 +183,7 @@ class _CategoryFormState extends State<CategoryForm> {
                   width: double.infinity,
                   height: MediaQuery.of(context).size.width * 0.105,
                   child: TextFormField(
+                    inputFormatters: [RegEx(type: InputFormatterType.alphanumeric)],
                     controller: nameController,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(

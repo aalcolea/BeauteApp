@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
@@ -95,6 +96,10 @@ class TextProdField extends StatelessWidget {
   final VoidCallback? onEditingComplete;
   final ValueChanged<String>? onChanged;
   final String? text;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
+  final Widget? label;
+  final TextStyle? textStyle;
 
   const TextProdField({
     Key? key,
@@ -102,13 +107,19 @@ class TextProdField extends StatelessWidget {
     this.focusNode,
     this.controller,
     this.onEditingComplete,
-    this.onChanged, this.text,
+    this.onChanged, this.text, this.inputFormatters, this.keyboardType, this.label, this.textStyle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
+    final defaultStyleLetterColor =TextStyle(
+        color: const Color(0xFF4F2263).withOpacity(0.5),
+    );
+
     return TextFormField(
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       enabled: enabled,
       focusNode: focusNode,
       controller: controller,
@@ -120,9 +131,7 @@ class TextProdField extends StatelessWidget {
         ),
         label: Text(
           text!,
-          style: TextStyle(
-            color: const Color(0xFF4F2263).withOpacity(0.5),
-          ),
+          style: textStyle ?? defaultStyleLetterColor,
         ),
         floatingLabelBehavior: FloatingLabelBehavior.never,
         border: const OutlineInputBorder(

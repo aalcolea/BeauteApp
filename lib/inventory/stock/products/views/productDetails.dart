@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:beaute_app/inventory/stock/products/styles/productFormStyles.dart';
+import 'package:beaute_app/regEx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -218,6 +219,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
                               child: TextProdField(
+                                inputFormatters: [
+                                  RegEx(type: InputFormatterType.alphanumeric),
+                                ],
                                 controller: nameController,
                                 enabled: editProd,
                                 text: 'Nombre del producto',
@@ -231,6 +235,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
                                   child: TextProdField(
+                                    inputFormatters: [RegEx(type: InputFormatterType.alphanumeric)],
                                     controller: descriptionController,
                                     enabled: editProd,
                                     text: 'Descripcion del producto',
@@ -242,6 +247,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
                                   child: TextProdField(
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      RegEx(type: InputFormatterType.numeric)],
                                     controller: barCodeController,
                                     enabled: editProd,
                                     text: 'Codigo del producto',
@@ -288,6 +296,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         right: MediaQuery.of(context).size.width * 0.03,
                                       ),
                                     child: TextProdField(
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [RegEx(type: InputFormatterType.numeric)],
                                       controller: stockController,
                                       enabled: editProd,
                                       text: 'Piezas',
@@ -327,6 +337,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         right: MediaQuery.of(context).size.width * 0.03,
                                       ),
                                     child: TextProdField(
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      inputFormatters: [RegEx(type: InputFormatterType.numeric)],
                                       controller: precioController,
                                       enabled: editProd,
                                       text: 'MXN',
