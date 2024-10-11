@@ -51,7 +51,6 @@ class _ProductOptionsState extends State<ProductOptions> {
         _columnHeight = renderBox.size.height;
         widget.columnHeight(_columnHeight);
       });
-      print('Altura total de la Column: ${widget.columnHeight}');
     }
   }
 
