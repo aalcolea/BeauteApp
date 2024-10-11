@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:beaute_app/agenda/forms/clientForm.dart';
+import 'package:beaute_app/regEx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -19,26 +19,6 @@ import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
 import '../utils/timer.dart';
 
-class AlfaNumericInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    if (newValue.text.startsWith(' ')) {
-      return oldValue;
-    }
-    if (oldValue.text.endsWith(' ') &&
-        !newValue.text.endsWith(' ') &&
-        newValue.text.length == oldValue.text.length - 1 &&
-        oldValue.text.length > 1) {
-      return newValue;
-    }
-    return FilteringTextInputFormatter.allow(
-      RegExp(r'[a-zA-ZñÑ0-9\s]'),
-    ).formatEditUpdate(oldValue, newValue);
-  }
-}
 
 class AppointmentForm extends StatefulWidget {
   final bool docLog;
@@ -126,6 +106,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   Future<void> addClientAndSubmitAppointment() async {
+    setState(() {
+      showBlurr = true;
+    });
     bool? confirmed = await showAddClientAndAppointment();
     if (confirmed == true) {
       await createClient();
@@ -145,31 +128,27 @@ class _AppointmentFormState extends State<AppointmentForm> {
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
         return Stack(
+          alignment: visibleKeyboard ? Alignment.topCenter : Alignment.center,
           children: [
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-              child: Container(
-                color: Colors.black54.withOpacity(0.3),
-              ),
-            ),
-            Center(
-              child: Material(
+            Material(
                   color: Colors.transparent,
                   child: Container(
                     margin: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.04),
                     child: AddClientAndAppointment(
-                        clientNamefromAppointmetForm:
-                            _clientTextController.text,
-                        onSendDataToAppointmentForm:
-                            _onRecieveDataToAppointmentForm,
+                        clientNamefromAppointmetForm: _clientTextController.text,
+                        onSendDataToAppointmentForm: _onRecieveDataToAppointmentForm,
                         onConfirm: _onConfirm),
                   )),
-            ),
           ],
         );
       },
-    );
+    ).then((value){
+      setState(() {
+        showBlurr = false;
+      });
+      return value;
+    });
   }
 
   void _onCancelConfirm(bool cancelConfirm, BuildContext dialogContext) {
@@ -180,11 +159,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   void _onRecieveDataToAppointmentForm(
-      String _name, String _email, int celnumber) {
+      String _name, String _email, int celnumber, bool blurr) {
     setState(() {
       _clientTextController.text = _name;
       emailController.text = _email;
       number = celnumber;
+      showBlurr = blurr;
     });
   }
 
@@ -557,7 +537,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     _clientTextController = fieldTextEditingController;
                                     return FieldsToWrite(
                                       inputFormatters: [
-                                        AlfaNumericInputFormatter(),
+                                        RegEx(type: InputFormatterType.alphanumeric),
                                       ],
                                       eneabled: widget.nameClient == null ? true : false,
                                       textInputAction: TextInputAction.done,
@@ -714,7 +694,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                               0.026),
                                   child: FieldsToWrite(
                                     inputFormatters: [
-                                      AlfaNumericInputFormatter(),
+                                      RegEx(type: InputFormatterType.alphanumeric),
                                     ],
                                     suffixIcon: Icon(
                                       CupertinoIcons.pencil_ellipsis_rectangle,
@@ -1032,7 +1012,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
               child: Container(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.black54.withOpacity(0.3),
               ),
             ),
           )

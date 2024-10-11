@@ -5,34 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../regEx.dart';
 import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
 
-class NameInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    // Verificar si el nuevo texto comienza con un espacio
-    if (newValue.text.startsWith(' ')) {
-      // Si comienza con un espacio, no permitimos la actualización y devolvemos el valor anterior
-      return oldValue;
-    }
-
-    // Verificar si el texto anterior termina con un espacio y el nuevo texto no
-    // Esto indica que el usuario está intentando eliminar un espacio final
-    if (oldValue.text.endsWith(' ') &&
-        !newValue.text.endsWith(' ') &&
-        newValue.text.length == oldValue.text.length - 1 &&
-        oldValue.text.length > 1) {
-      // Permitimos la eliminación del espacio final
-      return newValue;
-    }
-    return FilteringTextInputFormatter.allow(
-      RegExp(r'[a-zA-ZñÑ0-9\s]'), // Expresión regular que permite letras y espacios
-    ).formatEditUpdate(oldValue, newValue);
-  }
-}
 
 class EmailInputFormatter extends TextInputFormatter {
   @override
@@ -109,7 +84,11 @@ class ClientFormState extends State<ClientForm> {
   double? screenWidth;
   double? screenHeight;
   bool showBlurr = false;
-
+  //errores
+  bool nameError = false;
+  bool celError = false;
+  bool emailError = false;
+  //
   void hideKeyBoard() {
     if (visibleKeyboard) {
       FocusScope.of(context).unfocus();
@@ -127,6 +106,11 @@ class ClientFormState extends State<ClientForm> {
   }
 
   Future<void> createClient() async {
+    setState(() {
+      _nameController.text.isEmpty ? nameError = true : nameError = false;
+      _emailController.text.isEmpty ? emailError = true : emailError = false;
+      _numberController.text.isEmpty || _numberController.text.length < 10 ? celError = true : celError = false;
+    });
     try {
       var response = await http.post(
         Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
@@ -159,6 +143,7 @@ class ClientFormState extends State<ClientForm> {
         if(errorResponse['errors'] != null && errorResponse['errors']['number'] != null) {
           showClienteNumberExistsAlert(context, errorResponse['errors']['number'][0]);
         }else {
+          _numberController.text.isEmpty ? null :
           showClienteNumberExistsAlert(context, 'Error al crear cliente: ${response.body}');
         }
       }else {
@@ -292,11 +277,15 @@ class ClientFormState extends State<ClientForm> {
                                   top: 0),
                               child: TextFormField(
                                 inputFormatters: [
-                                  NameInputFormatter(),
+                                  RegEx(type: InputFormatterType.name),
+                                  //NameInputFormatter(),
                                 ],
                                 focusNode: focusNodeClient,
                                 controller: _nameController,
                                 decoration: InputDecoration(
+                                  error: nameError ? const Text('Agregar nombre', style: TextStyle(
+                                    color: Colors.red,
+                                  ),) : null,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: screenWidth! < 370
                                           ? MediaQuery.of(context).size.width * 0.02
@@ -348,12 +337,15 @@ class ClientFormState extends State<ClientForm> {
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(10),
+                                  RegEx(type: InputFormatterType.numeric),
                                 ],
                                 controller: _numberController,
                                 decoration: InputDecoration(
-                                  errorText: errorInit
-                                      ? 'El número debe ser de 10 dígitos'
-                                      : null,
+                                  error: celError && _numberController.text.isEmpty? const Text('Agregar número', style: TextStyle(
+                                    color: Colors.red,
+                                  ),) : celError && _numberController.text.length < 10 ? const Text('El número debe tener 10 digitos', style: TextStyle(
+                                    color: Colors.red,
+                                  ),) : null,
                                   hintText: 'No. Celular',
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: screenWidth! < 370
@@ -411,11 +403,12 @@ class ClientFormState extends State<ClientForm> {
                                   top: MediaQuery.of(context).size.width * 0.0225),
                               child: TextFormField(
                                 inputFormatters: [
-                                  EmailInputFormatter(),
-                                ],
+                                  RegEx(type: InputFormatterType.email),
+                                  ],
                                 focusNode: focusNodeEmail,
                                 controller: _emailController,
                                 decoration: InputDecoration(
+                                  error: emailError ? const Text('Agregar correo', style: TextStyle(color: Colors.red),) : null,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: screenWidth! < 370
                                           ? MediaQuery.of(context).size.width * 0.02
