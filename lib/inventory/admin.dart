@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
 import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/views/cart.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:soundpool/soundpool.dart';
+
 class adminInv extends StatefulWidget {
   const adminInv({super.key});
 
@@ -31,6 +33,13 @@ class _adminInvState extends State<adminInv> {
   bool showScaner = false;
   String? scanedProd;
   Soundpool? pool;
+  final Listenerblurr _listenerblurr = Listenerblurr();
+
+  void changeBlurr(){
+    _listenerblurr.setChange(
+      false,
+    );
+  }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
     setState(() {
@@ -330,11 +339,19 @@ class _adminInvState extends State<adminInv> {
             visible: _showBlurr,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.black54.withOpacity(0.3),
-              ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showBlurr = false;
+                    changeBlurr();
+                  });
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.black54.withOpacity(0.3),
+                ),
+              )
             ),
           )
         ],
@@ -345,7 +362,7 @@ class _adminInvState extends State<adminInv> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return Categories(onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur);
+        return Categories(onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
       case 2:
         return Cart(onHideBtnsBottom: _onHideBtnsBottom);
       case 3:
