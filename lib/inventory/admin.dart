@@ -37,9 +37,7 @@ class _adminInvState extends State<adminInv> {
   final Listenerblurr _listenerblurr = Listenerblurr();
 
   void changeBlurr(){
-    _listenerblurr.setChange(
-      false,
-    );
+    _listenerblurr.setChange(false,);
   }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {

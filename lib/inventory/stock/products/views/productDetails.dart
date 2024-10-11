@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:beaute_app/inventory/stock/products/styles/productFormStyles.dart';
+import 'package:beaute_app/inventory/stock/utils/listenerCatBox.dart';
 import 'package:beaute_app/regEx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   FocusNode barCodeFocus = FocusNode();
   //
   bool editProd = false;
+  ListenerCatBox listernerCatBox = ListenerCatBox();
+  bool isLoading = false;
   //
   String? oldNameProd;
   String? oldDescriptionProd;
@@ -51,15 +54,36 @@ class _ProductDetailsState extends State<ProductDetails> {
   double ? screenWidth;
   double ? screenHeight;
   final productService = ProductService();
+
+  void changeLockCatBox(){
+    listernerCatBox.setChange(!editProd);
+  }
+
   Future<void> updateProduct() async {
+    setState(() {
+      isLoading = true;
+    });
     try{
       int? stock = int.tryParse(stockController.text);
-      await productService.updateProductInfo(idProduct: widget.idProduct, name: nameController.text, price: widget.precio , barCod: barCodeController.text, catId: _catID, desc : widget.descriptionProd , cant: stock ?? 0);
+      await productService.updateProductInfo(idProduct: widget.idProduct, name: nameController.text, price: widget.precio ,
+          barCod: barCodeController.text, catId: _catID, desc : widget.descriptionProd , cant: stock ?? 0).then((_){
+        if(mounted){
+          showOverlay(
+              context,
+              const CustomToast(
+                message: 'Producto actualizado exitosamente',
+              ));}});
     }catch(e){
       print('Error al crear producto');
+      if(mounted){
+        showOverlay(
+            context,
+            const CustomToast(
+              message: 'Error al crear producto',
+            ));}
     } finally {
       setState(() {
-        //colordar isloading
+        isLoading = false;
       });
     }
   }
@@ -102,6 +126,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     stockController.text = widget.stock.toString();
     precioController.text = widget.precio.toString();
     _catID =  widget.catId;
+    changeLockCatBox();
     // TODO: implement initState
     super.initState();
   }
@@ -174,18 +199,19 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),)
                       ])),),
                   Spacer(),
-                  IconButton(
+                  IconButton(//onPressed del icono de modificar
                       onPressed: editProd == false ? () {
                         setState(() {
                           editProd = true;
+                          changeLockCatBox();
                           oldNameProd = nameController.text;
                           oldDescriptionProd = descriptionController.text;
                           oldBarcode = barCodeController.text;
                           oldStock = stockController.text;
                           oldPrecioProd = precioController.text;
                         });
-                      } : (){
-                        setState(() {
+                      } : (){//onPressedDelBoton
+                        setState(() {//onPresseddelGuardar
                           _catID != widget.catId || nameController.text != oldNameProd! || descriptionController.text != oldDescriptionProd! ||
                               barCodeController.text != oldBarcode! || stockController.text != oldStock! || precioController.text != oldPrecioProd! ?
                           updateProduct() :  showOverlay(
@@ -194,6 +220,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               message: 'No se hicieron cambios',
                           ));
                           editProd = false;
+                          changeLockCatBox();
                         });
                       },
                       icon: !editProd ? const Icon(
@@ -260,7 +287,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               Padding(padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
-                                  child: CategoryBox(  borderType: 2, onSelectedCat: onSelectedCat,selectedCatId: widget.catId))]),
+                                  child: CategoryBox(formType: 2, onSelectedCat: onSelectedCat,selectedCatId: widget.catId, listernerCatBox: listernerCatBox))]),
                           Row(
                             children: [
                               Expanded(
@@ -346,6 +373,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ],
                                 )),
                           ],),
+                          SizedBox(height: editProd ? 0 : 15,),
+                          Visibility(
+                              visible: isLoading,
+                              child: const CircularProgressIndicator(
+                                color: Color(0xFF4F2263),
+                              )),
                           Visibility(
                             visible: editProd,
                             child: Container(
