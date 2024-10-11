@@ -93,11 +93,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       final RenderBox renderBox = key.currentContext
           ?.findRenderObject() as RenderBox;
 
-      if (renderBox == null) {
-        print('RenderBox is null, unable to calculate options height.');
-        return;
-      }
-
       final size = renderBox.size;
       final position = renderBox.localToGlobal(Offset.zero);
 
@@ -133,10 +128,10 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                 descripcion: products_global[index]['descripcion'],
                 columnHeight: colHeight,
                 onProductDeleted: () async {
-                  await ProductService().fetchProducts(widget.selectedCategoryId);
+                  await refreshProducts();
                   removeOverlay();
                   setState(() {});
-                }
+                },
               ),
             ),
           );
@@ -155,6 +150,13 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       overlayEntry = null;
     }
     widget.onShowBlur(false); // Elimina el blur si estaba activo
+  }
+  Future<void> refreshProducts() async {
+    try {
+      await fetchProducts();
+    } catch (e) {
+      print('Error en refresh productos $e');
+    }
   }
 
   @override
