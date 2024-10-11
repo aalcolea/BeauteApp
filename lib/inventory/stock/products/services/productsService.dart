@@ -38,7 +38,7 @@ class ProductService {
     }
   }
 
-  Future<void> createProduct({required String nombre, required double precio, required String codigoBarras, String? descripcion, int? categoryId,
+  Future<bool> createProduct({required String nombre, required double precio, required String codigoBarras, String? descripcion, int? categoryId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
@@ -59,6 +59,7 @@ class ProductService {
       final responseBody = await http.Response.fromStream(response);
       if (response.statusCode == 201) {
         print('Producto creado exitosamente');
+        return true;
       } else {
         final responseData = jsonDecode(responseBody.body);
         throw Exception(responseData['message'] ?? 'Error al crear el producto');

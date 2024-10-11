@@ -1,3 +1,4 @@
+import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
 import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,15 +16,15 @@ class Products extends StatefulWidget {
   final String selectedCategory;
   final int selectedCategoryId;
   final VoidCallback onBack;
+  final Listenerblurr listenerblurr;
 
-  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId, required this.onShowBlur});
+  const Products({super.key, required this.selectedCategory, required this.onBack, required this.selectedCategoryId, required this.onShowBlur, required this.listenerblurr});
 
   @override
-  State<Products> createState() => _ProductsState();
+  ProductsState createState() => ProductsState();
 }
 
-class _ProductsState extends State<Products> with TickerProviderStateMixin {
-
+class ProductsState extends State<Products> with TickerProviderStateMixin {
   List<GlobalKey> productKeys = [];
   OverlayEntry? overlayEntry;
 
@@ -62,25 +63,35 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       cantHelper.add(0);
     }
     fetchProducts();
+    widget.listenerblurr.registrarObservador((newValue){
+      setState(() {
+        if(newValue == false){
+          removeOverlay();
+        }
+      });
+    });
   }
+
   Future<void> fetchProducts() async {
     try {
       final productService = ProductService();
       await productService.fetchProducts(widget.selectedCategoryId);
       setState(() {
         aniControllers = List.generate(
-            products_global.length,
-                (index) => AnimationController(
-                vsync: this, duration: const Duration(milliseconds: 450)));
+          products_global.length,
+              (index) => AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 450),
+          ),
+        );
         cantHelper = List.generate(products_global.length, (index) => 0);
         productKeys = List.generate(products_global.length, (index) => GlobalKey());
       });
     } catch (e) {
-      print('Error fetching products: $e');
-      setState(() {
-      });
+      print('Error fetching productos: $e');
     }
   }
+
 
   void colHeight (double _colHeight) {
     widgetHeight = _colHeight;
@@ -92,11 +103,6 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       final key = productKeys[index];
       final RenderBox renderBox = key.currentContext
           ?.findRenderObject() as RenderBox;
-
-      if (renderBox == null) {
-        print('RenderBox is null, unable to calculate options height.');
-        return;
-      }
 
       final size = renderBox.size;
       final position = renderBox.localToGlobal(Offset.zero);
@@ -115,7 +121,7 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       overlayEntry = OverlayEntry(
         builder: (context) {
           return Positioned(
-            top: topPosition,
+            top: topPosition - 7,
             left: position.dx,
             width: size.width,
             child: IntrinsicHeight(
@@ -133,10 +139,10 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
                 descripcion: products_global[index]['descripcion'],
                 columnHeight: colHeight,
                 onProductDeleted: () async {
-                  await ProductService().fetchProducts(widget.selectedCategoryId);
+                  await refreshProducts();
                   removeOverlay();
                   setState(() {});
-                }
+                },
               ),
             ),
           );
@@ -154,7 +160,14 @@ class _ProductsState extends State<Products> with TickerProviderStateMixin {
       overlayEntry!.remove();
       overlayEntry = null;
     }
-    widget.onShowBlur(false); // Elimina el blur si estaba activo
+    widget.onShowBlur(false);
+  }
+  Future<void> refreshProducts() async {
+    try {
+      await fetchProducts();
+    } catch (e) {
+      print('Error en refresh productos $e');
+    }
   }
 
   @override

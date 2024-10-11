@@ -1,15 +1,18 @@
 import 'dart:ui';
 
+import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
 import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/views/cart.dart';
 import 'package:beaute_app/inventory/scanBarCode.dart';
+import 'package:beaute_app/inventory/stock/products/views/products.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:soundpool/soundpool.dart';
+
 class adminInv extends StatefulWidget {
   const adminInv({super.key});
 
@@ -18,7 +21,7 @@ class adminInv extends StatefulWidget {
 }
 
 class _adminInvState extends State<adminInv> {
-
+  GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   bool _showBlurr = false;
   bool isDocLog = false;
   String currentScreen = "inventario";
@@ -31,6 +34,13 @@ class _adminInvState extends State<adminInv> {
   bool showScaner = false;
   String? scanedProd;
   Soundpool? pool;
+  final Listenerblurr _listenerblurr = Listenerblurr();
+
+  void changeBlurr(){
+    _listenerblurr.setChange(
+      false,
+    );
+  }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
     setState(() {
@@ -129,12 +139,16 @@ class _adminInvState extends State<adminInv> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () {
-                              Navigator.push(context,
-                                CupertinoPageRoute(
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
                                   builder: (context) => ProductForm(),
                                 ),
                               );
+                              if (result == true) {
+                                productsKey.currentState?.refreshProducts();
+                              }
                             },
                             icon: Icon(
                               CupertinoIcons.add_circled_solid,
@@ -330,11 +344,19 @@ class _adminInvState extends State<adminInv> {
             visible: _showBlurr,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.black54.withOpacity(0.3),
-              ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showBlurr = false;
+                    changeBlurr();
+                  });
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.black54.withOpacity(0.3),
+                ),
+              )
             ),
           )
         ],
@@ -345,17 +367,11 @@ class _adminInvState extends State<adminInv> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return Categories(onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur);
+        return Categories(productsKey: productsKey, onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
       case 2:
         return Cart(onHideBtnsBottom: _onHideBtnsBottom);
-      case 3:
-        return Container(
-          color: Colors.green,
-        );
       default:
-        return Container(
-          color: Colors.yellow,
-        );
+        return Container();
     }
   }
 

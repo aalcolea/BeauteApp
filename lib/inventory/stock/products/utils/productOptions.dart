@@ -20,9 +20,10 @@ class ProductOptions extends StatefulWidget {
   final int stock;
   final int catId;
   final Function(double) columnHeight;
-  final VoidCallback onProductDeleted;
+  final Future<void> Function() onProductDeleted;
 
-  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted});
+  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted,
+  });
 
   @override
   State<ProductOptions> createState() => _ProductOptionsState();
@@ -50,7 +51,6 @@ class _ProductOptionsState extends State<ProductOptions> {
         _columnHeight = renderBox.size.height;
         widget.columnHeight(_columnHeight);
       });
-      print('Altura total de la Column: ${widget.columnHeight}');
     }
   }
 
@@ -221,7 +221,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           onPressed: () {
                             widget.onClose();
                             showDeleteProductConfirmationDialog(context, () async {
-                              productService.deleteProduct(widget.id);
+                              await productService.deleteProduct(widget.id);
                               if (mounted) {
                                 showOverlay(
                                   context,
@@ -229,11 +229,8 @@ class _ProductOptionsState extends State<ProductOptions> {
                                     message: 'Producto eliminado',
                                   ),
                                 );
-                                widget.onProductDeleted();
-                                if (Navigator.of(context).canPop()) {
-                                  Navigator.of(context).pop();
-                                }
                               }
+                              await widget.onProductDeleted();
                             });
                           },
                           style: const ButtonStyle(
