@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 class Categories extends StatefulWidget {
+  final GlobalKey<ProductsState> productsKey;
   final void Function(
       bool,
   ) onHideBtnsBottom;
@@ -14,7 +15,7 @@ class Categories extends StatefulWidget {
       bool,
       ) onShowBlur;
 
-  const Categories({super.key, required this.onHideBtnsBottom, required this.onShowBlur});
+  const Categories({super.key, required this.onHideBtnsBottom, required this.onShowBlur, required this.productsKey});
 
   @override
   State<Categories> createState() => _CategoriesState();
@@ -389,7 +390,7 @@ class _CategoriesState extends State<Categories> {
               ),
             ),
           ) : Expanded(
-            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur),
+            child: Products(key: widget.productsKey, selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur),
           ),
           if (isSelecting) Container(
             height: MediaQuery.of(context).size.height * 0.05,

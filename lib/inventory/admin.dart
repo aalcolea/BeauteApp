@@ -4,12 +4,14 @@ import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
 import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/views/cart.dart';
 import 'package:beaute_app/inventory/scanBarCode.dart';
+import 'package:beaute_app/inventory/stock/products/views/products.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:soundpool/soundpool.dart';
+
 class adminInv extends StatefulWidget {
   const adminInv({super.key});
 
@@ -18,7 +20,7 @@ class adminInv extends StatefulWidget {
 }
 
 class _adminInvState extends State<adminInv> {
-
+  GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   bool _showBlurr = false;
   bool isDocLog = false;
   String currentScreen = "inventario";
@@ -129,12 +131,16 @@ class _adminInvState extends State<adminInv> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () {
-                              Navigator.push(context,
-                                CupertinoPageRoute(
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
                                   builder: (context) => ProductForm(),
                                 ),
                               );
+                              if (result == true) {
+                                productsKey.currentState?.refreshProducts();
+                              }
                             },
                             icon: Icon(
                               CupertinoIcons.add_circled_solid,
@@ -345,7 +351,7 @@ class _adminInvState extends State<adminInv> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return Categories(onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur);
+        return Categories(productsKey: productsKey, onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur);
       case 2:
         return Cart(onHideBtnsBottom: _onHideBtnsBottom);
       case 3:

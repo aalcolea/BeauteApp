@@ -35,6 +35,7 @@ class _ProductFormState extends State<ProductForm> {
   double ? screenWidth;
   double ? screenHeight;
   int _catID = 0;
+  bool isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -43,7 +44,6 @@ class _ProductFormState extends State<ProductForm> {
     screenHeight = MediaQuery.of(context).size.height;
   }
 
-  bool isLoading = false;
   void changeFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
@@ -90,20 +90,19 @@ class _ProductFormState extends State<ProductForm> {
       return;
     }
     setState(() {
-      //colocar isloading true (Mario lo debe ver)
+      isLoading = true;
     });
     try {
       await productService.createProduct(nombre: nameController.text, precio: double.parse(precioController.text), codigoBarras: barCodeController.text,
         descripcion: descriptionController.text, categoryId: _catID,
       );
       print('Producto creado exitosamente');
-
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } catch (e) {
       print('Error al crear producto');
     } finally {
       setState(() {
-        //colordar isloading
+        isLoading = false;
       });
     }
   }
@@ -260,7 +259,7 @@ class _ProductFormState extends State<ProductForm> {
                        horizontal: MediaQuery.of(context).size.width * 0.2,
                        vertical: MediaQuery.of(context).size.width * 0.05,
                      ),
-                   ), child: null,
+                   ), child: Text(isLoading ? "cargando" : "hola"),
                  )
                ],
              )
