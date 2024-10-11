@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
+
 import '../forms/categoryForm.dart';
 import '../../products/views/products.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,9 +14,10 @@ class Categories extends StatefulWidget {
   ) onHideBtnsBottom;
   final void Function(
       bool,
-      ) onShowBlur;
+  ) onShowBlur;
+  final Listenerblurr listenerblurr;
 
-  const Categories({super.key, required this.onHideBtnsBottom, required this.onShowBlur});
+  const Categories({super.key, required this.onHideBtnsBottom, required this.onShowBlur, required this.listenerblurr});
 
   @override
   State<Categories> createState() => _CategoriesState();
@@ -32,6 +35,7 @@ class _CategoriesState extends State<Categories> {
   List<String> selectedCategories = [];
   bool isSelecting = false;
   final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
+  bool hasMoreItems = true;
 
   void checkKeyboardVisibility() {
     keyboardVisibilitySubscription =
@@ -78,6 +82,9 @@ class _CategoriesState extends State<Categories> {
     checkKeyboardVisibility();
     loadFirstItems();
     print(offset);
+    widget.listenerblurr.registrarObservador((newValue){
+
+    });
   }
 
   @override
@@ -98,28 +105,53 @@ class _CategoriesState extends State<Categories> {
       setState(() {
         items.clear();
         offset = 0;
+        hasMoreItems = true;
       });
       List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
       setState(() {
         items = fetchedItems;
         offset += limit;
       });
+      _ensureAddCatAtTheEnd();
     }catch(e){
       print('Error al cargar los items $e');
     }
   }
   Future<void> loadItems() async{
+    if (!hasMoreItems) return;
     try{
       List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
       setState(() {
-        items.addAll(fetchedItems);
+        // Only add new items that don't already exist in the items list
+        for (var newItem in fetchedItems) {
+          bool exists = items.any((item) => item['id'] == newItem['id']);
+          if (!exists) {
+            items.add(newItem);
+          }
+        }
+
+        if (fetchedItems.length < limit) {
+          hasMoreItems = false; // No more items to load
+        }
         offset += limit;
       });
+      _ensureAddCatAtTheEnd();
       print(offset);
     }catch(e){
       print('Error al cargar mas productos $e');
     }
   }
+
+  void _ensureAddCatAtTheEnd() {
+    items.removeWhere((item) => item['category'] == 'addCat');
+    for (int i = 5; i <= items.length; i += 6) {
+      items.insert(i, {'category': 'addCat', 'id': 'addCat'});
+    }
+    if (items.length % 6 != 0) {
+      items.add({'category': 'addCat', 'id': 'addCat'});
+    }
+  }
+
   Future<List<Map<String, dynamic>>> fetchItems({int limit = 6, int offset = 0}) async{
     final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
     if(response.statusCode == 200){
@@ -162,7 +194,6 @@ class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
     int itemsPerPage = 6;
-    int pageCount = (items.length / itemsPerPage).ceil();
     return Container(
       color: Colors.white,
       child: Column(
@@ -176,14 +207,14 @@ class _CategoriesState extends State<Categories> {
                 ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && hasMoreItems) {
                       loadItems();
                     }
                     return true;
                   },
                   child: PageView.builder(
                       scrollDirection: Axis.vertical,
-                      itemCount: pageCount,
+                      itemCount: (items.length / itemsPerPage).ceil(),
                       itemBuilder: (context, pageIndex) {
                         int startIndex = pageIndex * itemsPerPage;
                         int endIndex = startIndex + itemsPerPage;
@@ -389,7 +420,13 @@ class _CategoriesState extends State<Categories> {
               ),
             ),
           ) : Expanded(
-            child: Products(selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur),
+            child: Products(
+                selectedCategory: _selectedCategory!,
+                onBack: _clearSelectedCategory,
+                selectedCategoryId: selectedCategoryId,
+                onShowBlur: widget.onShowBlur,
+                listenerblurr: widget.listenerblurr,
+            ),
           ),
           if (isSelecting) Container(
             height: MediaQuery.of(context).size.height * 0.05,
@@ -420,21 +457,6 @@ class _CategoriesState extends State<Categories> {
                   backgroundColor: Colors.white,
                   child: const Icon(Icons.delete, color: Colors.red,),
                   heroTag: null,
-                ),
-              ],
-            ),
-          ) else Container(
-            height: MediaQuery.of(context).size.height * 0.05,
-            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.8, bottom: MediaQuery.of(context).size.width * 0.01),
-            child: Row(
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    loadItems();
-                  },
-                  backgroundColor: Colors.white,
-                  heroTag: null,
-                  child: const Icon(CupertinoIcons.arrow_2_circlepath, color: Color(0xFF4F2263)),
                 ),
               ],
             ),
