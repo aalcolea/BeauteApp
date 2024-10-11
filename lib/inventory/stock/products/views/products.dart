@@ -35,6 +35,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   late Animation<double> movLeftCount;
   int ? tapedIndex;
   double widgetHeight = 0.0;
+  bool isLoading = true;
 
 
   void itemCount (index, action){
@@ -73,6 +74,9 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   }
 
   Future<void> fetchProducts() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final productService = ProductService();
       await productService.fetchProducts(widget.selectedCategoryId);
@@ -86,9 +90,13 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
         );
         cantHelper = List.generate(products_global.length, (index) => 0);
         productKeys = List.generate(products_global.length, (index) => GlobalKey());
+        setState(() {
+          isLoading = false;
+        });
       });
     } catch (e) {
       print('Error fetching productos: $e');
+      isLoading = false;
     }
   }
 
@@ -173,7 +181,8 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    return Container(
+    return isLoading ? Center(child: CircularProgressIndicator())
+        : Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.02),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
