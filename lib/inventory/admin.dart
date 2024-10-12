@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:beaute_app/inventory/sellpoint/processStuff/salesHistory.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
 import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
@@ -37,9 +38,7 @@ class _adminInvState extends State<adminInv> {
   final Listenerblurr _listenerblurr = Listenerblurr();
 
   void changeBlurr(){
-    _listenerblurr.setChange(
-      false,
-    );
+    _listenerblurr.setChange(false,);
   }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
@@ -156,6 +155,22 @@ class _adminInvState extends State<adminInv> {
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
                           ),
+
+                          IconButton(
+                            onPressed: () async {
+                             Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SalesHistory(),
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              CupertinoIcons.tickets,
+                              color: Color(0xFF4F2263),
+                              size: MediaQuery.of(context).size.width * 0.1,
+                            ),
+                          ),
                           Builder(builder: (BuildContext context) {
                             return IconButton(
                               onPressed: () {
@@ -222,11 +237,11 @@ class _adminInvState extends State<adminInv> {
                     margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(15),
                         bottomRight: Radius.circular(15)
                       ),
-                      border: Border(
+                      border: const Border(
                         bottom: BorderSide(
                           color: Color(0xFF4F2263),
                           width: 2.5,

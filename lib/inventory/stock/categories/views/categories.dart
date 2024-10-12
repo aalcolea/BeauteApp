@@ -83,7 +83,6 @@ class _CategoriesState extends State<Categories> {
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     loadFirstItems();
-    print(offset);
     widget.listenerblurr.registrarObservador((newValue){
 
     });
