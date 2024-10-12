@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
 import '../../../../regEx.dart';
 import '../services/productsService.dart';
 
@@ -94,7 +96,13 @@ class _ProductFormState extends State<ProductForm> {
     try {
       await productService.createProduct(nombre: nameController.text, precio: double.parse(precioController.text), codigoBarras: barCodeController.text,
         descripcion: descriptionController.text, categoryId: _catID,
-      );
+      ).then((_){
+        if(mounted){
+          showOverlay(
+              context,
+              const CustomToast(
+                message: 'Producto creado exitosamente',
+              ));}});
       print('Producto creado exitosamente');
       Navigator.pop(context, true);
     } catch (e) {
@@ -251,12 +259,17 @@ class _ProductFormState extends State<ProductForm> {
                        Padding(padding: EdgeInsets.only(
                            left: MediaQuery.of(context).size.width * 0.03,
                            right: MediaQuery.of(context).size.width * 0.03),
-                           child: CategoryBox(  borderType: 2, onSelectedCat: onSelectedCat))]),
+                           child: CategoryBox(formType: 1, onSelectedCat: onSelectedCat))]),
 
-                 Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
+                 Padding(padding: EdgeInsets.only(
+                     top: MediaQuery.of(context).size.width * 0.04,
+                     left: MediaQuery.of(context).size.width * 0.03,
+                     right: MediaQuery.of(context).size.width * 0.03,
+                 ),
                  child: ElevatedButton(
                    onPressed: createProduct,
                    style: ElevatedButton.styleFrom(
+                     minimumSize: Size(double.infinity, 0),
                      shape: RoundedRectangleBorder(
                        borderRadius: BorderRadius.circular(10),
                      ),
@@ -265,10 +278,10 @@ class _ProductFormState extends State<ProductForm> {
                        horizontal: MediaQuery.of(context).size.width * 0.15,
                        vertical: MediaQuery.of(context).size.width * 0.03,
                      ),
-                   ), child: Text('Crear Producto', style: TextStyle(
+                   ), child: !isLoading ? Text('Crear Producto', style: TextStyle(
                      fontSize: MediaQuery.of(context).size.width * 0.06,
                      color: Colors.white
-                 ),),
+                 ),) : CircularProgressIndicator(color: Colors.white,),
                  ),),
 
                ],

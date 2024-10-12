@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../utils/listenerCatBox.dart';
 
 class CategoryBox extends StatefulWidget {
-  final int borderType;
+  final int formType;
   final Function(int)? onSelectedCat;
   final int? selectedCatId;
-  const CategoryBox({super.key, required this.borderType, required this.onSelectedCat, this.selectedCatId});
+  final ListenerCatBox? listernerCatBox;
+  const CategoryBox({super.key, required this.formType, required this.onSelectedCat, this.selectedCatId, this.listernerCatBox});
 
   @override
   State<CategoryBox> createState() => _CategoryBoxState();
@@ -21,11 +23,16 @@ class _CategoryBoxState extends State<CategoryBox> {
   @override
   void initState() {
     super.initState();
+    widget.formType == 2 ? lock = true : lock = false;//formtype 2 es para modificar
     fetchItems();
+    widget.listernerCatBox?.registrarObservador((newValue){
+      lock = newValue;
+      print('newVak $newValue');
+    });
   }
   ///RECORDAR MANDAR A SERVCIO
   Future<void> fetchItems({int limit = 100, int offset = 0}) async {
-    final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
+    const String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
     final response = await http.get(Uri.parse(baseURL + '?limit=$limit&offset=$offset'));
 
     if (response.statusCode == 200) {
@@ -54,14 +61,12 @@ class _CategoryBoxState extends State<CategoryBox> {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Map<String, dynamic>>(
       isExpanded: true,
-      hint: widget.borderType == 2
-          ? Text(
+      hint: Text(
         'Categoria del producto',
         style: TextStyle(
-          color: const Color(0xFF4F2263).withOpacity(0.5),
+          color: lock == false ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.5),
         ),
-      )
-          : const Text('Categoria del producto'),
+      ),
       value: categorySel,
       items: items.map((categoryItem) {
         return DropdownMenuItem<Map<String, dynamic>>(
@@ -86,11 +91,11 @@ class _CategoryBoxState extends State<CategoryBox> {
       } : null,
       decoration: InputDecoration(
         contentPadding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02,
-            vertical: widget.borderType == 2 ? MediaQuery.of(context).size.width * 0.02 : 0),
+            vertical: MediaQuery.of(context).size.width * 0.02),
         constraints: BoxConstraints(
-          maxHeight: widget.borderType == 1 ? MediaQuery.of(context).size.width * 0.11 : MediaQuery.of(context).size.width * 0.5,
+          maxHeight: MediaQuery.of(context).size.width * 0.5,
         ),
-        focusedBorder: widget.borderType == 1 ? OutlineInputBorder(
+        focusedBorder: widget.formType == 1 ? OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
             color: Color(0xFF4F2263),
@@ -106,19 +111,13 @@ class _CategoryBoxState extends State<CategoryBox> {
             width: 0.7,
           ),
         ),
-        enabledBorder: widget.borderType == 1 ? OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Colors.black54,
-            width: 1.5,
-          ),
-        ) : const OutlineInputBorder(
-          borderRadius: BorderRadius.only(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(10),
             bottomRight: Radius.circular(10),
           ),
           borderSide: BorderSide(
-            color: Colors.black54,
+            color: lock == false  ? Colors.black54 : const Color(0xFF4F2263).withOpacity(0.3),
             width: 1.5,
           ),
         ),
@@ -132,7 +131,8 @@ class _CategoryBoxState extends State<CategoryBox> {
             children: [
               Text(
                 categoryItem['category'] ?? 'Categoria Null',
-                style: const TextStyle(color: Colors.black),
+                style: TextStyle(color: lock == false ? const Color(0xFF4F2263): Color(0xFF4F2263).withOpacity(0.3),
+                ),
               ),
             ],
           );
