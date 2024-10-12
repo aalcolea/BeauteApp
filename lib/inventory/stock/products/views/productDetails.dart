@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
+import '../../../kboardVisibilityManager.dart';
 import '../../categories/forms/categoryBox.dart';
 import '../services/productsService.dart';
 
@@ -26,9 +27,6 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
 
-  late KeyboardVisibilityController keyboardVisibilityController;
-  late StreamSubscription<bool> keyboardVisibilitySubscription;
-  bool visibleKeyboard = false;
   //
   TextEditingController nameController = TextEditingController();
   FocusNode nameFocus = FocusNode();
@@ -40,6 +38,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   FocusNode stockFocus = FocusNode();
   TextEditingController barCodeController = TextEditingController();
   FocusNode barCodeFocus = FocusNode();
+  late KeyboardVisibilityManager keyboardVisibilityManager;
+
   //
   bool editProd = false;
   ListenerCatBox listernerCatBox = ListenerCatBox();
@@ -101,32 +101,16 @@ class _ProductDetailsState extends State<ProductDetails> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  void checkKeyboardVisibility() {
-    keyboardVisibilitySubscription =
-        keyboardVisibilityController.onChange.listen((visible) {
-          setState(() {
-            visibleKeyboard = visible;
-          });
-        });
-  }
-
-  void hideKeyBoard() {
-    if (visibleKeyboard) {
-      FocusScope.of(context).unfocus();
-    }
-  }
-
   @override
   void initState() {
-    keyboardVisibilityController = KeyboardVisibilityController();
-    checkKeyboardVisibility();
     nameController.text = widget.nameProd;
     descriptionController.text = widget.descriptionProd;
     barCodeController.text = widget.barCode.toString();
     stockController.text = widget.stock.toString();
     precioController.text = widget.precio.toString();
     _catID =  widget.catId;
-    changeLockCatBox();
+    keyboardVisibilityManager = KeyboardVisibilityManager();
+
     // TODO: implement initState
     super.initState();
   }
@@ -134,7 +118,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   void dispose() {
     // TODO: implement dispose
-    keyboardVisibilitySubscription.cancel();
+    keyboardVisibilityManager.dispose();
     super.dispose();
   }
   void onSelectedCat (int catID) {
@@ -146,7 +130,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: CustomScrollView(
-          physics: visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
+          physics: keyboardVisibilityManager.visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
           slivers: [
             SliverAppBar(
               leadingWidth: MediaQuery.of(context).size.width,

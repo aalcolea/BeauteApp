@@ -113,7 +113,7 @@ class TextProdField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final defaultStyleLetterColor =TextStyle(
+    final defaultStyleLetterColor = TextStyle(
         color: const Color(0xFF4F2263).withOpacity(0.5),
     );
 
