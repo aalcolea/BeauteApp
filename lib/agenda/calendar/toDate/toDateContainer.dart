@@ -11,6 +11,7 @@ import '../../models/appointmentModel.dart';
 import '../../utils/PopUpTabs/deleteAppointment.dart';
 
 class ToDateContainer extends StatefulWidget {
+  final Function(bool) onShowBlurr;
   final Listenerapptm? listenerapptm;
   final void Function(bool, int?, String, String, bool, String) reachTop;
   final String? firtsIndexTouchHour;
@@ -18,7 +19,7 @@ class ToDateContainer extends StatefulWidget {
   final String dateLookandFill;
   final DateTime selectedDate;
   final int? expandedIndexToCharge;
-  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm});
+  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm, required this.onShowBlurr});
 
   @override
   State<ToDateContainer> createState() => _ToDateContainerState();
@@ -49,16 +50,14 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   bool isTaped = false;
   String? dateOnly;
   bool visibleKeyboard = false;
-  String _firtsIndexTouchHour = '';
   bool isCalendarShow = false;
   bool isHourCorrect = false;
-  int _selectedIndexAmPm = 0;
+  final int _selectedIndexAmPm = 0;
   bool positionBtnIcon = false;
   int isSelectedHelper = 7;
   double offsetX = 0.0;
   int movIndex = 0;
   bool dragStatus = false; //false = start
-  int? _oldIndex;
   bool isDragX = false;
   int itemDragX = 0;
   int helperModalDeleteClient = 0; //1 para complete, 2 para execute 3 para dismmis
@@ -74,6 +73,9 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
       false,
       itemDragX,
     );
+  }
+  void onShowBlurrModal(bool showBlurr){
+    widget.onShowBlurr(showBlurr);
   }
 
   //final void Function(bool, int?, String, String, bool, String) reachTop;
@@ -167,7 +169,6 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
   @override
   void initState() {
     // TODO: implement initState
-   _oldIndex = null;
    expandedIndex = widget.expandedIndexToCharge;
    isTaped = expandedIndex != null;
    if (widget.firtsIndexTouchHour != null) {
@@ -289,6 +290,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                 dismissible: DismissiblePane(
                                   confirmDismiss: () async {
                                     if (helperModalDeleteClient == 1) {
+                                      widget.onShowBlurr(true);
                                       bool result = await showDeleteAppointmentDialog(
                                         context,
                                         widget,
@@ -297,9 +299,10 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                         isDocLog,
                                       );
                                       if (result) {
-                                        refreshAppointments();
+                                        refreshAppointments;
                                         return true;
                                       } else {
+                                        widget.onShowBlurr(false);
                                         slidableControllers[index].close();
                                         return false;
                                       }
@@ -313,6 +316,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) async {
+                                      widget.onShowBlurr(true);
                                         bool result = await showDeleteAppointmentDialog(
                                           context,
                                           widget,
@@ -321,7 +325,10 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                           isDocLog,
                                         );
                                         if (result) {
+                                          widget.onShowBlurr(false);
                                           refreshAppointments();
+                                        }else{
+                                          widget.onShowBlurr(false);
                                         }
                                     },
                                     backgroundColor: const Color(0xFFBC1313),
@@ -336,6 +343,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                 firtsIndexTouchHour: widget.firtsIndexTouchHour, firtsIndexTouchDate: widget.firtsIndexTouchDate,
                               listenerapptm: widget.listenerapptm, filteredAppointments: filteredAppointments,
                               expandedIndexToCharge: expandedIndex, initializateApptm: _initializateApptm, listenerslidable: listenerslidable,
+                                onShowBlurrModal: onShowBlurrModal,
                               )));
                     });
               }

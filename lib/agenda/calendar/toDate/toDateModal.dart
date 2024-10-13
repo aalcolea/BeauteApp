@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:beaute_app/agenda/calendar/toDate/toDateContainer.dart';
 import 'package:beaute_app/agenda/utils/listenerApptm.dart';
+import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -41,6 +43,7 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen> with SingleTickerProviderStateMixin{
 
   bool isDocLog = false;
+  bool _showBlurr = false;
   late Future<List<Appointment>> appointments;
   late bool modalReachTop;
   final Listenerapptm _listenerapptm = Listenerapptm();
@@ -135,6 +138,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
     );
   }
 
+  void onShowBlurrModal(bool showBlurrModal){
+    setState(() {
+      _showBlurr = showBlurrModal;
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -184,8 +193,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
       throw Exception('Vefique conexión a internet');
     }
   }
-
-
 
   Future<void> initializeAppointments(DateTime date) async {
     try {
@@ -418,7 +425,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                 expandedIndexToCharge: expandedIndex,
                 listenerapptm: _listenerapptm,
                   firtsIndexTouchDate: widget.firtsIndexTouchDate,
-                  firtsIndexTouchHour: widget.firtsIndexTouchHour,
+                  firtsIndexTouchHour: widget.firtsIndexTouchHour, onShowBlurr: onShowBlurrModal,
               ),),
 
 
@@ -452,6 +459,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                 ),
               ),
             ],
+          ),
+        ),
+
+        Visibility(
+          visible: _showBlurr,
+          child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.transparent.withOpacity(0.0),
+                ),
+
           ),
         ),
 
@@ -499,7 +519,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
               !positionBtnIcon
                   ? CupertinoIcons.chevron_compact_up
                   : CupertinoIcons.chevron_compact_down,
-              color: Colors.grey,
+              color: _showBlurr ? Colors.grey.withOpacity(0.1) : Colors.grey,
               size: MediaQuery.of(context).size.width * 0.11,
             ),
           ),
