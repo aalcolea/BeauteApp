@@ -151,7 +151,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                   removeOverlay();
                   setState(() {});
                 },
-                onShowBlur: widget.onShowBlur,
+                onShowBlur: widget.onShowBlur, columnH: null, onShowBlureight: (bool p1) {  },
               ),
             ),
           );
@@ -230,6 +230,11 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                             barCode: products_global[index]['barCod'],
                             stock: products_global[index]['cant_cart'] == null ? 0 : products_global[index]['cant_cart']['cantidad'],
                             precio: products_global[index]['price'],
+                            onProductModified: () async {
+                            await refreshProducts();
+                            removeOverlay();
+                            setState(() {});
+                          },
                           ),
                         ),
                       );

@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'package:beaute_app/agenda/views/admin/admin.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:http/http.dart' as http;
 
-Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id,
-    Function refreshAppointments, docLog) async {
+Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, Function refreshAppointments, docLog) async {
 
   Future<void> deleteAppt(int id) async {
     const baseUrl =
@@ -24,7 +24,6 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
         if (responseData['fcm_token'] != null) {
           print("Token FCM del doctor: ${responseData['fcm_token']}");
         }
-
         refreshAppointments();
       } else {
         print('Error eliminando appointment: ${response.statusCode}');
@@ -41,12 +40,6 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
     builder: (BuildContext context) {
       return Stack(
         children: [
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-            child: Container(
-              color: Colors.black54.withOpacity(0.3),
-            ),
-          ),
           Center(
             child: Container(
               margin: EdgeInsets.symmetric(
@@ -134,16 +127,11 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                           ),
                           onPressed: () {
                             deleteAppt(id!);
-                            docLog
-                            ? Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            '/drScreen',
-                            (Route<dynamic> route) => false,
-                            )
-                                : Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            '/assistantScreen',
-                            (Route<dynamic> route) => false,
+                            Navigator.of(context).pushAndRemoveUntil(
+                              CupertinoPageRoute(
+                                builder: (context) => AssistantAdmin(docLog: docLog),
+                              ),
+                                  (Route<dynamic> route) => false,
                             );
                             },
                           child: Text(

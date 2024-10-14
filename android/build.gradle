@@ -2,6 +2,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://repo.maven.apache.org/maven2'
+            content {
+                excludeGroup "com.google.protobuf"
+            }
+        }
     }
 }
 
@@ -11,6 +17,16 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+}
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.1.0"
+    }
 }
 
 tasks.register("clean", Delete) {

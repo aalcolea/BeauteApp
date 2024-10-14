@@ -373,7 +373,7 @@ class _adminInvState extends State<adminInv> {
                 ),
               )
             ),
-          )
+          ),
         ],
       ),
     );

@@ -26,7 +26,9 @@ class ProductOptions extends StatefulWidget {
       bool
       ) onShowBlur;
 
-  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnHeight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted, required this.onShowBlur,
+  final dynamic columnH;
+
+  const ProductOptions({super.key, required this.onClose, required this.nombre, required this.cant, required this.precio, required this.columnH, required void Function(bool p1) onShowBlureight, required this.id, required this.barCode, required this.stock, required this.catId, required this.descripcion, required this.onProductDeleted, required this.onShowBlur, required this.columnHeight,
   });
 
   @override
@@ -169,6 +171,11 @@ class _ProductOptionsState extends State<ProductOptions> {
                                   barCode: widget.barCode,
                                   stock: widget.stock,
                                   precio: widget.precio,
+                                  onProductModified: () async {
+                                  await productService.refreshProducts(widget.catId);
+                                  }
+
+
                                 ),
                               ),
                             );

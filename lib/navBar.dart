@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'agenda/forms/alertForm.dart';
 import 'globalVar.dart';
 import 'agenda/services/auth_service.dart';
+import 'inventory/testPrinter/testPrint.dart';
 
 class navBar extends StatefulWidget {
   final bool isDoctorLog;
@@ -159,6 +160,47 @@ class _navBarState extends State<navBar> {
                 ),
               ),
             ),
+            ///TEST PRINTER
+            InkWell(
+              onTap: widget.currentScreen == 'inventario' ? Navigator.of(context).pop : (){
+                Navigator.of(context).pushAndRemoveUntil(
+                  CupertinoPageRoute(
+                    builder: (context) => testPrint(),
+                  ),
+                      (Route<dynamic> route) => false,
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.only(left: 20),
+                width: MediaQuery.of(context).size.width,
+                height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.06 : MediaQuery.of(context).size.height*0.07,
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  border: widget.currentScreen == 'agenda' ? Border(left: BorderSide.none, bottom: BorderSide(color: Color(0XFF4F2263))) : Border.all(color: Color(0XFF4F2263)),
+                  color: widget.currentScreen == 'agenda' ? Colors.transparent : Color(0XFF4F2263),
+                  boxShadow: widget.currentScreen == 'agenda' ? null : [
+                    BoxShadow(
+                      color: Colors.black54,
+                      offset: Offset(0, MediaQuery.of(context).size.width * 0.001),
+                      blurRadius: 10,
+                    )
+                  ],
+                ),
+                child: Text(
+                  'Test Print',
+                  style: widget.currentScreen == 'agenda' ? TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: MediaQuery.of(context).size.width*0.05,
+                      color: Color(0XFF4F2263)
+                  ) : TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: MediaQuery.of(context).size.width*0.05,
+                      color: Colors.white
+                  ),
+                ),
+              ),
+            ),
+            ///final test printer
             Visibility(
               visible: !widget.isDoctorLog,
               child: Container(

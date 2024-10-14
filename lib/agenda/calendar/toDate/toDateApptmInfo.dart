@@ -12,8 +12,8 @@ import '../../utils/PopUpTabs/saveAppointment.dart';
 import '../../utils/listenerApptm.dart';
 import '../../utils/timer.dart';
 
-
 class ApptmInfo extends StatefulWidget {
+  final Function(bool) onShowBlurrModal;
   final Listenerapptm? listenerapptm;
   final Listenerslidable? listenerslidable;
   final List<String> timeParts;
@@ -31,7 +31,8 @@ class ApptmInfo extends StatefulWidget {
   final Function (bool, DateTime) initializateApptm;
   const ApptmInfo({super.key, required this.clientName, required this.treatmentType, required this.index, required this.dateLookandFill, required this.reachTop,
     required this.appointment, required this.timeParts, this.firtsIndexTouchHour, this.firtsIndexTouchDate, this.expandedIndexToCharge,
-    required this.selectedDate, this.listenerapptm, required this.filteredAppointments, required this.initializateApptm, this.listenerslidable});
+    required this.selectedDate, this.listenerapptm, required this.filteredAppointments, required this.initializateApptm, this.listenerslidable,
+    required this.onShowBlurrModal});
 
   @override
   State<ApptmInfo> createState() => _ApptmInfoState();
@@ -49,8 +50,6 @@ class _ApptmInfoState extends State<ApptmInfo> {
   String antiqueDate = '';
   late DateTime dateTimeToinitModal;
   bool isHourCorrect = false;
-  int _selectedIndexAmPm = 0;
-
   //
   int? expandedIndex;
   bool isTaped = false;
@@ -77,47 +76,27 @@ class _ApptmInfoState extends State<ApptmInfo> {
     });
   }
 
-  void _onTimeChoose(bool isTimerShow, TextEditingController timerController,
-      int SelectedIndexAmPm) {
+  void _onTimeChoose(bool isTimerShow, TextEditingController timerController, int selectedIndexAmPm) {
     setState(() {
       _isTimerShow = isTimerShow;
       _timerController = timerController;
-      _selectedIndexAmPm = SelectedIndexAmPm;
-      String toCompare = timerController.text;
-      List<String> timeToCompare = toCompare.split(':');
-      int hourToCompareConvert = int.parse(timeToCompare[0]);
-      int minuteToCompareConvert = int.parse(timeToCompare[1]);
-      DateTime dateTimeNow = DateTime.now();
-      DateTime selectedDateT =
-      DateFormat('yyyy-MM-dd').parse(_dateController.text);
 
-      DateTime selectedDateTimeToCompare = DateTime(
-          selectedDateT.year,
-          selectedDateT.month,
-          selectedDateT.day,
-          hourToCompareConvert,
-          minuteToCompareConvert);
-
-      if (selectedDateT.year == dateTimeNow.year &&
-          selectedDateT.month == dateTimeNow.month &&
-          selectedDateT.day == dateTimeNow.day &&
-          selectedDateTimeToCompare.isBefore(dateTimeNow)) {
+      DateTime now = DateTime.now();
+      DateTime selectedDate = DateFormat('yyyy-MM-dd').parse(_dateController.text);
+      List<String> timeParts = timerController.text.split(':');
+      DateTime selectedDateTime = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, int.parse(timeParts[0]), int.parse(timeParts[1]),
+      );
+      if (selectedDate.isAtSameMomentAs(now) && selectedDateTime.isBefore(now)) {
         isHourCorrect = false;
-        _timerController.text = 'Seleccione hora válida';
-        timerControllertoShow.text = 'Seleccione hora válida';
+        _timerController.text = timerControllertoShow.text = 'Seleccione hora válida';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pueden seleccionar horarios pasados'),
-          ),
+          const SnackBar(content: Text('No se pueden seleccionar horarios pasados')),
         );
       } else {
         isHourCorrect = true;
-        _timerController = timerController;
-        String toShow = _timerController.text;
-        DateTime formattedTime24hrs = DateFormat('HH:mm').parse(toShow);
-        String formattedTime12hrs =
-        DateFormat('hh:mm a').format(formattedTime24hrs);
-        _timerController.text = formattedTime12hrs;
+        String formattedTime = DateFormat('hh:mm a').format(DateFormat('HH:mm').parse(timerController.text));
+        _timerController.text = formattedTime;
       }
     });
   }
@@ -202,13 +181,11 @@ class _ApptmInfoState extends State<ApptmInfo> {
     });
     widget.listenerslidable!.registrarObservador((newDragStatus, newDragId){
         if(newDragStatus == true){
-          setState(() {
             isDragX = newDragStatus;
             itemDragX = newDragId;
             if (!draggedItems.contains(itemDragX)) {
               draggedItems.add(itemDragX);
             }
-          });
         }else{
           setState(() {
             isDragX = false;
@@ -224,175 +201,114 @@ class _ApptmInfoState extends State<ApptmInfo> {
     return Stack(
       children: [
         GestureDetector(
-            onTap: () {
-              if (expandedIndex == index) {
-                setState(() {
-                  expandedIndex = null;
-                  isTaped = false;
-                });
-              } else {
-                setState(() {
-                  Appointment appointmetsToModify = widget.filteredAppointments[index];
-                  _timerController.text = DateFormat('HH:mm').format(appointmetsToModify.appointmentDate!);
-                  DateTime formattedTime24hrs = DateFormat('HH:mm').parse(_timerController.text);
-                  String formattedTime12hrs = DateFormat('h:mm a').format(formattedTime24hrs);
-                  _timerController.text = formattedTime12hrs;_dateController.text = DateFormat('yyyy-MM-dd').format(appointmetsToModify.appointmentDate!);
-                  _dateLookandFill = dateOnly!;
-                  expandedIndex = index;
-                  isTaped = true;
-                  modalReachTop = true;
-                  widget.reachTop(
-                      modalReachTop,
-                      expandedIndex,
-                      _timerController.text,
-                      _dateController.text,
-                      positionBtnIcon,
-                      _dateLookandFill);
-                });
-              }
-            },
-            ///container donde esta la info de la cita
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: draggedItems.contains(index)  ? const Radius.circular(0): const Radius.circular(15),
-                    bottomRight: draggedItems.contains(index) == true  ? const Radius.circular(0): const Radius.circular(15),
-                    topLeft: const Radius.circular(15),
-                    bottomLeft: const Radius.circular(15),
-                  ),
-                  border: _oldIndex != index ? Border.all(
-                    color: expandedIndex == index
-                        ? const Color(0xFF4F2263)
-                        : !isTaped && expandedIndex != index
-                        ? const Color(0xFF4F2263)
-                        : const Color(0xFFC5B6CD),
-                    width: 1.5,
-                  ) : const Border(
-                    left: BorderSide(color: Color(0xFF4F2263), width: 1.5),
-                    top: BorderSide(color: Color(0xFF4F2263), width: 1.5),
-                    bottom: BorderSide(color: Color(0xFF4F2263), width: 1.5),
-                    right: BorderSide(color: Color(0xFF4F2263), width: 1.5), //change
-                  ),
-                  color: Colors.white,
-                  //boxShadow: normallyShadow,
-                ),
-                alignment: Alignment.center,
-                child: Column(
+          onTap: () {
+            if (expandedIndex == index) {
+              setState(() {
+                expandedIndex = null;
+                isTaped = false;
+              });
+            } else {
+              setState(() {
+                Appointment appointmetsToModify = widget.filteredAppointments[index];
+                _timerController.text = DateFormat('HH:mm').format(appointmetsToModify.appointmentDate!);
+                DateTime formattedTime24hrs = DateFormat('HH:mm').parse(_timerController.text);
+                String formattedTime12hrs = DateFormat('h:mm a').format(formattedTime24hrs);
+                _timerController.text = formattedTime12hrs;
+                _dateController.text = DateFormat('yyyy-MM-dd').format(appointmetsToModify.appointmentDate!);
+                _dateLookandFill = dateOnly!;
+                expandedIndex = index;
+                isTaped = true;
+                modalReachTop = true;
+                widget.reachTop(modalReachTop, expandedIndex, _timerController.text, _dateController.text, positionBtnIcon, _dateLookandFill);
+              });
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.02,
+              vertical: MediaQuery.of(context).size.width * 0.01,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: draggedItems.contains(index) ? const Radius.circular(0) : const Radius.circular(15),
+                bottomRight: draggedItems.contains(index) == true ? const Radius.circular(0) : const Radius.circular(15),
+                topLeft: const Radius.circular(15),
+                bottomLeft: const Radius.circular(15),
+              ),
+              border: _oldIndex != index ? Border.all(
+                color: expandedIndex == index ? const Color(0xFF4F2263) : !isTaped && expandedIndex != index ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                width: 1.5,
+              ) : const Border(
+                left: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                top: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                bottom: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                right: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+              ),
+              color: Colors.white,
+            ),
+            alignment: Alignment.center,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                          crossAxisAlignment: expandedIndex == index
-                              ? CrossAxisAlignment.center
-                              : CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                width: expandedIndex == index
-                                    ? MediaQuery.of(context).size.width * 0.75
-                                    : MediaQuery.of(context).size.width * 0.70,
-
-                                /// Fila de Nombre del doctor Nombre del paciente
-                                child: ListTile(
-                                    title: Row(
-                                        children: [
-                                          Text(
-                                            widget.appointment.doctorId == 1 ? 'Dr 1' : 'Dr 2',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              MediaQuery.of(context).size.width * 0.05,
-                                              color: expandedIndex == index ? const Color(0xFF4F2263) : !isTaped && expandedIndex != index
-                                                  ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
-                                            ),
-                                          ),
-                                          Text(
-                                              ' ${widget.clientName}',
-                                              style: TextStyle(
-                                                fontSize:
-                                                MediaQuery.of(context).size.width * 0.05,
-                                                color: expandedIndex == index
-                                                    ? Colors.black
-                                                    : !isTaped && expandedIndex != index
-                                                    ? Colors.black
-                                                    : const Color(0xFFC5B6CD),
-                                              ))
-                                        ]),
-                                    subtitle: Text(
-                                        widget.treatmentType,
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.05,
-                                          color: expandedIndex == index ? Colors.black : !isTaped && expandedIndex != index ? Colors.black : const Color(0xFFC5B6CD),
-                                        )))),
-
-                            ///cuadrado morado en donde se muestra la hora
-                            Visibility(
-                                visible: expandedIndex != index
-                                    ? true
-                                    : false,
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width * 0.22,
-                                    height: MediaQuery.of(context).size.height * 0.0675,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: !isTaped ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                        color: !isTaped ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    margin: EdgeInsets.only(
-                                      right: expandedIndex != index
-                                          ? MediaQuery.of(context).size.width * 0.0 : 0,
-                                    ),
-                                    child: RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                            style: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width * 0.06,
-                                              color: Colors.white,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text: '${widget.timeParts[0]}\n', // "01:00"
-                                              ),
-                                              TextSpan(
-                                                  text: widget.timeParts[1], // "PM"
-                                                  style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                  ))
-                                            ])))),
-                            ///termina card
-                            Visibility(
-                                visible: expandedIndex == index ? true : false,
-                                child: Container(
-                                    alignment: Alignment.topRight,
-                                    color: Colors.transparent,
-                                    child: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        onPressed: () {
-                                          setState(() {
-                                            expandedIndex = null;
-                                            isTaped = false;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          CupertinoIcons.minus,
-                                          size: MediaQuery.of(context).size.width * 0.09,
-                                          color: const Color(0xFF4F2263),
-                                        ))))
-                          ]),
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                widget.appointment.doctorId == 1 ? 'Dr 1' : 'Dr 2',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                                  color: expandedIndex == widget.index ? const Color(0xFF4F2263) : !isTaped && expandedIndex != index ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                                ),
+                              ),
+                              Text(
+                                ' ${widget.clientName}',
+                                style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                                  color: expandedIndex == index ? Colors.black : !isTaped && expandedIndex!= index ? Colors.black : const Color(0xFFC5B6CD),
+                                ))]),
+                          const Spacer(),
+                          Visibility(
+                              visible: expandedIndex == index ? true : false,
+                              child: Container(
+                                  alignment: Alignment.topRight,
+                                  color: Colors.transparent,
+                                  child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {
+                                        setState(() {
+                                          expandedIndex = null;
+                                          isTaped = false;
+                                        });},
+                                      icon: Icon(
+                                        CupertinoIcons.minus,
+                                        size: MediaQuery.of(context).size.width * 0.09,
+                                        color: const Color(0xFF4F2263),
+                                      ))))]),
+                      Text(
+                        widget.treatmentType,
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.05,
+                          color: expandedIndex == widget.index ? Colors.black : !isTaped && expandedIndex != widget.index ? Colors.black : const Color(0xFFC5B6CD),
+                        ),
+                      ),
+                      ///componentes de la segunda card >>>>>>
                       Visibility(
-                          visible: expandedIndex == index
-                              ? true
-                              : false,
-                          child: Column(children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 8,
-                                horizontal: MediaQuery.of(context).size.width * .026,
-                              ),
-                              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.026,
-                              ),
-                              alignment:
-                              Alignment.centerLeft,
+                        visible: expandedIndex == index ? true : false,
+                          child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.width * 0.02,
+                                bottom: MediaQuery.of(context).size.width * 0.02,
+                            ),
+                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * .026),
+                              alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
                                 color: const Color(0xFF4F2263),
                                 borderRadius: BorderRadius.circular(
@@ -407,15 +323,61 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: MediaQuery.of(context).size.width * 0.026,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: TextFormField(
+                                controller: _dateController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: MediaQuery.of(context).size.width * 0.03,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  labelText: 'DD/M/AAAA',
+                                  suffixIcon: const Icon(Icons.calendar_today)),
+                                readOnly: true,
+                                onTap: () {
+                                  setState(() {
+                                    isCalendarShow == true ? isCalendarShow = false : isCalendarShow = true;
+                                  });
+                                },
                               ),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width, // o un ancho específico
+                            ),
+                          ),
+                          AnimatedContainer(duration: const Duration(milliseconds: 105),
+                            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            margin: EdgeInsets.only(bottom: isCalendarShow ? MediaQuery.of(context).size.width * 0.02 : 0),
+                            height: isCalendarShow ? 300 : 0,
+                            decoration: const BoxDecoration(
+                                color: Colors.white
+                            ),
+                            clipBehavior: Clip.hardEdge, // Recort
+                            child: CalendarioCita(onDayToAppointFormSelected: _onDateToAppointmentForm),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.024,),
+                            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.03),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4F2263),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              'Hora:',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                                width: MediaQuery.of(context).size.width,
                                 child: TextFormField(
-                                  controller: _dateController,
+                                  controller: _timerController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: MediaQuery.of(context).size.width * 0.03,
@@ -423,109 +385,49 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    labelText: 'DD/M/AAAA',
-                                    suffixIcon: const Icon(Icons.calendar_today),
+                                    labelText: 'HH:MM',
+                                    suffixIcon: const Icon(
+                                        Icons.access_time),
                                   ),
                                   readOnly: true,
                                   onTap: () {
                                     setState(() {
-                                      isCalendarShow == true ? isCalendarShow = false : isCalendarShow = true;
+                                      _isTimerShow == false
+                                          ? _isTimerShow = true
+                                          : _isTimerShow = false;
                                     });
                                   },
                                 ),
                               ),
+                          AnimatedContainer(duration: const Duration(milliseconds: 85),
+                            //padding: const EdgeInsets.only(left: , right: 1, bottom: 10),
+                            margin: EdgeInsets.only(
+                                bottom: _isTimerShow ? MediaQuery.of(context).size.width * 0.03 : 0,
+                                left: MediaQuery.of(context).size.width * 0.01,
+                                right: MediaQuery.of(context).size.width * 0.01,
                             ),
-                            AnimatedContainer(duration: const Duration(milliseconds: 85),
-                              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                              margin: EdgeInsets.only(bottom: isCalendarShow ? MediaQuery.of(context).size.width * 0.02 : 0),
-                              height: isCalendarShow ? 300 : 0,
-                              decoration: const BoxDecoration(
-                                  color: Colors.white
-                              ),
-                              clipBehavior: Clip.hardEdge, // Recort
-                              child: CalendarioCita(onDayToAppointFormSelected: _onDateToAppointmentForm),
+                            height: _isTimerShow ? 250 : 0,
+                            decoration: const BoxDecoration(
+                                color: Colors.white
                             ),
-
-                            Container(
-                              padding:
-                              EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: MediaQuery.of(context).size.width * 0.024,
+                            clipBehavior: Clip.hardEdge,
+                            child: TimerFly(onTimeChoose: _onTimeChoose),
+                          ),
+                          Visibility(
+                              visible: !isCalendarShow && !_isTimerShow,
+                              child: Padding(
+                              padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.025,
+                                bottom: MediaQuery.of(context).size.width * 0.02,
+                                right: MediaQuery.of(context).size.width * 0.025,
                               ),
-                              margin: EdgeInsets.symmetric(
-                                horizontal: MediaQuery.of(context).size.width * 0.026,
-                              ),
-                              alignment: Alignment.centerLeft,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4F2263),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Text(
-                                'Hora:',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                                padding:
-                                EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: MediaQuery.of(context).size.width * 0.024,
-                                ),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: TextFormField(
-                                    controller: _timerController,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: MediaQuery.of(context).size.width * 0.03,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                      ),
-                                      labelText: 'HH:MM',
-                                      suffixIcon: const Icon(
-                                          Icons.access_time),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Padding(padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width * 0.05,
+                                      right: MediaQuery.of(context).size.width * 0.02,
                                     ),
-                                    readOnly: true,
-                                    onTap: () {
-                                      setState(() {
-                                        _isTimerShow == false
-                                            ? _isTimerShow = true
-                                            : _isTimerShow = false;
-                                      });
-                                    },
-                                  ),
-                                )
-                            ),
-
-                            AnimatedContainer(duration: const Duration(milliseconds: 85),
-                              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 10),
-                              margin: EdgeInsets.only(bottom: _isTimerShow ? MediaQuery.of(context).size.width * 0.02 : 0),
-                              height: _isTimerShow ? 250 : 0,
-                              decoration: const BoxDecoration(
-                                  color: Colors.white
-                              ),
-                              clipBehavior: Clip.hardEdge,
-                              child: TimerFly(onTimeChoose: _onTimeChoose),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                  top: MediaQuery.of(
-                                      context).size.width * 0.025,
-                                  bottom: MediaQuery.of(context).size.width * 0.02,
-                                  right: MediaQuery.of(context).size.width * 0.025,
-                                ),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Padding( padding: EdgeInsets.only(
-                                        left: MediaQuery.of(context).size.width * 0.05,
-                                        right: MediaQuery.of(context).size.width * 0.02,
-                                      ),
-                                        child: ElevatedButton(
+                                      child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             elevation: 4,
                                             shape: RoundedRectangleBorder(
@@ -538,93 +440,130 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                             ),
                                           ),
                                           onPressed: () {
+                                            widget.onShowBlurrModal(true);
                                             showDeleteAppointmentDialog(
                                                 context, widget, widget.appointment.id,
                                                 refreshAppointments,
-                                                isDocLog);
+                                                isDocLog).then((_){
+                                              widget.onShowBlurrModal(false);
+                                            });
                                           },
                                           child: Icon(
                                             Icons.delete,
                                             color: Colors.red,
                                             size: MediaQuery.of(context).size.width * 0.085,
+                                          ))),
+                                    ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 4,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                              side: const BorderSide(
+                                                  color: Color(0xFF4F2263),
+                                                  width: 1),
+                                            ),
+                                            backgroundColor: const Color(0xFF4F2263),
+                                            surfaceTintColor: const Color(0xFF4F2263),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: MediaQuery.of(context).size.width * 0.05,
+                                            ),
                                           ),
-                                        ),
-                                      ),
-
-                                      ///boton para modificar
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 4,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            side: const BorderSide(
-                                                color: Color(0xFF4F2263),
-                                                width: 1),
-                                          ),
-                                          backgroundColor: const Color(0xFF4F2263),
-                                          surfaceTintColor: const Color(0xFF4F2263),
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: MediaQuery.of(context).size.width * 0.05,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            showDialog(barrierDismissible: false, context: context, builder: (builder) {
-                                              return ConfirmationDialog(
-                                                appointment: widget.appointment,
-                                                dateController: _dateController,
-                                                timeController: _timerController,
-                                                fetchAppointments: fetchAppointments,
-                                              );
-                                            },).then((result) {
-                                              if (result == true) {
-                                                setState(() {
-                                                  modalReachTop = true;
-                                                  expandedIndex = null;
-                                                  isTaped = false;
-                                                  positionBtnIcon = true;
-                                                  _dateLookandFill = dateOnly!;
-                                                  fetchAppointments(dateTimeToinitModal);
-                                                  late DateTime dateSelected = dateTimeToinitModal;
-                                                  DateTime date = dateTimeToinitModal;
-                                                  dateSelected = date;
-                                                  dateOnly = DateFormat('yyyy-MM-dd').format(dateSelected);
-                                                  widget.reachTop(
-                                                      modalReachTop,
-                                                      expandedIndex,
-                                                      _timerController.text,
-                                                      _dateController.text,
-                                                      positionBtnIcon,
-                                                      _dateLookandFillAfterSave);
-                                                  widget.initializateApptm(true, dateSelected);
-                                                });
-                                              } else {
-                                                _timerController.text = antiqueHour;
-                                                _dateController.text = antiqueDate;
-                                              }
+                                          onPressed: () {
+                                            setState(() {
+                                              widget.onShowBlurrModal(true);
+                                              showDialog(barrierDismissible: false, context: context, builder: (builder) {
+                                                return ConfirmationDialog(
+                                                  appointment: widget.appointment,
+                                                  dateController: _dateController,
+                                                  timeController: _timerController,
+                                                  fetchAppointments: fetchAppointments,
+                                                );
+                                              },).then((result) {
+                                                if (result == true) {
+                                                  widget.onShowBlurrModal(false);
+                                                  setState(() {
+                                                    modalReachTop = true;
+                                                    expandedIndex = null;
+                                                    isTaped = false;
+                                                    positionBtnIcon = true;
+                                                    _dateLookandFill = dateOnly!;
+                                                    fetchAppointments(dateTimeToinitModal);
+                                                    late DateTime dateSelected = dateTimeToinitModal;
+                                                    DateTime date = dateTimeToinitModal;
+                                                    dateSelected = date;
+                                                    dateOnly = DateFormat('yyyy-MM-dd').format(dateSelected);
+                                                    widget.reachTop(
+                                                        modalReachTop,
+                                                        expandedIndex,
+                                                        _timerController.text,
+                                                        _dateController.text,
+                                                        positionBtnIcon,
+                                                        _dateLookandFillAfterSave);
+                                                    widget.initializateApptm(true, dateSelected);
+                                                  });
+                                                } else {
+                                                  widget.onShowBlurrModal(false);
+                                                  _timerController.text = antiqueHour;
+                                                  _dateController.text = antiqueDate;
+                                                }
+                                              });
                                             });
-                                          });
-                                        },
-                                        child: Icon(
-                                          CupertinoIcons.checkmark,
-                                          color: Colors.white,
-                                          size: MediaQuery.of(context).size.width * 0.09,
-                                        ),
-                                      )
-                                    ]))
-                          ]))
-                    ]))),
-        /*Visibility(
-            visible: true,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black54,
-              ),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-        )),*/
-
+                                          },
+                                          child: Icon(
+                                            CupertinoIcons.checkmark,
+                                            color: Colors.white,
+                                            size: MediaQuery.of(context).size.width * 0.09,
+                                          ),
+                                        )
+                                  ])))
+                        ],
+                      ))
+                      ///<<<<componentes de la segunda card
+                      //
+                    ],
+                  ),
+                ),
+                ///>>>>>>>>>> componente de la primera card, cuadro de hora
+                Visibility(
+                  visible: expandedIndex != index ? true : false,
+                  child: Container(
+                    padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: !isTaped ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: !isTaped ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.06,
+                          color: Colors.white,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '${widget.timeParts[0]}\n',
+                          ),
+                          TextSpan(
+                            text: widget.timeParts[1],
+                            style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                ///<<<<<<<<<<<<<<< componente de la primera card, cuadro de hora
+              ],
+            ),
+          ),
+        ),
       ],
     );
+
   }
 }
