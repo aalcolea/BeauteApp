@@ -79,6 +79,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   String toTime = '';
   int? newClientID;
   bool showBlurr = false;
+
   Future<void> createClient() async {
     try {
       var response = await http.post(
@@ -301,10 +302,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
     DateFormat dateFormat24Hour = DateFormat('HH:mm');
     DateTime dateTime = dateFormat12Hour.parse(toTime);
     String time24HourFormat = dateFormat24Hour.format(dateTime);
-    //_timeController.text = time24HourFormat;
     toTime = time24HourFormat;
-    print('time ${time24HourFormat}');
-    print('timeController ${ _timeController.text}');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
     if (token == null) {
@@ -334,8 +332,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
         if (mounted) {
           setState(() {
             showBlurr = true;
-            showDialog(context: context, builder: (BuildContext context){
-              return ClienteSuccessDialog(docLog: widget.docLog);
+            showDialog(context: context,  barrierDismissible: false, builder: (BuildContext context){
+              return Appointmetsuccessfullycreated(docLog: widget.docLog);
             }).then((_){
               setState(() {
                 showBlurr = false;

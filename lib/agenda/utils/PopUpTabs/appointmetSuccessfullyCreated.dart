@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../../views/admin/admin.dart';
 
-class ClienteSuccessDialog extends StatelessWidget {
+class Appointmetsuccessfullycreated extends StatelessWidget {
   final bool docLog;
 
-  const ClienteSuccessDialog({super.key, required this.docLog});
+  const Appointmetsuccessfullycreated({super.key, required this.docLog});
 
   @override
   Widget build(BuildContext context) {
