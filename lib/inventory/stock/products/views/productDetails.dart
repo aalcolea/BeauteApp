@@ -19,7 +19,9 @@ class ProductDetails extends StatefulWidget {
   final int stock;
   final double precio;
   final int catId;
-  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId});
+  final Future<void> Function() onProductModified;
+
+  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId, required this.onProductModified});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -72,7 +74,9 @@ class _ProductDetailsState extends State<ProductDetails> {
               context,
               const CustomToast(
                 message: 'Producto actualizado exitosamente',
-              ));}});
+              ));}
+          });
+      await widget.onProductModified();
     }catch(e){
       print('Error al crear producto');
       if(mounted){
@@ -145,7 +149,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         setState(() {
                           editProd = false;
                         });
-                      }, child: Text(' Cancelar',
+                      }, child: Text('Cancelar',
                       style: TextStyle(
                         color: const Color(0xFF4F2263),
                         fontSize: MediaQuery.of(context).size.width * 0.05,
