@@ -15,7 +15,7 @@ Future<bool> showModifyproductStockDialog(
               margin: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.04),
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.01,
+                bottom: MediaQuery.of(context).size.height * 0.015,
                 left: MediaQuery.of(context).size.height * 0.02,
               ),
               width: MediaQuery.of(context).size.width,
@@ -65,7 +65,7 @@ Future<bool> showModifyproductStockDialog(
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
+                    padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
