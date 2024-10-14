@@ -64,7 +64,7 @@
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Se necesita acceso para guardar fotos en la galería</string>
      <key>NSBluetoothAlwaysUsageDescription</key>
-     <string>Beaute necesita acceso a Bluetooth para comunicarse con las impresoras<</string>
+     <string>Beaute necesita acceso a Bluetooth para comunicarse con las impresoras</string>
      <key>NSBluetoothPeripheralUsageDescription</key>
      <string>App necesita acceso a Bluetooth para comunicarse con las impresoras</string>
 </dict>
