@@ -65,12 +65,25 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
     }
     fetchProducts();
     widget.listenerblurr.registrarObservador((newValue){
-      setState(() {
-        if(newValue == false){
+      if(newValue == false){
+        removeOverlay();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var controller in aniControllers) {
+      controller.dispose();
+    }
+    widget.listenerblurr.eliminarObservador((newValue) {
+      if (mounted) {
+        if (newValue == false) {
           removeOverlay();
         }
-      });
+      }
     });
+    super.dispose();
   }
 
   Future<void> fetchProducts() async {
@@ -149,7 +162,6 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                 onProductDeleted: () async {
                   await refreshProducts();
                   removeOverlay();
-                  setState(() {});
                 },
                 onShowBlur: widget.onShowBlur, columnH: null, onShowBlureight: (bool p1) {  },
               ),
@@ -169,8 +181,16 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
       overlayEntry!.remove();
       overlayEntry = null;
     }
-    widget.onShowBlur(false);
+    for (var controller in aniControllers) {
+      if (controller.isAnimating) {
+        controller.stop();
+      }
+    }
+    if (mounted) {
+      widget.onShowBlur(false);
+    }
   }
+
   Future<void> refreshProducts() async {
     try {
       await fetchProducts();
