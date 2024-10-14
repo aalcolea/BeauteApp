@@ -176,7 +176,7 @@ class _CartState extends State<Cart> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          cartProvider.decrementElement(cartProvider.cart[index]['product_id']);
+                                                          cartProvider.decrementProductInCart(cartProvider.cart[index]['product_id']);
                                                           setState(() {
                                                             bool action = false;
                                                             itemCount(index, action);
@@ -229,7 +229,7 @@ class _CartState extends State<Cart> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          cartProvider.addElement(cartProvider.cart[index]['product_id']);
+                                                          cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
                                                           setState(() {
                                                             bool action = true;
                                                             itemCount(index, action);
