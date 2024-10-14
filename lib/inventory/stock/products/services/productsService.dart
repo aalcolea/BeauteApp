@@ -72,7 +72,7 @@ class ProductService {
       throw Exception('Error al crear el producto: $e');
     }
   }
-  Future<void> updateProductInfo({required int idProduct, required String name, required double price, required String barCod, String? desc, required catId, required int cant}) async{
+  Future<bool> updateProductInfo({required int idProduct, required String name, required double price, required String barCod, String? desc, required catId, required int cant}) async{
     final url = Uri.parse(baseURL + '/$idProduct');
     print(barCod);
     try{
@@ -93,12 +93,13 @@ class ProductService {
       );
       if(response.statusCode == 200){
         print('Producto Actualizado con exito');
+        return true;
       }else{
-        print('Error al actualizar, código: ${response.statusCode}, error: ${response.body}');
-
+        throw Exception('Error al crear el producto');
       }
     }catch(e){
       print('Error al editar el pructo');
+      throw Exception('Error al modificar el producto: $e');
     }
   }
 
@@ -115,6 +116,13 @@ class ProductService {
       }
     }catch(e){
       print('Error: $e');
+    }
+  }
+  Future<void> refreshProducts(int categryid) async {
+    try {
+      await fetchProducts(categryid);
+    } catch (e) {
+      print('Error en refresh productos $e');
     }
   }
 }
