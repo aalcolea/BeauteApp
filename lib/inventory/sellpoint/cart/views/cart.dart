@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
+import '../../../stock/products/services/productsService.dart';
+
 class Cart extends StatefulWidget {
   final void Function(
       bool,
@@ -29,14 +33,27 @@ class _CartState extends State<Cart> {
   late KeyboardVisibilityController keyboardVisibilityController;
   bool visibleKeyboard = false;
   int oldIndex = 0;
-
-  void itemCount (index, action){
-    if(action == false){
+  double countCart = 0.0;
+  void itemCount(int index, bool action, CartProvider cartProvider) {
+    countCart = double.parse(cantControllers[index].text);
+    if (action == false){
       cantHelper[index]--;
-      cantHelper[index] < 0 ? cantHelper[index] = 0 : cantControllers[index].text = cantHelper[index].toString();
-    }else{
-      cantHelper[index]++;
-      cantControllers[index].text = cantHelper[index].toString();
+      if (cantHelper[index] < 0) {
+        cantHelper[index] = 0;
+      } else{
+        cartProvider.decrementProductInCart(cartProvider.cart[index]['product_id']);
+        cantControllers[index].text = cartProvider.getProductCount(cartProvider.cart[index]['product_id']).toString();
+      }
+      countCart = double.parse(cantControllers[index].text);
+    } else{
+      if (cartProvider.getProductCount(cartProvider.cart[index]['product_id']) < cartProvider.cart[index]['cant_cart']) {
+        cantHelper[index]++;
+        cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
+        cantControllers[index].text = cartProvider.getProductCount(cartProvider.cart[index]['product_id']).toString();
+      } else {
+        print('No puedes agregar más de lo disponible en stock');
+      }
+      countCart = double.parse(cantControllers[index].text);
     }
   }
 
@@ -176,10 +193,10 @@ class _CartState extends State<Cart> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          cartProvider.decrementElement(cartProvider.cart[index]['product_id']);
+                                                          cartProvider.decrementProductInCart(cartProvider.cart[index]['product_id']);
                                                           setState(() {
                                                             bool action = false;
-                                                            itemCount(index, action);
+                                                            itemCount(index, action, cartProvider);
                                                           });
                                                         },
                                                         child: Icon(
@@ -228,14 +245,65 @@ class _CartState extends State<Cart> {
                                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
                                                           ),
                                                         ),
-                                                        onPressed: () {
-                                                          cartProvider.addElement(cartProvider.cart[index]['product_id']);
-                                                          setState(() {
-                                                            bool action = true;
-                                                            itemCount(index, action);
-                                                          });
-                                                        },
-                                                        child: Icon(
+                                                      onPressed: () {
+                                                        final productInCart = cartProvider.cart.firstWhere(
+                                                              (prod) => prod['product_id'] == cartProvider.cart[index]['product_id'],
+                                                          orElse: () => <String, dynamic>{},
+                                                        );
+                                                        if (productInCart.isNotEmpty){
+                                                          final stockDisponible = productInCart['stock'];
+                                                          final cantidadEnCarrito = cartProvider.getProductCount(cartProvider.cart[index]['product_id']);
+                                                          print('stock: ${stockDisponible} cantCar: ${cantidadEnCarrito}');
+                                                          if (cantidadEnCarrito < stockDisponible) {
+                                                            cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
+                                                            setState(() {
+                                                              bool action = true;
+                                                              itemCount(index, action, cartProvider);
+                                                            });
+                                                          } else {
+                                                            showOverlay(
+                                                              context,
+                                                              const CustomToast(
+                                                                message: 'No puedes agregar más de lo disponible en stock',
+                                                              ),
+                                                            );
+                                                          }
+                                                        } else {
+                                                          final product = products_global.firstWhere(
+                                                                (prod) => prod['product_id'] == cartProvider.cart[index]['product_id'],
+                                                            orElse: () => <String, dynamic>{},
+                                                          );
+                                                          if (product.isNotEmpty) {
+                                                            print('Producto encontrado en products_global: ${product}');
+                                                            final stockDisponible = product['cant_cart']['cantidad'] ?? 0;
+                                                            final cantidadEnCarrito = cartProvider.getProductCount(cartProvider.cart[index]['product_id']);
+                                                            print('stock: ${stockDisponible} cantCar: ${cantidadEnCarrito}');
+                                                            if (cantidadEnCarrito < stockDisponible){
+                                                              cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
+                                                              setState(() {
+                                                                bool action = true;
+                                                                itemCount(index, action, cartProvider);
+                                                              });
+                                                            } else {
+                                                              showOverlay(
+                                                                context,
+                                                                const CustomToast(
+                                                                  message: 'No puedes agregar más de lo disponible en stock',
+                                                                ),
+                                                              );
+                                                            }
+                                                          } else {
+                                                            print('Producto no encontrado en products_global');
+                                                            showOverlay(
+                                                              context,
+                                                              const CustomToast(
+                                                                message: 'Producto no encontrado en la lista de productos',
+                                                              ),
+                                                            );
+                                                          }
+                                                        }
+                                                      },
+                                                      child: Icon(
                                                           CupertinoIcons.add,
                                                           color: Colors.white,
                                                           size: MediaQuery.of(context).size.width * 0.04,

@@ -2,46 +2,45 @@ import 'package:beaute_app/inventory/stock/products/services/productsService.dar
 import 'package:flutter/material.dart';
 
 class CartProvider extends ChangeNotifier {
-
   List<Map<String, dynamic>> _cart = [];
   List<Map<String, dynamic>> get cart => _cart;
   double total_price = 0;
-  void addElement(int product_id) {
-    try {
+
+  void addProductToCart(int product_id){
+    final productInCart = _cart.firstWhere(
+          (prod) => prod['product_id'] == product_id,
+      orElse: () => <String, dynamic>{},
+    );
+    if (productInCart.isNotEmpty){
+      final stockDisponible = productInCart['stock'];
+      if (productInCart['cant_cart'] < stockDisponible){
+        productInCart['cant_cart'] += 1;
+      }else{
+        print('No puedes agregar más de lo disponible en stock');
+      }
+    }else{
       final product = products_global.firstWhere(
             (prod) => prod['product_id'] == product_id,
-        orElse: () => {},
+        orElse: () => <String, dynamic>{},
       );
-      if (product != null) {
-        bool check = false;
-        for (var item in _cart) {
-          if (item['product_id'] == product_id) {
-            item['cant_cart'] += 1;
-            check = true;
-            break;
-          }
-        }
-        if (!check) {
-          _cart.add({
-            'product': product['product'],
-            'price': product['price'].toDouble(),
-            'cant_cart': 1.0,
-            'product_id': product['product_id']
-          });
-        }
-        notifyListeners();
-      } else {
-        print('Producto no encontrado en la lista global');
+      if (product.isNotEmpty){
+        _cart.add({
+          'product': product['product'],
+          'price': product['price'],
+          'cant_cart': 1.0,
+          'product_id': product['product_id'],
+          'stock': product['cant_cart']['cantidad'],
+        });
+      }else{
+        print('Producto no encontrado en products_global');
       }
-    } catch (e) {
-      print('Error al agregar producto: $e');
     }
+    notifyListeners();
     print(_cart);
   }
-
-  void decrementElement(int product_id) {
+  void decrementProductInCart(int productId){
     for (var item in _cart) {
-      if (item['product_id'] == product_id) {
+      if (item['product_id'] == productId) {
         if (item['cant_cart'] > 1) {
           item['cant_cart'] -= 1;
         } else {
@@ -51,5 +50,12 @@ class CartProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+  int getProductCount(int productId){
+    final productInCart = _cart.firstWhere(
+          (item) => item['product_id'] == productId,
+      orElse: () => <String, dynamic>{},
+    );
+    return productInCart.isNotEmpty && productInCart['cant_cart'] is num ? (productInCart['cant_cart'] as num).toInt() : 0;
   }
 }

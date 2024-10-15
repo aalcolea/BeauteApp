@@ -4,6 +4,8 @@ import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
 import '../../../sellpoint/cart/services/cartService.dart';
 import '../utils/productOptions.dart';
 
@@ -402,18 +404,25 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                           ),
                                           shadowColor: Colors.transparent
                                         ),
-                                        onPressed: () {
-                                          cartProvider.addElement(products_global[index]['product_id']);
-                                          setState(() {
-                                            bool action = true;
-                                            tapedIndex = index;
-                                            if (!tapedIndices.contains(index)) {
-                                              tapedIndices.add(index);
-                                            }
-                                            itemCount(index, action);
-                                            aniControllers[index].forward();
-                                          });
-                                        },
+                                        onPressed: (products_global[index]['cant_cart']?['cantidad'] ?? 0) > cartProvider.getProductCount(products_global[index]['product_id'])
+                                            ? () {
+                                            cartProvider.addProductToCart(products_global[index]['product_id']);
+                                            setState(() {
+                                              bool action = true;
+                                              tapedIndex = index;
+                                              if (!tapedIndices.contains(index)) {
+                                                tapedIndices.add(index);
+                                              }
+                                              itemCount(index, action);
+                                              aniControllers[index].forward();
+                                            });
+                                          } : () {
+                                            showOverlay(
+                                                context,
+                                                const CustomToast(
+                                                  message: 'No puedes agregar más de lo disponible en stock',
+                                                ));
+                                            },
                                         child: Icon(
                                           CupertinoIcons.add,
                                           color: Colors.white,
