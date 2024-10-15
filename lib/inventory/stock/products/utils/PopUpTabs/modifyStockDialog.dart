@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../agenda/themes/colors.dart';
+
 Future<bool> showModifyproductStockDialog(
     BuildContext context, String nombreProd, int cantProd, Future<void> Function() onDelete) {
   return showDialog<bool>(
@@ -39,7 +41,7 @@ Future<bool> showModifyproductStockDialog(
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: MediaQuery.of(context).size.width * 0.07,
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               ),
                             ),
                           ),
@@ -49,7 +51,7 @@ Future<bool> showModifyproductStockDialog(
                             },
                             icon: const Icon(
                               CupertinoIcons.xmark,
-                              color: Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                             ),
                           )
                         ],
@@ -59,7 +61,7 @@ Future<bool> showModifyproductStockDialog(
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.045,
-                          color: Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                         ),
                       ),
                     ],
@@ -72,7 +74,7 @@ Future<bool> showModifyproductStockDialog(
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(40, 40),
-                            backgroundColor: const Color(0xFF4F2263),
+                            backgroundColor: AppColors.primaryColor,
                             padding: EdgeInsets.symmetric(
                               horizontal: MediaQuery.of(context).size.width * 0.02,
                               vertical: MediaQuery.of(context).size.width * 0.02,
@@ -104,14 +106,14 @@ Future<bool> showModifyproductStockDialog(
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   width: 1.5,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   width: 1.5,
                                 ),
                               ),
@@ -121,7 +123,7 @@ Future<bool> showModifyproductStockDialog(
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(40, 40),
-                            backgroundColor: const Color(0xFF4F2263),
+                            backgroundColor: AppColors.primaryColor,
                             padding: EdgeInsets.symmetric(
                               horizontal: MediaQuery.of(context).size.width * 0.02,
                               vertical: MediaQuery.of(context).size.width * 0.02,

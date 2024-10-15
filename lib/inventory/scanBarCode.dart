@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import '../agenda/themes/colors.dart';
+
 class ScanBarCode extends StatefulWidget {
   final Function (bool) onShowScan;
   final Function (String?) onScanProd;
@@ -60,7 +62,7 @@ class _ScanBarCodeState extends State<ScanBarCode> {
             onQRViewCreated: _onQRViewCreated,
             overlay: QrScannerOverlayShape(
               overlayColor: Colors.black54,
-              borderColor: const Color(0xFF4F2263),
+              borderColor: AppColors.primaryColor,
               borderRadius: 10,
               borderLength: 30,
               borderWidth: 10,

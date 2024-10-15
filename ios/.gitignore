@@ -26,6 +26,8 @@ Flutter/flutter_export_environment.sh
 ServiceDefinitions.json
 Runner/GeneratedPluginRegistrant.*
 Runner.xcodeproj/project.pbxproj
+Podfile
+Podfile.lock
 /build/
 
 # Exceptions to above rules.

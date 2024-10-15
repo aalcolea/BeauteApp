@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 
+import '../../../../agenda/themes/colors.dart';
 import '../forms/categoryForm.dart';
 import '../../products/views/products.dart';
 import 'package:flutter/cupertino.dart';
@@ -288,7 +289,7 @@ class _CategoriesState extends State<Categories> {
                                                 borderRadius: BorderRadius.circular(10),
                                                 child: Icon(
                                                   CupertinoIcons.add,
-                                                  color: const Color(0xFF4F2263).withOpacity(0.3),
+                                                  color: AppColors.primaryColor.withOpacity(0.3),
                                                   size: MediaQuery.of(context).size.width * 0.15,
                                                 )
                                             )
@@ -383,7 +384,7 @@ class _CategoriesState extends State<Categories> {
                                                     color: Colors.black54.withOpacity(0.5),
                                                     borderRadius: BorderRadius.circular(10),
                                                     border: Border.all(
-                                                      color: Color(0xFF4F2263),
+                                                      color: AppColors.primaryColor,
                                                       width: MediaQuery.of(context).size.width * 0.01
                                                     )
                                                   ),
@@ -391,7 +392,7 @@ class _CategoriesState extends State<Categories> {
                                                   width: MediaQuery.of(context).size.width * 0.5,
                                                   child: Icon(
                                                     CupertinoIcons.check_mark_circled,
-                                                    color: Color(0xFF4F2263),
+                                                    color: AppColors.primaryColor,
                                                   ),
                                                 ),
                                               ),
@@ -403,7 +404,7 @@ class _CategoriesState extends State<Categories> {
                                           child: Text(
                                               "${item['category']}",
                                               style: TextStyle(
-                                                color: const Color(0xFF4F2263),
+                                                color: AppColors.primaryColor,
                                                 fontSize: MediaQuery.of(context).size.height * 0.017,
                                               )
                                           ),

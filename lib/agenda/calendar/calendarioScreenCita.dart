@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../themes/colors.dart';
+
 class CalendarioCita extends StatefulWidget {
   final void Function(String, bool) onDayToAppointFormSelected;
   CalendarioCita({Key? key, required this.onDayToAppointFormSelected})
@@ -81,7 +83,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
             IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_rounded,
-                color: const Color(0xFF4F2263),
+                color: AppColors.primaryColor,
                 size: MediaQuery.of(context).size.width * 0.07,
               ),
               onPressed: () {
@@ -107,7 +109,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
             IconButton(
               icon: Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: const Color(0xFF4F2263),
+                color: AppColors.primaryColor,
                 size: MediaQuery.of(context).size.width * 0.07,
               ),
               onPressed: () {
@@ -193,7 +195,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                 child: Text(
                                   details.date.day.toString(),
                                   style: TextStyle(
-                                    color: const Color(0xFF4F2263),
+                                    color: AppColors.primaryColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.05,
@@ -218,7 +220,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                               child: Text(
                                 details.date.day.toString(),
                                 style: TextStyle(
-                                  color: const Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   fontSize:
                                       MediaQuery.of(context).size.width * 0.05,
                                 ),

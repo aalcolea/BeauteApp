@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../themes/colors.dart';
 import '../../views/admin/admin.dart';
 
 class Appointmetsuccessfullycreated extends StatelessWidget {
@@ -35,7 +36,7 @@ class Appointmetsuccessfullycreated extends StatelessWidget {
                     '¡Cita creada!',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.085,
-                      color: const Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -55,7 +56,7 @@ class Appointmetsuccessfullycreated extends StatelessWidget {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                           width: 2.5,
                         ),
                       ),
@@ -64,15 +65,9 @@ class Appointmetsuccessfullycreated extends StatelessWidget {
                       'Inicio',
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.05,
-                        color: const Color(0xFF4F2263),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                        color: AppColors.primaryColor,
+                      ))))
+                    ])))
       ],
     );
   }

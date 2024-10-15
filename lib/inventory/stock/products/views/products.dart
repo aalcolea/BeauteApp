@@ -4,6 +4,7 @@ import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../agenda/themes/colors.dart';
 import '../../../sellpoint/cart/services/cartService.dart';
 import '../utils/productOptions.dart';
 
@@ -196,14 +197,14 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                     onPressed: widget.onBack,
                     icon: const Icon(
                       Icons.arrow_back_ios_new,
-                      color: Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                     )
                 ),
                 Text(
                   widget.selectedCategory,
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.08,
-                      color: const Color(0xFF4F2263)
+                      color: AppColors.primaryColor
                   ),
                 ),
               ],
@@ -260,7 +261,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                   Text(
                                     "${products_global[index]['product']}",
                                     style: TextStyle(
-                                      color: const Color(0xFF4F2263),
+                                      color: AppColors.primaryColor,
                                       fontWeight: FontWeight.bold,
                                       fontSize: MediaQuery.of(context).size.width * 0.04,
                                     ),
@@ -269,12 +270,12 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                     children: [
                                       Text(
                                         "Cant.: ",
-                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                        style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                       ),
                                       Text(
                                         products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
                                         style: TextStyle(
-                                            color: const Color(0xFF4F2263),
+                                            color: AppColors.primaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context).size.width * 0.035
                                         ),
@@ -285,14 +286,14 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                     children: [
                                       Text(
                                         "Precio: ",
-                                        style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                        style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                       ),
                                       Container(
                                         padding: const EdgeInsets.only(right: 10),
                                         child: Text(
                                           "\$${products_global[index]['price']} MXN",
                                           style: TextStyle(
-                                            color: const Color(0xFF4F2263),
+                                            color: AppColors.primaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context).size.width * 0.035,
                                           ),
@@ -309,7 +310,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                   width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.13,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: const Color(0xFF4F2263),
+                                    color: AppColors.primaryColor,
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -349,7 +350,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                               visible: tapedIndices.contains(index),
                                               child: Container(
                                                 decoration: const BoxDecoration(
-                                                  color: Color(0xFF4F2263),
+                                                  color: AppColors.primaryColor,
                                                 ),
                                                 padding: EdgeInsets.symmetric(
                                                   horizontal: MediaQuery.of(context).size.width * 0.0,
@@ -405,7 +406,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                         Divider(
                           indent: MediaQuery.of(context).size.width * 0.05,
                           endIndent: MediaQuery.of(context).size.width * 0.05,
-                          color: Color(0xFF4F2263).withOpacity(0.1),
+                          color: AppColors.primaryColor.withOpacity(0.1),
                           thickness: MediaQuery.of(context).size.width * 0.005,
                         )
                       ],

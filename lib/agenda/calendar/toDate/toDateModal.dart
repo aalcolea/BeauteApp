@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../forms/appoinmentForm.dart';
 import '../../models/appointmentModel.dart';
+import '../../themes/colors.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final void Function(bool, int?, String, String, bool, String) reachTop;
@@ -343,7 +344,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                         DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
                                         style: TextStyle(
                                           color: isSelected
-                                              ? Colors.deepPurple
+                                              ? AppColors.primaryColor
                                               : Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
@@ -355,7 +356,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                         "${date.day}",
                                         style: TextStyle(
                                           color: isSelected
-                                              ? Colors.deepPurple
+                                              ? AppColors.primaryColor
                                               : Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
@@ -432,14 +433,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
             ///
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F2263),
+                  backgroundColor: AppColors.primaryColor,
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.0,
                   ),
-                  surfaceTintColor: const Color(0xFF4F2263),
+                  surfaceTintColor: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
-                    side: BorderSide(color: lockBtn ? Colors.grey.withOpacity(0.3) : const Color(0xFF4F2263), width: 2),
+                    side: BorderSide(color: lockBtn ? Colors.grey.withOpacity(0.3) : AppColors.primaryColor, width: 2),
                   ),
                 ),
                 onPressed: lockBtn ? null : () {

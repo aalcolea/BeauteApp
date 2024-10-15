@@ -1,3 +1,4 @@
+import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,22 +61,22 @@ class _navBarState extends State<navBar> {
                   children: [
                     CircleAvatar(
                       radius: MediaQuery.of(context).size.width*0.05,
+                      backgroundColor: AppColors.primaryColor,
                       child: SvgPicture.asset(
                         'assets/imgLog/drIcon.svg',
                         colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                        height: MediaQuery.of(context).size.width*0.067,
+                        height: MediaQuery.of(context).size.width * 0.067,
                       ),
-                      backgroundColor: Color(0XFF4F2263),
                     ),
                     Container(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 10),
                       child:
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(SessionManager.instance.Nombre,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263))),
-                            Text('Slogan here')
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: AppColors.primaryColor)),
+                            const Text('Asistente')
                           ],
                         )
                     )
@@ -86,19 +87,19 @@ class _navBarState extends State<navBar> {
               onTap: widget.currentScreen == 'agenda' ? Navigator.of(context).pop : (){
                 Navigator.of(context).pushAndRemoveUntil(
                   CupertinoPageRoute(
-                    builder: (context) => AssistantAdmin(docLog: false),
+                    builder: (context) => const AssistantAdmin(docLog: false),
                   ),
                       (Route<dynamic> route) => false,
                 );
               },
               child: Container(
-                padding: EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.only(left: 20),
                 width: MediaQuery.of(context).size.width,
-                height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.07 : MediaQuery.of(context).size.height*0.06,
+                height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height * 0.07 : MediaQuery.of(context).size.height * 0.06,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
-                  border: widget.currentScreen == 'agenda' ? Border.all(color: Color(0XFF4F2263)) : Border(left: BorderSide.none, top: BorderSide(color: Color(0XFF4F2263))),
-                  color: widget.currentScreen == 'agenda' ? Color(0XFF4F2263) : Colors.transparent,
+                  border: widget.currentScreen == 'agenda' ? Border.all(color: AppColors.primaryColor) : const Border(left: BorderSide.none, top: BorderSide(color: Color(0XFF4F2263))),
+                  color: widget.currentScreen == 'agenda' ? AppColors.primaryColor : Colors.transparent,
                   boxShadow: widget.currentScreen == 'agenda' ? [
                     BoxShadow(
                       color: Colors.black54,
@@ -116,7 +117,7 @@ class _navBarState extends State<navBar> {
                     ) : TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width*0.05,
-                        color: Color(0XFF4F2263)
+                        color: AppColors.primaryColor
                     ),
                 ),
               ),
@@ -125,7 +126,7 @@ class _navBarState extends State<navBar> {
               onTap: widget.currentScreen == 'inventario' ? Navigator.of(context).pop : (){
                 Navigator.of(context).pushAndRemoveUntil(
                   CupertinoPageRoute(
-                    builder: (context) => adminInv(),
+                    builder: (context) => const adminInv(),
                   ),
                       (Route<dynamic> route) => false,
                 );
@@ -136,8 +137,8 @@ class _navBarState extends State<navBar> {
                 height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.06 : MediaQuery.of(context).size.height*0.07,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
-                  border: widget.currentScreen == 'agenda' ? Border(left: BorderSide.none, bottom: BorderSide(color: Color(0XFF4F2263))) : Border.all(color: Color(0XFF4F2263)),
-                  color: widget.currentScreen == 'agenda' ? Colors.transparent : Color(0XFF4F2263),
+                  border: widget.currentScreen == 'agenda' ? const Border(left: BorderSide.none, bottom: BorderSide(color: AppColors.primaryColor)) : Border.all(color: AppColors.primaryColor),
+                  color: widget.currentScreen == 'agenda' ? Colors.transparent : AppColors.primaryColor,
                   boxShadow: widget.currentScreen == 'agenda' ? null : [
                     BoxShadow(
                       color: Colors.black54,
@@ -151,7 +152,7 @@ class _navBarState extends State<navBar> {
                   style: widget.currentScreen == 'agenda' ? TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width*0.05,
-                      color: Color(0XFF4F2263)
+                      color: AppColors.primaryColor
                   ) : TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width*0.05,
@@ -163,21 +164,20 @@ class _navBarState extends State<navBar> {
             ///TEST PRINTER
             InkWell(
               onTap: widget.currentScreen == 'inventario' ? Navigator.of(context).pop : (){
-                Navigator.of(context).pushAndRemoveUntil(
+                Navigator.of(context).push(
                   CupertinoPageRoute(
                     builder: (context) => testPrint(),
                   ),
-                      (Route<dynamic> route) => false,
                 );
               },
               child: Container(
-                padding: EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.only(left: 20),
                 width: MediaQuery.of(context).size.width,
                 height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.06 : MediaQuery.of(context).size.height*0.07,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
-                  border: widget.currentScreen == 'agenda' ? Border(left: BorderSide.none, bottom: BorderSide(color: Color(0XFF4F2263))) : Border.all(color: Color(0XFF4F2263)),
-                  color: widget.currentScreen == 'agenda' ? Colors.transparent : Color(0XFF4F2263),
+                  border: widget.currentScreen == 'agenda' ? const Border(left: BorderSide.none, bottom: BorderSide(color: AppColors.primaryColor)) : Border.all(color: AppColors.primaryColor),
+                  color: Colors.grey,
                   boxShadow: widget.currentScreen == 'agenda' ? null : [
                     BoxShadow(
                       color: Colors.black54,
@@ -191,7 +191,7 @@ class _navBarState extends State<navBar> {
                   style: widget.currentScreen == 'agenda' ? TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width*0.05,
-                      color: Color(0XFF4F2263)
+                      color: AppColors.primaryColor
                   ) : TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width*0.05,
@@ -204,7 +204,7 @@ class _navBarState extends State<navBar> {
             Visibility(
               visible: !widget.isDoctorLog,
               child: Container(
-              padding: EdgeInsets.only(top:40),
+              padding: const EdgeInsets.only(top:40),
               child: ElevatedButton(
                   onPressed: (){
                     setState(() {
@@ -214,10 +214,10 @@ class _navBarState extends State<navBar> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    side: BorderSide(color: Color(0XFF4F2263), width: 1.0),
+                    side: const BorderSide(color: AppColors.primaryColor, width: 1.0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     minimumSize: Size(170, 55),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     elevation: 5.0,
                     shadowColor: Colors.black54,
                   ),
@@ -226,7 +226,7 @@ class _navBarState extends State<navBar> {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width*0.05,
-                        color: Color(0XFF4F2263)
+                        color: AppColors.primaryColor
                     ),
                   )
               ),
@@ -247,9 +247,9 @@ class _navBarState extends State<navBar> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.exit_to_app, color: Color(0XFF4F2263)),
+                              const Icon(Icons.exit_to_app, color: AppColors.primaryColor),
                               SizedBox(width: 10),
-                              Text('Cerrar sesion', style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.05, color: Color(0XFF4F2263)))
+                              Text('Cerrar sesion', style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.05, color: AppColors.primaryColor))
                             ],
                           )),
                     ],

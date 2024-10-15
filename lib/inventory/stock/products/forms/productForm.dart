@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
+import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../../regEx.dart';
@@ -138,7 +139,7 @@ class _ProductFormState extends State<ProductForm> {
                   icon: Icon(
                     CupertinoIcons.back,
                     size: MediaQuery.of(context).size.width * 0.08,
-                    color: const Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                   ),
                 ),
                 Padding(
@@ -150,7 +151,7 @@ class _ProductFormState extends State<ProductForm> {
                           textAlign: TextAlign.start,
                           'Agregar Producto',
                         style: TextStyle(
-                          color: const Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                           fontSize: screenWidth! < 370.00
                               ? MediaQuery.of(context).size.width * 0.078
                               : MediaQuery.of(context).size.width * 0.082,
@@ -180,7 +181,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Nombre del producto',
                            textStyle: const TextStyle(
-                             color: Color(0xFF4F2263),
+                             color: AppColors.primaryColor,
                            ),
                            onEditingComplete: () => changeFocus(context, nameFocus, descriptionFocus),
                          )),
@@ -202,7 +203,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Descripción del producto',
                            textStyle: const TextStyle(
-                             color: Color(0xFF4F2263),
+                             color: AppColors.primaryColor,
                            ),
                            onEditingComplete: () => changeFocus(context, descriptionFocus, precioFocus),
                          )),
@@ -225,7 +226,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Precio del producto',
                            textStyle: const TextStyle(
-                             color: Color(0xFF4F2263),
+                             color: AppColors.primaryColor,
                            ),
                            onEditingComplete: () => changeFocus(context, precioFocus, barCodeFocus),
                          )),
@@ -248,7 +249,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Código de barras del producto',
                            textStyle: const TextStyle(
-                             color: Color(0xFF4F2263),
+                             color: AppColors.primaryColor,
                            ),
                          )),
                    ],
@@ -273,7 +274,7 @@ class _ProductFormState extends State<ProductForm> {
                      shape: RoundedRectangleBorder(
                        borderRadius: BorderRadius.circular(10),
                      ),
-                     backgroundColor: const Color(0xFF4F2263),
+                     backgroundColor: AppColors.primaryColor,
                      padding: EdgeInsets.symmetric(
                        horizontal: MediaQuery.of(context).size.width * 0.15,
                        vertical: MediaQuery.of(context).size.width * 0.03,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../regEx.dart';
+import '../../themes/colors.dart';
 
 class AddClientAndAppointment extends StatefulWidget {
   final String clientNamefromAppointmetForm;
@@ -81,7 +82,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                 Text(
                   'Nuevo cliente',
                   style: TextStyle(
-                    color: const Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                     fontSize: MediaQuery.of(context).size.width * 0.075,
                     fontWeight: FontWeight.bold,
                   ),
@@ -92,7 +93,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                   },
                   icon: const Icon(
                     Icons.close,
-                    color: Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                   ),
                 ),
               ],
@@ -107,7 +108,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
               ),
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
-                color: const Color(0xFF4F2263),
+                color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -132,8 +133,15 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                     horizontal: MediaQuery.of(context).size.width * 0.03),
                 hintText: 'Nombre completo',
                 border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: AppColors.primaryColor)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(color: AppColors.primaryColor)),
+                focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                ),
+                  borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),),
               ),
               onTap: () {},
             ),
@@ -147,7 +155,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
               ),
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
-                color: const Color(0xFF4F2263),
+                color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -176,8 +184,15 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                     horizontal: MediaQuery.of(context).size.width * 0.03),
                 hintText: 'No. Celular',
                 border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: AppColors.primaryColor)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(color: AppColors.primaryColor)),
+                focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                ),
+                  borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),),
               ),
               onTap: () {},
             ),
@@ -191,7 +206,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
               ),
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
-                color: const Color(0xFF4F2263),
+                color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -217,8 +232,15 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                       horizontal: MediaQuery.of(context).size.width * 0.03),
                   hintText: 'Correo electrónico',
                   border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                          color: AppColors.primaryColor)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: AppColors.primaryColor)),
+                  focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                  ),
+                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),),
                 ),
                 onTap: () {},
               ),
@@ -237,7 +259,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                     horizontal: MediaQuery.of(context).size.width * 0.1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+                  side: const BorderSide(color: AppColors.primaryColor, width: 2),
                 ),
                 backgroundColor: Colors.white,
               ),
@@ -245,7 +267,7 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
                 textAlign: TextAlign.center,
                 'Agregar cliente y crear cita',
                 style: TextStyle(
-                  color: const Color(0xFF4F2263),
+                  color: AppColors.primaryColor,
                   fontSize: MediaQuery.of(context).size.width * 0.05,
                 ),
               ),

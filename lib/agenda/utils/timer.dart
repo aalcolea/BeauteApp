@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../themes/colors.dart';
+
 class TimerFly extends StatefulWidget {
   final void Function(bool, TextEditingController, int) onTimeChoose;
 
@@ -66,7 +68,7 @@ class _TimerFlyState extends State<TimerFly> {
                 childDelegate: ListWheelChildLoopingListDelegate(
                     children: List.generate(12, (index) {
                   final Color colorforhours = index == selectedIndexHours
-                      ? const Color(0xFF4F2263)
+                      ? AppColors.primaryColor
                       : Colors.grey;
 
                   return Container(
@@ -78,11 +80,11 @@ class _TimerFlyState extends State<TimerFly> {
                           ? const BoxDecoration(
                               border: Border(
                                 top: BorderSide(
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   width: 2,
                                 ),
                                 bottom: BorderSide(
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   width: 2,
                                 ),
                               ),
@@ -120,7 +122,7 @@ class _TimerFlyState extends State<TimerFly> {
           ':',
           style: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.125,
-            color: const Color(0xFF4F2263),
+            color: AppColors.primaryColor,
           ),
         ),
 
@@ -143,18 +145,18 @@ class _TimerFlyState extends State<TimerFly> {
                 childDelegate: ListWheelChildLoopingListDelegate(
                     children: List.generate(60, (index) {
                   final Color colorformins = index == selectedIndexMins
-                      ? const Color(0xFF4F2263)
+                      ? AppColors.primaryColor
                       : Colors.grey;
                   return Container(
                       decoration: index == selectedIndexMins
                           ? const BoxDecoration(
                               border: Border(
                                 top: BorderSide(
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   width: 2,
                                 ),
                                 bottom: BorderSide(
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   width: 2,
                                 ),
                               ),
@@ -211,7 +213,7 @@ class _TimerFlyState extends State<TimerFly> {
                     childCount: 2,
                     builder: (context, index) {
                       final Color colorforitems = index == selectedIndexAmPm
-                          ? const Color(0xFF4F2263)
+                          ? AppColors.primaryColor
                           : Colors.grey;
                       final String text = index == 0 ? 'p.m' : 'a.m';
                       return Container(
@@ -219,11 +221,11 @@ class _TimerFlyState extends State<TimerFly> {
                               ? const BoxDecoration(
                                   border: Border(
                                     top: BorderSide(
-                                      color: Color(0xFF4F2263),
+                                      color: AppColors.primaryColor,
                                       width: 2,
                                     ),
                                     bottom: BorderSide(
-                                      color: Color(0xFF4F2263),
+                                      color: AppColors.primaryColor,
                                       width: 2,
                                     ),
                                   ),
@@ -300,9 +302,9 @@ class _TimerFlyState extends State<TimerFly> {
                     horizontal: MediaQuery.of(context).size.width * 0.1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  side: const BorderSide(color: Color(0xFF4F2263), width: 2),
+                  side: const BorderSide(color: AppColors.primaryColor, width: 2),
                 ),
-                backgroundColor: const Color(0xFF4F2263),
+                backgroundColor: AppColors.primaryColor,
               ),
               child: const Text(
                 'Guardar',

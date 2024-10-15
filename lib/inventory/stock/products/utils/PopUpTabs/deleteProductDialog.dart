@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../agenda/themes/colors.dart';
+
 Future<bool> showDeleteProductConfirmationDialog(
     BuildContext context, Future<void> Function() onDelete) {
   return showDialog<bool>(
@@ -30,7 +32,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width * 0.07,
-                      color: const Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -60,7 +62,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                               width: 2.5,
                             ),
                           ),
@@ -69,7 +71,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                           'Cancelar',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.05,
-                            color: Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                           ),
                         ),
                       ),

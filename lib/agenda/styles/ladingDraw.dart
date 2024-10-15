@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../themes/colors.dart';
+
 class LadingDraw extends StatelessWidget {
   const LadingDraw({super.key});
 
@@ -22,7 +24,7 @@ class _LadingDraw extends CustomPainter {
     // TODO: implement paint
 
     final paintSubline = Paint();
-    paintSubline.color = const Color(0xFF4F2263);
+    paintSubline.color = AppColors.primaryColor;
     paintSubline.style = PaintingStyle.stroke;
     paintSubline.strokeWidth = 10;
     paintSubline.maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);

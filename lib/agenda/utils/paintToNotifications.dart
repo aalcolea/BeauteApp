@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../themes/colors.dart';
+
 class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -8,7 +10,7 @@ class TrianglePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()
-      ..color = const Color(0xFF4F2263)
+      ..color = AppColors.primaryColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
 
