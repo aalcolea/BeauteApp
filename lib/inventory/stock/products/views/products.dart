@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../agenda/themes/colors.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
 import '../../../sellpoint/cart/services/cartService.dart';
 import '../utils/productOptions.dart';
 
@@ -66,12 +68,25 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
     }
     fetchProducts();
     widget.listenerblurr.registrarObservador((newValue){
-      setState(() {
-        if(newValue == false){
+      if(newValue == false){
+        removeOverlay();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var controller in aniControllers) {
+      controller.dispose();
+    }
+    widget.listenerblurr.eliminarObservador((newValue) {
+      if (mounted) {
+        if (newValue == false) {
           removeOverlay();
         }
-      });
+      }
     });
+    super.dispose();
   }
 
   Future<void> fetchProducts() async {
@@ -150,7 +165,9 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                 onProductDeleted: () async {
                   await refreshProducts();
                   removeOverlay();
-                  setState(() {});
+                },
+                onProductModified: () async {
+                  await refreshProducts();
                 },
                 onShowBlur: widget.onShowBlur, columnH: null, onShowBlureight: (bool p1) {  },
               ),
@@ -170,8 +187,16 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
       overlayEntry!.remove();
       overlayEntry = null;
     }
-    widget.onShowBlur(false);
+    for (var controller in aniControllers) {
+      if (controller.isAnimating) {
+        controller.stop();
+      }
+    }
+    if (mounted) {
+      widget.onShowBlur(false);
+    }
   }
+
   Future<void> refreshProducts() async {
     try {
       await fetchProducts();
@@ -380,18 +405,25 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                           ),
                                           shadowColor: Colors.transparent
                                         ),
-                                        onPressed: () {
-                                          cartProvider.addElement(products_global[index]['product_id']);
-                                          setState(() {
-                                            bool action = true;
-                                            tapedIndex = index;
-                                            if (!tapedIndices.contains(index)) {
-                                              tapedIndices.add(index);
-                                            }
-                                            itemCount(index, action);
-                                            aniControllers[index].forward();
-                                          });
-                                        },
+                                        onPressed: (products_global[index]['cant_cart']?['cantidad'] ?? 0) > cartProvider.getProductCount(products_global[index]['product_id'])
+                                            ? () {
+                                            cartProvider.addProductToCart(products_global[index]['product_id']);
+                                            setState(() {
+                                              bool action = true;
+                                              tapedIndex = index;
+                                              if (!tapedIndices.contains(index)) {
+                                                tapedIndices.add(index);
+                                              }
+                                              itemCount(index, action);
+                                              aniControllers[index].forward();
+                                            });
+                                          } : () {
+                                            showOverlay(
+                                                context,
+                                                const CustomToast(
+                                                  message: 'No puedes agregar más de lo disponible en stock',
+                                                ));
+                                            },
                                         child: Icon(
                                           CupertinoIcons.add,
                                           color: Colors.white,

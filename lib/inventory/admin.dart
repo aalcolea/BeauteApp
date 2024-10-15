@@ -40,7 +40,10 @@ class _adminInvState extends State<adminInv> {
   final Listenerblurr _listenerblurr = Listenerblurr();
 
   void changeBlurr(){
-    _listenerblurr.setChange(false,);
+    if (productsKey.currentState != null) {
+      productsKey.currentState!.removeOverlay();
+    }
+    _listenerblurr.setChange(false);
   }
 
   void _onHideBtnsBottom(bool hideBtnsBottom) {
@@ -58,9 +61,11 @@ class _adminInvState extends State<adminInv> {
   }
 
   void _onShowBlur(bool showBlur){
-    setState(() {
-      _showBlurr = showBlur;
-    });
+    if (mounted) {
+      setState(() {
+        _showBlurr = showBlur;
+      });
+    }
   }
 
   void onShowScan(bool closeScan){
