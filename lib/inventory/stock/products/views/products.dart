@@ -381,7 +381,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                           ),
                                           shadowColor: Colors.transparent
                                         ),
-                                        onPressed: products_global[index]['cant_cart']['cantidad'] > cartProvider.getProductCount(products_global[index]['product_id'])
+                                        onPressed: (products_global[index]['cant_cart']?['cantidad'] ?? 0) > cartProvider.getProductCount(products_global[index]['product_id'])
                                             ? () {
                                             cartProvider.addProductToCart(products_global[index]['product_id']);
                                             setState(() {
