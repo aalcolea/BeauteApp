@@ -212,8 +212,17 @@ class _ProductOptionsState extends State<ProductOptions> {
                                 builder: (builder) {
                                   return ModifyProductStockDialog(nombreProd: widget.nombre, cantProd: widget.stock, onModify: (int currentStock) async {
                                     await stockService.updateProductStock(idProduct: widget.id, stockValue: widget.stock, controllerValue: currentStock);
+                                    if (mounted) {
+                                      print('hola');
+                                      showOverlay(
+                                        context,
+                                        const CustomToast(
+                                          message: 'Producto modificado',
+                                        ),
+                                      );
+                                    }
                                     await widget.onProductModified();
-                                    },
+                                  },
                                   idProd: widget.id,
                                   );
                                 }
