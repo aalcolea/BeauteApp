@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../../../../agenda/utils/showToast.dart';
+import '../../../../../agenda/utils/toastWidget.dart';
 import '../../services/stockService.dart';
 
 class ModifyProductStockDialog extends StatefulWidget {
@@ -16,22 +18,6 @@ class ModifyProductStockDialog extends StatefulWidget {
     required this.idProd,
   });
 
-  /*static Future<bool> showModifyProductStockDialog(BuildContext context, String nombreProd,
-      int cantProd, Future<void> Function() onModify, int idProd) {
-    return showDialog<bool>(
-      context: context,
-      barrierColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return ModifyProductStockDialog(
-          nombreProd: nombreProd,
-          cantProd: cantProd,
-          onModify: onModify,
-          idProd: idProd,
-        );
-      },
-    ).then((value) => value ?? false);
-  }*/
-
   @override
   _ModifyProductStockDialogState createState() =>
       _ModifyProductStockDialogState();
@@ -42,6 +28,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
   late int _currentStock;
   late TextEditingController _stockController;
   final stockService = StockService();
+  bool isLoading = false;
 
   @override
   void initState() {
