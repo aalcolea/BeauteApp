@@ -163,6 +163,9 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                   await refreshProducts();
                   removeOverlay();
                 },
+                onProductModified: () async {
+                  await refreshProducts();
+                },
                 onShowBlur: widget.onShowBlur, columnH: null, onShowBlureight: (bool p1) {  },
               ),
             ),
