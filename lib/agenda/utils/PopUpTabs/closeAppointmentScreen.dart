@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+import '../../themes/colors.dart';
+
 class AlertCloseAppointmentScreen extends StatefulWidget {
   final void Function(bool, BuildContext) onCancelConfirm;
 
@@ -66,7 +68,7 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                       '¿Deseas salir \nsin guardar?',
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.075,
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),
@@ -116,11 +118,11 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: const Color(0xFF4F2263), width: 2))
+                            border: Border(bottom: BorderSide(color: AppColors.primaryColor, width: 2))
                           ),
                           child: const Text(
                             'Cancelar',
-                            style: TextStyle(color: Color(0xFF4F2263), fontSize: 20),
+                            style: TextStyle(color: AppColors.primaryColor, fontSize: 20),
                           ),
                         )
                       ),

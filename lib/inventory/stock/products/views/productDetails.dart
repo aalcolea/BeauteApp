@@ -5,6 +5,7 @@ import 'package:beaute_app/regEx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../kboardVisibilityManager.dart';
@@ -151,7 +152,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         });
                       }, child: Text('Cancelar',
                       style: TextStyle(
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.05,
                         fontWeight: FontWeight.bold,
                       ),), )),
@@ -165,7 +166,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     icon: Icon(
                       CupertinoIcons.back,
                       size: MediaQuery.of(context).size.width * 0.08,
-                      color: const Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                     ),
                   ),),
                   Visibility(
@@ -179,7 +180,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           textAlign: TextAlign.start,
                           'Modificar',
                           style: TextStyle(
-                            color: const Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                             fontSize: screenWidth! < 370.00
                                 ? MediaQuery.of(context).size.width * 0.078
                                 : MediaQuery.of(context).size.width * 0.082,
@@ -213,9 +214,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                       },
                       icon: !editProd ? const Icon(
                         Icons.edit,
-                        color: Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                       ) : Text('Guardar ', style: TextStyle(
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.05,
                         fontWeight: FontWeight.bold,
                       ),))
@@ -290,7 +291,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       ),
                                       height: MediaQuery.of(context).size.width * 0.09,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFF4F2263),
+                                        color: AppColors.primaryColor,
                                         borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(10.0),
                                           topRight: Radius.circular(10.0),
@@ -331,7 +332,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       ),
                                       height: MediaQuery.of(context).size.width * 0.09,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFF4F2263),
+                                        color: AppColors.primaryColor,
                                         borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(10.0),
                                           topRight: Radius.circular(10.0),
@@ -365,7 +366,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           Visibility(
                               visible: isLoading,
                               child: const CircularProgressIndicator(
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               )),
                           Visibility(
                             visible: editProd,
@@ -378,7 +379,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               child:  ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color(0xFF4F2263),),
+                                  side: const BorderSide(color: AppColors.primaryColor,),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),

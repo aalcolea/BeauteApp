@@ -7,6 +7,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../services/getClientsService.dart';
+import '../themes/colors.dart';
 
 class AlertForm extends StatefulWidget {
   final bool isDoctorLog;
@@ -164,7 +165,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.08,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                           ),
                         ),),
 
@@ -175,7 +176,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                 Navigator.pop(context);
                               });
                             },
-                            icon: const Icon(Icons.close, color: Color(0xFF4F2263))
+                            icon: const Icon(Icons.close, color: AppColors.primaryColor)
                         ),
                       ],
                     ),
@@ -198,7 +199,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                             width: MediaQuery.of(context).size.width,
                                             decoration: const BoxDecoration(
-                                              color: Color(0xFF4F2263),
+                                              color: AppColors.primaryColor,
                                               borderRadius: BorderRadius.all(Radius.circular(10)),
                                             ),
                                             child: Text('Doctor:', style: TextStyle(
@@ -219,15 +220,22 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                                   horizontal: MediaQuery.of(context).size.width * 0.03,
                                                   vertical: MediaQuery.of(context).size.width * 0.03,
                                                 ),
-                                                border: OutlineInputBorder(
+                                              border: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
-                                                ),
+                                                  borderSide: const BorderSide(
+                                                      color: AppColors.primaryColor)),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),),
                                                 suffixIcon: AnimatedBuilder(
                                                   animation: animationController,
                                                   child: Icon(
                                                     Icons.arrow_drop_down_circle_outlined,
                                                     size: MediaQuery.of(context).size.width * 0.085,
-                                                    color: const Color(0xFF4F2263),
+                                                    color: AppColors.primaryColor,
                                                   ),
                                                   builder: (context, iconToRotate){
                                                     return Transform.rotate(angle: rotate.value, child:  iconToRotate,);
@@ -263,7 +271,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                             width: MediaQuery.of(context).size.width,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF4F2263),
+                                              color: AppColors.primaryColor,
                                               borderRadius: BorderRadius.all(Radius.circular(10)),
                                             ),
                                             child: Text('Mensaje:', style: TextStyle(

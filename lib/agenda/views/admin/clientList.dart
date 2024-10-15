@@ -9,6 +9,7 @@ import '../../forms/clientForm.dart';
 import '../../../main.dart';
 import '../../models/clientModel.dart';
 import '../../services/clienteService.dart';
+import '../../themes/colors.dart';
 import '../../utils/PopUpTabs/deleteClientDialog.dart';
 import '../../utils/showToast.dart';
 import '../../utils/toastWidget.dart';
@@ -238,7 +239,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
         text: source.substring(index, index + query.length),
         style: baseStyle.copyWith(
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF4F2263),
+          color: AppColors.primaryColor,
         ),
       ));
       start = index + query.length;
@@ -349,7 +350,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                   text: highlightOccurrences(client.name, query,
                     TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      color: const Color(0xFF4F2264),
+                      color: AppColors.primaryColor,
                       fontSize: MediaQuery.of(context).size.width * 0.055,
                     ),
                   ),
@@ -366,7 +367,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                             query,
                             TextStyle(
                               overflow: TextOverflow.ellipsis,
-                              color: const Color(0xFF4F2263).withOpacity(0.3),
+                              color: AppColors.primaryColor.withOpacity(0.3),
                               fontSize: MediaQuery.of(context).size.width * 0.045,
                             ),
                           ),
@@ -379,7 +380,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: const Color(0xFF4F2263).withOpacity(0.3),
+                            color: AppColors.primaryColor.withOpacity(0.3),
                             fontSize: MediaQuery.of(context).size.width * 0.045,
                           ),
                         ),
@@ -390,7 +391,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                     margin: const EdgeInsets.only(top: 8),
                     height: 2,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ],
@@ -414,7 +415,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
             margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF4F2263),
+              color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
@@ -429,8 +430,8 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
         symbolBuilder: (context, symbol, state) {
           final color = switch (state) {
             AlphabetScrollbarItemState.active => Colors.white,
-            AlphabetScrollbarItemState.deactivated => const Color(0xFF4F2263),
-            _ => const Color(0xFF4F2263).withOpacity(0.6),
+            AlphabetScrollbarItemState.deactivated => AppColors.primaryColor,
+            _ => AppColors.primaryColor.withOpacity(0.6),
           };
 
           return Container(
@@ -440,7 +441,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 left: Radius.circular(100),
               ),
               color: state == AlphabetScrollbarItemState.active
-                  ? const Color(0xFF4F2263).withOpacity(0.3)
+                  ? AppColors.primaryColor.withOpacity(0.3)
                   : null,
             ),
             child: Center(
@@ -493,19 +494,23 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                           contentPadding: EdgeInsets.zero,
                           hintText: 'Buscar...',
                           hintStyle: TextStyle(
-                            color: Color(0xFF4F2263).withOpacity(0.3)
+                            color: AppColors.primaryColor.withOpacity(0.3)
                           ),
-                          prefixIcon: Icon(Icons.search, color: Color(0xFF4F2263).withOpacity(0.3)),
+                          prefixIcon: Icon(Icons.search, color: AppColors.primaryColor.withOpacity(0.3)),
                           disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.3), width: 2.0),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
+                            borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.3), width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: AppColors.primaryColor, width: 2.0),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(),
+                            borderSide: const BorderSide(color: AppColors.primaryColor),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
@@ -528,7 +533,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                   icon: Icon(
                     Icons.person_add_alt_outlined,
                     size: MediaQuery.of(context).size.width * 0.11,
-                    color: const Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                   ),
                 ),
               ),

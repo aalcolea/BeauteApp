@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../themes/colors.dart';
+
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final AlignmentGeometry alignment;
-  final BoxDecoration decoration;
+  final BoxDecoration? decoration;
   final Widget? child;
 
   const TitleContainer({
@@ -14,15 +16,18 @@ class TitleContainer extends StatelessWidget {
     this.padding,
     this.margin,
     this.alignment = Alignment.centerLeft,
-    this.decoration = const BoxDecoration(
-      color: Color(0xFF4F2263),
-      borderRadius: BorderRadius.all(Radius.circular(10)),
-    ),
+    this.decoration,
     this.child,
   });
 
   @override
   Widget build(BuildContext context) {
+
+    final BoxDecoration defaultDecoration = const BoxDecoration(
+      color: AppColors.primaryColor,
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    );
+
     final EdgeInsetsGeometry defaultPadding = EdgeInsets.symmetric(
       vertical: MediaQuery.of(context).size.width * 0.02,
       horizontal: MediaQuery.of(context).size.width * 0.02,
@@ -36,7 +41,7 @@ class TitleContainer extends StatelessWidget {
       padding: padding ?? defaultPadding,
       margin: margin ?? defaultMargin,
       alignment: alignment,
-      decoration: decoration,
+      decoration: decoration ?? defaultDecoration,
       child: child,
     );
   }
@@ -141,6 +146,8 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
   final drSelected = TextEditingController();
   int optSelectedToSend = 0;
   int optSelected = 0;
+  String nameDr1 = 'Doctor1'; //aqui cambiar por el nombre del doctor1
+  String nameDr2 = 'Doctor2'; //aqui cambiar por el nombre del doctor2
 
   @override
   void initState() {
@@ -162,7 +169,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
             splashColor: Colors.transparent,
             onTap: () {
               setState(() {
-                drSelected.text = 'Doctor1';
+                drSelected.text = nameDr1;
                 widget.onAssignedDoctor(
                   dr1sel = true,
                   dr2sel = false,
@@ -177,7 +184,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
                   color:
-                      optSelected == 1 || optSelectedToSend == 1 ? const Color(0xFF4F2263) : Colors.white,
+                      optSelected == 1 || optSelectedToSend == 1 ? AppColors.primaryColor : Colors.white,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
@@ -195,7 +202,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                           )
                         : SvgPicture.asset(
                             'assets/imgLog/docVector2.svg',
-                            colorFilter: const ColorFilter.mode(Color(0xFF4F2263), BlendMode.srcIn),
+                              colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
                             width: MediaQuery.of(context).size.width * 0.07,
                             height: MediaQuery.of(context).size.width * 0.07,
                           ),
@@ -205,7 +212,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     style: TextStyle(
                         color: optSelected == 1 ||  optSelectedToSend == 1
                             ? Colors.white
-                            : const Color(0xFF4F2263),
+                            : AppColors.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.054),
                   )
                 ],
@@ -225,7 +232,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
             splashColor: Colors.transparent,
             onTap: () {
               setState(() {
-                drSelected.text = 'Doctor2';
+                drSelected.text = nameDr2;
                 widget.onAssignedDoctor(
                   dr2sel = true,
                   dr1sel = false,
@@ -239,7 +246,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
-                  color: optSelected == 2 ||  optSelectedToSend == 2 ? const Color(0xFF4F2263) : Colors.white,
+                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors.primaryColor : Colors.white,
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
@@ -257,22 +264,17 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                         )
                         : SvgPicture.asset(
                           'assets/imgLog/docVector2.svg',
-                          colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
                           width: MediaQuery.of(context).size.width * 0.07,
                           height: MediaQuery.of(context).size.width * 0.07,
-                        ), /*Icon(
-                      CupertinoIcons.person_crop_circle_fill,
-                      color: optSelected == 2
-                          ? Colors.white
-                          : const Color(0xFF4F2263),
-                    ),*/
+                        ),
                   ),
                   Text(
                     'Doctor 2',
                     style: TextStyle(
                         color: optSelected == 2 ||  optSelectedToSend == 2
                             ? Colors.white
-                            : const Color(0xFF4F2263),
+                            : AppColors.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.054),
                   )
                 ],
@@ -302,6 +304,7 @@ class FieldsToWrite extends StatelessWidget {
   final void Function(PointerDownEvent)? onTapOutside;
   final List<TextInputFormatter>? inputFormatters;
   final String? initVal;
+  final InputDecoration? inputdecoration;
 
   const FieldsToWrite({
     super.key,
@@ -320,13 +323,38 @@ class FieldsToWrite extends StatelessWidget {
     this.onTapOutside,
     this.inputFormatters,
     this.preffixIcon,
-    this.initVal,
+    this.initVal, this.inputdecoration,
   });
 
   @override
   Widget build(BuildContext context) {
     final EdgeInsetsGeometry defaultContentPadding = EdgeInsets.symmetric(
       horizontal: MediaQuery.of(context).size.width * 0.03,
+    );
+    final InputDecoration defaultInputD = InputDecoration(
+      hintText: labelText,
+      suffixIcon: suffixIcon,
+      contentPadding: contentPadding ?? defaultContentPadding,
+      prefixIcon: preffixIcon,
+      filled: fillColor != null,
+      fillColor: fillColor ?? Colors.white,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+    ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: AppColors.primaryColor, // Cambia este color al que prefieras
+          width: 1.0, // El grosor del borde
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+        focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: AppColors.primaryColor,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+      )
     );
 
     return TextFormField(
@@ -338,17 +366,7 @@ class FieldsToWrite extends StatelessWidget {
       focusNode: focusNode,
       controller: controller,
       readOnly: readOnly,
-      decoration: InputDecoration(
-        hintText: labelText,
-        suffixIcon: suffixIcon,
-        contentPadding: contentPadding ?? defaultContentPadding,
-        prefixIcon: preffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        filled: fillColor != null,
-        fillColor: fillColor ?? Colors.white,
-      ),
+      decoration: inputdecoration  ?? defaultInputD,
       onChanged: onChanged,
       onTap: onTap,
       onTapOutside: onTapOutside,

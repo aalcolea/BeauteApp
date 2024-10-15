@@ -5,6 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import '../../../../agenda/themes/colors.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
+import '../../../stock/products/services/productsService.dart';
 
 class Cart extends StatefulWidget {
   final void Function(
@@ -29,14 +33,27 @@ class _CartState extends State<Cart> {
   late KeyboardVisibilityController keyboardVisibilityController;
   bool visibleKeyboard = false;
   int oldIndex = 0;
-
-  void itemCount (index, action){
-    if(action == false){
+  double countCart = 0.0;
+  void itemCount(int index, bool action, CartProvider cartProvider) {
+    countCart = double.parse(cantControllers[index].text);
+    if (action == false){
       cantHelper[index]--;
-      cantHelper[index] < 0 ? cantHelper[index] = 0 : cantControllers[index].text = cantHelper[index].toString();
-    }else{
-      cantHelper[index]++;
-      cantControllers[index].text = cantHelper[index].toString();
+      if (cantHelper[index] < 0) {
+        cantHelper[index] = 0;
+      } else{
+        cartProvider.decrementProductInCart(cartProvider.cart[index]['product_id']);
+        cantControllers[index].text = cartProvider.getProductCount(cartProvider.cart[index]['product_id']).toString();
+      }
+      countCart = double.parse(cantControllers[index].text);
+    } else{
+      if (cartProvider.getProductCount(cartProvider.cart[index]['product_id']) < cartProvider.cart[index]['cant_cart']) {
+        cantHelper[index]++;
+        cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
+        cantControllers[index].text = cartProvider.getProductCount(cartProvider.cart[index]['product_id']).toString();
+      } else {
+        print('No puedes agregar más de lo disponible en stock');
+      }
+      countCart = double.parse(cantControllers[index].text);
     }
   }
 
@@ -104,7 +121,7 @@ class _CartState extends State<Cart> {
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF4F2263).withOpacity(0.1),
+                  color: AppColors.primaryColor.withOpacity(0.1),
                   width: 2,
                 ),
               ),
@@ -145,14 +162,14 @@ class _CartState extends State<Cart> {
                                               Text(
                                                 '${cartProvider.cart[index]['product']}',
                                                 style: TextStyle(
-                                                  color: const Color(0xFF4F2263),
+                                                  color: AppColors.primaryColor,
                                                   fontSize: MediaQuery.of(context).size.width * 0.05,
                                                 ),
                                               ),
                                               Text(
                                                 'Codigo ${cartProvider.cart[index]['product_id']}',
                                                 style: TextStyle(
-                                                    color: Color(0xFF4F2263).withOpacity(0.3),
+                                                    color: AppColors.primaryColor.withOpacity(0.3),
                                                     fontSize: MediaQuery.of(context).size.width * 0.04
                                                 ),
                                               ),
@@ -167,7 +184,7 @@ class _CartState extends State<Cart> {
                                                     ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           minimumSize: const Size(0, 0),
-                                                          backgroundColor: const Color(0xFF4F2263).withOpacity(0.5),
+                                                          backgroundColor: AppColors.primaryColor.withOpacity(0.5),
                                                           padding: EdgeInsets.symmetric(
                                                               horizontal: MediaQuery.of(context).size.width * 0.02,
                                                               vertical: MediaQuery.of(context).size.width * 0.02,
@@ -176,10 +193,10 @@ class _CartState extends State<Cart> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          cartProvider.decrementElement(cartProvider.cart[index]['product_id']);
+                                                          cartProvider.decrementProductInCart(cartProvider.cart[index]['product_id']);
                                                           setState(() {
                                                             bool action = false;
-                                                            itemCount(index, action);
+                                                            itemCount(index, action, cartProvider);
                                                           });
                                                         },
                                                         child: Icon(
@@ -203,7 +220,7 @@ class _CartState extends State<Cart> {
                                                           focusedBorder: OutlineInputBorder(
                                                             borderRadius: BorderRadius.circular(10),
                                                             borderSide: const BorderSide(
-                                                              color: Color(0xFF4F2263),
+                                                              color: AppColors.primaryColor,
                                                               width: 1.5,
                                                             ),
                                                           ),
@@ -220,7 +237,7 @@ class _CartState extends State<Cart> {
                                                     ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           minimumSize: const Size(0, 0),
-                                                          backgroundColor: const Color(0xFF4F2263).withOpacity(0.5),
+                                                          backgroundColor: AppColors.primaryColor.withOpacity(0.5),
                                                           padding: EdgeInsets.symmetric(
                                                             horizontal: MediaQuery.of(context).size.width * 0.02,
                                                             vertical: MediaQuery.of(context).size.width * 0.02,
@@ -228,14 +245,65 @@ class _CartState extends State<Cart> {
                                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
                                                           ),
                                                         ),
-                                                        onPressed: () {
-                                                          cartProvider.addElement(cartProvider.cart[index]['product_id']);
-                                                          setState(() {
-                                                            bool action = true;
-                                                            itemCount(index, action);
-                                                          });
-                                                        },
-                                                        child: Icon(
+                                                      onPressed: () {
+                                                        final productInCart = cartProvider.cart.firstWhere(
+                                                              (prod) => prod['product_id'] == cartProvider.cart[index]['product_id'],
+                                                          orElse: () => <String, dynamic>{},
+                                                        );
+                                                        if (productInCart.isNotEmpty){
+                                                          final stockDisponible = productInCart['stock'];
+                                                          final cantidadEnCarrito = cartProvider.getProductCount(cartProvider.cart[index]['product_id']);
+                                                          print('stock: ${stockDisponible} cantCar: ${cantidadEnCarrito}');
+                                                          if (cantidadEnCarrito < stockDisponible) {
+                                                            cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
+                                                            setState(() {
+                                                              bool action = true;
+                                                              itemCount(index, action, cartProvider);
+                                                            });
+                                                          } else {
+                                                            showOverlay(
+                                                              context,
+                                                              const CustomToast(
+                                                                message: 'No puedes agregar más de lo disponible en stock',
+                                                              ),
+                                                            );
+                                                          }
+                                                        } else {
+                                                          final product = products_global.firstWhere(
+                                                                (prod) => prod['product_id'] == cartProvider.cart[index]['product_id'],
+                                                            orElse: () => <String, dynamic>{},
+                                                          );
+                                                          if (product.isNotEmpty) {
+                                                            print('Producto encontrado en products_global: ${product}');
+                                                            final stockDisponible = product['cant_cart']['cantidad'] ?? 0;
+                                                            final cantidadEnCarrito = cartProvider.getProductCount(cartProvider.cart[index]['product_id']);
+                                                            print('stock: ${stockDisponible} cantCar: ${cantidadEnCarrito}');
+                                                            if (cantidadEnCarrito < stockDisponible){
+                                                              cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
+                                                              setState(() {
+                                                                bool action = true;
+                                                                itemCount(index, action, cartProvider);
+                                                              });
+                                                            } else {
+                                                              showOverlay(
+                                                                context,
+                                                                const CustomToast(
+                                                                  message: 'No puedes agregar más de lo disponible en stock',
+                                                                ),
+                                                              );
+                                                            }
+                                                          } else {
+                                                            print('Producto no encontrado en products_global');
+                                                            showOverlay(
+                                                              context,
+                                                              const CustomToast(
+                                                                message: 'Producto no encontrado en la lista de productos',
+                                                              ),
+                                                            );
+                                                          }
+                                                        }
+                                                      },
+                                                      child: Icon(
                                                           CupertinoIcons.add,
                                                           color: Colors.white,
                                                           size: MediaQuery.of(context).size.width * 0.04,
@@ -255,14 +323,14 @@ class _CartState extends State<Cart> {
                                                 Text(
                                                   '\$${(cartProvider.cart[index]['cant_cart'] * cartProvider.cart[index]['price']).toStringAsFixed(2)}',
                                                   style: TextStyle(
-                                                    color: const Color(0xFF4F2263),
+                                                    color: AppColors.primaryColor,
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
                                                   ),
                                                 ),
                                                 Text(
                                                   'MXN',
                                                   style: TextStyle(
-                                                      color: const Color(0xFF4F2263).withOpacity(0.3),
+                                                      color: AppColors.primaryColor.withOpacity(0.3),
                                                       fontSize: MediaQuery.of(context).size.width * 0.04
                                                   ),
                                                 )
@@ -298,7 +366,7 @@ class _CartState extends State<Cart> {
                 Text(
                   'Total:',
                   style: TextStyle(
-                    color: Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.08,
                   ),
@@ -309,7 +377,7 @@ class _CartState extends State<Cart> {
                     Text(
                       '\$${totalCart.toStringAsFixed(2)}',
                       style: TextStyle(
-                        color: Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.08,
                       ),
@@ -317,7 +385,7 @@ class _CartState extends State<Cart> {
                     Text(
                       'MXN ',
                       style: TextStyle(
-                        color: const Color(0xFF4F2263).withOpacity(0.3),
+                        color: AppColors.primaryColor.withOpacity(0.3),
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.04,
                       ),
@@ -337,7 +405,7 @@ class _CartState extends State<Cart> {
                 right: MediaQuery.of(context).size.width * 0.03
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF4F2263),
+              color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

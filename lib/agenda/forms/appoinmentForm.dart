@@ -14,6 +14,7 @@ import '../calendar/calendarioScreenCita.dart';
 import '../models/clientModel.dart';
 import '../services/getClientsService.dart';
 import '../styles/AppointmentStyles.dart';
+import '../themes/colors.dart';
 import '../utils/PopUpTabs/addNewClientandAppointment.dart';
 import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
@@ -79,6 +80,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
   String toTime = '';
   int? newClientID;
   bool showBlurr = false;
+  //
+  String nameDr1 = 'Doctor1';
+  String nameDr2 = 'Doctor2';
+  String nameDr3 = 'Doctor3';//etc
 
   Future<void> createClient() async {
     try {
@@ -200,11 +205,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
       bool showdrChooseWidget) {
     setState(() {
       _drSelected = drSelected;
-      if (_drSelected!.text == 'Doctor1') {
+      if (_drSelected!.text == nameDr1) {
         doctor_id_body = 1;
       } else {
         doctor_id_body = 2;
-      }
+      }//si hay mas drs habra que hacer un swicht o if else
       _optSelected = optSelected;
       _showdrChooseWidget = showdrChooseWidget;
     });
@@ -415,7 +420,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               icon: Icon(
                                 CupertinoIcons.back,
                                 size: MediaQuery.of(context).size.width * 0.08,
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               ),
                             ),
                             Text(
@@ -424,7 +429,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.095,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                             ))
                       ])
                     ])),
@@ -472,13 +477,30 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       contentPadding: EdgeInsets.symmetric(
                                           horizontal: MediaQuery.of(context).size.width * 0.03),
                                       border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderSide: const BorderSide(
+                                          color: AppColors.primaryColor,
+                                          width: 1,
+                                        )
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                            color: AppColors.primaryColor,
+                                            width: 1,
+                                          )
+                                      ),
+                                      focusedBorder:  OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                            color: AppColors.primaryColor,
+                                            width: 1,
+                                          )
                                       ),
                                       suffixIcon: Icon(
                                         Icons.arrow_drop_down_circle_outlined,
                                         size: MediaQuery.of(context).size.width * 0.085,
-                                        color: const Color(0xFF4F2263),
+                                        color: AppColors.primaryColor,
                                       ),
                                     ),
                                     readOnly: true,
@@ -543,7 +565,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       labelText: 'Cliente',
                                       suffixIcon: Icon(
                                         CupertinoIcons.person,
-                                        color: widget.nameClient != null ? Colors.grey : const Color(0xFF4F2263),
+                                        color: widget.nameClient != null ? Colors.grey : AppColors.primaryColor,
                                         size: MediaQuery.of(context).size.width * 0.075,
                                       ),
                                       controller: widget.nameClient != null ? _clientTextController : fieldTextEditingController,
@@ -596,8 +618,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     suffixIcon: Icon(
                                       Icons.calendar_today,
                                       color: drFieldDone && clientFieldDone && widget.dateFromCalendarSchedule == null
-                                          ? const Color(0xFF4F2263) : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
-                                      const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
+                                          ? AppColors.primaryColor : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
+                                      AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                                       size: MediaQuery.of(context).size.width * 0.07,
                                     ),
                                     onTap: () {
@@ -645,8 +667,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     suffixIcon: Icon(
                                       Icons.access_time,
                                       color: _dateController.text.isNotEmpty
-                                          ? const Color(0xFF4F2263)
-                                          : const Color(0xFF4F2263)
+                                          ? AppColors.primaryColor
+                                          : AppColors.primaryColor
                                               .withOpacity(0.3),
                                       size: MediaQuery.of(context).size.width * 0.075,
                                     ),
@@ -698,8 +720,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       CupertinoIcons.pencil_ellipsis_rectangle,
                                       size: MediaQuery.of(context).size.width *
                                           0.085,
-                                      color: _timeController.text.isNotEmpty && isHourCorrect ? const Color(0xFF4F2263)
-                                          : const Color(0xFF4F2263).withOpacity(0.3),
+                                      color: _timeController.text.isNotEmpty && isHourCorrect ? AppColors.primaryColor
+                                          : AppColors.primaryColor.withOpacity(0.3),
                                     ),
                                     eneabled: _timeController.text.isNotEmpty && isHourCorrect ? true : false,
                                     labelText: 'Tratamiento',
@@ -724,7 +746,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           (states) {
                                         if (states
                                             .contains(MaterialState.selected)) {
-                                          return const Color(0xFF4F2263);
+                                          return AppColors.primaryColor;
                                         } else {
                                           return Colors.transparent;
                                         }
@@ -743,9 +765,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           fontSize: MediaQuery.of(context).size.width * 0.045,
                                           color: clientInDB == null ||
                                                   clientInDB == true
-                                              ? const Color(0xFF4F2263)
+                                              ? AppColors.primaryColor
                                                   .withOpacity(0.3)
-                                              : const Color(0xFF4F2263),
+                                              : AppColors.primaryColor,
                                         ),
                                       ),
                                     ),
@@ -771,7 +793,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25.0),
                                       side: BorderSide(
-                                          color: treatmentController.text.isNotEmpty ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.3),
+                                          color: treatmentController.text.isNotEmpty ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                                           width: 2),
                                     ),
                                     backgroundColor: Colors.white,
@@ -780,6 +802,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     'Crear cita',
                                     style: TextStyle(
                                       fontSize: MediaQuery.of(context).size.width * 0.06,
+                                      color: AppColors.primaryColor,
                                         ))))
                           ])))
                 ])
@@ -985,7 +1008,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               suffixIcon: Icon(
                                 Icons.arrow_drop_down_circle_outlined,
                                 size: MediaQuery.of(context).size.width * 0.085,
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
+                              ),
+                              enabledBorder:  OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide: const BorderSide(
+                                    color: AppColors.primaryColor,
+                                    width: 1,
+                                  )
                               ),
                             ),
                             readOnly: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../calendar/calendarSchedule.dart';
+import '../../themes/colors.dart';
 import '../../utils/paintToNotifications.dart';
 import '../../utils/sliverlist/notiCards.dart';
 
@@ -64,20 +65,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ? MediaQuery.of(context).size.height * 0.027
                       : MediaQuery.of(context).size.height * 0.0252,
                 ),
-                Expanded(
+              Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: const Color(0xFF4F2263),
-                        width: 2.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                      decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: AppColors.primaryColor,
+                            width: 2.5,
+                          ))))
+            ]),
             Column(
               children: [
                 Row(
@@ -96,61 +93,48 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ],
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _buildSection('HOY', todayAppointments),
-                        _buildSection('MAÑANA', tomorrowAppointments),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                    child: SingleChildScrollView(
+                        child: Column(children: [
+                  _buildSection('HOY', todayAppointments),
+                  _buildSection('MAÑANA', tomorrowAppointments),
+                ])))
+              ])
+            ])));
   }
 
   Widget _buildSection(
       String title, Future<List<Appointment2>> appointmentsFuture) {
     return Column(
       children: [
-        Row(
-          children: [
-            Container(
+        Row(children: [
+          Container(
               margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.width * 0.04,
+                  top: MediaQuery.of(context).size.width * 0.04,
                   left: MediaQuery.of(context).size.width * 0.02,
                   right: MediaQuery.of(context).size.width * 0.02),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
-          ],
-        ),
+              child: Text(title,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  )))
+        ]),
         Container(
           margin: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width * 0.02),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.0035,
           decoration: const BoxDecoration(
-            color: Color(0xFF4F2263),
+            color: AppColors.primaryColor,
           ),
         ),
         FutureBuilder<List<Appointment2>>(
           future: appointmentsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Text('No hay citas');
+              return const Text('No hay citas');
             } else {
               return Column(
                 children: snapshot.data!.map((appointment) {

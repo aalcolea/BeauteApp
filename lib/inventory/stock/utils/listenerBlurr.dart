@@ -11,6 +11,10 @@ class Listenerblurr{
     _observadores.add(callback);
   }
 
+  void eliminarObservador(void Function(bool) observador) {
+    _observadores.remove(observador);
+  }
+
   void notificarObservadores(){
     for (var callback in _observadores){
       callback(_blurr);

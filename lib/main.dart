@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:beaute_app/agenda/views/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +15,11 @@ import 'globalVar.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   await Firebase.initializeApp();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
@@ -53,7 +59,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
         useMaterial3: true,
       ),
       routes: {
@@ -127,8 +133,10 @@ class SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            CircularProgressIndicator(),
+          children: [
+            CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
             SizedBox(height: 20),
             Text('Cargando...', style: TextStyle(fontSize: 18)),
           ],

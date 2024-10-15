@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/appointmentModel.dart';
+import '../../themes/colors.dart';
 
 class ConfirmationDialog extends StatefulWidget {
   final Appointment appointment;
@@ -101,7 +102,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                     '¿Seguro que desea guardar los cambios?',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.075,
-                      color: const Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -119,7 +120,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                               width: 2.0,
                             ),
                           ),
@@ -128,7 +129,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                           'Cancelar',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.055,
-                            color: const Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                           ),
                         ),
                       ),
@@ -139,7 +140,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           side: const BorderSide(
-                              color: const Color(0xFF4F2263), width: 1),
+                              color: AppColors.primaryColor, width: 1),
                         ),
                         backgroundColor: Colors.white,
                         surfaceTintColor: Colors.white,

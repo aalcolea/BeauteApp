@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+import '../../themes/colors.dart';
+
 class AlertCloseDialog extends StatefulWidget {
   final void Function(bool) onCancelConfirm;
 
@@ -39,7 +41,7 @@ class _AlertCloseDialogState extends State<AlertCloseDialog> {
             ),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: const Color(0xFF4F2263), width: 0.5),
+                border: Border.all(color: AppColors.primaryColor, width: 0.5),
                 color: Colors.white,
                 boxShadow: const [
                   BoxShadow(blurRadius: 3.5, offset: Offset(0, 0))
@@ -100,7 +102,7 @@ class _AlertCloseDialogState extends State<AlertCloseDialog> {
                         '¿Deseas cerrar la aaaaaapp?',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.065,
-                          color: const Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                         ),
                       ),*/
                     ),
@@ -115,7 +117,7 @@ class _AlertCloseDialogState extends State<AlertCloseDialog> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           side: const BorderSide(
-                            color: Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                             width: 0.75,
                           ),
                           padding: EdgeInsets.zero,
@@ -144,7 +146,7 @@ class _AlertCloseDialogState extends State<AlertCloseDialog> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         side: const BorderSide(
-                          color: Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                           width: 0.75,
                         ),
                         padding: const EdgeInsets.all(4),
