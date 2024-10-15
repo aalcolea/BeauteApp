@@ -6,6 +6,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../regEx.dart';
+import '../themes/colors.dart';
 import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
 
 
@@ -216,7 +217,7 @@ class ClientFormState extends State<ClientForm> {
                         fontSize:
                         MediaQuery.of(context).size.width * 0.08,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                       ),
                     ),
                     IconButton(
@@ -226,7 +227,7 @@ class ClientFormState extends State<ClientForm> {
                             Navigator.pop(context);
                           });
                         },
-                        icon: const Icon(Icons.close, color: const Color(0xFF4F2263),))
+                        icon: const Icon(Icons.close, color: AppColors.primaryColor,))
                   ],
                 ),
                 Container(
@@ -254,7 +255,7 @@ class ClientFormState extends State<ClientForm> {
                                     vertical: MediaQuery.of(context).size.width * 0.025),
                                 alignment: Alignment.centerLeft,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Row(
@@ -295,6 +296,14 @@ class ClientFormState extends State<ClientForm> {
                                   hintText: 'Nombre completo',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
+                                    borderSide: const BorderSide(color: AppColors.primaryColor)
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                    focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
                                   ),
                                 ),
                                 onTap: () {
@@ -316,7 +325,7 @@ class ClientFormState extends State<ClientForm> {
                                   horizontal: MediaQuery.of(context).size.width * 0.0),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Text(
@@ -333,6 +342,7 @@ class ClientFormState extends State<ClientForm> {
                                   bottom: MediaQuery.of(context).size.width * 0.045,
                                   top: MediaQuery.of(context).size.width * 0.0225),
                               child: TextFormField(
+                                textInputAction: TextInputAction.done,
                                 focusNode: focusNodeCel,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
@@ -354,7 +364,15 @@ class ClientFormState extends State<ClientForm> {
                                       horizontal:
                                       MediaQuery.of(context).size.width * 0.02),
                                   border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderSide: const BorderSide(
+                                            color: AppColors.primaryColor)),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                  focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
+                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
                                   ),
                                 ),
                                 onTap: () {
@@ -385,7 +403,7 @@ class ClientFormState extends State<ClientForm> {
                                   horizontal: MediaQuery.of(context).size.width * 0.0),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Text(
@@ -413,10 +431,17 @@ class ClientFormState extends State<ClientForm> {
                                       vertical: screenWidth! < 370
                                           ? MediaQuery.of(context).size.width * 0.02
                                           : MediaQuery.of(context).size.width * 0.0325,
-                                      horizontal:
-                                      MediaQuery.of(context).size.width * 0.02),
+                                      horizontal: MediaQuery.of(context).size.width * 0.02),
                                   border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.primaryColor)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                  focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
+                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
                                   ),
                                   hintText: 'Correo electrónico',
                                 ),
@@ -446,7 +471,7 @@ class ClientFormState extends State<ClientForm> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10.0),
                                         side: const BorderSide(
-                                            color: Color(0xFF4F2263), width: 2),
+                                            color: AppColors.primaryColor, width: 2),
                                       ),
                                       fixedSize: Size(
                                         MediaQuery.of(context).size.width * 0.6,
@@ -459,7 +484,7 @@ class ClientFormState extends State<ClientForm> {
                                           fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.055,
-                                          color: const Color(0xFF4F2263),
+                                          color: AppColors.primaryColor,
                                         ))))
                           ])),
                 ),

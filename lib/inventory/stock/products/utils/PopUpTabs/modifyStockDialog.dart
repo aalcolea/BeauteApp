@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../agenda/utils/showToast.dart';
 import '../../../../../agenda/utils/toastWidget.dart';
 import '../../services/stockService.dart';
+import '../../../../../agenda/themes/colors.dart';
 
 class ModifyProductStockDialog extends StatefulWidget {
   final String nombreProd;
@@ -192,12 +193,12 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                         ),
                       ),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(40, 40),
-                          backgroundColor: const Color(0xFF4F2263),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width * 0.02,
-                            vertical: MediaQuery.of(context).size.width * 0.02,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(40, 40),
+                            backgroundColor: AppColors.primaryColor,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: MediaQuery.of(context).size.width * 0.02,
+                              vertical: MediaQuery.of(context).size.width * 0.02,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5.0),

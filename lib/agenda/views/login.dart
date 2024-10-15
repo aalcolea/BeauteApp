@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../services/auth_service.dart';
 import '../styles/ladingDraw.dart';
+import '../themes/colors.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -64,13 +65,13 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: const Color(0xFF4F2263),
+                      surfaceTintColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: Color(0xFF4F2263), width: 2),
+                            color: AppColors.primaryColor, width: 2),
                       ),
-                      backgroundColor: const Color(0xFF4F2263),
+                      backgroundColor: AppColors.primaryColor,
                     ),
                     child: Row(
                       children: [
@@ -131,13 +132,13 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: const Color(0xFF4F2263),
+                      surfaceTintColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: Color(0xFF4F2263), width: 2),
+                            color: AppColors.primaryColor, width: 2),
                       ),
-                      backgroundColor: const Color(0xFF4F2263),
+                      backgroundColor: AppColors.primaryColor,
                     ),
                     child: Row(
                       children: [
@@ -201,13 +202,13 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: const Color(0xFF4F2263),
+                      surfaceTintColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: Color(0xFF4F2263), width: 2),
+                            color: AppColors.primaryColor, width: 2),
                       ),
-                      backgroundColor: const Color(0xFF4F2263),
+                      backgroundColor: AppColors.primaryColor,
                     ),
                     child: Row(
                       children: [
@@ -247,7 +248,7 @@ class _LoginState extends State<Login> {
                     decoration: const BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                           spreadRadius: 1,
                           blurRadius: 2,
                           offset: Offset(2, -0),

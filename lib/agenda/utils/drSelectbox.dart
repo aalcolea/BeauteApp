@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../themes/colors.dart';
+
 class DoctorSelectbox extends StatefulWidget {
   const DoctorSelectbox({
     super.key,
@@ -28,7 +30,7 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
             'Doctor1 ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Color(0xFF4F2263),
+              color: AppColors.primaryColor,
             ),
           ),
         ],
@@ -39,7 +41,7 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
           value: nameDr,
           child: Container(
             color: selectedDr == nameDr
-                ? const Color(0xFF4F2263)
+                ? AppColors.primaryColor
                 : Colors.transparent,
             child: Row(
               children: [
@@ -48,14 +50,14 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
                   size: 40,
                   color: selectedDr == nameDr
                       ? Colors.white
-                      : const Color(0xFF4F2263),
+                      : AppColors.primaryColor,
                 ),
                 Text(
                   nameDr,
                   style: TextStyle(
                       color: selectedDr == nameDr
                           ? Colors.white
-                          : const Color(0xFF4F2263),
+                          : AppColors.primaryColor,
                       fontSize: 26),
                 ),
               ],
@@ -76,7 +78,7 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
       style: const TextStyle(fontSize: 26, color: Color(0xFF48454C)),
       icon: const Icon(
         Icons.arrow_drop_down,
-        color: Color(0xFF4F2263),
+        color: AppColors.primaryColor,
         size: 35,
       ),
       selectedItemBuilder: (BuildContext context) {
@@ -89,12 +91,12 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
                   const Icon(
                     Icons.person,
                     size: 40,
-                    color: Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                   ),
                   Text(
                     item,
                     style:
-                        const TextStyle(color: Color(0xFF4F2263), fontSize: 26),
+                        const TextStyle(color: AppColors.primaryColor, fontSize: 26),
                   ),
                 ],
               ),

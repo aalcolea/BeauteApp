@@ -74,6 +74,10 @@ class _testPrintState extends State<testPrint> {
       ),
       body: Column(
         children: [
+          IconButton(onPressed: (){
+            Navigator.of(context).pop();
+
+          }, icon: Icon(Icons.ac_unit)),
           Expanded(
             child: ListView.builder(
               itemCount: devicesList.length,

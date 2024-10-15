@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../calendar/calendarioScreenCita.dart';
 import '../../models/appointmentModel.dart';
+import '../../themes/colors.dart';
 import '../../utils/PopUpTabs/deleteAppointment.dart';
 import '../../utils/PopUpTabs/saveAppointment.dart';
 import '../../utils/listenerApptm.dart';
@@ -236,13 +237,13 @@ class _ApptmInfoState extends State<ApptmInfo> {
                 bottomLeft: const Radius.circular(15),
               ),
               border: _oldIndex != index ? Border.all(
-                color: expandedIndex == index ? const Color(0xFF4F2263) : !isTaped && expandedIndex != index ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                color: expandedIndex == index ? AppColors.primaryColor : !isTaped && expandedIndex != index ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                 width: 1.5,
               ) : const Border(
-                left: BorderSide(color: Color(0xFF4F2263), width: 1.5),
-                top: BorderSide(color: Color(0xFF4F2263), width: 1.5),
-                bottom: BorderSide(color: Color(0xFF4F2263), width: 1.5),
-                right: BorderSide(color: Color(0xFF4F2263), width: 1.5),
+                left: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                top: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                bottom: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                right: BorderSide(color: AppColors.primaryColor, width: 1.5),
               ),
               color: Colors.white,
             ),
@@ -263,14 +264,14 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                                  color: expandedIndex == widget.index ? const Color(0xFF4F2263) : !isTaped && expandedIndex != index ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                                  color: expandedIndex == widget.index ? AppColors.primaryColor : !isTaped && expandedIndex != index ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                                 ),
                               ),
                               Text(
                                 ' ${widget.clientName}',
                                 style: TextStyle(
                                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                                  color: expandedIndex == index ? Colors.black : !isTaped && expandedIndex!= index ? Colors.black : const Color(0xFFC5B6CD),
+                                  color: expandedIndex == index ? Colors.black : !isTaped && expandedIndex!= index ? Colors.black : AppColors.primaryColor.withOpacity(0.3),
                                 ))]),
                           const Spacer(),
                           Visibility(
@@ -288,13 +289,13 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                       icon: Icon(
                                         CupertinoIcons.minus,
                                         size: MediaQuery.of(context).size.width * 0.09,
-                                        color: const Color(0xFF4F2263),
+                                        color: AppColors.primaryColor,
                                       ))))]),
                       Text(
                         widget.treatmentType,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.05,
-                          color: expandedIndex == widget.index ? Colors.black : !isTaped && expandedIndex != widget.index ? Colors.black : const Color(0xFFC5B6CD),
+                          color: expandedIndex == widget.index ? Colors.black : !isTaped && expandedIndex != widget.index ? Colors.black : AppColors.primaryColor.withOpacity(0.3),
                         ),
                       ),
                       ///componentes de la segunda card >>>>>>
@@ -310,7 +311,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                               padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * .026),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 borderRadius: BorderRadius.circular(
                                     10),
                               ),
@@ -362,7 +363,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                             margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.03),
                             alignment: Alignment.centerLeft,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Text(
@@ -459,11 +460,11 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10.0),
                                               side: const BorderSide(
-                                                  color: Color(0xFF4F2263),
+                                                  color: AppColors.primaryColor,
                                                   width: 1),
                                             ),
-                                            backgroundColor: const Color(0xFF4F2263),
-                                            surfaceTintColor: const Color(0xFF4F2263),
+                                            backgroundColor: AppColors.primaryColor,
+                                            surfaceTintColor: AppColors.primaryColor,
                                             padding: EdgeInsets.symmetric(
                                               horizontal: MediaQuery.of(context).size.width * 0.05,
                                             ),
@@ -530,10 +531,10 @@ class _ApptmInfoState extends State<ApptmInfo> {
                     padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: !isTaped ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                      color: !isTaped ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3), //const Color(0xFFC5B6CD),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: !isTaped ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                        color: !isTaped ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                         width: 1.5,
                       ),
                     ),

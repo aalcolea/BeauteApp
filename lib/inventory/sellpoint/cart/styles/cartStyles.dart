@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../agenda/themes/colors.dart';
+
 class Background extends StatefulWidget {
   final double widthItem1;
   final double widthItem2;
@@ -18,14 +20,14 @@ class _BackgroundState extends State<Background> {
             alignment: Alignment.topLeft,
             width: widget.widthItem1,
             decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.1), width: 2))
+                border: Border(right: BorderSide(color: AppColors.primaryColor.withOpacity(0.1), width: 2))
             ),
             child: Column(
               children: [
                 Text(
                   'Producto',
                   style: TextStyle(
-                    color: const Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
@@ -38,14 +40,14 @@ class _BackgroundState extends State<Background> {
             alignment: Alignment.topLeft,
             width: widget.widthItem2,
             decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.1), width: 2))
+                border: Border(right: BorderSide(color: AppColors.primaryColor.withOpacity(0.1), width: 2))
             ),
             child: Column(
               children: [
                 Text(
                   'Cant.',
                   style: TextStyle(
-                    color: const Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
@@ -61,7 +63,7 @@ class _BackgroundState extends State<Background> {
                 Text(
                   'Precio',
                   style: TextStyle(
-                    color: const Color(0xFF4F2263),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),

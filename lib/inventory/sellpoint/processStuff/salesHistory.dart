@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../agenda/calendar/calendarioScreenCita.dart';
+import '../../../agenda/themes/colors.dart';
 import '../../../regEx.dart';
 import '../../kboardVisibilityManager.dart';
 
@@ -79,7 +80,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                       icon: Icon(
                         CupertinoIcons.back,
                         size: MediaQuery.of(context).size.width * 0.08,
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                       ),
                     ),
                     Padding(
@@ -91,7 +92,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             textAlign: TextAlign.start,
                             'Historial de ventas',
                             style: TextStyle(
-                              color: const Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                               fontSize: screenWidth! < 370.00
                                   ? MediaQuery.of(context).size.width * 0.078
                                   : MediaQuery.of(context).size.width * 0.082,
@@ -119,11 +120,11 @@ class _SalesHistoryState extends State<SalesHistory> {
                             hintText: 'Fecha',
                             border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10)),
-                              borderSide: BorderSide(color: Color(0xFF4F2263)),
+                              borderSide: BorderSide(color: AppColors.primaryColor),
                             ),
                           ),
                           style: const TextStyle(
-                            color: Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                           ),
                         onTap: (){
                             setState(() {
@@ -143,11 +144,11 @@ class _SalesHistoryState extends State<SalesHistory> {
                           labelText: 'Buscar por nombre o categoria',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide(color: Color(0xFF4F2263)),
+                            borderSide: BorderSide(color: AppColors.primaryColor),
                           ),
                         ),
                         style: const TextStyle(
-                          color: Color(0xFF4F2263),
+                          color: AppColors.primaryColor,
                         ),
                       ),
                       Visibility(
@@ -184,7 +185,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                             Text(
                                               "'NOMBRE DEL PRODUCTO'",
                                               style: TextStyle(
-                                                color: const Color(0xFF4F2263),
+                                                color: AppColors.primaryColor,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context).size.width * 0.04,
                                               ),
@@ -193,12 +194,12 @@ class _SalesHistoryState extends State<SalesHistory> {
                                               children: [
                                                 Text(
                                                   "Cant.: ",
-                                                  style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                                  style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                                 ),
                                                 Text(
                                                   '10 pzs',
                                                   style: TextStyle(
-                                                      color: const Color(0xFF4F2263),
+                                                      color: AppColors.primaryColor,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: MediaQuery.of(context).size.width * 0.035
                                                   ),
@@ -209,14 +210,14 @@ class _SalesHistoryState extends State<SalesHistory> {
                                               children: [
                                                 Text(
                                                   "Precio unitario: ",
-                                                  style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                                  style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                                 ),
                                                 Container(
                                                   padding: const EdgeInsets.only(right: 10),
                                                   child: Text(
                                                     '\$100',
                                                     style: TextStyle(
-                                                      color: const Color(0xFF4F2263),
+                                                      color: AppColors.primaryColor,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: MediaQuery.of(context).size.width * 0.035,
                                                     ),
@@ -228,14 +229,14 @@ class _SalesHistoryState extends State<SalesHistory> {
                                               children: [
                                                 Text(
                                                   "Total: ",
-                                                  style: TextStyle(color: const Color(0xFF4F2263).withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                                  style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                                 ),
                                                 Container(
                                                   padding: const EdgeInsets.only(right: 10),
                                                   child: Text(
                                                     '\$500',
                                                     style: TextStyle(
-                                                      color: const Color(0xFF4F2263),
+                                                      color: AppColors.primaryColor,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: MediaQuery.of(context).size.width * 0.035,
                                                     ),
@@ -249,7 +250,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                     ),
                                   ),
                                   Divider(
-                                    color: Color(0xFF4F2263),
+                                    color: AppColors.primaryColor,
                                     thickness: MediaQuery.of(context).size.width * 0.005,
                                   ),
                                 ])));},
@@ -291,7 +292,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             ),
                             width: double.infinity,
                             decoration: BoxDecoration(
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               borderRadius: BorderRadius.all(Radius.circular(10)),
                             ),
                             child: Text(
@@ -312,11 +313,11 @@ class _SalesHistoryState extends State<SalesHistory> {
                               filled: true,
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                                borderSide: BorderSide(color: Color(0xFF4F2263)),
+                                borderSide: BorderSide(color: AppColors.primaryColor),
                               ),
                             ),
                             style: const TextStyle(
-                              color: Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                             ),
                           ),
                           Container(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../themes/colors.dart';
+
 Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelete) {
   return showDialog<bool>(
     context: context,
@@ -33,7 +35,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.07,
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),
@@ -88,7 +90,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                           decoration: const BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 width: 2.5,
                               ),
                             ),
@@ -97,7 +99,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                             'Eliminar',
                             style: TextStyle(
                               fontSize: MediaQuery.of(context).size.width * 0.05,
-                              color: const Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                             ),
                           ),
                         ),

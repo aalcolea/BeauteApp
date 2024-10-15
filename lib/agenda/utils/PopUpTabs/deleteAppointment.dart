@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../themes/colors.dart';
+
 Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, Function refreshAppointments, docLog) async {
 
   Future<void> deleteAppt(int id) async {
@@ -67,7 +69,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                           '¿Seguro que desea eliminar esta cita?',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.075,
-                            color: const Color(0xFF4F2263),
+                            color: AppColors.primaryColor,
                           ),
                         ),
                       ),
@@ -95,7 +97,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                             ),
                             decoration: const BoxDecoration(
                               border: Border(
-                                bottom: BorderSide(color: Color(0xFF4F2263),
+                                bottom: BorderSide(color: AppColors.primaryColor,
                                   width: 2.0,
                                 ),
                               ),
@@ -105,7 +107,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                               style: TextStyle(
                                 fontSize:
                                 MediaQuery.of(context).size.width * 0.05,
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               ),
                             ),
                           ),

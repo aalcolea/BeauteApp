@@ -5,6 +5,8 @@ import 'dart:convert';
 import '../../calendar/calendarSchedule.dart';
 import 'package:http/http.dart' as http;
 
+import '../../themes/colors.dart';
+
 Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
   const baseUrl =
       'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppointmentsByDate/';
@@ -129,8 +131,7 @@ class _NotiCardsState extends State<NotiCards> {
                   left: MediaQuery.of(context).size.height * 0.01,
                   right: MediaQuery.of(context).size.height * 0.01),
               decoration: BoxDecoration(
-                color:
-                    !isRead ? const Color(0xFF4F2263) : const Color(0xFFC5B6CD),
+                color: !isRead ? AppColors.primaryColor : const Color(0xFFC5B6CD),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),

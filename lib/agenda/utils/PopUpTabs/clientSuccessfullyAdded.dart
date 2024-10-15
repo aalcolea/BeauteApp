@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
+import '../../themes/colors.dart';
+
 class ClienteAddedDialog extends StatelessWidget {
   const ClienteAddedDialog({super.key});
   @override
@@ -40,7 +42,7 @@ class ClienteAddedDialog extends StatelessWidget {
                     '¡Cliente agregado!',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.085,
-                      color: const Color(0xFF4F2263),
+                      color: AppColors.primaryColor,
                           )))
                 ])));
   }
@@ -122,7 +124,7 @@ void showClienteNumberExistsAlert(BuildContext context, String message) {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        backgroundColor: const Color(0xFF4F2263),
+                        backgroundColor: AppColors.primaryColor,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/agenda/views/admin/clientList.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,6 @@ import 'forToday.dart';
 
 class AssistantAdmin extends StatefulWidget {
   final bool docLog;
-
   const AssistantAdmin({super.key, required this.docLog});
 
   @override
@@ -23,6 +23,7 @@ class AssistantAdmin extends StatefulWidget {
 }
 
 class _AssistantAdminState extends State<AssistantAdmin> {
+
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
@@ -42,7 +43,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
       setState(() {
         visibleKeyboard = visible;
         if(_selectedScreen == 3){
-          //print('estoy en clientdetails y saque el teclado');
         }
       });
     });
@@ -168,7 +168,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   icon: Icon(
                                     CupertinoIcons.back,
                                     size: MediaQuery.of(context).size.width * 0.08,
-                                    color: const Color(0xFF4F2263),
+                                    color: AppColors.primaryColor,
                                   )),
                             ),
                             Text(
@@ -180,7 +180,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   ? 'Para hoy'
                                   : '',
                               style: TextStyle(
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 fontSize: screenWidth! < 370.00
                                     ? MediaQuery.of(context).size.width * 0.078
                                     : MediaQuery.of(context).size.width * 0.082,
@@ -208,7 +208,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               icon: Icon(
                                 CupertinoIcons.calendar_today,
                                 size: MediaQuery.of(context).size.width * 0.095,
-                                color: const Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               ),
                             ),
                             Builder(builder: (BuildContext context){
@@ -218,7 +218,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 },
                                 icon: SvgPicture.asset(
                                   'assets/imgLog/navBar.svg',
-                                  colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                                  colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.105,
                                 ),);
                             }),
@@ -248,7 +248,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           border: _selectedScreen != 4
                               ? const Border(
                               bottom: BorderSide(
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 width: 2.5,
                               ))
                               : null,
@@ -320,8 +320,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                         ? CupertinoIcons.calendar
                                         : CupertinoIcons.calendar,
                                     color: _selectedScreen == 1
-                                        ? const Color(0xFF4F2263)
-                                        : const Color(0xFF4F2263).withOpacity(0.2),
+                                        ? AppColors.primaryColor
+                                        : AppColors.primaryColor.withOpacity(0.2),
                                     size: MediaQuery.of(context).size.width * 0.12,
                                   ),
                                 ),
@@ -330,15 +330,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4F2263),
+                              backgroundColor: AppColors.primaryColor,
                               padding: EdgeInsets.symmetric(
                                   horizontal:
                                   MediaQuery.of(context).size.width * 0.06),
-                              surfaceTintColor: const Color(0xFF4F2263),
+                              surfaceTintColor: AppColors.primaryColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                                 side: const BorderSide(
-                                    color: Color(0xFF4F2263), width: 2),
+                                    color: AppColors.primaryColor, width: 2),
                               ),
                             ),
                             onPressed: () {
@@ -380,8 +380,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                     _selectedScreen == 3 ?
                                     CupertinoIcons.person_fill :CupertinoIcons.person,
                                     color: _selectedScreen == 3
-                                        ? const Color(0xFF4F2263)
-                                        : const Color(0xFF4F2263).withOpacity(0.2),
+                                        ? AppColors.primaryColor
+                                        : AppColors.primaryColor.withOpacity(0.2),
                                     size: MediaQuery.of(context).size.width * 0.11,
                                   ),
                                 ),

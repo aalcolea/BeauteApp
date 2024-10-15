@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/agenda/utils/listenerApptm.dart';
 import 'package:beaute_app/agenda/utils/listenerSlidable.dart';
 import 'package:beaute_app/agenda/calendar/toDate/toDateApptmInfo.dart';
@@ -253,7 +254,9 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
             future: appointments,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator(
+                  color: AppColors.primaryColor
+                ));
               } else if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

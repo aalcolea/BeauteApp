@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../agenda/themes/colors.dart';
 import '../../utils/listenerCatBox.dart';
 
 class CategoryBox extends StatefulWidget {
@@ -64,7 +65,7 @@ class _CategoryBoxState extends State<CategoryBox> {
       hint: Text(
         'Categoria del producto',
         style: TextStyle(
-          color: lock == false ? const Color(0xFF4F2263) : const Color(0xFF4F2263).withOpacity(0.5),
+          color: lock == false ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.5),
         ),
       ),
       value: categorySel,
@@ -98,7 +99,7 @@ class _CategoryBoxState extends State<CategoryBox> {
         focusedBorder: widget.formType == 1 ? OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
-            color: Color(0xFF4F2263),
+            color: AppColors.primaryColor,
             width: 0.7,
           ),
         ) : const OutlineInputBorder(
@@ -107,7 +108,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             bottomRight: Radius.circular(10),
           ),
           borderSide: BorderSide(
-            color: Color(0xFF4F2263),
+            color: AppColors.primaryColor,
             width: 0.7,
           ),
         ),
@@ -117,7 +118,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             bottomRight: Radius.circular(10),
           ),
           borderSide: BorderSide(
-            color: lock == false  ? Colors.black54 : const Color(0xFF4F2263).withOpacity(0.3),
+            color: lock == false  ? Colors.black54 : AppColors.primaryColor.withOpacity(0.3),
             width: 1.5,
           ),
         ),
@@ -131,7 +132,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             children: [
               Text(
                 categoryItem['category'] ?? 'Categoria Null',
-                style: TextStyle(color: lock == false ? const Color(0xFF4F2263): Color(0xFF4F2263).withOpacity(0.3),
+                style: TextStyle(color: lock == false ? AppColors.primaryColor: AppColors.primaryColor.withOpacity(0.3),
                 ),
               ),
             ],
