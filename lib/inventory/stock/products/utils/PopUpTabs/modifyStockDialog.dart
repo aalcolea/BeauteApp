@@ -190,6 +190,11 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                               ),
                             ),
                           ),
+                          onChanged: (text) {
+                            setState(() {
+                              text.isNotEmpty ? _currentStock = int.parse(text) : _currentStock = 0;
+                            });
+                          },
                         ),
                       ),
                       ElevatedButton(

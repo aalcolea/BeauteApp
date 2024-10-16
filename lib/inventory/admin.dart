@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:beaute_app/agenda/utils/showToast.dart';
+import 'package:beaute_app/agenda/utils/toastWidget.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/salesHistory.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
@@ -7,6 +9,7 @@ import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/views/cart.dart';
 import 'package:beaute_app/inventory/scanBarCode.dart';
 import 'package:beaute_app/inventory/stock/products/views/products.dart';
+import 'package:beaute_app/inventory/testPrinter/printService.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +28,7 @@ class adminInv extends StatefulWidget {
 
 class _adminInvState extends State<adminInv> {
   GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
+  PrintService printService = PrintService();
   bool _showBlurr = false;
   bool isDocLog = false;
   String currentScreen = "inventario";
@@ -158,6 +162,21 @@ class _adminInvState extends State<adminInv> {
                             },
                             icon: Icon(
                               CupertinoIcons.add_circled_solid,
+                              color: AppColors.primaryColor,
+                              size: MediaQuery.of(context).size.width * 0.1,
+                            ),
+                          ),
+
+                          IconButton(
+                            onPressed: () async {
+                              setState(() {
+                                printService.selectedDevice != null ? showOverlay(context, const CustomToast(message: 'Impresora conectada')) :
+                                printService.scanForDevices();
+                              });
+
+                            },
+                            icon: Icon(
+                              printService.selectedDevice != null ? Icons.print_outlined : Icons.print_disabled_outlined,
                               color: AppColors.primaryColor,
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
@@ -391,7 +410,7 @@ class _adminInvState extends State<adminInv> {
       case 1:
         return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
       case 2:
-        return Cart(onHideBtnsBottom: onHideBtnsBottom);
+        return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService);
       default:
         return Container();
     }
