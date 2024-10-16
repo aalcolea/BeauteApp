@@ -4,6 +4,7 @@ class AppColors {
   static const Color primaryColor = Color(0xFF8B0000);//
   static const Color primaryColorMoreStrong = Color(0xFFB80000);//
   static const Color textCalendarNoCurrentMonth = Color(0xFF72A5D0);
+  static const Color redDelete = Color(0xFFBC1313);//
   static const Color lettersCurrentMonth = Color(0xFF5B0000); //0xFF72A5D0
   static const Color lettersNotCurrentMonth = Color(0xFF5B0000);
   static const Color dotDr1Calendar = Color(0xFFB22222);

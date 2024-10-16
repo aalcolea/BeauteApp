@@ -334,7 +334,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                           widget.onShowBlurr(false);
                                         }
                                     },
-                                    backgroundColor: const Color(0xFFBC1313),
+                                    backgroundColor: AppColors.redDelete,
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,
                                     label: 'Eliminar',
