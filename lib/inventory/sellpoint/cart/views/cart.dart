@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
+import 'package:beaute_app/inventory/testPrinter/printService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -12,12 +13,13 @@ import '../../../stock/products/services/productsService.dart';
 import '../utils/popUpTabs/showConfirmSellDialog.dart';
 
 class Cart extends StatefulWidget {
+  final PrintService printService;
   final void Function(
       bool,
       ) onHideBtnsBottom;
 
   final Future<void> Function()? onCartSent;
-  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent});
+  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService});
 
   @override
   State<Cart> createState() => _CartState();
@@ -25,8 +27,17 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
 
+  //lista predefinida para probar
+  List<Map<String, dynamic>> ventas = [
+    {'cantidad': 3, 'prod' : 'Shampo para calvos', 'precio' : 100.0, 'importe' : 20.0},
+    {'cantidad': 1, 'prod' : 'Gel para barba', 'precio' : 100.0, 'importe' : 100.0},
+    {'cantidad': 6, 'prod' : 'Crema hidratante', 'precio' : 150.0, 'importe' : 900.0},
+    {'cantidad': 6, 'prod' : 'Crema hidratante', 'precio' : 150.0, 'importe' : 9000.0},
+  ];
+
   List<TextEditingController> cantControllers = [];
   List<int> cantHelper = [];
+  //PrintService printService = PrintService();
 
   double totalCart = 0;
 
@@ -396,39 +407,33 @@ class _CartState extends State<Cart> {
               ],
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.width * 0.15,
-            margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.width * 0.01,
-                bottom: MediaQuery.of(context).size.width * 0.02,
-                left: MediaQuery.of(context).size.width * 0.03,
-                right: MediaQuery.of(context).size.width * 0.03
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ElevatedButton(
-              style: ButtonStyle(
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                backgroundColor: AppColors.primaryColor,
                 alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
                 bool confirm = await showConfirmSellDialog(context);
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
                   if(result) {
+                    widget.printService.generateEscPosTicket(ventas);
                     cartProvider.refreshCart();
                   }
                 }
-              }
-              , child: Text(
+              },
+              child: Text(
               'Pagar',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: MediaQuery.of(context).size.width * 0.08,
               ),
             ),)
-          ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:beaute_app/inventory/stock/products/styles/productFormStyles.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerCatBox.dart';
 import 'package:beaute_app/regEx.dart';
@@ -68,8 +69,8 @@ class _ProductDetailsState extends State<ProductDetails> {
     });
     try{
       int? stock = int.tryParse(stockController.text);
-      await productService.updateProductInfo(idProduct: widget.idProduct, name: nameController.text, price: widget.precio ,
-          barCod: barCodeController.text, catId: _catID, desc : widget.descriptionProd , cant: stock ?? 0).then((_){
+      await productService.updateProductInfo(idProduct: widget.idProduct, name: nameController.text, price:  double.parse(precioController.text),
+          barCod: barCodeController.text, catId: _catID, desc : descriptionController.text , cant: stock ?? 0).then((_){
         if(mounted){
           showOverlay(
               context,
