@@ -46,7 +46,7 @@ class _adminInvState extends State<adminInv> {
     _listenerblurr.setChange(false);
   }
 
-  void _onHideBtnsBottom(bool hideBtnsBottom) {
+  void onHideBtnsBottom(bool hideBtnsBottom) {
     setState(() {
       _hideBtnsBottom = hideBtnsBottom;
     });
@@ -389,9 +389,9 @@ class _adminInvState extends State<adminInv> {
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
-        return Categories(productsKey: productsKey, onHideBtnsBottom: _onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
+        return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
       case 2:
-        return Cart(onHideBtnsBottom: _onHideBtnsBottom);
+        return Cart(onHideBtnsBottom: onHideBtnsBottom);
       default:
         return Container();
     }
