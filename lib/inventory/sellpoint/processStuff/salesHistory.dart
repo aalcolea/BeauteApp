@@ -338,7 +338,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                   ),
                 )
             ),
-          )
+          ),
         ],
       )
     );
