@@ -14,7 +14,7 @@ void showOverlay(BuildContext context, Widget widget) {
 
   Overlay.of(context).insert(overlayEntry);
 
-  Future.delayed(const Duration(seconds: 5), () {
+  Future.delayed(const Duration(milliseconds: 2200), () {
     overlayEntry.remove();
   });
 }

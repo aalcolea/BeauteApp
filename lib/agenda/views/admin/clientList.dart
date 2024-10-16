@@ -292,7 +292,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
             direction: DismissDirection.endToStart,
             background: Container(
               margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
-              color: Colors.red,
+              color: AppColors.redDelete,
               alignment: Alignment.centerRight,
               child: AnimatedBuilder(
                 animation: aniController,

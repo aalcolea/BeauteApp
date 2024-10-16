@@ -11,7 +11,7 @@ class CustomToast extends StatefulWidget {
     required this.message,
     this.backgroundColor = Colors.black,
     this.textColor = Colors.white,
-    this.duration = const Duration(seconds: 5),
+    this.duration = const Duration(seconds: 2200),
   }) : super(key: key);
 
   @override
