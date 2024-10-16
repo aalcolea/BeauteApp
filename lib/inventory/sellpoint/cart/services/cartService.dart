@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CartProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _cart = [];
@@ -36,7 +38,7 @@ class CartProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
-    print(_cart);
+    print('test : $_cart');
   }
   void decrementProductInCart(int productId){
     for (var item in _cart) {
@@ -58,4 +60,38 @@ class CartProvider extends ChangeNotifier {
     );
     return productInCart.isNotEmpty && productInCart['cant_cart'] is num ? (productInCart['cant_cart'] as num).toInt() : 0;
   }
+  Future<bool> sendCart() async {
+    List<Map<String, dynamic>> transformedCart = _cart.map((item){
+      return {
+        'producto_id' : item['product_id'],
+        'cant_cart': item['cant_cart'].toInt(),
+      };
+    }).toList();
+    final body = jsonEncode({
+      'carrito': transformedCart,
+    });
+    print('Carrito mandado:$transformedCart');
+    final response = await http.post(
+      Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/carrito'),
+      //Uri.parse('http://192.168.101.140:8080/api/carrito'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: body,
+    );
+    if (response.statusCode == 201) {
+      print('Carrito enviado correctamente y actualizado');
+      _cart.clear();
+      return true;
+    } else {
+      print('Error al enviar carrito: ${response.body}');
+      return false;
+    }
+  }
+  void refreshCart() {
+    _cart.clear();
+    notifyListeners();
+  }
+
 }

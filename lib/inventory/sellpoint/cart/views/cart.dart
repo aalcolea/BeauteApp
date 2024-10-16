@@ -9,12 +9,15 @@ import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../stock/products/services/productsService.dart';
+import '../utils/popUpTabs/showConfirmSellDialog.dart';
 
 class Cart extends StatefulWidget {
   final void Function(
       bool,
       ) onHideBtnsBottom;
-  const Cart({super.key, required this.onHideBtnsBottom});
+
+  final Future<void> Function()? onCartSent;
+  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent});
 
   @override
   State<Cart> createState() => _CartState();
@@ -51,7 +54,7 @@ class _CartState extends State<Cart> {
         cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
         cantControllers[index].text = cartProvider.getProductCount(cartProvider.cart[index]['product_id']).toString();
       } else {
-        print('No puedes agregar más de lo disponible en stock');
+        print('No puedes agregar más de lo disponible en stock2');
       }
       countCart = double.parse(cantControllers[index].text);
     }
@@ -253,7 +256,6 @@ class _CartState extends State<Cart> {
                                                         if (productInCart.isNotEmpty){
                                                           final stockDisponible = productInCart['stock'];
                                                           final cantidadEnCarrito = cartProvider.getProductCount(cartProvider.cart[index]['product_id']);
-                                                          print('stock: ${stockDisponible} cantCar: ${cantidadEnCarrito}');
                                                           if (cantidadEnCarrito < stockDisponible) {
                                                             cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
                                                             setState(() {
@@ -277,7 +279,6 @@ class _CartState extends State<Cart> {
                                                             print('Producto encontrado en products_global: ${product}');
                                                             final stockDisponible = product['cant_cart']['cantidad'] ?? 0;
                                                             final cantidadEnCarrito = cartProvider.getProductCount(cartProvider.cart[index]['product_id']);
-                                                            print('stock: ${stockDisponible} cantCar: ${cantidadEnCarrito}');
                                                             if (cantidadEnCarrito < stockDisponible){
                                                               cartProvider.addProductToCart(cartProvider.cart[index]['product_id']);
                                                               setState(() {
@@ -396,7 +397,6 @@ class _CartState extends State<Cart> {
             ),
           ),
           Container(
-            alignment: Alignment.center,
             height: MediaQuery.of(context).size.width * 0.15,
             margin: EdgeInsets.only(
                 top: MediaQuery.of(context).size.width * 0.01,
@@ -408,13 +408,26 @@ class _CartState extends State<Cart> {
               color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
+            child: ElevatedButton(
+              style: ButtonStyle(
+                alignment: Alignment.center,
+              ),
+              onPressed: () async {
+                bool confirm = await showConfirmSellDialog(context);
+                if (confirm) {
+                  bool result = await cartProvider.sendCart();
+                  if(result) {
+                    cartProvider.refreshCart();
+                  }
+                }
+              }
+              , child: Text(
               'Pagar',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: MediaQuery.of(context).size.width * 0.08,
               ),
-            ),
+            ),)
           ),
         ],
       ),

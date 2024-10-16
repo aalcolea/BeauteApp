@@ -37,7 +37,7 @@ class _CategoriesState extends State<Categories> {
   late int selectedCategoryId;
   List<String> selectedCategories = [];
   bool isSelecting = false;
-  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
+  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories'; //'http://192.168.101.140:8080/api/categories';
   bool hasMoreItems = true;
 
   void checkKeyboardVisibility() {
@@ -312,7 +312,7 @@ class _CategoriesState extends State<Categories> {
                                       selectedCategories.add(item['id'].toString());
                                     }
                                   } else {
-                                    _selectedCategory = item['id'].toString();
+                                    _selectedCategory = item['category'].toString();
                                   }
                                 });
                                 print("${item['category']}");

@@ -7,7 +7,7 @@ import '../../../../agenda/utils/toastWidget.dart';
 
 List<Map<String, dynamic>> products_global = [];
 class ProductService {
-  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/productos';
+  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/productos'; //'http://192.168.101.140:8080/api/productos';//
 
   Future<void> fetchProducts(int categoryId) async {
     final String url = '$baseURL?category_id=$categoryId';

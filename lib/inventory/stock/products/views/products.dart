@@ -354,6 +354,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                                 shadowColor: Colors.transparent
                                               ),
                                               onPressed: () {
+                                                cartProvider.decrementProductInCart(products_global[index]['product_id']);
                                                 setState(() {
                                                   bool action = false;
                                                   itemCount(index, action);
