@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
 
 import '../agenda/themes/colors.dart';
@@ -106,10 +107,34 @@ class _adminInvState extends State<adminInv> {
     super.initState();
   }
 
+  void onPrintServiceComunication(PrintService printService){
+    setState(() {
+      print('printAdmin');
+      this.printService = printService;
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
+   /* return ChangeNotifierProvider<PrintService>(
+        create: (_) => printService,
+        child: Consumer<PrintService>(
+            builder: (context, printService, child) {*/
+      Widget _buildBody() {
+        switch (_selectedScreen) {
+          case 1:
+            return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
+          case 2:
+            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService);
+          default:
+            return Container();
+        }
+      }
+
     return Scaffold(
-      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog, currentScreen: currentScreen),
+      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog, currentScreen: currentScreen,
+        onPrintServiceComunication: onPrintServiceComunication),
       body: Stack(
         children: [
           Container(
@@ -119,9 +144,9 @@ class _adminInvState extends State<adminInv> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.045,
-                    right: MediaQuery.of(context).size.width * 0.025,
-                    bottom: MediaQuery.of(context).size.width * 0.005
+                      left: MediaQuery.of(context).size.width * 0.045,
+                      right: MediaQuery.of(context).size.width * 0.025,
+                      bottom: MediaQuery.of(context).size.width * 0.005
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,7 +173,7 @@ class _adminInvState extends State<adminInv> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
+                         /* IconButton(
                             onPressed: () async {
                               final result = await Navigator.push(
                                 context,
@@ -166,14 +191,14 @@ class _adminInvState extends State<adminInv> {
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
                           ),
-
+*/
                           IconButton(
-                            onPressed: () async {
+                            onPressed:  printService.selectedDevice?.state.isEmpty == null ? () async {
                               setState(() {
-                                printService.selectedDevice != null ? showOverlay(context, const CustomToast(message: 'Impresora conectada')) :
-                                printService.scanForDevices();
+                                printService.scanForDevices(context);
                               });
-
+                            } : () async {
+                              printService.disconnect(context);
                             },
                             icon: Icon(
                               printService.selectedDevice != null ? Icons.print_outlined : Icons.print_disabled_outlined,
@@ -184,7 +209,7 @@ class _adminInvState extends State<adminInv> {
 
                           IconButton(
                             onPressed: () async {
-                             Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => SalesHistory(),
@@ -204,7 +229,7 @@ class _adminInvState extends State<adminInv> {
                               },
                               icon: SvgPicture.asset(
                                 'assets/imgLog/navBar.svg',
-                                colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
+                                colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
                                 width: MediaQuery.of(context).size.width * 0.105,
                               ),
                             );
@@ -262,27 +287,27 @@ class _adminInvState extends State<adminInv> {
                   child: Container(
                     margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15)
-                      ),
-                      border: const Border(
-                        bottom: BorderSide(
-                          color: AppColors.primaryColor,
-                          width: 2.5,
-                      )),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black54,
-                          blurRadius: 10,
-                          offset: Offset(0, MediaQuery.of(context).size.width * 0.012),
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15)
                         ),
-                        BoxShadow(
-                          color: Colors.white,
-                          offset: Offset(0, MediaQuery.of(context).size.width * -0.025),
-                        )
-                      ]
+                        border: const Border(
+                            bottom: BorderSide(
+                              color: AppColors.primaryColor,
+                              width: 2.5,
+                            )),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black54,
+                            blurRadius: 10,
+                            offset: Offset(0, MediaQuery.of(context).size.width * 0.012),
+                          ),
+                          BoxShadow(
+                            color: Colors.white,
+                            offset: Offset(0, MediaQuery.of(context).size.width * -0.025),
+                          )
+                        ]
                     ),
                     child: Container(
                       margin: EdgeInsets.only(
@@ -384,36 +409,24 @@ class _adminInvState extends State<adminInv> {
           Visibility(
             visible: _showBlurr,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _showBlurr = false;
-                    changeBlurr();
-                  });
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.black54.withOpacity(0.3),
-                ),
-              )
+                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _showBlurr = false;
+                      changeBlurr();
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.black54.withOpacity(0.3),
+                  ),
+                )
             ),
           ),
         ],
-      ),
-    );
+      ),);
+    //}));
   }
-
-  Widget _buildBody() {
-    switch (_selectedScreen) {
-      case 1:
-        return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
-      case 2:
-        return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService);
-      default:
-        return Container();
-    }
-  }
-
 }
