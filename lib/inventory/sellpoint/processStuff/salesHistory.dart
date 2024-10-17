@@ -26,6 +26,7 @@ class _SalesHistoryState extends State<SalesHistory> {
     {'producto':'Agua de horchata', 'cant':10, 'precio_uni':25, 'fecha':'17-05-2024'},
   ];
 
+  late String formattedDate;
   late KeyboardVisibilityManager keyboardVisibilityManager;
   //
   double? screenWidth;
@@ -60,6 +61,9 @@ class _SalesHistoryState extends State<SalesHistory> {
     // TODO: implement initState
     keyboardVisibilityManager = KeyboardVisibilityManager();
     super.initState();
+    DateTime now = DateTime.now();
+    var formatter = DateFormat('dd-MM-yyyy');
+    formattedDate = formatter.format(now);
   }
 
   @override
@@ -155,7 +159,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                   enabled: selectedPage == 0 ? true : false,
                                   isDense: true,
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
-                                    hintText: selectedPage == 0 ? 'Fecha' : '17-10-2024',
+                                    hintText: selectedPage == 0 ? 'Fecha' : formattedDate,
                                   hintStyle: TextStyle(
                                     color: AppColors.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
