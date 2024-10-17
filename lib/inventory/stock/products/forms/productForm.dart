@@ -10,6 +10,7 @@ import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../../regEx.dart';
+import '../../../kboardVisibilityManager.dart';
 import '../services/productsService.dart';
 
 class ProductForm extends StatefulWidget {
@@ -21,10 +22,8 @@ class ProductForm extends StatefulWidget {
 
 class _ProductFormState extends State<ProductForm> {
 
-  late KeyboardVisibilityController keyboardVisibilityController;
-  late StreamSubscription<bool> keyboardVisibilitySubscription;
-  bool visibleKeyboard = false;
-  //
+  late KeyboardVisibilityManager keyboardVisibilityManager;
+
   TextEditingController nameController = TextEditingController();
   FocusNode nameFocus = FocusNode();
   TextEditingController descriptionController = TextEditingController();
@@ -52,25 +51,9 @@ class _ProductFormState extends State<ProductForm> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  void checkKeyboardVisibility() {
-    keyboardVisibilitySubscription =
-        keyboardVisibilityController.onChange.listen((visible) {
-      setState(() {
-        visibleKeyboard = visible;
-      });
-    });
-  }
-
-  void hideKeyBoard() {
-    if (visibleKeyboard) {
-      FocusScope.of(context).unfocus();
-    }
-  }
-
   @override
   void initState() {
-    keyboardVisibilityController = KeyboardVisibilityController();
-    checkKeyboardVisibility();
+    keyboardVisibilityManager = KeyboardVisibilityManager();
     // TODO: implement initState
     super.initState();
   }
@@ -78,7 +61,7 @@ class _ProductFormState extends State<ProductForm> {
   @override
   void dispose() {
     // TODO: implement dispose
-    keyboardVisibilitySubscription.cancel();
+    keyboardVisibilityManager.dispose();
     super.dispose();
   }
 
@@ -122,7 +105,7 @@ class _ProductFormState extends State<ProductForm> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
-        physics: visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
+        physics: keyboardVisibilityManager.visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             leadingWidth: MediaQuery.of(context).size.width,
