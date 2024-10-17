@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:beaute_app/inventory/sellpoint/processStuff/utils/todaySalesList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import '../../../agenda/calendar/calendarioScreenCita.dart';
 import '../../../agenda/themes/colors.dart';
 import '../../../regEx.dart';
 import '../../kboardVisibilityManager.dart';
+import '../processStuff/utils/salesList.dart';
 
 class SalesHistory extends StatefulWidget {
   const SalesHistory({super.key});
@@ -15,6 +17,14 @@ class SalesHistory extends StatefulWidget {
 }
 
 class _SalesHistoryState extends State<SalesHistory> {
+
+  List<Map<String, dynamic>> sales = [
+    {'producto':'Shampoo para calvos', 'cant':10, 'precio_uni':100, 'fecha':'01-10-2024'},
+    {'producto':'Botox de nalgas', 'cant':5, 'precio_uni':50, 'fecha':'13-06-2024'},
+    {'producto':'Jirafa amarilla', 'cant':10, 'precio_uni':50, 'fecha':'16-01-2024'},
+    {'producto':'Crema para pies', 'cant':2, 'precio_uni':500, 'fecha':'24-08-2024'},
+    {'producto':'Agua de horchata', 'cant':10, 'precio_uni':25, 'fecha':'17-05-2024'},
+  ];
 
   late KeyboardVisibilityManager keyboardVisibilityManager;
   //
@@ -142,8 +152,10 @@ class _SalesHistoryState extends State<SalesHistory> {
                                 controller: dateController,
                                 focusNode: dateNode,
                                 decoration: InputDecoration(
+                                  enabled: selectedPage == 0 ? true : false,
+                                  isDense: true,
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
-                                    hintText: 'Fecha',
+                                    hintText: selectedPage == 0 ? 'Fecha' : '17-10-2024',
                                   hintStyle: TextStyle(
                                     color: AppColors.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -153,16 +165,17 @@ class _SalesHistoryState extends State<SalesHistory> {
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                 ),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppColors.primaryColor,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
                                 ),
                                 onTap: (){
                                   setState(() {
@@ -183,29 +196,31 @@ class _SalesHistoryState extends State<SalesHistory> {
                                   RegEx(type: InputFormatterType.alphanumeric),
                                 ],
                                 decoration: InputDecoration(
+                                  isDense: true,
                                   constraints: BoxConstraints(
                                     maxHeight: MediaQuery.of(context).size.width * 0.105,
                                   ),
-                                  labelText: 'Buscar por nombre o categoria...',
-                                  labelStyle: TextStyle(
+                                  hintText: 'Buscar por nombre o categoria...',
+                                  hintStyle: TextStyle(
                                     color: AppColors.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
                                   disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                 ),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppColors.primaryColor,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
                                 ),
                               ),
                             )
@@ -217,8 +232,14 @@ class _SalesHistoryState extends State<SalesHistory> {
                         child: Container(
                           margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.03),
                           alignment: Alignment.centerLeft,
-                          child: Text(textAlign: TextAlign.left,
-                              'Productos vendidos el ${dateController.text}'),
+                          child: Text(
+                            textAlign: TextAlign.left,
+                            '*Productos vendidos el ${dateController.text}',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: MediaQuery.of(context).size.width * 0.035,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -234,8 +255,8 @@ class _SalesHistoryState extends State<SalesHistory> {
                     });
                   },
                   children: [
-                    _buildSalesList(context), // Página para Historial de ventas
-                    _buildSalesList(context), // Página para Ventas de hoy (puedes agregar lógica específica)
+                    buildSalesList(context),
+                    buildTodaySalesList(context),
                   ],
                 ),
               ),
@@ -255,52 +276,46 @@ class _SalesHistoryState extends State<SalesHistory> {
                   width: double.infinity,
                   height: double.infinity,
                   color: Colors.black54.withOpacity(0.3),
+                  alignment: Alignment.centerLeft,
                   child: Padding(
                       padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.width * 0.3,
+                        top: MediaQuery.of(context).size.width * 0.2943,
                         bottom: MediaQuery.of(context).size.width * 0.03,
                         left: MediaQuery.of(context).size.width * 0.03,
                         right: MediaQuery.of(context).size.width * 0.03,
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            height: MediaQuery.of(context).size.width * 0.105,
-                            margin: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).size.width * 0.03,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: MediaQuery.of(context).size.width * 0.03,
-                              vertical: MediaQuery.of(context).size.width * 0.03,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                            ),
-                            child: Text(
-                              'Fecha:',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: MediaQuery.of(context).size.width * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
                           TextFormField(
+                            textAlign: TextAlign.center,
                             readOnly: true,
                             controller: dateController,
                             decoration: InputDecoration(
+                              isDense: true,
+                              constraints: BoxConstraints(
+                                maxHeight: MediaQuery.of(context).size.width * 0.105,
+                                maxWidth: MediaQuery.of(context).size.width * 0.25
+                              ),
                               floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
-                              hintText: 'DD/MM/AA',
+                              hintText: 'DD-MM-AAAA',
+                              hintStyle: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontSize: MediaQuery.of(context).size.width * 0.03,
+                              ),
                               filled: true,
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                                borderSide: BorderSide(color: AppColors.primaryColor),
+                                borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                               ),
                             ),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.primaryColor,
+                              fontSize: MediaQuery.of(context).size.width * 0.035
                             ),
                           ),
                           Container(
@@ -308,7 +323,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height * 0.45,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black54, width: 0.5),
+                              border: Border.all(color: AppColors.primaryColor, width: 3.0),
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -327,106 +342,10 @@ class _SalesHistoryState extends State<SalesHistory> {
     );
   }
 
-  Widget _buildSalesList(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
-      itemCount: 4,
-      itemBuilder: (context, index) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
-          child: Column(
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.width * 0.0075,
-                    horizontal: MediaQuery.of(context).size.width * 0.0247),
-                title: Row(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "'NOMBRE DEL PRODUCTO'",
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Cant.: ",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                            Text(
-                              '10 pzs',
-                              style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Precio unitario: ",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                            Text(
-                              '\$100',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Total: ",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                            Text(
-                              '\$500',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Divider(
-                color: AppColors.primaryColor.withOpacity(0.7),
-                thickness: MediaQuery.of(context).size.width * 0.004,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildTabButton(String title, int pageIndex) {
     return Container(
       decoration: selectedPage == pageIndex
-          ? BoxDecoration(
+          ? const BoxDecoration(
         border: Border(
           top: BorderSide(color: AppColors.primaryColor, width: 2.0),
           left: BorderSide(color: AppColors.primaryColor, width: 2.0),
@@ -437,7 +356,7 @@ class _SalesHistoryState extends State<SalesHistory> {
           topRight: Radius.circular(10.0),
         ),
       )
-          : BoxDecoration(
+          : const BoxDecoration(
         border: Border(
           bottom: BorderSide(color: AppColors.primaryColor, width: 2.0),
         ),
