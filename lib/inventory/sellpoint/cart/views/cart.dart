@@ -27,8 +27,8 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
 
-  //lista predefinida para probar
-  List<Map<String, dynamic>> ventas = [
+  //lista de prueba cambiar luego
+  List<Map<String, dynamic>> carrito = [
     {'cantidad': 3, 'prod' : 'Shampo para calvos', 'precio' : 100.0, 'importe' : 20.0},
     {'cantidad': 1, 'prod' : 'Gel para barba', 'precio' : 100.0, 'importe' : 100.0},
     {'cantidad': 6, 'prod' : 'Crema hidratante', 'precio' : 150.0, 'importe' : 900.0},
@@ -37,8 +37,6 @@ class _CartState extends State<Cart> {
 
   List<TextEditingController> cantControllers = [];
   List<int> cantHelper = [];
-  //PrintService printService = PrintService();
-
   double totalCart = 0;
 
   final FocusNode focusNode = FocusNode();
@@ -99,6 +97,7 @@ class _CartState extends State<Cart> {
     final cartProvider = Provider.of<CartProvider>(context);
     cantControllers.clear();
     totalCart = 0;
+
     for (int i = 0; i < cartProvider.cart.length; i++) {
       cantControllers.add(TextEditingController(text: cartProvider.cart[i]['cant_cart'].toStringAsFixed(0)));
       totalCart += cartProvider.cart[i]['price'] * cartProvider.cart[i]['cant_cart'];
@@ -422,7 +421,8 @@ class _CartState extends State<Cart> {
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
                   if(result) {
-                    widget.printService.generateEscPosTicket(ventas);
+                    widget.printService.characteristic != null ?
+                    widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
                   }
                 }

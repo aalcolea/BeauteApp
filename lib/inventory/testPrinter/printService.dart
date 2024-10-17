@@ -1,16 +1,29 @@
 
+import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
 
-class PrintService{
+import '../../agenda/utils/showToast.dart';
+import '../../agenda/utils/toastWidget.dart';
+import '../listenerPrintService.dart';
+
+class PrintService extends ChangeNotifier {
+  @override
+    void dispose() {
+      _connectionSubscription?.cancel();
+      super.dispose();
+    }
 
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> devicesList = [];
   BluetoothDevice? selectedDevice;
   BluetoothCharacteristic? characteristic;
   String targetDevice = '0ED2DB67-8733-2C1D-0ACB-557F656FFCF3';
+  StreamSubscription<BluetoothDeviceState>? _connectionSubscription;
+  bool isConnected = false;
+  ListenerPrintService listenerPrintService = ListenerPrintService();
 
   void discoverServices(BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
@@ -22,34 +35,67 @@ class PrintService{
       }
     }
   }
-
-
-  void scanForDevices() async {
-    List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
-    for (BluetoothDevice device in connectedDevices) {
-      if (device.id.toString() == targetDevice) {
-        selectedDevice = device;
-        discoverServices(selectedDevice!);
-        print("Dispositivo ya conectado: ${device.name}");
-        return;
-      }
+    void initDeviceStatus() {
+      isConnected = selectedDevice != null;
+      selectedDevice !=null ? listenerPrintService.setChange(3) : null;
     }
-    flutterBlue.startScan(timeout: Duration(seconds: 5));
-    flutterBlue.scanResults.listen((results) {
-      for (ScanResult r in results) {
-        if (r.device.id.toString() == targetDevice) {
-          flutterBlue.stopScan();
-          selectedDevice = r.device;
-          selectedDevice?.connect();
-          discoverServices(selectedDevice!);
-          print("Dispositivo encontrado y conectado: ${r.device.name}");
-          break;
+
+
+  void scanForDevices(context) async {
+    try {
+      List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
+      for (BluetoothDevice device in connectedDevices) {
+        if (device.id.toString() == targetDevice) {
+          selectedDevice = device;
+          disconnect(context);
+          /*discoverServices(selectedDevice!);
+          listenToDeviceState(context);
+          notifyListeners();*/
+          return;
         }
       }
-    });
-  }
+      flutterBlue.startScan(timeout: const Duration(seconds: 5));
+      flutterBlue.scanResults.listen((results) async {
+        for (ScanResult r in results) {
+          if (r.device.id.toString() == targetDevice) {
+            flutterBlue.stopScan();
+            selectedDevice = r.device;
+            print("Dispositivo encontrado: ${selectedDevice?.name}");
+            try {
+              await Future.delayed(const Duration(seconds: 2));
+              await selectedDevice?.connect();
+              isConnected = true;
+              listenerPrintService.setChange(1);
+              print("Dispositivo conectado: ${selectedDevice?.name}");
+              discoverServices(selectedDevice!);
+              showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
+              listenToDeviceState(context);
+              notifyListeners();
+            } catch (e) {
+              print("Error al conectar con el dispositivo: $e");
+              selectedDevice = null;
+              showOverlay(context, const CustomToast(message: "Espere mientras se reconecta automáticamente"));
+              await Future.delayed(const Duration(seconds: 8));
+              scanForDevices(context);
+              notifyListeners();
+            }
+            break;
+          }}});
+    } catch (e) {
+      print("Error durante el escaneo: $e");
+    }}
 
-  void generateEscPosTicket(List<Map<String, dynamic>> ventas) async {
+  void listenToDeviceState(context) {
+    _connectionSubscription?.cancel();
+    if (selectedDevice != null) {
+      _connectionSubscription = selectedDevice!.state.listen((state) {
+        if (state == BluetoothDeviceState.disconnected) {
+          selectedDevice = null;
+          showOverlay(context, const CustomToast(message: 'Impresora desconectada'));
+          notifyListeners();
+        }});}}
+
+  void generateEscPosTicket(List<Map<String, dynamic>> carrito, BluetoothCharacteristic? characteristic) async {
     String lugar = 'Lugar exp: Merida, Yucatan\n';
 
     if(characteristic!=null){
@@ -75,7 +121,7 @@ class PrintService{
       bytes += utf8.encode('CANT |   PROD   |PRECIO |IMPORTE\n');
       bytes += utf8.encode('--------------------------------\n');
 
-      for (var venta in ventas) {
+      for (var venta in carrito) {
         int cantidad = venta['cantidad'];
         String producto = venta['prod'];
         double precio = venta['precio'];
@@ -100,7 +146,7 @@ class PrintService{
         }
       }
 
-      double total = ventas.fold(0.0, (suma, venta) => suma + (venta['importe'] as double));
+      double total = carrito.fold(0.0, (suma, venta) => suma + (venta['importe'] as double));
       int amountLength = total.toStringAsFixed(0).length;
       int lineWidth = 16 - (amountLength - 10).clamp(0, 19);
 
@@ -121,10 +167,24 @@ class PrintService{
       bytes += utf8.encode('Gracias por su visita!\n');
       bytes += utf8.encode('\x1B\x45\x00'); // Negrita OFF
       bytes += utf8.encode('\n\n\n');
-      await characteristic!.write(bytes, withoutResponse: true);
+      await characteristic.write(bytes, withoutResponse: true);
     }
   }
 
-
-
+  void disconnect(context) async {
+    if (selectedDevice != null) {
+      try {
+        _connectionSubscription?.cancel();
+        await selectedDevice?.disconnect();
+        selectedDevice = null;
+        isConnected = false;
+        listenerPrintService.setChange(0);
+        notifyListeners();
+        print("Dispositivo desconectado correctamente");
+        showOverlay(context, const CustomToast(message: 'Dispositivo desconectado correctamente'));
+      } catch (e) {
+        print("Error al desconectar el dispositivo: $e");
+      }
+    }
+  }
 }
