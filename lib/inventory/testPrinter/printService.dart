@@ -2,9 +2,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img; // Usa un alias para la librería 'image'
 import 'package:intl/intl.dart';
-
 import '../../agenda/utils/showToast.dart';
 import '../../agenda/utils/toastWidget.dart';
 import '../listenerPrintService.dart';
@@ -24,6 +26,7 @@ class PrintService extends ChangeNotifier {
   StreamSubscription<BluetoothDeviceState>? _connectionSubscription;
   bool isConnected = false;
   ListenerPrintService listenerPrintService = ListenerPrintService();
+  String nameTargetDevice = 'MP210';
 
   void discoverServices(BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
@@ -57,7 +60,8 @@ class PrintService extends ChangeNotifier {
       flutterBlue.startScan(timeout: const Duration(seconds: 5));
       flutterBlue.scanResults.listen((results) async {
         for (ScanResult r in results) {
-          if (r.device.id.toString() == targetDevice) {
+          if (r.device.name == nameTargetDevice) {
+            print("name ${r.device.name}");
             flutterBlue.stopScan();
             selectedDevice = r.device;
             print("Dispositivo encontrado: ${selectedDevice?.name}");
@@ -187,4 +191,106 @@ class PrintService extends ChangeNotifier {
       }
     }
   }
+
+
+
+  Future<void> printImage(BluetoothCharacteristic characteristic) async {
+    // Generate the bytes of the image
+    print('printIMG');
+    List<int> bytes = await generateImageBytes();
+    print('bytes $bytes');
+
+    // Send the bytes to the printer using the characteristic's write method
+    await characteristic.write(bytes, withoutResponse: true);
+  }
+
+  Future<List<int>> generateImageBytes() async {
+    List<int> bytes = [];
+
+    // Load the image from the assets
+    final ByteData data = await rootBundle.load('assets/imgLog/logoBeauteWhiteSqr.png');
+    final Uint8List imageBytes = data.buffer.asUint8List();
+    img.Image? image = img.decodeImage(imageBytes); // Use 'img.Image' instead of 'Image'
+
+    if (image == null) {
+      print('Error decoding the image');
+      return bytes;
+    }
+
+    // Convert the image to grayscale
+    image = img.grayscale(image);
+
+    // Resize the image if necessary
+    const int maxWidth = 384; // Adjust this according to your printer's maximum width
+    if (image.width > maxWidth) {
+      image = img.copyResize(image, width: maxWidth);
+    }
+
+    // Convert the image to a format compatible with ESC/POS
+    bytes += generateImageEscPos(image);
+
+    // Add additional print commands if needed
+    bytes += [0x1B, 0x64, 0x02]; // Feed two lines
+    bytes += [0x1B, 0x69]; // Cut the paper
+
+    return bytes;
+  }
+
+// Function to convert the image to ESC/POS format
+// Function to convert the image to ESC/POS format
+  List<int> generateImageEscPos(img.Image image) {
+    List<int> bytes = [];
+
+    // Command for graphic mode in ESC/POS printer
+    bytes += [0x1D, 0x76, 0x30, 0x00];
+    bytes += [(image.width + 7) ~/ 8 & 0xFF, 0x00]; // Width in bytes, rounded up
+    bytes += [image.height & 0xFF, (image.height >> 8) & 0xFF]; // Height in pixels
+
+    // Traverse the pixels of the image and convert to monochrome
+    for (int y = 0; y < image.height; y++) {
+      for (int x = 0; x < image.width; x += 8) {
+        int byte = 0;
+        for (int bit = 0; bit < 8; bit++) {
+          if (x + bit < image.width) {
+            img.Pixel pixel = image.getPixel(x + bit, y);
+            print('pixel $pixel');
+            int luminance = 0;
+            //int luminance = getLuminance(pixel);
+            if (luminance < 128) {
+              byte |= (1 << (7 - bit)); // Dark color, will be printed
+            }
+          }
+        }
+        bytes.add(byte);
+      }
+    }
+
+    return bytes;
+  }
+
+
+// Function to get the luminance of a pixel
+  int getLuminance(int pixel) {
+    int r = getRed(pixel);
+    int g = getGreen(pixel);
+    int b = getBlue(pixel);
+    return ((r * 0.3) + (g * 0.59) + (b * 0.11)).toInt();
+  }
+
+// Functions to extract RGB components from a pixel
+  int getRed(int pixel) => (pixel >> 16) & 0xFF;
+  int getGreen(int pixel) => (pixel >> 8) & 0xFF;
+  int getBlue(int pixel) => pixel & 0xFF;
+
+  int pixelToInt(img.Pixel pixel) {
+    int r = pixel.r.toInt();
+    int g = pixel.g.toInt();
+    int b = pixel.b.toInt();
+    int a = pixel.a.toInt();
+
+    // Combina los canales de color en un entero ARGB
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
+
+
 }

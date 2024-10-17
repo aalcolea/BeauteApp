@@ -421,6 +421,7 @@ class _CartState extends State<Cart> {
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
                   if(result) {
+                    widget.printService.printImage(widget.printService.characteristic!);
                     widget.printService.characteristic != null ?
                     widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
