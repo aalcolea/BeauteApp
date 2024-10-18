@@ -133,6 +133,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                 ),
               ),
               SliverToBoxAdapter(
+
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03, vertical: MediaQuery.of(context).size.width * 0.02),
                   child: Column(
