@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:beaute_app/inventory/sellpoint/processStuff/utils/todaySalesList.dart';
+import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,14 +17,6 @@ class SalesHistory extends StatefulWidget {
 }
 
 class _SalesHistoryState extends State<SalesHistory> {
-
-  List<Map<String, dynamic>> sales = [
-    {'producto':'Shampoo para calvos', 'cant':10, 'precio_uni':100, 'fecha':'01-10-2024'},
-    {'producto':'Botox de nalgas', 'cant':5, 'precio_uni':50, 'fecha':'13-06-2024'},
-    {'producto':'Jirafa amarilla', 'cant':10, 'precio_uni':50, 'fecha':'16-01-2024'},
-    {'producto':'Crema para pies', 'cant':2, 'precio_uni':500, 'fecha':'24-08-2024'},
-    {'producto':'Agua de horchata', 'cant':10, 'precio_uni':25, 'fecha':'17-05-2024'},
-  ];
 
   late String formattedDate;
   late KeyboardVisibilityManager keyboardVisibilityManager;
@@ -76,15 +68,17 @@ class _SalesHistoryState extends State<SalesHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Stack(
         children: [
           CustomScrollView(
             physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
+                shape: Border(
+                    bottom: BorderSide(color: AppColors.primaryColor.withOpacity(0.03), width: 3.0)
+                ),
+                backgroundColor: AppColors.calendarBg,
                 leadingWidth: MediaQuery.of(context).size.width,
-                backgroundColor: Colors.white,
                 stretch: false,
                 pinned: true,
                 leading: Row(
@@ -114,11 +108,12 @@ class _SalesHistoryState extends State<SalesHistory> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             _buildTabButton('Historial de ventas', 0),
-                            _buildTabButton('Ventas de hoy', 1),
-                          ]),
+                            _buildTabButton('Ventas por dia', 1),
+                          ]
+                      ),
                     ),
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(color: AppColors.primaryColor, width: 2.0),
                         ),
@@ -144,10 +139,14 @@ class _SalesHistoryState extends State<SalesHistory> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.005),
+                        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.005, bottom: MediaQuery.of(context).size.height * 0.01),
                         child: Row(
                           children: [
                             Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: AppColors.calendarBg,
+                              ),
                               width: MediaQuery.of(context).size.width * 0.25,
                               height: MediaQuery.of(context).size.width * 0.105,
                               child: TextFormField(
@@ -155,7 +154,6 @@ class _SalesHistoryState extends State<SalesHistory> {
                                 controller: dateController,
                                 focusNode: dateNode,
                                 decoration: InputDecoration(
-                                  enabled: selectedPage == 0 ? true : false,
                                   isDense: true,
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
                                     hintText: selectedPage == 0 ? 'Fecha' : formattedDate,
@@ -192,40 +190,46 @@ class _SalesHistoryState extends State<SalesHistory> {
                               width: MediaQuery.of(context).size.width * 0.02,
                             ),
                             Expanded(
-                              child: TextFormField(
-                                controller: seekController,
-                                focusNode: seekNode,
-                                inputFormatters: [
-                                  RegEx(type: InputFormatterType.alphanumeric),
-                                ],
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  constraints: BoxConstraints(
-                                    maxHeight: MediaQuery.of(context).size.width * 0.105,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: AppColors.calendarBg,
+                                ),
+                                child: TextFormField(
+                                  controller: seekController,
+                                  focusNode: seekNode,
+                                  inputFormatters: [
+                                    RegEx(type: InputFormatterType.alphanumeric),
+                                  ],
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    constraints: BoxConstraints(
+                                      maxHeight: MediaQuery.of(context).size.width * 0.105,
+                                    ),
+                                    hintText: 'Buscar por nombre o categoria...',
+                                    hintStyle: TextStyle(
+                                      color: AppColors.primaryColor.withOpacity(0.3),
+                                      fontSize: MediaQuery.of(context).size.width * 0.035,
+                                    ),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
                                   ),
-                                  hintText: 'Buscar por nombre o categoria...',
-                                  hintStyle: TextStyle(
-                                    color: AppColors.primaryColor.withOpacity(0.3),
+                                  style: TextStyle(
+                                    color: AppColors.primaryColor,
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
-                                  disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
                                 ),
-                                style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontSize: MediaQuery.of(context).size.width * 0.035,
-                                ),
-                              ),
+                              )
                             )
                           ],
                         ),
@@ -239,7 +243,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             textAlign: TextAlign.left,
                             '*Productos vendidos el ${dateController.text}',
                             style: TextStyle(
-                              color: AppColors.primaryColor,
+                              color: AppColors.calendarBg,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
                             ),
                           ),
@@ -258,8 +262,8 @@ class _SalesHistoryState extends State<SalesHistory> {
                     });
                   },
                   children: [
+                    buildTicketsList(context),
                     buildSalesList(context),
-                    buildTodaySalesList(context),
                   ],
                 ),
               ),
@@ -348,7 +352,8 @@ class _SalesHistoryState extends State<SalesHistory> {
   Widget _buildTabButton(String title, int pageIndex) {
     return Container(
       decoration: selectedPage == pageIndex
-          ? const BoxDecoration(
+          ? BoxDecoration(
+        color: AppColors.primaryColor.withOpacity(0.03),
         border: Border(
           top: BorderSide(color: AppColors.primaryColor, width: 2.0),
           left: BorderSide(color: AppColors.primaryColor, width: 2.0),
