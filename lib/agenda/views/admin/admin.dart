@@ -77,7 +77,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
-    //docLog = widget.docLog;
     super.initState();
   }
 
@@ -140,7 +139,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
           children: [
             Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
-              color: Colors.white,
+              color: Colors.transparent,
               child: Column(
                 children: [
                   Padding(
@@ -196,6 +195,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             IconButton(
                               padding: EdgeInsets.zero,
                               onPressed: () {
+                                /*Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => NotificationsScreen(),
+                                  ),
+                                );*/
                                 setState(() {
                                   if (_selectedScreen != 4) {
                                     _selectedScreen = 4;
@@ -236,7 +240,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             : MediaQuery.of(context).size.width * 0.0,
                       ),
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.BgprimaryColor,
                           borderRadius: BorderRadius.only(
                               topLeft: _selectedScreen == 4
                                   ? const Radius.circular(15)
@@ -265,7 +269,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             BoxShadow(
                               color: Colors.white,
                               offset: Offset(
-                                  0, MediaQuery.of(context).size.width * -0.025),
+                                  MediaQuery.of(context).size.height, MediaQuery.of(context).size.width * -0.025),
                             ),
                           ]),
                       child: Container(
@@ -282,7 +286,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               : MediaQuery.of(context).size.width * 0.0,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: _buildBody(),
@@ -409,13 +413,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
       ));
   }
 
-  void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddclient) {
-    setState(() {
-      _selectedScreen = initScreen;
-      _hideBtnsBottom = forShowBtnAfterAddclient;
-    });
-  }
-
   Widget _buildBody() {
     switch (_selectedScreen) {
       case 1:
@@ -424,7 +421,13 @@ class _AssistantAdminState extends State<AssistantAdmin> {
       case 3:
         return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, docLog: widget.docLog, onShowBlur: _onShowBlur, );
       case 4:
-        return const NotificationsScreen(doctorId: 3);
+        return NotificationsScreen(onCloseForToday: (sel) {
+            setState(() {
+              _selectedScreen = sel;
+              _hideBtnsBottom = false;
+            });
+          },
+        );
       default:
         return Container();
     }

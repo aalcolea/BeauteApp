@@ -235,7 +235,7 @@ class _navBarState extends State<navBar> {
                               padding: const EdgeInsets.only(left: 20),
                               width: MediaQuery.of(context).size.width,
                               alignment: Alignment.centerLeft,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.transparent,
                               ),
                               child: Column(

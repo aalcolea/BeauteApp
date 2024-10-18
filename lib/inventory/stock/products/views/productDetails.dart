@@ -134,13 +134,12 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        //backgroundColor: const Color(0xFFFFF7F6),
         body: CustomScrollView(
           physics: keyboardVisibilityManager.visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
           slivers: [
             SliverAppBar(
-              leadingWidth: MediaQuery.of(context).size.width,
-              backgroundColor: Colors.white,
+            leadingWidth: MediaQuery.of(context).size.width,
               stretch: false,
               pinned: true,
               leading: Row(

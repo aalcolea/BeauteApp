@@ -6,7 +6,7 @@ class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final fillPaint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.BgprimaryColor
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()
@@ -15,7 +15,7 @@ class TrianglePainter extends CustomPainter {
       ..strokeWidth = 2.5;
 
     final whiteBorderPaint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.BgprimaryColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.3;
 

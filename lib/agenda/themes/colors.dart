@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primaryColor = Color(0xFF8B0000);//
+  static const Color BgprimaryColor = Color(0xFFFFF7F6);//
   static const Color primaryColorMoreStrong = Color(0xFFB80000);//
   static const Color textCalendarNoCurrentMonth = Color(0xFF72A5D0);
   static const Color redDelete = Color(0xFFBC1313);//

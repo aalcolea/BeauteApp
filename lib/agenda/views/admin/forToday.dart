@@ -6,9 +6,9 @@ import '../../utils/paintToNotifications.dart';
 import '../../utils/sliverlist/notiCards.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  final int doctorId;
+  final Function(int) onCloseForToday;
 
-  const NotificationsScreen({super.key, required this.doctorId});
+  const NotificationsScreen({super.key, required this.onCloseForToday});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
@@ -49,59 +49,84 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Stack(
-          children: [
-            ///este column representa el fondo
-            Column(
-              children: [
-                SizedBox(
-                  height: screenWidth! < 370.00
-                      ? MediaQuery.of(context).size.height * 0.027
-                      : MediaQuery.of(context).size.height * 0.0252,
-                ),
-              Expanded(
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                            color: AppColors.primaryColor,
-                            width: 2.5,
-                          ))))
-            ]),
-            Column(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: screenWidth! < 370.00
-                          ? MediaQuery.of(context).size.width * 0.725 //pantallas < 370
-                          : screenWidth! < 391.00 ? MediaQuery.of(context).size.width * 0.7405 :
-                            MediaQuery.of(context).size.width * 0.7525, //pantallas > 370
-                    ),
-                    CustomPaint(
-                      painter: TrianglePainter(),
-                      size: Size(MediaQuery.of(context).size.width * 0.1,
-                          MediaQuery.of(context).size.width * 0.065),
-                    ),
-                  ],
-                ),
-                Expanded(
-                    child: SingleChildScrollView(
-                        child: Column(children: [
-                  _buildSection('HOY', todayAppointments),
-                  _buildSection('MAÑANA', tomorrowAppointments),
-                ])))
-              ])
-            ])));
-  }
+    return Stack(
+      children: [
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.transparent
+            ),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Stack(
+                    children: [
+                      ///este column representa el fondo
+                      Column(
+                          children: [
+                            SizedBox(
+                              height: screenWidth! < 370.00
+                                  ? MediaQuery.of(context).size.height * 0.027
+                                  : MediaQuery.of(context).size.height * 0.0252,
+                            ),
+                            Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                          color: AppColors.primaryColor,
+                                          width: 2.5,
+                                        ))))
+                          ]),
+                      Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: screenWidth! < 370.00
+                                      ? MediaQuery.of(context).size.width * 0.725 //pantallas < 370
+                                      : screenWidth! < 391.00 ? MediaQuery.of(context).size.width * 0.7225 :
+                                  MediaQuery.of(context).size.width * 0.7525, //pantallas > 370
+                                ),
+                                CustomPaint(
+                                  painter: TrianglePainter(),
+                                  size: Size(MediaQuery.of(context).size.width * 0.1,
+                                      MediaQuery.of(context).size.width * 0.065),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                                child: SingleChildScrollView(
+                                    child: Column(children: [
+                                      _buildSection('HOY', todayAppointments),
+                                      _buildSection('MAÑANA', tomorrowAppointments),
+                                    ])))
+                          ])
+                    ]))),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.03),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.BgprimaryColor.withOpacity(0.5),
+            ),
+            child: IconButton(
+              onPressed: (){
+                setState(() {
+                  widget.onCloseForToday(1);
+                });
+              }, icon: Icon(Icons.close,size: MediaQuery.of(context).size.width * 0.065,
+            color: Colors.black,
+            ),
+            ),
+          ),
+        ),
 
+      ],
+    );
+  }
+/*  */
   Widget _buildSection(
       String title, Future<List<Appointment2>> appointmentsFuture) {
     return Column(

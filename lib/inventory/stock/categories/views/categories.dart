@@ -197,7 +197,7 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     int itemsPerPage = 6;
     return Container(
-      color: Colors.white,
+      color: AppColors.BgprimaryColor,
       child: Column(
         children: [
           _selectedCategory == null
@@ -300,7 +300,14 @@ class _CategoriesState extends State<Categories> {
                               ),
                             ) : InkWell(
                               onTap: () {
-                                setState(() {
+                                selectedCategoryId = item['id'];
+                                Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => Products(selectedCategory: item['id'].toString(), onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
+                                  ),
+                                );
+                               /* setState(() {
+                                  print('here');
                                   selectedCategoryId = item['id'];
                                   if (isSelecting) {
                                     if (selectedCategories.contains(item['id'].toString())) {
@@ -314,7 +321,7 @@ class _CategoriesState extends State<Categories> {
                                   } else {
                                     _selectedCategory = item['category'].toString();
                                   }
-                                });
+                                });*/
                                 print("${item['category']}");
                               },
                               onLongPress: () {
@@ -421,9 +428,9 @@ class _CategoriesState extends State<Categories> {
                 ),
               ),
             ),
-          ) : Expanded(
+          ) : Container(),/*Expanded(
             child: Products(key: widget.productsKey, selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
-          ),
+          ),*/
           if (isSelecting) Container(
             height: MediaQuery.of(context).size.height * 0.05,
             padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.62, bottom: MediaQuery.of(context).size.width * 0.01),
