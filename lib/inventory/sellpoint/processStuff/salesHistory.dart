@@ -80,9 +80,7 @@ class _SalesHistoryState extends State<SalesHistory> {
       body: Stack(
         children: [
           CustomScrollView(
-            physics: keyboardVisibilityManager.visibleKeyboard
-                ? const BouncingScrollPhysics()
-                : const BouncingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 leadingWidth: MediaQuery.of(context).size.width,
@@ -92,7 +90,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                 leading: Row(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(color: AppColors.primaryColor, width: 2.0),
                         ),
@@ -140,6 +138,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                 ),
               ),
               SliverToBoxAdapter(
+
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03, vertical: MediaQuery.of(context).size.width * 0.02),
                   child: Column(
