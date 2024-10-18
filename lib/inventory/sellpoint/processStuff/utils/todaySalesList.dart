@@ -30,6 +30,8 @@ Widget buildTodaySalesList(BuildContext context) {
       final catID = groupedSales.keys.elementAt(index);
       final categorySales = groupedSales[catID]!;
       return ExpansionTile(
+        iconColor: AppColors.primaryColor,
+        collapsedIconColor: AppColors.primaryColor,
         tilePadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
         childrenPadding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04, left: MediaQuery.of(context).size.width * 0.02),
         shape: Border(

@@ -49,6 +49,8 @@ class _navBarState extends State<navBar> {
 
   @override
   void initState() {
+
+    print('docLOg${widget.isDoctorLog}');
     printService.initDeviceStatus();
     printService.listenerPrintService.registrarObservador((newValue){
       setState(() {
@@ -135,7 +137,7 @@ class _navBarState extends State<navBar> {
                     onTap: widget.currentScreen == 'agenda' ? Navigator.of(context).pop : (){
                       Navigator.of(context).pushAndRemoveUntil(
                         CupertinoPageRoute(
-                          builder: (context) => const AssistantAdmin(docLog: false),
+                          builder: (context) => AssistantAdmin(docLog: widget.isDoctorLog),
                         ),
                             (Route<dynamic> route) => false,
                       );
@@ -174,7 +176,7 @@ class _navBarState extends State<navBar> {
                     onTap: widget.currentScreen == 'inventario' ? Navigator.of(context).pop : (){
                       Navigator.of(context).pushAndRemoveUntil(
                         CupertinoPageRoute(
-                          builder: (context) => const adminInv(),
+                          builder: (context) => adminInv(docLog: widget.isDoctorLog),
                         ),
                             (Route<dynamic> route) => false,
                       );
