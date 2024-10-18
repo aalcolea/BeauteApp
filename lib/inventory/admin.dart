@@ -21,7 +21,8 @@ import 'package:soundpool/soundpool.dart';
 import '../agenda/themes/colors.dart';
 
 class adminInv extends StatefulWidget {
-  const adminInv({super.key});
+  final bool docLog;
+  const adminInv({super.key, required this.docLog});
 
   @override
   State<adminInv> createState() => _adminInvState();
@@ -31,7 +32,6 @@ class _adminInvState extends State<adminInv> {
   GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   PrintService printService = PrintService();
   bool _showBlurr = false;
-  bool isDocLog = false;
   String currentScreen = "inventario";
   double? screenWidth;
   double? screenHeight;
@@ -104,6 +104,7 @@ class _adminInvState extends State<adminInv> {
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
   }
 
@@ -133,7 +134,7 @@ class _adminInvState extends State<adminInv> {
       }
 
     return Scaffold(
-      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog, currentScreen: currentScreen,
+      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: widget.docLog, currentScreen: currentScreen,
         onPrintServiceComunication: onPrintServiceComunication),
       body: Stack(
         children: [

@@ -421,9 +421,10 @@ class _CartState extends State<Cart> {
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
                   if(result) {
-                    widget.printService.printImage(widget.printService.characteristic!);
-                    widget.printService.characteristic != null ?
-                    widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
+                    widget.printService.printImage('assets/imgLog/logoBeauteWhiteSqr.png', widget.printService.characteristic, 400);
+                    //widget.printService.printImage(widget.printService.characteristic!);
+                   // widget.printService.characteristic != null ?
+                    //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
                   }
                 }

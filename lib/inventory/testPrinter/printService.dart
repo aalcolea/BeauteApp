@@ -1,15 +1,16 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:typed_data';
-import 'package:image/image.dart' as img; // Usa un alias para la librería 'image'
 import 'package:intl/intl.dart';
 import '../../agenda/utils/showToast.dart';
 import '../../agenda/utils/toastWidget.dart';
 import '../listenerPrintService.dart';
+import 'package:image/image.dart' as img;
 
 class PrintService extends ChangeNotifier {
   @override
@@ -192,104 +193,120 @@ class PrintService extends ChangeNotifier {
     }
   }
 
-
-
-  Future<void> printImage(BluetoothCharacteristic characteristic) async {
-    // Generate the bytes of the image
-    print('printIMG');
-    List<int> bytes = await generateImageBytes();
-    print('bytes $bytes');
-
-    // Send the bytes to the printer using the characteristic's write method
-    await characteristic.write(bytes, withoutResponse: true);
+// Función para cargar la imagen desde un path
+  Future<Uint8List> loadImageFromFile(String path) async {
+    // Cargar la imagen desde los assets
+    try {
+      return await rootBundle.load(path).then((byteData) => byteData.buffer.asUint8List());
+    } catch (e) {
+      throw Exception("Error al cargar la imagen: $e");
+    }
   }
 
-  Future<List<int>> generateImageBytes() async {
-    List<int> bytes = [];
-
-    // Load the image from the assets
-    final ByteData data = await rootBundle.load('assets/imgLog/logoBeauteWhiteSqr.png');
-    final Uint8List imageBytes = data.buffer.asUint8List();
-    img.Image? image = img.decodeImage(imageBytes); // Use 'img.Image' instead of 'Image'
-
+// Función para convertir la imagen a escala de grises
+  Uint8List convertImageToGrayscale(Uint8List originalImageData) {
+    img.Image? image = img.decodeImage(originalImageData);
     if (image == null) {
-      print('Error decoding the image');
-      return bytes;
+      throw Exception("No se pudo cargar la imagen");
     }
 
-    // Convert the image to grayscale
-    image = img.grayscale(image);
+    img.grayscale(image);
 
-    // Resize the image if necessary
-    const int maxWidth = 384; // Adjust this according to your printer's maximum width
-    if (image.width > maxWidth) {
-      image = img.copyResize(image, width: maxWidth);
-    }
-
-    // Convert the image to a format compatible with ESC/POS
-    bytes += generateImageEscPos(image);
-
-    // Add additional print commands if needed
-    bytes += [0x1B, 0x64, 0x02]; // Feed two lines
-    bytes += [0x1B, 0x69]; // Cut the paper
-
-    return bytes;
+    return Uint8List.fromList(img.encodePng(image));
   }
 
-// Function to convert the image to ESC/POS format
-// Function to convert the image to ESC/POS format
-  List<int> generateImageEscPos(img.Image image) {
-    List<int> bytes = [];
+// Función para redimensionar la imagen al ancho máximo
+  img.Image resizeImage(img.Image image, int maxWidth) {
+    if (image.width > maxWidth) {
+      return img.copyResize(image, width: maxWidth);
+    }
+    return image;
+  }
 
-    // Command for graphic mode in ESC/POS printer
-    bytes += [0x1D, 0x76, 0x30, 0x00];
-    bytes += [(image.width + 7) ~/ 8 & 0xFF, 0x00]; // Width in bytes, rounded up
-    bytes += [image.height & 0xFF, (image.height >> 8) & 0xFF]; // Height in pixels
+// Función para convertir la imagen en formato binario
+  Uint8List convertToBinary(img.Image image) {
+    int width = image.width;
+    int height = image.height;
+    List<int> binary = [];
 
-    // Traverse the pixels of the image and convert to monochrome
-    for (int y = 0; y < image.height; y++) {
-      for (int x = 0; x < image.width; x += 8) {
-        int byte = 0;
-        for (int bit = 0; bit < 8; bit++) {
-          if (x + bit < image.width) {
-            img.Pixel pixel = image.getPixel(x + bit, y);
-            print('pixel $pixel');
-            int luminance = 0;
-            //int luminance = getLuminance(pixel);
-            if (luminance < 128) {
-              byte |= (1 << (7 - bit)); // Dark color, will be printed
-            }
-          }
-        }
-        bytes.add(byte);
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        // Obtener el píxel
+        img.Pixel pixel = image.getPixel(x, y); // Obtiene el objeto Pixel
+
+        // Extraer componentes de color utilizando el objeto Pixel
+        num red = pixel.r;   // Obtener el valor rojo
+        num green = pixel.g; // Obtener el valor verde
+        num blue = pixel.b;  // Obtener el valor azul
+
+        // Calcular la luminancia utilizando los componentes RGB
+        int luminance = (0.299 * red + 0.587 * green + 0.114 * blue).toInt();
+
+        // Si la luminancia es mayor a un umbral, se considera blanco (0), de lo contrario negro (1)
+        binary.add(luminance > 128 ? 0 : 1);
       }
     }
 
-    return bytes;
+    return Uint8List.fromList(binary);
   }
 
 
-// Function to get the luminance of a pixel
-  int getLuminance(int pixel) {
-    int r = getRed(pixel);
-    int g = getGreen(pixel);
-    int b = getBlue(pixel);
-    return ((r * 0.3) + (g * 0.59) + (b * 0.11)).toInt();
+// Función para codificar en formato ESC/POS
+  Uint8List encodeToEscPos(Uint8List binaryData, int width) {
+    List<int> bytes = [];
+    bytes.addAll([0x1B, 0x40]); // Inicializar impresora
+    bytes.addAll([0x1D, 0x76, 0x30, 0x00]); // Modo gráfico
+
+    bytes.addAll([width & 0xFF, (width >> 8) & 0xFF]); // Ancho
+    int height = (binaryData.length / width).ceil();
+    bytes.addAll([height & 0xFF, (height >> 8) & 0xFF]); // Alto
+
+    for (int i = 0; i < binaryData.length; i += 8) {
+      int byte = 0;
+      for (int bit = 0; bit < 8; bit++) {
+        if (i + bit < binaryData.length && binaryData[i + bit] == 1) {
+          byte |= (1 << (7 - bit));
+        }
+      }
+      bytes.add(byte);
+    }
+
+    bytes.addAll([0x0A, 0x1D, 0x56, 0x41, 0x00]); // Avanzar papel y cortar
+
+    return Uint8List.fromList(bytes);
   }
 
-// Functions to extract RGB components from a pixel
-  int getRed(int pixel) => (pixel >> 16) & 0xFF;
-  int getGreen(int pixel) => (pixel >> 8) & 0xFF;
-  int getBlue(int pixel) => pixel & 0xFF;
+// Función principal para preparar la imagen y enviarla a la impresora
+  Future<void> printImage(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth) async {
+    print(imagePath);
+    try {
+      // Cargar la imagen
+      Uint8List imageData = await loadImageFromFile(imagePath);
 
-  int pixelToInt(img.Pixel pixel) {
-    int r = pixel.r.toInt();
-    int g = pixel.g.toInt();
-    int b = pixel.b.toInt();
-    int a = pixel.a.toInt();
+      // Convertir a escala de grises
+      Uint8List grayscaleImageData = convertImageToGrayscale(imageData);
 
-    // Combina los canales de color en un entero ARGB
-    return (a << 24) | (r << 16) | (g << 8) | b;
+      // Decodificar la imagen
+      img.Image? image = img.decodeImage(grayscaleImageData);
+      if (image == null) {
+        throw Exception("Error al decodificar la imagen");
+      }
+
+      // Redimensionar la imagen al ancho máximo de la impresora
+      img.Image resizedImage = resizeImage(image, maxWidth);
+
+      // Convertir la imagen a formato binario (1 bit por píxel)
+      Uint8List binaryData = convertToBinary(resizedImage);
+
+      // Codificar en formato ESC/POS
+      Uint8List escPosData = encodeToEscPos(binaryData, resizedImage.width);
+
+      // Enviar a la impresora
+      await characteristic!.write(escPosData, withoutResponse: true);
+      print("Imagen impresa exitosamente");
+    } catch (e) {
+      print("Error al imprimir la imagen: $e");
+    }
   }
 
 
