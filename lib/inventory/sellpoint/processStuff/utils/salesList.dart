@@ -113,8 +113,8 @@ Widget buildSalesList(BuildContext context) {
               ),
             ),
             Divider(
-              color: AppColors.primaryColor.withOpacity(0.7),
-              thickness: MediaQuery.of(context).size.width * 0.004,
+              color: AppColors.primaryColor,
+              thickness: MediaQuery.of(context).size.width * 0.0055,
             ),
           ],
         ),
