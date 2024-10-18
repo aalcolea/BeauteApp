@@ -77,6 +77,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
+    //docLog = widget.docLog;
     super.initState();
   }
 

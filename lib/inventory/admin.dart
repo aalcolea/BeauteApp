@@ -21,7 +21,8 @@ import 'package:soundpool/soundpool.dart';
 import '../agenda/themes/colors.dart';
 
 class adminInv extends StatefulWidget {
-  const adminInv({super.key});
+  final bool docLog;
+  const adminInv({super.key, required this.docLog});
 
   @override
   State<adminInv> createState() => _adminInvState();
@@ -31,7 +32,6 @@ class _adminInvState extends State<adminInv> {
   GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   PrintService printService = PrintService();
   bool _showBlurr = false;
-  bool isDocLog = false;
   String currentScreen = "inventario";
   double? screenWidth;
   double? screenHeight;
@@ -104,6 +104,7 @@ class _adminInvState extends State<adminInv> {
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
   }
 
@@ -133,7 +134,7 @@ class _adminInvState extends State<adminInv> {
       }
 
     return Scaffold(
-      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog, currentScreen: currentScreen,
+      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: widget.docLog, currentScreen: currentScreen,
         onPrintServiceComunication: onPrintServiceComunication),
       body: Stack(
         children: [
@@ -173,12 +174,14 @@ class _adminInvState extends State<adminInv> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                         /* IconButton(
+                          Visibility(
+                            visible: _selectedScreen == 1 ? true : false,
+                            child: IconButton(
                             onPressed: () async {
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProductForm(),
+                                  builder: (context) => const ProductForm(),
                                 ),
                               );
                               if (result == true) {
@@ -190,29 +193,15 @@ class _adminInvState extends State<adminInv> {
                               color: AppColors.primaryColor,
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
-                          ),
-*/
-                          IconButton(
-                            onPressed:  printService.selectedDevice?.state.isEmpty == null ? () async {
-                              setState(() {
-                                printService.scanForDevices(context);
-                              });
-                            } : () async {
-                              printService.disconnect(context);
-                            },
-                            icon: Icon(
-                              printService.selectedDevice != null ? Icons.print_outlined : Icons.print_disabled_outlined,
-                              color: AppColors.primaryColor,
-                              size: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          ),
-
-                          IconButton(
+                          )),
+                          Visibility(
+                            visible: _selectedScreen == 2 ? true : false,
+                            child: IconButton(
                             onPressed: () async {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SalesHistory(),
+                                  builder: (context) => const SalesHistory(),
                                 ),
                               );
                             },
@@ -221,7 +210,7 @@ class _adminInvState extends State<adminInv> {
                               color: AppColors.primaryColor,
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
-                          ),
+                          ),),
                           Builder(builder: (BuildContext context) {
                             return IconButton(
                               onPressed: () {
