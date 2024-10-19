@@ -30,6 +30,7 @@ class _SalesHistoryState extends State<SalesHistory> {
   TextEditingController dateController = TextEditingController();
   FocusNode seekNode = FocusNode();
   FocusNode dateNode = FocusNode();
+  PageController pageController = PageController();
 
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
@@ -74,67 +75,43 @@ class _SalesHistoryState extends State<SalesHistory> {
             physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
-                shape: Border(
-                    bottom: BorderSide(color: AppColors.primaryColor.withOpacity(0.03), width: 3.0)
-                ),
                 backgroundColor: AppColors.calendarBg,
                 leadingWidth: MediaQuery.of(context).size.width,
-                stretch: false,
                 pinned: true,
                 leading: Row(
                   children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: AppColors.primaryColor, width: 2.0),
-                        ),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          CupertinoIcons.back,
-                          size: MediaQuery.of(context).size.width * 0.08,
-                          color: AppColors.primaryColor,
-                        ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        CupertinoIcons.back,
+                        size: MediaQuery.of(context).size.width * 0.08,
+                        color: AppColors.primaryColor,
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            _buildTabButton('Historial de ventas', 0),
-                            _buildTabButton('Ventas por dia', 1),
-                          ]
-                      ),
-                    ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: AppColors.primaryColor, width: 2.0),
-                        ),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          CupertinoIcons.back,
-                          size: MediaQuery.of(context).size.width * 0.08,
-                          color: AppColors.calendarBg,
-                        ),
-                      ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          _buildTabButton('Historial de ventas', 0),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.005,
+                            height: MediaQuery.of(context).size.width * 0.1,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(1),
+                              color: AppColors.primaryColor.withOpacity(0.7),
+                            ),
+                          ),
+                          _buildTabButton('Ventas por dia', 1)
+                        ]
                     ),
                   ],
                 ),
               ),
               SliverToBoxAdapter(
-
                 child: Container(
+                  color: AppColors.calendarBg,
                   padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03, vertical: MediaQuery.of(context).size.width * 0.02),
                   child: Column(
                     children: [
@@ -147,6 +124,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                 borderRadius: BorderRadius.circular(10.0),
                                 color: AppColors.calendarBg,
                               ),
+                              margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
                               width: MediaQuery.of(context).size.width * 0.25,
                               height: MediaQuery.of(context).size.width * 0.105,
                               child: TextFormField(
@@ -166,11 +144,11 @@ class _SalesHistoryState extends State<SalesHistory> {
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                 ),
@@ -185,9 +163,6 @@ class _SalesHistoryState extends State<SalesHistory> {
                                   });
                                 },
                               ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.02,
                             ),
                             Expanded(
                               child: Container(
@@ -212,15 +187,15 @@ class _SalesHistoryState extends State<SalesHistory> {
                                       fontSize: MediaQuery.of(context).size.width * 0.035,
                                     ),
                                     disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   ),
@@ -255,7 +230,7 @@ class _SalesHistoryState extends State<SalesHistory> {
               ),
               SliverFillRemaining(
                 child: PageView(
-                  controller: PageController(initialPage: selectedPage),
+                  controller: pageController,
                   onPageChanged: (int page) {
                     setState(() {
                       selectedPage = page;
@@ -331,7 +306,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             height: MediaQuery.of(context).size.height * 0.45,
                             decoration: BoxDecoration(
                               border: Border.all(color: AppColors.primaryColor, width: 3.0),
-                              color: Colors.white,
+                              color: AppColors.calendarBg,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: CalendarioCita(
@@ -350,45 +325,26 @@ class _SalesHistoryState extends State<SalesHistory> {
   }
 
   Widget _buildTabButton(String title, int pageIndex) {
-    return Container(
-      decoration: selectedPage == pageIndex
-          ? BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.03),
-        border: Border(
-          top: BorderSide(color: AppColors.primaryColor, width: 2.0),
-          left: BorderSide(color: AppColors.primaryColor, width: 2.0),
-          right: BorderSide(color: AppColors.primaryColor, width: 2.0),
-        ),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10.0),
-          topRight: Radius.circular(10.0),
-        ),
-      )
-          : const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.primaryColor, width: 2.0),
-        ),
-      ),
-      child: TextButton(
-        onPressed: () {
-          setState(() {
-            selectedPage = pageIndex;
-          });
-        },
-        child: Text(
-          textAlign: TextAlign.center,
-          title,
-          style: selectedPage == pageIndex
-              ? TextStyle(
-            color: AppColors.primaryColor,
-            fontSize: MediaQuery.of(context).size.width * 0.063,
-            fontWeight: FontWeight.bold,
-          )
-              : TextStyle(
-            color: AppColors.primaryColor.withOpacity(0.5),
-            fontSize: MediaQuery.of(context).size.width * 0.035,
-            fontWeight: FontWeight.bold,
-          ),
+    return TextButton(
+      onPressed: () {
+        setState(() {
+          selectedPage = pageIndex;
+          pageController.animateToPage(pageIndex, duration: Duration(milliseconds: 250), curve: Curves.linear);
+        });
+      },
+      child: Text(
+        textAlign: TextAlign.center,
+        title,
+        style: selectedPage == pageIndex
+            ? TextStyle(
+          color: AppColors.primaryColor,
+          fontSize: MediaQuery.of(context).size.width * 0.06,
+          fontWeight: FontWeight.bold,
+        )
+            : TextStyle(
+          color: AppColors.primaryColor.withOpacity(0.2),
+          fontSize: MediaQuery.of(context).size.width * 0.035,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
