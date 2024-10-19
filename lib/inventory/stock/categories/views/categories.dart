@@ -355,7 +355,7 @@ class _CategoriesState extends State<Categories> {
                                               ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
                                                 child: Image.network(
-                                                  item['image'],
+                                                  item['image'] ?? '',
                                                   fit: BoxFit.contain,
                                                   loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                                     if (loadingProgress == null) {
@@ -371,7 +371,9 @@ class _CategoriesState extends State<Categories> {
                                                     }
                                                   },
                                                   errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                                    return const Text('Error al cargar la imagen');
+                                                    return Image.asset('assets/imgLog/logoBeauteWhiteSqr.png',
+                                                      fit: BoxFit.contain,
+                                                    );
                                                   },
                                                 ),
                                               ),

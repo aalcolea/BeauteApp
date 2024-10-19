@@ -417,17 +417,22 @@ class _CartState extends State<Cart> {
                 horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
-                bool confirm = await showConfirmSellDialog(context);
+                /*bool confirm = await showConfirmSellDialog(context);
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
-                  if(result) {
-                    widget.printService.printImage('assets/imgLog/logoBeauteWhiteSqr.png', widget.printService.characteristic, 400);
-                    //widget.printService.printImage(widget.printService.characteristic!);
-                   // widget.printService.characteristic != null ?
-                    //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
+                  if(result) {*/
+                   /* widget.printService.generateEscPosTicketWithImage(
+                        [ // Carrito hardcodeado
+                          {'cantidad': 1, 'prod': 'Producto A', 'precio': 100.0, 'importe': 100.0},
+                        ],
+                        widget.printService.characteristic, // Característica de la impresora Bluetooth
+                        'assets/imgLog/assiWhite.png', // Ruta de la imagen
+                        384 // Ancho máximo para la impresora (384 píxeles para 58 mm)
+                    );*/
+                widget.printService.printImage('image.png');
                     cartProvider.refreshCart();
-                  }
-                }
+                  /*}
+                }*/
               },
               child: Text(
               'Pagar',
