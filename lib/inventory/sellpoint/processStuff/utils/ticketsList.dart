@@ -30,173 +30,184 @@ Map<int, List<Map<String, dynamic>>> groupByTicket(List<Map<String, dynamic>> ti
 
 Widget buildTicketsList(BuildContext context) {
   final groupedTickets = groupByTicket(ticketProducts);
-  return ListView.builder(
-    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03),
-    itemCount: groupedTickets.keys.length,
-    itemBuilder: (context, index) {
-      final ticketID = groupedTickets.keys.elementAt(index);
-      final categoryTickets = groupedTickets[ticketID]!;
-      final ticket = tickets.firstWhere((t) => t['ticketID'] == ticketID, orElse: () => {});
-      return ExpansionTile(
-        iconColor: AppColors.calendarBg,
-        collapsedIconColor: AppColors.calendarBg,
-        backgroundColor: AppColors.primaryColor,
-        collapsedBackgroundColor: AppColors.primaryColor,
-        tilePadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
-        childrenPadding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.0),
-        shape: const Border(
-          bottom: BorderSide(
-              color: AppColors.calendarBg, width: 2
-          )
-        ),
-        collapsedShape: const Border(
-            bottom: BorderSide(
-                color: AppColors.calendarBg, width: 2
-            )
-        ),
-        initiallyExpanded: false,
-        title: Text(
-          'Ticket $ticketID',
-          style: TextStyle(
+  return Container(
+    color: AppColors.calendarBg,
+    child: ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: groupedTickets.keys.length,
+      itemBuilder: (context, index) {
+        final ticketID = groupedTickets.keys.elementAt(index);
+        final categoryTickets = groupedTickets[ticketID]!;
+        final ticket = tickets.firstWhere((t) => t['ticketID'] == ticketID, orElse: () => {});
+        return Container(
+          margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
+          decoration: BoxDecoration(
             color: AppColors.calendarBg,
-            fontWeight: FontWeight.bold,
-            fontSize: MediaQuery.of(context).size.width * 0.045,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black54.withOpacity(0.2),
+                offset: const Offset(4, 4),
+                blurRadius: 2,
+                spreadRadius: 0.1,
+              )
+            ],
           ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Fecha: ',
-                  style: TextStyle(
-                    color: AppColors.calendarBg,
-                  ),
-                ),
-                Text(
-                  '${ticket['fecha']}',
-                  style: TextStyle(
-                      color: AppColors.calendarBg,
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width * 0.035),
-                ),
-              ],
+          child: ExpansionTile(
+            iconColor: AppColors.primaryColor,
+            collapsedIconColor: AppColors.primaryColor,
+            backgroundColor: Colors.transparent,
+            collapsedBackgroundColor: Colors.transparent,
+            tilePadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
+            initiallyExpanded: false,
+            shape: const Border(
+                bottom: BorderSide(color: Colors.transparent)
             ),
-            Row(
-              children: [
-                Text(
-                  'Cantidad total: ',
-                  style: TextStyle(
-                      color: AppColors.calendarBg,
-                  ),
-                ),
-                Text(
-                  '${ticket['cant']} pzs',
-                  style: TextStyle(
-                      color: AppColors.calendarBg,
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width * 0.035),
-                ),
-              ],
+            title: Text(
+              'Ticket $ticketID',
+              style: TextStyle(
+                color: AppColors.primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.045,
+              ),
             ),
-            Row(
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Total: ',
-                  style: TextStyle(
-                      color: AppColors.calendarBg,
-                  ),
-                ),
-                Text(
-                  '\$${ticket['total']}',
-                  style: TextStyle(
-                      color: AppColors.calendarBg,
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width * 0.035),
-                ),
-              ],
-            ),
-          ],
-        ),
-        children: categoryTickets.map((product) {
-          return Container(
-            color: AppColors.calendarBg,
-            child: ListTile(
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.06),
-                title: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product['producto'],
-                        style: TextStyle(
+                Row(
+                  children: [
+                    const Text(
+                      'Fecha: ',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                    Text(
+                      '${ticket['fecha']}',
+                      style: TextStyle(
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                        ),
+                          fontSize: MediaQuery.of(context).size.width * 0.035),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      'Cantidad total: ',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            "Cant.: ",
-                            style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: MediaQuery.of(context).size.width * 0.035),
-                          ),
-                          Text(
-                            '${product['cant']} pzs',
-                            style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.035),
-                          ),
-                        ],
+                    ),
+                    Text(
+                      '${ticket['cant']} pzs',
+                      style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.035),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      'Total: ',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            "Precio unitario: ",
-                            style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: MediaQuery.of(context).size.width * 0.035),
-                          ),
-                          Text(
-                            '\$${product['precio_uni']}',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.035,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Total: ",
-                            style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: MediaQuery.of(context).size.width * 0.035),
-                          ),
-                          Text(
-                            '${product['cant'] * product['precio_uni']}',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.035,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
+                    ),
+                    Text(
+                      '\$${ticket['total']}',
+                      style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.035),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          );
-        }).toList(),
-      );
-    },
+            children: categoryTickets.map((product) {
+              return Container(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.03),
+                color: Colors.transparent,
+                child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.06),
+                    title: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product['producto'],
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Cant.: ",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                              Text(
+                                '${product['cant']} pzs',
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Precio unitario: ",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                              Text(
+                                '\$${product['precio_uni']}',
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Total: ",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                              Text(
+                                '${product['cant'] * product['precio_uni']}',
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    ),
   );
 }
