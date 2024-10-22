@@ -117,148 +117,158 @@ class _NotiCardsState extends State<NotiCards> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        margin: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.02),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.01,
-                  bottom: MediaQuery.of(context).size.height * 0.0025),
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.height * 0.01,
-                  right: MediaQuery.of(context).size.height * 0.01),
-              decoration: BoxDecoration(
-                color: !isRead ? AppColors.primaryColor : const Color(0xFFC5B6CD),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
+    return Stack(
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.02),
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.01,
+                    bottom: MediaQuery.of(context).size.height * 0.0025),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.height * 0.01,
+                    right: MediaQuery.of(context).size.height * 0.01),
+                decoration: BoxDecoration(
+                  color: !isRead
+                      ? AppColors.primaryColor
+                      : AppColors.primaryColor.withOpacity(0.3),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '¡Cita próxima!',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.055,
-                      color: !isRead ? Colors.white : Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '¡Cita próxima!',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.055,
+                        color: !isRead ? Colors.white : Colors.white,
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: isRead == false
-                            ? () async {
-                                try {
-                                  await readNotification(
-                                      widget.appointment.id!);
-                                  setState(() {
-                                    isRead = true;
-                                  });
-                                } catch (e) {
-                                  print('Error: $e');
+                    Row(
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: isRead == false
+                              ? () async {
+                                  try {
+                                    await readNotification(
+                                        widget.appointment.id!);
+                                    setState(() {
+                                      isRead = true;
+                                    });
+                                  } catch (e) {
+                                    print('Error: $e');
+                                  }
                                 }
-                              }
-                            : () async {
-                                try {
-                                  await unReadNotification(
-                                      widget.appointment.id!);
-                                  setState(() {
-                                    isRead = false;
-                                  });
-                                } catch (e) {
-                                  print('Error: $e');
-                                }
-                              },
-                        icon: Icon(
-                          !isRead
-                              ? CupertinoIcons.mail_solid
-                              : Icons.markunread_mailbox_outlined,
-                          color: Colors.white,
-                          size: MediaQuery.of(context).size.width * 0.07,
+                              : () async {
+                                  try {
+                                    await unReadNotification(
+                                        widget.appointment.id!);
+                                    setState(() {
+                                      isRead = false;
+                                    });
+                                  } catch (e) {
+                                    print('Error: $e');
+                                  }
+                                },
+                          icon: Icon(
+                            isRead
+                                ? Icons.mark_email_read_outlined
+                                : Icons.markunread_mailbox_sharp,
+                            color: Colors.white,
+                            size: MediaQuery.of(context).size.width * 0.07,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding:
-                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-              decoration: BoxDecoration(
-                color: !isRead
-                    ? const Color(0xFFC5B6CD)
-                    : Color(0xFFC5B6CD).withOpacity(0.3),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Prepárate para tu cita de hoy.',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white,
-                        ),
-                      ),
-                    ],
+              Container(
+                padding:
+                    EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                decoration: BoxDecoration(
+                  color: !isRead
+                      ? AppColors.primaryColor.withOpacity(0.3)
+                      : AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Paciente: ',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Prepárate para tu cita de hoy.',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: !isRead
+                                ? Colors.black
+                                : Colors.white.withOpacity(0.75),
+                          ),
                         ),
-                      ),
-                      Text(
-                        widget.appointment.clientName ?? 'Desconocido',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white,
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Paciente: ',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: !isRead
+                                ? Colors.black
+                                : Colors.white.withOpacity(0.75),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Hora: ',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white,
+                        Text(
+                          widget.appointment.clientName ?? 'Desconocido',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: !isRead
+                                ? Colors.black
+                                : Colors.white.withOpacity(0.75),
+                          ),
                         ),
-                      ),
-                      Text(
-                        widget.appointment.appointmentDate != null
-                            ? '${widget.appointment.appointmentDate!.hour}:${widget.appointment.appointmentDate!.minute}'
-                            : 'Desconocido',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white,
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Hora: ',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: !isRead ? Colors.black : Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          widget.appointment.appointmentDate != null
+                              ? '${widget.appointment.appointmentDate!.hour}:${widget.appointment.appointmentDate!.minute}'
+                              : 'Desconocido',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: !isRead ? Colors.black : Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

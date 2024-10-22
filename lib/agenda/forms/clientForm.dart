@@ -202,7 +202,7 @@ class ClientFormState extends State<ClientForm> {
                 top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
             padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.BgprimaryColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -233,8 +233,7 @@ class ClientFormState extends State<ClientForm> {
                 Container(
                   padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
                     height: visibleKeyboard
-                        ? (screenWidth! < 391
-                            ? MediaQuery.of(context).size.height * 0.46
+                        ? (screenWidth! < 391 ? MediaQuery.of(context).size.height * 0.46
                             : MediaQuery.of(context).size.height * 0.5)
                         : screenWidth! < 391.0 ? MediaQuery.of(context).size.height * 0.535
                   : MediaQuery.of(context).size.height * 0.6,
@@ -467,7 +466,7 @@ class ClientFormState extends State<ClientForm> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: MediaQuery.of(context).size.width * 0.01,
                                           vertical: MediaQuery.of(context).size.width * 0.0112),
-                                      surfaceTintColor: Colors.white,
+                                      surfaceTintColor: AppColors.BgprimaryColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10.0),
                                         side: const BorderSide(

@@ -139,15 +139,16 @@ class _adminInvState extends State<adminInv> {
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
-            color: Colors.white,
+            color: Colors.transparent,
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.04),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
                   padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.045,
                       right: MediaQuery.of(context).size.width * 0.025,
-                      bottom: MediaQuery.of(context).size.width * 0.005
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +158,7 @@ class _adminInvState extends State<adminInv> {
                         children: [
                           Text(
                             _selectedScreen == 1
-                                ? 'Inventario'//'$scanedProd'//
+                                ? 'Inventario'//'$scanedProd'
                                 : _selectedScreen == 2
                                 ? 'Venta'
                                 : '',
@@ -228,55 +229,60 @@ class _adminInvState extends State<adminInv> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.045, left: MediaQuery.of(context).size.width * 0.045, bottom: MediaQuery.of(context).size.width * 0.025),
-                        child: SizedBox(
-                          height: showScaner ? MediaQuery.of(context).size.width * 0.18 : 37,//37
-                          child: showScaner ? ScanBarCode(onShowScan: onShowScan, onScanProd: onScanProd) : TextFormField(
-                            controller: searchController,
-                            focusNode: focusNode,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.zero,
-                              hintText: 'Buscar producto...',
-                              hintStyle: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.2)
-                              ),
-                              prefixIcon: Icon(Icons.search, color: AppColors.primaryColor.withOpacity(0.2)),
-                              suffixIcon: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      showScaner == false ? showScaner = true : showScaner = false;
-                                    });
-                                  },
-                                  child: Icon(CupertinoIcons.barcode_viewfinder, color: AppColors.primaryColor)
-                              ),
-                              disabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(),
-                                borderRadius: BorderRadius.circular(10.0),
+                Container(
+                  color: Colors.transparent,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02, left: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.025),
+                          child: Container(
+                            color: Colors.transparent,
+                            height: showScaner ? MediaQuery.of(context).size.width * 0.3 : 40,//37
+                            child: showScaner ? ScanBarCode(onShowScan: onShowScan, onScanProd: onScanProd) : TextFormField(
+                              controller: searchController,
+                              focusNode: focusNode,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                hintText: 'Buscar producto...',
+                                hintStyle: TextStyle(
+                                    color: AppColors.primaryColor.withOpacity(0.2)
+                                ),
+                                prefixIcon: Icon(Icons.search, color: AppColors.primaryColor.withOpacity(0.2)),
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        showScaner == false ? showScaner = true : showScaner = false;
+                                      });
+                                    },
+                                    child: const Icon(CupertinoIcons.barcode_viewfinder, color: AppColors.primaryColor)
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04),
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.width * 0.04),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                      color: AppColors.BgprimaryColor,
                         borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(15),
                             bottomRight: Radius.circular(15)
@@ -294,33 +300,31 @@ class _adminInvState extends State<adminInv> {
                           ),
                           BoxShadow(
                             color: Colors.white,
-                            offset: Offset(0, MediaQuery.of(context).size.width * -0.025),
+                            offset: Offset(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width * -0.025),
                           )
                         ]
                     ),
                     child: Container(
                       margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.width * 0.0,
                         bottom: MediaQuery.of(context).size.width * 0.02,
-                        left: MediaQuery.of(context).size.width * 0.02,
-                        right: _selectedScreen == 1
-                            ? MediaQuery.of(context).size.width * 0.0
-                            : MediaQuery.of(context).size.width * 0.02,
+                        right: _selectedScreen == 1 ? MediaQuery.of(context).size.width * 0.0 : MediaQuery.of(context).size.width * 0.02,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: _buildBody(),
                     ),
                   ),
                 ),
+                ///botones inferiores
                 Visibility(
                   visible: !_hideBtnsBottom,
                   child: Container(
-                    margin: EdgeInsets.only(
-                        bottom: screenWidth! < 391
+                    margin: EdgeInsets.only(bottom: screenWidth! < 391
                             ? MediaQuery.of(context).size.width * 0.055
+                            : MediaQuery.of(context).size.width * 0.02),
+                    padding: EdgeInsets.only(top: screenWidth! < 391
+                            ? MediaQuery.of(context).size.width * 0.035
                             : MediaQuery.of(context).size.width * 0.02),
                     child: Row(
                       children: [
