@@ -160,7 +160,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black54, width: 0.5),
-        color: Colors.white,
+        color: AppColors.BgprimaryColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -184,7 +184,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
                   color:
-                      optSelected == 1 || optSelectedToSend == 1 ? AppColors.primaryColor : Colors.white,
+                      optSelected == 1 || optSelectedToSend == 1 ? AppColors.primaryColor : AppColors.BgprimaryColor,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
@@ -246,7 +246,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
-                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors.primaryColor : Colors.white,
+                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors.primaryColor : AppColors.BgprimaryColor,
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),

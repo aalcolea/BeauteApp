@@ -119,16 +119,15 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.015),
+      color: AppColors.BgprimaryColor,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
             child: Container(
               margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.width * 0.02,
                   bottom: MediaQuery.of(context).size.width * 0.01,
-                  left: MediaQuery.of(context).size.width * 0.01,
-                  right: MediaQuery.of(context).size.width * 0.01
+                  left: MediaQuery.of(context).size.width * 0.02,
               ),
               decoration: BoxDecoration(
                 color: Colors.transparent,

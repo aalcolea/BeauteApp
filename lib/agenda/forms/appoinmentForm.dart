@@ -445,7 +445,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         height: visibleKeyboard ? MediaQuery.of(context).size.height * 0.52
                             : _showdrChooseWidget ? MediaQuery.of(context).size.height * 0.7
                                 : MediaQuery.of(context).size.height * 0.88,
-                        color: Colors.white,
+                        color: Colors.transparent,
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           child: Column(
@@ -569,7 +569,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         size: MediaQuery.of(context).size.width * 0.075,
                                       ),
                                       controller: widget.nameClient != null ? _clientTextController : fieldTextEditingController,
-                                      fillColor: Colors.white,
+                                      fillColor: Colors.transparent,
                                       focusNode: fieldFocusNode,
                                       onChanged: (text) {},
                                       onEdComplete: () {
@@ -850,7 +850,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         ),
                         FieldsPading(
                           child: FieldsToWrite(
-                            fillColor: Colors.white,
+                            fillColor: AppColors.BgprimaryColor,
                             labelText: 'HH:MM',
                             readOnly: true,
                             controller: _timeController,
@@ -935,7 +935,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               vertical: MediaQuery.of(context).size.width * 0.02,
                               horizontal: MediaQuery.of(context).size.width * 0.026),
                           child: FieldsToWrite(
-                            fillColor: Colors.white,
+                            fillColor: AppColors.BgprimaryColor,
                             readOnly: true,
                             labelText: 'DD/M/AAAA',
                             controller: _dateController,
@@ -996,7 +996,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           child: TextFormField(
                             controller: _drSelected,
                             decoration: InputDecoration(
-                              fillColor: Colors.white,
+                              fillColor: AppColors.BgprimaryColor,
                               filled: true,
                               hintText: 'Seleccione una opción...',
                               contentPadding: EdgeInsets.symmetric(
