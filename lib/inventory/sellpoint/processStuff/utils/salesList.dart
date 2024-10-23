@@ -47,117 +47,119 @@ class _SalesListState extends State<SalesList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return Container(
-          color: AppColors.calendarBg,
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
-          child: Column(
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.width * 0.0075,
-                    horizontal: MediaQuery.of(context).size.width * 0.0247),
-                title: Row(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${products[index]['nombre']}",
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Cant.:",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
+    return Container(
+      color: AppColors.calendarBg,
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.width * 0.0075,
+                      horizontal: MediaQuery.of(context).size.width * 0.0247),
+                  title: Row(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${products[index]['nombre']}",
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width * 0.04,
                             ),
-                            Text(
-                              '${products[index]['cantidad']} pzs',
-                              style: TextStyle(
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Cant.:",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor.withOpacity(0.5),
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                              Text(
+                                '${products[index]['cantidad']} pzs',
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Precio unitario: ",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor.withOpacity(0.5),
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                              Text(
+                                '\$${products[index]['precio']}',
+                                style: TextStyle(
                                   color: AppColors.primaryColor,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Precio unitario: ",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                            Text(
-                              '\$${products[index]['precio']}',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Total: ",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                            Text(
-                              '${products[index]['total'].toStringAsFixed(2)}',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Total: ",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor.withOpacity(0.5),
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Fecha de venta: ",
-                              style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
-                                  fontSize: MediaQuery.of(context).size.width * 0.035),
-                            ),
-                            Text(
-                              '${products[index]['fecha']}',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                              Text(
+                                '${products[index]['total'].toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Fecha de venta: ",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor.withOpacity(0.5),
+                                    fontSize: MediaQuery.of(context).size.width * 0.035),
+                              ),
+                              Text(
+                                '${products[index]['fecha']}',
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Divider(
-                color: AppColors.primaryColor,
-                thickness: MediaQuery.of(context).size.width * 0.0055,
-              ),
-            ],
-          ),
-        );
-      },
+                Divider(
+                  color: AppColors.primaryColor,
+                  thickness: MediaQuery.of(context).size.width * 0.0055,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

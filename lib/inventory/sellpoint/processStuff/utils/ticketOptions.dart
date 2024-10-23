@@ -44,7 +44,7 @@ class _TicketOptionsState extends State<TicketOptions> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
         child: Column(
           key: _columnKey,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,9 @@ class _TicketOptionsState extends State<TicketOptions> {
             Material(
               color: Colors.transparent,
               child: GestureDetector(
-                onTap: widget.onClose,
+                onTap: () {
+                  widget.onClose();
+                },
                 child: Container(
                     padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.02,
@@ -157,60 +159,6 @@ class _TicketOptionsState extends State<TicketOptions> {
                       ],
                     ),
                   ),
-                  Divider(
-                    color: AppColors.primaryColor.withOpacity(0.1),
-                    thickness: MediaQuery.of(context).size.width * 0.004,
-                  ),
-                  Flexible(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              widget.onClose();
-                              widget.onShowBlur(1);
-                            },
-                            style: const ButtonStyle(
-                                alignment: Alignment.centerLeft
-                            ),
-                            child: const Text(
-                              'Modificar stock',
-                              style: TextStyle(
-                                  color: AppColors.primaryColor
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    color: AppColors.primaryColor.withOpacity(0.1),
-                    thickness: MediaQuery.of(context).size.width * 0.004,
-                  ),
-                  Flexible(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              widget.onClose();
-                              widget.onShowBlur(1);
-                            },
-                            style: const ButtonStyle(
-                                alignment: Alignment.centerLeft
-                            ),
-                            child: const Text(
-                              'Eliminar',
-                              style: TextStyle(
-                                  color: Colors.red
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
                 ],
               ),
             ),
