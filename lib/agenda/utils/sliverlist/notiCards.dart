@@ -41,8 +41,9 @@ Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
 
 class NotiCards extends StatefulWidget {
   final Appointment2 appointment;
+  final Function(double) onCalculateHeightCard;
 
-  const NotiCards({super.key, required this.appointment});
+  const NotiCards({super.key, required this.appointment, required this.onCalculateHeightCard});
 
   @override
   _NotiCardsState createState() => _NotiCardsState();
@@ -50,6 +51,7 @@ class NotiCards extends StatefulWidget {
 
 class _NotiCardsState extends State<NotiCards> {
   late bool isRead;
+  final _keyNoti = GlobalKey<FormState>();
 
   Future<void> readNotification(int appointmentId) async {
     const baseUrl =
@@ -113,6 +115,19 @@ class _NotiCardsState extends State<NotiCards> {
   void initState() {
     super.initState();
     isRead = widget.appointment.notificationRead!;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //print('Tamaño del contenedor: ${_keyNoti.currentContext!.size}');
+      widget.onCalculateHeightCard(_keyNoti.currentContext!.size!.height);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //print('Tamaño del contenedorDID: ${_keyNoti.currentContext!.size}');
+    });
   }
 
   @override
@@ -120,6 +135,7 @@ class _NotiCardsState extends State<NotiCards> {
     return Stack(
       children: [
         Container(
+          key: _keyNoti,
           margin: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width * 0.02),
           child: Column(

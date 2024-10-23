@@ -192,6 +192,7 @@ class _ClientInfoState extends State<ClientInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.BgprimaryColor,
       body: Stack(
         children: [Column(
           children: [

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/agenda/views/admin/clientList.dart';
+import 'package:beaute_app/agenda/views/admin/forTodayModal.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class AssistantAdmin extends StatefulWidget {
 
 class _AssistantAdminState extends State<AssistantAdmin> {
 
+  Fortodaymodal fortodaymodal = Fortodaymodal();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
@@ -54,6 +56,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     });
   }
 
+  Future<void> onOpenModal() async {
+    bool? result = await fortodaymodal.showModal(context);
+    if (result == true) {
+      setState(() {
+        _showBlurr = false;
+      });
+      print('El modal fue cerrado');
+    }
+  }
 
   void _onshowContentToModify(bool showContentToModify) {
   }
@@ -115,7 +126,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                 }
               });
       });
-
       return;
     }
   }
@@ -139,7 +149,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
           children: [
             Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
-              color: Colors.transparent,
+              color: AppColors.BgprimaryColor,
               child: Column(
                 children: [
                   Padding(
@@ -194,21 +204,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           children: [
                             IconButton(
                               padding: EdgeInsets.zero,
-                              onPressed: () {
-                                /*Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => NotificationsScreen(),
-                                  ),
-                                );*/
+                              onPressed: () async {
                                 setState(() {
-                                  if (_selectedScreen != 4) {
-                                    _selectedScreen = 4;
-                                    _hideBtnsBottom = true;
-                                  } else {
-                                    _selectedScreen = 1;
-                                    _hideBtnsBottom = false;
-                                  }
+                                  _showBlurr = true;
                                 });
+                                await onOpenModal();
                               },
                               icon: Icon(
                                 CupertinoIcons.calendar_today,
@@ -286,7 +286,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               : MediaQuery.of(context).size.width * 0.0,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.transparent,
+                          color: AppColors.BgprimaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: _buildBody(),
