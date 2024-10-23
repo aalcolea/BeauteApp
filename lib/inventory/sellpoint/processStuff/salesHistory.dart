@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:beaute_app/inventory/sellpoint/processStuff/services/salesServices.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class _SalesHistoryState extends State<SalesHistory> {
   double? screenWidth;
   double? screenHeight;
   bool showBlurr = false;
+  int blurShowed = 0;
   int selectedPage = 0;
   //
   TextEditingController seekController = TextEditingController();
@@ -32,6 +34,8 @@ class _SalesHistoryState extends State<SalesHistory> {
   FocusNode dateNode = FocusNode();
   PageController pageController = PageController();
 
+  List<Map<String, dynamic>> tickets = [];
+
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
     setState(() {
@@ -39,6 +43,14 @@ class _SalesHistoryState extends State<SalesHistory> {
       String formattedDate = DateFormat('dd-MM-yyyy').format(parsedDate);
       dateController.text = formattedDate;
       showBlurr = showCalendar;
+    });
+  }
+
+  void _onShowBlurr(int showBlurr) {
+    setState(() {
+      blurShowed = showBlurr;
+      this.showBlurr = true;
+      print(blurShowed);
     });
   }
 
@@ -65,6 +77,7 @@ class _SalesHistoryState extends State<SalesHistory> {
     keyboardVisibilityManager.dispose();
     super.dispose();
   }
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +173,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                   setState(() {
                                     print('tap');
                                     showBlurr = true;
+                                    blurShowed = 0;
                                   });
                                 },
                               ),
@@ -237,14 +251,14 @@ class _SalesHistoryState extends State<SalesHistory> {
                     });
                   },
                   children: [
-                    buildTicketsList(context),
-                    buildSalesList(context),
+                    Ticketslist(onShowBlur: _onShowBlurr),
+                    SalesList(onShowBlur: _onShowBlurr,),
                   ],
                 ),
               ),
             ],
           ),
-          Visibility(
+          blurShowed == 0 ? Visibility(
             visible: showBlurr,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
@@ -276,8 +290,8 @@ class _SalesHistoryState extends State<SalesHistory> {
                             decoration: InputDecoration(
                               isDense: true,
                               constraints: BoxConstraints(
-                                maxHeight: MediaQuery.of(context).size.width * 0.105,
-                                maxWidth: MediaQuery.of(context).size.width * 0.25
+                                  maxHeight: MediaQuery.of(context).size.width * 0.105,
+                                  maxWidth: MediaQuery.of(context).size.width * 0.25
                               ),
                               floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
                               hintText: 'DD-MM-AAAA',
@@ -296,16 +310,17 @@ class _SalesHistoryState extends State<SalesHistory> {
                               ),
                             ),
                             style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontSize: MediaQuery.of(context).size.width * 0.035
+                                color: AppColors.primaryColor,
+                                fontSize: MediaQuery.of(context).size.width * 0.035
                             ),
                           ),
                           Container(
                             margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.03),
+                            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height * 0.45,
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.primaryColor, width: 3.0),
+                              border: Border.all(color: AppColors.primaryColor, width: 2.0),
                               color: AppColors.calendarBg,
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -318,6 +333,26 @@ class _SalesHistoryState extends State<SalesHistory> {
                 ),
               ),
             ),
+          ) : Visibility(
+              visible: showBlurr,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showBlurr = false;
+                      blurShowed = 0;
+
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.black54.withOpacity(0.3),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+              )
           ),
         ],
       ),

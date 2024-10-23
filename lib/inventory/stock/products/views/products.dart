@@ -106,8 +106,6 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
     screenHeight = MediaQuery.of(context).size.height;
   }
 
-
-
   Future<void> fetchProducts() async {
     setState(() {
       isLoading = true;

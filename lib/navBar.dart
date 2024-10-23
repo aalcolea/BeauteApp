@@ -124,7 +124,7 @@ class _navBarState extends State<navBar> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(SessionManager.instance.Nombre,
+                                  Text(SessionManager.instance.Nombre == 'Dulce' ? 'Nombre Asistente' : SessionManager.instance.Nombre,
                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: AppColors.primaryColor)),
                                   const Text('Asistente')
                                 ],
