@@ -80,6 +80,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   String toTime = '';
   int? newClientID;
   bool showBlurr = false;
+  bool isLoading = false;
   //
   String nameDr1 = 'Doctor1';
   String nameDr2 = 'Doctor2';
@@ -302,6 +303,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   Future<void> submitAppointment() async {
+    setState(() {
+      isLoading = true;
+
+    });
     toTime = _timeController.text;
     DateFormat dateFormat12Hour = DateFormat('hh:mm a');
     DateFormat dateFormat24Hour = DateFormat('HH:mm');
@@ -336,6 +341,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       if (response.statusCode == 201) {
         if (mounted) {
           setState(() {
+            isLoading = false;
             showBlurr = true;
             showDialog(context: context,  barrierDismissible: false, builder: (BuildContext context){
               return Appointmetsuccessfullycreated(docLog: widget.docLog);
@@ -395,6 +401,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         onBackPressed(didPop);
       },
       child: Scaffold(
+        backgroundColor: AppColors.BgprimaryColor,
         body: Form(
           child: Stack(
             children: [
@@ -763,10 +770,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                         'Agregar nuevo cliente',
                                         style: TextStyle(
                                           fontSize: MediaQuery.of(context).size.width * 0.045,
-                                          color: clientInDB == null ||
-                                                  clientInDB == true
-                                              ? AppColors.primaryColor
-                                                  .withOpacity(0.3)
+                                          color: clientInDB == null || clientInDB == true
+                                              ? AppColors.primaryColor.withOpacity(0.3)
                                               : AppColors.primaryColor,
                                         ),
                                       ),
@@ -781,8 +786,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                     : false,
                                 child: ElevatedButton(
                                   onPressed:
-                                      treatmentController.text.isNotEmpty && !saveNewClient && isHourCorrect
-                                          ? submitAppointment : saveNewClient && treatmentController.text.isNotEmpty && isHourCorrect
+                                      treatmentController.text.isNotEmpty && !saveNewClient && isHourCorrect && isLoading == false
+                                          ? submitAppointment :  isLoading == false && saveNewClient && treatmentController.text.isNotEmpty && isHourCorrect
                                               ? addClientAndSubmitAppointment : null,
                                   style: ElevatedButton.styleFrom(
                                     surfaceTintColor: Colors.white,
@@ -796,14 +801,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                           color: treatmentController.text.isNotEmpty ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                                           width: 2),
                                     ),
-                                    backgroundColor: Colors.white,
                                   ),
-                                  child: Text(
-                                    'Crear cita',
-                                    style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.06,
-                                      color: AppColors.primaryColor,
-                                        ))))
+                                  child: isLoading ? const CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                  ) : Text(
+                                      'Crear cita',
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width * 0.06,
+                                        color: AppColors.primaryColor,
+                                      )),))
                           ])))
                 ])
               ]),
