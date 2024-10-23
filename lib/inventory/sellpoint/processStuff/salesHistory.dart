@@ -49,7 +49,11 @@ class _SalesHistoryState extends State<SalesHistory> {
   void _onShowBlurr(int showBlurr) {
     setState(() {
       blurShowed = showBlurr;
-      this.showBlurr = true;
+      if (blurShowed == 0) {
+        this.showBlurr = false;
+      } else {
+        this.showBlurr = true;
+      }
       print(blurShowed);
     });
   }
@@ -173,7 +177,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                   setState(() {
                                     print('tap');
                                     showBlurr = true;
-                                    blurShowed = 0;
+                                    blurShowed = 1;
                                   });
                                 },
                               ),
@@ -258,7 +262,7 @@ class _SalesHistoryState extends State<SalesHistory> {
               ),
             ],
           ),
-          blurShowed == 0 ? Visibility(
+          blurShowed == 1 ? Visibility(
             visible: showBlurr,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
@@ -342,7 +346,6 @@ class _SalesHistoryState extends State<SalesHistory> {
                     setState(() {
                       showBlurr = false;
                       blurShowed = 0;
-
                     });
                   },
                   child: Container(
