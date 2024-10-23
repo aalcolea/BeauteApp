@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:beaute_app/inventory/sellpoint/processStuff/services/salesServices.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,8 @@ class _SalesHistoryState extends State<SalesHistory> {
     DateTime now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
     formattedDate = formatter.format(now);
+    fetchSales();
+    print(fetchSales());
   }
 
   @override
@@ -65,7 +68,23 @@ class _SalesHistoryState extends State<SalesHistory> {
     keyboardVisibilityManager.dispose();
     super.dispose();
   }
-
+  bool isLoading = false;
+  Future<void> fetchSales() async{
+      setState(() {
+        isLoading = true;
+      });
+      try{
+        final salesServce = SalesServices();
+        //await salesServce.fetchSales();
+        await salesServce.getSalesByProduct();
+        setState(() {
+          isLoading = false;
+        });
+      }catch (e) {
+        print('Error fetching sales: $e');
+        isLoading = false;
+      }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
