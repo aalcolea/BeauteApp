@@ -74,7 +74,8 @@ class _SalesHistoryState extends State<SalesHistory> {
       });
       try{
         final salesServce = SalesServices();
-        await salesServce.fetchSales();
+        //await salesServce.fetchSales();
+        await salesServce.getSalesByProduct();
         setState(() {
           isLoading = false;
         });
