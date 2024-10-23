@@ -10,7 +10,10 @@ import 'package:intl/intl.dart';
 import '../../agenda/utils/showToast.dart';
 import '../../agenda/utils/toastWidget.dart';
 import '../listenerPrintService.dart';
+import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:image/image.dart' as img;
+
 
 class PrintService extends ChangeNotifier {
   @override
@@ -192,10 +195,7 @@ class PrintService extends ChangeNotifier {
       }
     }
   }
-
-// Función para cargar la imagen desde un path
   Future<Uint8List> loadImageFromFile(String path) async {
-    // Cargar la imagen desde los assets
     try {
       return await rootBundle.load(path).then((byteData) => byteData.buffer.asUint8List());
     } catch (e) {
@@ -203,7 +203,6 @@ class PrintService extends ChangeNotifier {
     }
   }
 
-// Función para convertir la imagen a escala de grises
   Uint8List convertImageToGrayscale(Uint8List originalImageData) {
     img.Image? image = img.decodeImage(originalImageData);
     if (image == null) {
@@ -215,99 +214,438 @@ class PrintService extends ChangeNotifier {
     return Uint8List.fromList(img.encodePng(image));
   }
 
-// Función para redimensionar la imagen al ancho máximo
-  img.Image resizeImage(img.Image image, int maxWidth) {
-    if (image.width > maxWidth) {
-      return img.copyResize(image, width: maxWidth);
-    }
-    return image;
+  img.Image resizeImage(img.Image image, int maxWidth, int maxHeight) {
+    return img.copyResize(image, width: maxWidth, height: maxHeight);
   }
-
-// Función para convertir la imagen en formato binario
   Uint8List convertToBinary(img.Image image) {
     int width = image.width;
     int height = image.height;
     List<int> binary = [];
 
     for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        // Obtener el píxel
-        img.Pixel pixel = image.getPixel(x, y); // Obtiene el objeto Pixel
+      for (int x = 0; x < width; x += 8) {
+        int byte = 0;
+        for (int bit = 0; bit < 8; bit++) {
+          if (x + bit < width) {
+            int pixelColor = image.getPixel(x + bit, y);
+            int luminance = img.getLuminance(pixelColor);
+            if (luminance < 128) {
+              byte |= (1 << (7 - bit));
+            }
+          }
+        }
+        binary.add(byte);
+      }
+    }
 
-        // Extraer componentes de color utilizando el objeto Pixel
-        num red = pixel.r;   // Obtener el valor rojo
-        num green = pixel.g; // Obtener el valor verde
-        num blue = pixel.b;  // Obtener el valor azul
+    return Uint8List.fromList(binary);
+  }
+  Uint8List encodeToEscPos(Uint8List binaryData, int width) {
+    List<int> bytes = [];
+    bytes.addAll([0x1B, 0x40]);
+    bytes.addAll([0x1D, 0x76, 0x30, 0x00]);
+    bytes.addAll([width & 0xFF, (width >> 8) & 0xFF]);
+    int height = (binaryData.length / (width / 8)).ceil();
+    bytes.addAll([height & 0xFF, (height >> 8) & 0xFF]);
+    bytes.addAll(binaryData);
+    bytes.addAll([0x0A, 0x1D, 0x56, 0x42, 0x00]);
 
-        // Calcular la luminancia utilizando los componentes RGB
-        int luminance = (0.299 * red + 0.587 * green + 0.114 * blue).toInt();
+    return Uint8List.fromList(bytes);
+  }
 
-        // Si la luminancia es mayor a un umbral, se considera blanco (0), de lo contrario negro (1)
-        binary.add(luminance > 128 ? 0 : 1);
+  Uint8List convertToMonochrome(img.Image image) {
+    int width = image.width;
+    int height = image.height;
+    List<int> binary = [];
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x += 8) {
+        int byte = 0;
+        for (int bit = 0; bit < 8; bit++) {
+          if (x + bit < width) {
+            int pixelColor = image.getPixel(x + bit, y);
+            int luminance = img.getLuminance(pixelColor);
+            if (luminance < 128) {
+              byte |= (1 << (7 - bit));
+            }
+          }
+        }
+        binary.add(byte);
       }
     }
 
     return Uint8List.fromList(binary);
   }
 
-
-// Función para codificar en formato ESC/POS
-  Uint8List encodeToEscPos(Uint8List binaryData, int width) {
-    List<int> bytes = [];
-    bytes.addAll([0x1B, 0x40]); // Inicializar impresora
-    bytes.addAll([0x1D, 0x76, 0x30, 0x00]); // Modo gráfico
-
-    bytes.addAll([width & 0xFF, (width >> 8) & 0xFF]); // Ancho
-    int height = (binaryData.length / width).ceil();
-    bytes.addAll([height & 0xFF, (height >> 8) & 0xFF]); // Alto
-
-    for (int i = 0; i < binaryData.length; i += 8) {
-      int byte = 0;
-      for (int bit = 0; bit < 8; bit++) {
-        if (i + bit < binaryData.length && binaryData[i + bit] == 1) {
-          byte |= (1 << (7 - bit));
-        }
+  Future<void> printImageInChunks(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth, int maxHeight) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+    try {
+      Uint8List imageData = await loadImageFromFile(imagePath);
+      img.Image? image = img.decodeImage(imageData);
+      if (image == null) {
+        throw Exception("Error al decodificar la imagen");
       }
-      bytes.add(byte);
+      img.Image resizedImage = resizeImage(image, maxWidth, maxHeight);
+      Uint8List binaryData = convertToMonochrome(resizedImage);
+      Uint8List escPosData = encodeToEscPos(binaryData, resizedImage.width);
+      await characteristic.write(escPosData, withoutResponse: true);
+      print("Imagen impresa exitosamente.");
+    } catch (e) {
+      print("Error al imprimir la imagen: $e");
+    }
+  }
+  img.Image resizeImageWithDynamicMargin(img.Image image, int maxWidth, int maxHeight) {
+    int imageWidth = image.width;
+    int margin = (maxWidth - imageWidth) ~/ 2;
+    if (margin < 0) margin = 0;
+    int newWidth = imageWidth;
+    int newHeight = maxHeight;
+
+    img.Image resizedImage = img.copyResize(image, width: newWidth, height: newHeight);
+
+    img.Image finalImage = img.Image(maxWidth, maxHeight);
+    img.fill(finalImage, img.getColor(255, 255, 255));
+    img.drawImage(finalImage, resizedImage, dstX: margin, dstY: 0);
+
+    return finalImage;
+  }
+
+  Uint8List convertToMonochromeOptimized(img.Image image) {
+    int width = image.width;
+    int height = image.height;
+    List<int> binary = [];
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x += 8) {
+        int byte = 0;
+        for (int bit = 0; bit < 8; bit++) {
+          if (x + bit < width) {
+            int pixelColor = image.getPixel(x + bit, y);
+            int luminance = img.getLuminance(pixelColor);
+            if (luminance < 200) {
+              byte |= (1 << (7 - bit));
+            }
+          }
+        }
+        binary.add(byte);
+      }
     }
 
-    bytes.addAll([0x0A, 0x1D, 0x56, 0x41, 0x00]); // Avanzar papel y cortar
+    return Uint8List.fromList(binary);
+  }
+
+  Uint8List encodeToEscPosCentered(Uint8List binaryData, int width) {
+    List<int> bytes = [];
+    bytes.addAll([0x1B, 0x40]);
+    bytes.addAll([0x1B, 0x61, 0x01]);
+
+    bytes.addAll([0x1D, 0x76, 0x30, 0x00]);
+
+    // Añadir el ancho y alto
+    bytes.addAll([width & 0xFF, (width >> 8) & 0xFF]);
+    int height = (binaryData.length / (width / 8)).ceil();
+    bytes.addAll([height & 0xFF, (height >> 8) & 0xFF]);
+
+    bytes.addAll(binaryData);
+    bytes.addAll([0x0A, 0x1D, 0x56, 0x42, 0x00]);
 
     return Uint8List.fromList(bytes);
   }
 
-// Función principal para preparar la imagen y enviarla a la impresora
-  Future<void> printImage(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth) async {
-    print(imagePath);
+  img.Image resizeImageWithMargin(img.Image image, int maxWidth, int maxHeight) {
+    int margin = 20;
+    int newWidth = maxWidth - (2 * margin);
+    int newHeight = maxHeight;
+    img.Image resizedImage = img.copyResize(image, width: newWidth, height: newHeight);
+    img.Image finalImage = img.Image(maxWidth, maxHeight);
+    img.fill(finalImage, img.getColor(255, 255, 255));
+    img.drawImage(finalImage, resizedImage, dstX: margin, dstY: 0);
+
+    return finalImage;
+  }
+/*  Future<void> resetPrinter(BluetoothCharacteristic? characteristic) async {
+    Uint8List resetCommand = Uint8List.fromList([0x1B, 0x40]);
+    await characteristic?.write(resetCommand, withoutResponse: true);
+  }*/
+
+  Uint8List encodeToEscPosWithManualMargins(Uint8List binaryData, int width, int maxWidth) {
+    List<int> bytes = [];
+
+    // Inicializar impresora y forzar alineación a la izquierda
+    bytes.addAll([0x1B, 0x40]); // Resetear impresora
+    bytes.addAll([0x1B, 0x61, 0x00]); // Alinear a la izquierda
+
+    // Calcular márgenes manualmente si la imagen es más pequeña que el ancho máximo
+    if (width < maxWidth) {
+      int marginSize = (maxWidth - width) ~/ 2;
+      bytes.addAll(List<int>.filled(marginSize, 0x20)); // Añadir espacios como margen izquierdo
+    }
+
+    // Modo gráfico para imprimir la imagen
+    bytes.addAll([0x1D, 0x76, 0x30, 0x00]);
+
+    // Añadir el ancho y alto
+    bytes.addAll([width & 0xFF, (width >> 8) & 0xFF]); // Ancho en bytes
+    int height = (binaryData.length / (width / 8)).ceil();
+    bytes.addAll([height & 0xFF, (height >> 8) & 0xFF]); // Alto en bytes
+
+    // Añadir los datos binarios de la imagen
+    bytes.addAll(binaryData);
+
+    // Comando de avance de papel y corte
+    bytes.addAll([0x0A, 0x1D, 0x56, 0x42, 0x00]);
+
+    return Uint8List.fromList(bytes);
+  }
+  Future<void> printImageDirectWithManualMargins(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth, int maxHeight) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+
     try {
-      // Cargar la imagen
+      // Cargar la imagen desde el archivo
       Uint8List imageData = await loadImageFromFile(imagePath);
-
-      // Convertir a escala de grises
-      Uint8List grayscaleImageData = convertImageToGrayscale(imageData);
-
-      // Decodificar la imagen
-      img.Image? image = img.decodeImage(grayscaleImageData);
+      img.Image? image = img.decodeImage(imageData);
       if (image == null) {
         throw Exception("Error al decodificar la imagen");
       }
 
-      // Redimensionar la imagen al ancho máximo de la impresora
-      img.Image resizedImage = resizeImage(image, maxWidth);
+      // Redimensionar la imagen para que no exceda el ancho máximo permitido
+      img.Image resizedImage = resizeImageWithDynamicMargin(image, maxWidth, maxHeight);
 
-      // Convertir la imagen a formato binario (1 bit por píxel)
-      Uint8List binaryData = convertToBinary(resizedImage);
+      // Convertir la imagen a monocromático (1 bit por píxel)
+      Uint8List binaryData = convertToMonochromeOptimized(resizedImage);
 
-      // Codificar en formato ESC/POS
-      Uint8List escPosData = encodeToEscPos(binaryData, resizedImage.width);
+      // Codificar la imagen en formato ESC/POS con márgenes manuales
+      Uint8List escPosData = encodeToEscPosWithManualMargins(binaryData, resizedImage.width, maxWidth);
 
-      // Enviar a la impresora
-      await characteristic!.write(escPosData, withoutResponse: true);
-      print("Imagen impresa exitosamente");
+      // Enviar la imagen completa a la impresora
+      await characteristic.write(escPosData, withoutResponse: true);
+
+      print("Imagen impresa exitosamente.");
+    } catch (e) {
+      print("Error al imprimir la imagen: $e");
+    }
+  }
+  Future<void> resetToOrigin(BluetoothCharacteristic? characteristic) async {
+    // Comando para volver al origen (al inicio de la línea)
+    Uint8List originCommand = Uint8List.fromList([0x1B, 0x61, 0x00]); // Alinear a la izquierda
+    await characteristic?.write(originCommand, withoutResponse: true);
+  }
+  Future<void> printImageDirectWithPositionReset(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth, int maxHeight) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+
+    try {
+      // Reiniciar la impresora al origen antes de cada impresión
+      await resetToOrigin(characteristic);
+
+      // Cargar la imagen desde el archivo
+      Uint8List imageData = await loadImageFromFile(imagePath);
+      img.Image? image = img.decodeImage(imageData);
+      if (image == null) {
+        throw Exception("Error al decodificar la imagen");
+      }
+
+      // Redimensionar la imagen para que no exceda el ancho máximo permitido
+      img.Image resizedImage = resizeImageWithDynamicMargin(image, maxWidth, maxHeight);
+
+      // Convertir la imagen a monocromático (1 bit por píxel)
+      Uint8List binaryData = convertToMonochromeOptimized(resizedImage);
+
+      // Codificar la imagen en formato ESC/POS con márgenes manuales
+      Uint8List escPosData = encodeToEscPosWithManualMargins(binaryData, resizedImage.width, maxWidth);
+
+      // Enviar la imagen completa a la impresora
+      await characteristic.write(escPosData, withoutResponse: true);
+
+      // Reiniciar la posición de la impresora después de la impresión
+      await resetToOrigin(characteristic);
+
+      print("Imagen impresa exitosamente.");
     } catch (e) {
       print("Error al imprimir la imagen: $e");
     }
   }
 
+  Future<void> printImageDirectOptimized(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth, int maxHeight) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+
+    try {
+      Uint8List imageData = await loadImageFromFile(imagePath);
+      img.Image? image = img.decodeImage(imageData);
+      if (image == null) {
+        throw Exception("Error al decodificar la imagen");
+      }
+      img.Image resizedImage = resizeImageWithDynamicMargin(image, maxWidth, maxHeight);
+      Uint8List binaryData = convertToMonochromeOptimized(resizedImage);
+      Uint8List escPosData = encodeToEscPosCentered(binaryData, resizedImage.width);
+      await characteristic.write(escPosData, withoutResponse: true);
+      await resetPrinter(characteristic);
+      print("Imagen impresa exitosamente.");
+    } catch (e) {
+      print("Error al imprimir la imagen: $e");
+    }
+  }
+
+// Función de reset de impresora
+  Future<void> resetPrinter(BluetoothCharacteristic? characteristic) async {
+    Uint8List resetCommand = Uint8List.fromList([0x1B, 0x40]); // Comando de reset
+    await characteristic?.write(resetCommand, withoutResponse: true);
+  }// Función de reset de impresora mejorada con comando de vaciado de búfer
+  Future<void> resetPrinterAndClearBuffer(BluetoothCharacteristic? characteristic) async {
+    // Comando para resetear la impresora y vaciar el búfer
+    Uint8List resetAndClearBufferCommand = Uint8List.fromList([
+      0x1B, 0x40, // Resetear impresora
+      0x1B, 0x63, 0x30, 0x02, // Vaciado de búfer
+      0x1B, 0x64, 0x03, // Avanzar el papel para finalizar el trabajo actual
+    ]);
+
+    await characteristic?.write(resetAndClearBufferCommand, withoutResponse: true);
+  }
+
+// Función para enviar impresiones vacías múltiples (n veces)
+
+  // Función para enviar una impresión vacía completa con "corte de papel"
+  Future<void> sendFullEmptyPrintJobWithCut(BluetoothCharacteristic? characteristic) async {
+    List<int> emptyJob = [];
+
+    // Comando para imprimir una línea vacía
+    emptyJob += utf8.encode('--------------------------------\n');
+    emptyJob += utf8.encode('\n\n\n'); // Espacio vacío
+
+    // Comando para avanzar el papel y cortar
+    emptyJob += [0x1D, 0x56, 0x41, 0x00]; // Comando ESC/POS para cortar papel
+
+    await characteristic?.write(Uint8List.fromList(emptyJob), withoutResponse: true);
+  }
+// Función para enviar una impresión vacía válida
+  Future<void> sendFullEmptyPrintJobWithMinimalContent(BluetoothCharacteristic? characteristic) async {
+    List<int> emptyJob = [];
+
+    // Comando para imprimir una línea vacía o mínima
+    emptyJob += utf8.encode('--------------------------------\n');
+    emptyJob += utf8.encode('\n\n\n'); // Espacio vacío
+
+    // Enviar a la impresora
+    await characteristic?.write(Uint8List.fromList(emptyJob), withoutResponse: true);
+  }
+
+// Función principal que imprime 9 veces vacías y 1 vez real
+  Future<void> generateEscPosTicketWithImageMultipleTimes(String imagePath, BluetoothCharacteristic? characteristic, int maxWidth, int maxHeight) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+
+    // Repetimos el ciclo de impresión completo 10 veces
+    for (int i = 0; i < 10; i++) {
+      if (i < 9) {
+        // Imprimir trabajos vacíos (primeras 9 iteraciones)
+        await sendFullEmptyPrintJobWithMinimalContent(characteristic);
+        print("Impresión vacía enviada: $i");
+      } else {
+        // En la décima iteración, imprimir el ticket y la imagen real
+        print("Impresión real enviada");
+
+        List<Map<String, dynamic>> carrito = [
+          {
+            'cantidad': 2,
+            'prod': 'Producto 1',
+            'precio': 10.50,
+            'importe': 21.00,
+          },
+          {
+            'cantidad': 1,
+            'prod': 'Producto 2',
+            'precio': 5.25,
+            'importe': 5.25,
+          },
+          {
+            'cantidad': 3,
+            'prod': 'Producto 3',
+            'precio': 2.75,
+            'importe': 8.25,
+          },
+        ];
+
+        // Generar el ticket con texto
+        String lugar = 'Lugar exp: Merida, Yucatan\n';
+        List<int> bytes = [];
+
+        // Comando ESC/POS para centrar y poner en negrita el texto "CLINICA FLY"
+        bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
+        bytes += utf8.encode('\x1B\x45\x01'); // Negrita ON
+        bytes += utf8.encode('CLINICA FLY\n\n');
+        bytes += utf8.encode('\x1B\x45\x00'); // Negrita OFF
+        bytes += utf8.encode('\x1B\x61\x00'); // Alinear izquierda
+        bytes += utf8.encode('$lugar');
+        bytes += utf8.encode('Fecha exp: ${DateFormat.yMd().format(DateTime.now())} ${DateFormat.jm().format(DateTime.now())}\n');
+        bytes += utf8.encode('\n');
+        bytes += utf8.encode('Cliente #\n');
+        bytes += utf8.encode('CANT |   PROD   |PRECIO |IMPORTE\n');
+        bytes += utf8.encode('--------------------------------\n');
+
+        for (var venta in carrito) {
+          int cantidad = venta['cantidad'];
+          String producto = venta['prod'];
+          double precio = venta['precio'];
+          double importe = venta['importe'];
+
+          List<String> partesProducto = [];
+
+          int maxCaracteres = 9;
+          for (int i = 0; i < producto.length; i += maxCaracteres) {
+            int fin = (i + maxCaracteres < producto.length) ? i + maxCaracteres : producto.length;
+            partesProducto.add(producto.substring(i, fin));
+          }
+
+          for (int j = 0; j < partesProducto.length; j++) {
+            if (j == 0) {
+              bytes += utf8.encode(' $cantidad    ${partesProducto[j]}  \$$precio  \$$importe\n');
+            } else if (j < 3) {
+              bytes += utf8.encode('      ${partesProducto[j]}\n');
+            } else {
+              break;
+            }
+          }
+        }
+
+        double total = carrito.fold(0.0, (suma, venta) => suma + (venta['importe'] as double));
+        int amountLength = total.toStringAsFixed(0).length;
+        int lineWidth = 16 - (amountLength - 10).clamp(0, 19);
+
+        String totalText = 'TOTAL';
+        String amountText = '\$${total.toStringAsFixed(2)}';
+        bytes += utf8.encode('--------------------------------\n');
+        int totalLength = totalText.length + amountText.length;
+        int spacesToAdd = lineWidth - totalLength;
+        String padding = ' ' * spacesToAdd.clamp(0, lineWidth);
+        bytes += utf8.encode('\x1D\x21\x11');
+        bytes += utf8.encode('$totalText$padding$amountText\n');
+        bytes += utf8.encode('\x1D\x21\x00');
+        bytes += utf8.encode('--------------------------------\n');
+        bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
+        bytes += utf8.encode('\x1B\x45\x01'); // Negrita ON
+        bytes += utf8.encode('Gracias por su visita!\n');
+        bytes += utf8.encode('\x1B\x45\x00'); // Negrita OFF
+        bytes += utf8.encode('\n\n\n');
+
+        await characteristic.write(Uint8List.fromList(bytes), withoutResponse: true);
+
+        // Imprimir la imagen después del ticket
+        await printImageDirectWithManualMargins(imagePath, characteristic, maxWidth, maxHeight);
+      }
+    }
+  }
 
 }

@@ -416,17 +416,23 @@ class _CartState extends State<Cart> {
                 horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
-                bool confirm = await showConfirmSellDialog(context);
+               /* bool confirm = await showConfirmSellDialog(context);
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
-                  if(result) {
-                    widget.printService.printImage('assets/imgLog/logoBeauteWhiteSqr.png', widget.printService.characteristic, 400);
+                  if(result) {*/
+
+
+                int maxWidth = 384; // Ancho máximo de la impresora
+                int maxHeight = 800; // Altura deseada
+                widget.printService.generateEscPosTicketWithImageMultipleTimes('assets/imgLog/test2.jpeg', widget.printService.characteristic, maxWidth, maxHeight);
+
+                //widget.printService.printImageDirectWithManualMargins('assets/imgLog/test2.jpeg', widget.printService.characteristic, maxWidth, maxHeight);// Usa un ancho adecuado
                     //widget.printService.printImage(widget.printService.characteristic!);
                    // widget.printService.characteristic != null ?
                     //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
-                  }
-                }
+                  /*}
+                }*/
               },
               child: Text(
               'Pagar',

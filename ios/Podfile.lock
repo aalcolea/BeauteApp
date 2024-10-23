@@ -1,4 +1,6 @@
 PODS:
+  - charset_converter (0.0.1):
+    - Flutter
   - Firebase/CoreOnly (11.0.0):
     - FirebaseCore (= 11.0.0)
   - Firebase/Messaging (11.0.0):
@@ -93,6 +95,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - charset_converter (from `.symlinks/plugins/charset_converter/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -121,6 +124,8 @@ SPEC REPOS:
     - Protobuf
 
 EXTERNAL SOURCES:
+  charset_converter:
+    :path: ".symlinks/plugins/charset_converter/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_messaging:
@@ -147,6 +152,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  charset_converter: 215c7b04932ec2b9ba43be96a9bc34afed3e5322
   Firebase: 9f574c08c2396885b5e7e100ed4293d956218af9
   firebase_core: ceec591a66629daaee82d3321551692c4a871493
   firebase_messaging: 15d8b557010f3bb7b98d0302e1c7c8fbcd244425
