@@ -34,6 +34,8 @@ class _SalesHistoryState extends State<SalesHistory> {
   FocusNode dateNode = FocusNode();
   PageController pageController = PageController();
 
+  List<Map<String, dynamic>> tickets = [];
+
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
     setState(() {
@@ -67,8 +69,6 @@ class _SalesHistoryState extends State<SalesHistory> {
     DateTime now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
     formattedDate = formatter.format(now);
-    fetchSales();
-    print(fetchSales());
   }
 
   @override
@@ -78,22 +78,7 @@ class _SalesHistoryState extends State<SalesHistory> {
     super.dispose();
   }
   bool isLoading = false;
-  Future<void> fetchSales() async{
-      setState(() {
-        isLoading = true;
-      });
-      try{
-        final salesServce = SalesServices();
-        //await salesServce.fetchSales();
-        await salesServce.getSalesByProduct();
-        setState(() {
-          isLoading = false;
-        });
-      }catch (e) {
-        print('Error fetching sales: $e');
-        isLoading = false;
-      }
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,7 +252,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                   },
                   children: [
                     Ticketslist(onShowBlur: _onShowBlurr),
-                    buildSalesList(context),
+                    SalesList(onShowBlur: _onShowBlurr,),
                   ],
                 ),
               ),
