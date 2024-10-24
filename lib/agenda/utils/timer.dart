@@ -68,7 +68,7 @@ class _TimerFlyState extends State<TimerFly> {
                 childDelegate: ListWheelChildLoopingListDelegate(
                     children: List.generate(12, (index) {
                   final Color colorforhours = index == selectedIndexHours
-                      ? AppColors.primaryColor
+                      ? AppColors2.primaryColor
                       : Colors.grey;
 
                   return Container(
@@ -80,11 +80,11 @@ class _TimerFlyState extends State<TimerFly> {
                           ? const BoxDecoration(
                               border: Border(
                                 top: BorderSide(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   width: 2,
                                 ),
                                 bottom: BorderSide(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   width: 2,
                                 ),
                               ),
@@ -122,7 +122,7 @@ class _TimerFlyState extends State<TimerFly> {
           ':',
           style: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.125,
-            color: AppColors.primaryColor,
+            color: AppColors2.primaryColor,
           ),
         ),
 
@@ -145,18 +145,18 @@ class _TimerFlyState extends State<TimerFly> {
                 childDelegate: ListWheelChildLoopingListDelegate(
                     children: List.generate(60, (index) {
                   final Color colorformins = index == selectedIndexMins
-                      ? AppColors.primaryColor
+                      ? AppColors2.primaryColor
                       : Colors.grey;
                   return Container(
                       decoration: index == selectedIndexMins
                           ? const BoxDecoration(
                               border: Border(
                                 top: BorderSide(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   width: 2,
                                 ),
                                 bottom: BorderSide(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   width: 2,
                                 ),
                               ),
@@ -213,7 +213,7 @@ class _TimerFlyState extends State<TimerFly> {
                     childCount: 2,
                     builder: (context, index) {
                       final Color colorforitems = index == selectedIndexAmPm
-                          ? AppColors.primaryColor
+                          ? AppColors2.primaryColor
                           : Colors.grey;
                       final String text = index == 0 ? 'p.m' : 'a.m';
                       return Container(
@@ -221,11 +221,11 @@ class _TimerFlyState extends State<TimerFly> {
                               ? const BoxDecoration(
                                   border: Border(
                                     top: BorderSide(
-                                      color: AppColors.primaryColor,
+                                      color: AppColors2.primaryColor,
                                       width: 2,
                                     ),
                                     bottom: BorderSide(
-                                      color: AppColors.primaryColor,
+                                      color: AppColors2.primaryColor,
                                       width: 2,
                                     ),
                                   ),
@@ -302,9 +302,9 @@ class _TimerFlyState extends State<TimerFly> {
                     horizontal: MediaQuery.of(context).size.width * 0.1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  side: const BorderSide(color: AppColors.primaryColor, width: 2),
+                  side: const BorderSide(color: AppColors2.primaryColor, width: 2),
                 ),
-                backgroundColor: AppColors.primaryColor,
+                backgroundColor: AppColors2.primaryColor,
               ),
               child: const Text(
                 'Guardar',

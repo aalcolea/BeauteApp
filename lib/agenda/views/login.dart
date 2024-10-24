@@ -65,13 +65,13 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: AppColors.primaryColor,
+                      surfaceTintColor: AppColors2.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors2.primaryColor, width: 2),
                       ),
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors2.primaryColor,
                     ),
                     child: Row(
                       children: [
@@ -132,13 +132,13 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: AppColors.primaryColor,
+                      surfaceTintColor: AppColors2.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors2.primaryColor, width: 2),
                       ),
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors2.primaryColor,
                     ),
                     child: Row(
                       children: [
@@ -202,13 +202,13 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: AppColors.primaryColor,
+                      surfaceTintColor: AppColors2.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors2.primaryColor, width: 2),
                       ),
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors2.primaryColor,
                     ),
                     child: Row(
                       children: [
@@ -248,7 +248,7 @@ class _LoginState extends State<Login> {
                     decoration: const BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryColor,
+                          color: AppColors2.primaryColor,
                           spreadRadius: 1,
                           blurRadius: 2,
                           offset: Offset(2, -0),

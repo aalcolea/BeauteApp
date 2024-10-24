@@ -165,7 +165,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.08,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primaryColor,
+                            color: AppColors2.primaryColor,
                           ),
                         ),),
 
@@ -176,7 +176,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                 Navigator.pop(context);
                               });
                             },
-                            icon: const Icon(Icons.close, color: AppColors.primaryColor)
+                            icon: const Icon(Icons.close, color: AppColors2.primaryColor)
                         ),
                       ],
                     ),
@@ -199,7 +199,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                             width: MediaQuery.of(context).size.width,
                                             decoration: const BoxDecoration(
-                                              color: AppColors.primaryColor,
+                                              color: AppColors2.primaryColor,
                                               borderRadius: BorderRadius.all(Radius.circular(10)),
                                             ),
                                             child: Text('Doctor:', style: TextStyle(
@@ -223,19 +223,19 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                               border: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
                                                   borderSide: const BorderSide(
-                                                      color: AppColors.primaryColor)),
+                                                      color: AppColors2.primaryColor)),
                                               enabledBorder: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
-                                                  borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                                  borderSide: const BorderSide(color: AppColors2.primaryColor)),
                                               focusedBorder: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
-                                                  borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),),
+                                                  borderSide: const BorderSide(color: AppColors2.primaryColor, width: 1.5),),
                                                 suffixIcon: AnimatedBuilder(
                                                   animation: animationController,
                                                   child: Icon(
                                                     Icons.arrow_drop_down_circle_outlined,
                                                     size: MediaQuery.of(context).size.width * 0.085,
-                                                    color: AppColors.primaryColor,
+                                                    color: AppColors2.primaryColor,
                                                   ),
                                                   builder: (context, iconToRotate){
                                                     return Transform.rotate(angle: rotate.value, child:  iconToRotate,);
@@ -271,7 +271,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                             width: MediaQuery.of(context).size.width,
                                             decoration: BoxDecoration(
-                                              color: AppColors.primaryColor,
+                                              color: AppColors2.primaryColor,
                                               borderRadius: BorderRadius.all(Radius.circular(10)),
                                             ),
                                             child: Text('Mensaje:', style: TextStyle(

@@ -30,7 +30,7 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
             'Doctor1 ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppColors.primaryColor,
+              color: AppColors2.primaryColor,
             ),
           ),
         ],
@@ -41,7 +41,7 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
           value: nameDr,
           child: Container(
             color: selectedDr == nameDr
-                ? AppColors.primaryColor
+                ? AppColors2.primaryColor
                 : Colors.transparent,
             child: Row(
               children: [
@@ -50,14 +50,14 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
                   size: 40,
                   color: selectedDr == nameDr
                       ? Colors.white
-                      : AppColors.primaryColor,
+                      : AppColors2.primaryColor,
                 ),
                 Text(
                   nameDr,
                   style: TextStyle(
                       color: selectedDr == nameDr
                           ? Colors.white
-                          : AppColors.primaryColor,
+                          : AppColors2.primaryColor,
                       fontSize: 26),
                 ),
               ],
@@ -78,7 +78,7 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
       style: const TextStyle(fontSize: 26, color: Color(0xFF48454C)),
       icon: const Icon(
         Icons.arrow_drop_down,
-        color: AppColors.primaryColor,
+        color: AppColors2.primaryColor,
         size: 35,
       ),
       selectedItemBuilder: (BuildContext context) {
@@ -91,12 +91,12 @@ class _DoctorSelectboxState extends State<DoctorSelectbox> {
                   const Icon(
                     Icons.person,
                     size: 40,
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                   ),
                   Text(
                     item,
                     style:
-                        const TextStyle(color: AppColors.primaryColor, fontSize: 26),
+                        const TextStyle(color: AppColors2.primaryColor, fontSize: 26),
                   ),
                 ],
               ),

@@ -24,7 +24,7 @@ class TitleContainer extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final BoxDecoration defaultDecoration = const BoxDecoration(
-      color: AppColors.primaryColor,
+      color: AppColors2.primaryColor,
       borderRadius: BorderRadius.all(Radius.circular(10)),
     );
 
@@ -160,7 +160,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black54, width: 0.5),
-        color: AppColors.BgprimaryColor,
+        color: AppColors2.BgprimaryColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -184,7 +184,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
                   color:
-                      optSelected == 1 || optSelectedToSend == 1 ? AppColors.primaryColor : AppColors.BgprimaryColor,
+                      optSelected == 1 || optSelectedToSend == 1 ? AppColors2.primaryColor : AppColors2.BgprimaryColor,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
@@ -202,7 +202,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                           )
                         : SvgPicture.asset(
                             'assets/imgLog/docVector2.svg',
-                              colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                              colorFilter: const ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn),
                             width: MediaQuery.of(context).size.width * 0.07,
                             height: MediaQuery.of(context).size.width * 0.07,
                           ),
@@ -212,7 +212,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     style: TextStyle(
                         color: optSelected == 1 ||  optSelectedToSend == 1
                             ? Colors.white
-                            : AppColors.primaryColor,
+                            : AppColors2.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.054),
                   )
                 ],
@@ -246,7 +246,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
-                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors.primaryColor : AppColors.BgprimaryColor,
+                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors2.primaryColor : AppColors2.BgprimaryColor,
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
@@ -264,7 +264,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                         )
                         : SvgPicture.asset(
                           'assets/imgLog/docVector2.svg',
-                          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                          colorFilter: const ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn),
                           width: MediaQuery.of(context).size.width * 0.07,
                           height: MediaQuery.of(context).size.width * 0.07,
                         ),
@@ -274,7 +274,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     style: TextStyle(
                         color: optSelected == 2 ||  optSelectedToSend == 2
                             ? Colors.white
-                            : AppColors.primaryColor,
+                            : AppColors2.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.054),
                   )
                 ],
@@ -343,14 +343,14 @@ class FieldsToWrite extends StatelessWidget {
     ),
       enabledBorder: OutlineInputBorder(
         borderSide: const BorderSide(
-          color: AppColors.primaryColor, // Cambia este color al que prefieras
+          color: AppColors2.primaryColor, // Cambia este color al que prefieras
           width: 1.0, // El grosor del borde
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
         focusedBorder: OutlineInputBorder(
         borderSide: const BorderSide(
-          color: AppColors.primaryColor,
+          color: AppColors2.primaryColor,
           width: 1.0,
         ),
         borderRadius: BorderRadius.circular(10.0),

@@ -65,7 +65,7 @@ class _CategoryBoxState extends State<CategoryBox> {
       hint: Text(
         'Categoria del producto',
         style: TextStyle(
-          color: lock == false ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.5),
+          color: lock == false ? AppColors2.primaryColor : AppColors2.primaryColor.withOpacity(0.5),
         ),
       ),
       value: categorySel,
@@ -99,7 +99,7 @@ class _CategoryBoxState extends State<CategoryBox> {
         focusedBorder: widget.formType == 1 ? OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
-            color: AppColors.primaryColor,
+            color: AppColors2.primaryColor,
             width: 0.7,
           ),
         ) : const OutlineInputBorder(
@@ -108,7 +108,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             bottomRight: Radius.circular(10),
           ),
           borderSide: BorderSide(
-            color: AppColors.primaryColor,
+            color: AppColors2.primaryColor,
             width: 0.7,
           ),
         ),
@@ -118,7 +118,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             bottomRight: Radius.circular(10),
           ),
           borderSide: BorderSide(
-            color: lock == false  ? Colors.black54 : AppColors.primaryColor.withOpacity(0.3),
+            color: lock == false  ? Colors.black54 : AppColors2.primaryColor.withOpacity(0.3),
             width: 1.5,
           ),
         ),
@@ -132,7 +132,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             children: [
               Text(
                 categoryItem['category'] ?? 'Categoria Null',
-                style: TextStyle(color: lock == false ? AppColors.primaryColor: AppColors.primaryColor.withOpacity(0.3),
+                style: TextStyle(color: lock == false ? AppColors2.primaryColor: AppColors2.primaryColor.withOpacity(0.3),
                 ),
               ),
             ],

@@ -30,25 +30,25 @@ Widget buildTodaySalesList(BuildContext context) {
       final catID = groupedSales.keys.elementAt(index);
       final categorySales = groupedSales[catID]!;
       return ExpansionTile(
-        iconColor: AppColors.primaryColor,
-        collapsedIconColor: AppColors.primaryColor,
+        iconColor: AppColors2.primaryColor,
+        collapsedIconColor: AppColors2.primaryColor,
         tilePadding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
         childrenPadding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04, left: MediaQuery.of(context).size.width * 0.02),
         shape: Border(
           top: BorderSide(
-              color: AppColors.primaryColor.withOpacity(0.7), width: 2
+              color: AppColors2.primaryColor.withOpacity(0.7), width: 2
           )
         ),
         collapsedShape: Border(
             top: BorderSide(
-                color: AppColors.primaryColor.withOpacity(0.7), width: 2
+                color: AppColors2.primaryColor.withOpacity(0.7), width: 2
             )
         ),
         initiallyExpanded: true,
         title: Text(
           'Categoría $catID',
           style: TextStyle(
-            color: AppColors.primaryColor,
+            color: AppColors2.primaryColor,
             fontWeight: FontWeight.bold,
             fontSize: MediaQuery.of(context).size.width * 0.045,
           ),
@@ -64,7 +64,7 @@ Widget buildTodaySalesList(BuildContext context) {
                 Text(
                   sale['producto'],
                   style: TextStyle(
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.04,
                   ),
@@ -74,13 +74,13 @@ Widget buildTodaySalesList(BuildContext context) {
                     Text(
                       "Cant.: ",
                       style: TextStyle(
-                          color: AppColors.primaryColor.withOpacity(0.5),
+                          color: AppColors2.primaryColor.withOpacity(0.5),
                           fontSize: MediaQuery.of(context).size.width * 0.035),
                     ),
                     Text(
                       '${sale['cant']} pzs',
                       style: TextStyle(
-                          color: AppColors.primaryColor,
+                          color: AppColors2.primaryColor,
                           fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width * 0.035),
                     ),
@@ -91,13 +91,13 @@ Widget buildTodaySalesList(BuildContext context) {
                     Text(
                       "Precio unitario: ",
                       style: TextStyle(
-                          color: AppColors.primaryColor.withOpacity(0.5),
+                          color: AppColors2.primaryColor.withOpacity(0.5),
                           fontSize: MediaQuery.of(context).size.width * 0.035),
                     ),
                     Text(
                       '\$${sale['precio_uni']}',
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.035,
                       ),
@@ -109,13 +109,13 @@ Widget buildTodaySalesList(BuildContext context) {
                     Text(
                       "Total: ",
                       style: TextStyle(
-                          color: AppColors.primaryColor.withOpacity(0.5),
+                          color: AppColors2.primaryColor.withOpacity(0.5),
                           fontSize: MediaQuery.of(context).size.width * 0.035),
                     ),
                     Text(
                       '${sale['cant'] * sale['precio_uni']}',
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.035,
                       ),
@@ -127,13 +127,13 @@ Widget buildTodaySalesList(BuildContext context) {
                     Text(
                       "Fecha de venta: ",
                       style: TextStyle(
-                          color: AppColors.primaryColor.withOpacity(0.5),
+                          color: AppColors2.primaryColor.withOpacity(0.5),
                           fontSize: MediaQuery.of(context).size.width * 0.035),
                     ),
                     Text(
                       '${sale['fecha']}',
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.035,
                       ),

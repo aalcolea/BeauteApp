@@ -136,7 +136,7 @@ class _TicketslistState extends State<Ticketslist> {
   Widget build(BuildContext context) {
     // final groupedTickets = groupByTicket(ticketProducts);
     return Container(
-      color: AppColors.calendarBg,
+      color: AppColors2.calendarBg,
       child: ListView.builder(
         padding: EdgeInsets.zero,
         itemCount: tickets.length,
@@ -144,7 +144,7 @@ class _TicketslistState extends State<Ticketslist> {
           return Container(
               margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
               decoration: BoxDecoration(
-                color: AppColors.calendarBg,
+                color: AppColors2.calendarBg,
                 borderRadius: BorderRadius.circular(10),
 
                 boxShadow: [
@@ -162,12 +162,12 @@ class _TicketslistState extends State<Ticketslist> {
                   showTicketOptions(index);
                 },
                 child: ExpansionTile(
-                  iconColor: AppColors.calendarBg,
-                  collapsedIconColor: AppColors.primaryColor,
-                  backgroundColor: AppColors.primaryColor,
+                  iconColor: AppColors2.calendarBg,
+                  collapsedIconColor: AppColors2.primaryColor,
+                  backgroundColor: AppColors2.primaryColor,
                   collapsedBackgroundColor: Colors.transparent,
-                  textColor: AppColors.calendarBg,
-                  collapsedTextColor: AppColors.primaryColor,
+                  textColor: AppColors2.calendarBg,
+                  collapsedTextColor: AppColors2.primaryColor,
                   tilePadding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.04,
                       right: MediaQuery.of(context).size.width * 0.02,
@@ -178,7 +178,7 @@ class _TicketslistState extends State<Ticketslist> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                     side: const BorderSide(
-                      color: AppColors.primaryColor,
+                      color: AppColors2.primaryColor,
                       width: 2
                     )
                   ),
@@ -246,10 +246,10 @@ class _TicketslistState extends State<Ticketslist> {
                     Container(
                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04, top: MediaQuery.of(context).size.width * 0.04, left: MediaQuery.of(context).size.width * 0.04),
                       decoration: const BoxDecoration(
-                        color: AppColors.calendarBg,
+                        color: AppColors2.calendarBg,
                         borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
                         border: Border(
-                          top: BorderSide(color: AppColors.primaryColor, width: 2)
+                          top: BorderSide(color: AppColors2.primaryColor, width: 2)
                         )
                       ),
                       child: Column(
@@ -263,7 +263,7 @@ class _TicketslistState extends State<Ticketslist> {
                                 Text(
                                   '${detalle['producto']['nombre']}',
                                   style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.04,
                                   ),
@@ -273,13 +273,13 @@ class _TicketslistState extends State<Ticketslist> {
                                     Text(
                                       "Cant.: ",
                                       style: TextStyle(
-                                          color: AppColors.primaryColor,
+                                          color: AppColors2.primaryColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
                                       '${detalle['cantidad']} pzs',
                                       style: TextStyle(
-                                          color: AppColors.primaryColor,
+                                          color: AppColors2.primaryColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
@@ -290,13 +290,13 @@ class _TicketslistState extends State<Ticketslist> {
                                     Text(
                                       "Precio unitario: ",
                                       style: TextStyle(
-                                          color: AppColors.primaryColor,
+                                          color: AppColors2.primaryColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
                                       '\$${detalle['precio']}',
                                       style: TextStyle(
-                                        color: AppColors.primaryColor,
+                                        color: AppColors2.primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: MediaQuery.of(context).size.width * 0.035,
                                       ),
@@ -308,13 +308,13 @@ class _TicketslistState extends State<Ticketslist> {
                                     Text(
                                       "Total: ",
                                       style: TextStyle(
-                                          color: AppColors.primaryColor,
+                                          color: AppColors2.primaryColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
                                       '\$${detalle['cantidad'] * double.parse(detalle['precio'])}',
                                       style: TextStyle(
-                                        color: AppColors.primaryColor,
+                                        color: AppColors2.primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: MediaQuery.of(context).size.width * 0.035,
                                       ),

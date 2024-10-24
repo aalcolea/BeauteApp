@@ -42,7 +42,7 @@ class ClienteAddedDialog extends StatelessWidget {
                     '¡Cliente agregado!',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.085,
-                      color: AppColors.primaryColor,
+                      color: AppColors2.primaryColor,
                           )))
                 ])));
   }
@@ -124,7 +124,7 @@ void showClienteNumberExistsAlert(BuildContext context, String message) {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        backgroundColor: AppColors.primaryColor,
+                        backgroundColor: AppColors2.primaryColor,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

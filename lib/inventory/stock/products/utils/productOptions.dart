@@ -96,7 +96,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           Text(
                             '${widget.nombre}',
                             style: TextStyle(
-                              color: AppColors.primaryColor,
+                              color: AppColors2.primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: MediaQuery.of(context).size.width * 0.04,
                             ),
@@ -105,12 +105,12 @@ class _ProductOptionsState extends State<ProductOptions> {
                             children: [
                               Text(
                                 "Cant.: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
                               Text(
                                 '${widget.cant}',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
                                 style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.035
                                 ),
@@ -121,14 +121,14 @@ class _ProductOptionsState extends State<ProductOptions> {
                             children: [
                               Text(
                                 "Precio: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
                               Container(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: Text(
                                   '\$${widget.precio} MXN',//"\$${products_global[]['price']} MXN",
                                   style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
@@ -188,7 +188,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           child: const Text(
                             'Editar producto',
                             style: TextStyle(
-                                color: AppColors.primaryColor
+                                color: AppColors2.primaryColor
                             ),
                           ),
                         ),
@@ -197,7 +197,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                   ),
                 ),
                 Divider(
-                  color: AppColors.primaryColor.withOpacity(0.1),
+                  color: AppColors2.primaryColor.withOpacity(0.1),
                   thickness: MediaQuery.of(context).size.width * 0.004,
                 ),
                 Flexible(
@@ -237,7 +237,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           child: const Text(
                             'Modificar stock',
                             style: TextStyle(
-                                color: AppColors.primaryColor
+                                color: AppColors2.primaryColor
                             ),
                           ),
                         ),
@@ -246,7 +246,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                   ),
                 ),
                 Divider(
-                  color: AppColors.primaryColor.withOpacity(0.1),
+                  color: AppColors2.primaryColor.withOpacity(0.1),
                   thickness: MediaQuery.of(context).size.width * 0.004,
                 ),
                 Flexible(

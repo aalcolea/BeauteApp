@@ -119,7 +119,7 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     return Container(
-      color: AppColors.BgprimaryColor,
+      color: AppColors2.BgprimaryColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -133,7 +133,7 @@ class _CartState extends State<Cart> {
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: AppColors.primaryColor.withOpacity(0.1),
+                  color: AppColors2.primaryColor.withOpacity(0.1),
                   width: 2,
                 ),
               ),
@@ -174,14 +174,14 @@ class _CartState extends State<Cart> {
                                               Text(
                                                 '${cartProvider.cart[index]['product']}',
                                                 style: TextStyle(
-                                                  color: AppColors.primaryColor,
+                                                  color: AppColors2.primaryColor,
                                                   fontSize: MediaQuery.of(context).size.width * 0.05,
                                                 ),
                                               ),
                                               Text(
                                                 'Codigo ${cartProvider.cart[index]['product_id']}',
                                                 style: TextStyle(
-                                                    color: AppColors.primaryColor.withOpacity(0.3),
+                                                    color: AppColors2.primaryColor.withOpacity(0.3),
                                                     fontSize: MediaQuery.of(context).size.width * 0.04
                                                 ),
                                               ),
@@ -196,7 +196,7 @@ class _CartState extends State<Cart> {
                                                     ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           minimumSize: const Size(0, 0),
-                                                          backgroundColor: AppColors.primaryColor.withOpacity(0.5),
+                                                          backgroundColor: AppColors2.primaryColor.withOpacity(0.5),
                                                           padding: EdgeInsets.symmetric(
                                                               horizontal: MediaQuery.of(context).size.width * 0.02,
                                                               vertical: MediaQuery.of(context).size.width * 0.02,
@@ -232,7 +232,7 @@ class _CartState extends State<Cart> {
                                                           focusedBorder: OutlineInputBorder(
                                                             borderRadius: BorderRadius.circular(10),
                                                             borderSide: const BorderSide(
-                                                              color: AppColors.primaryColor,
+                                                              color: AppColors2.primaryColor,
                                                               width: 1.5,
                                                             ),
                                                           ),
@@ -249,7 +249,7 @@ class _CartState extends State<Cart> {
                                                     ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           minimumSize: const Size(0, 0),
-                                                          backgroundColor: AppColors.primaryColor.withOpacity(0.5),
+                                                          backgroundColor: AppColors2.primaryColor.withOpacity(0.5),
                                                           padding: EdgeInsets.symmetric(
                                                             horizontal: MediaQuery.of(context).size.width * 0.02,
                                                             vertical: MediaQuery.of(context).size.width * 0.02,
@@ -333,14 +333,14 @@ class _CartState extends State<Cart> {
                                                 Text(
                                                   '\$${(cartProvider.cart[index]['cant_cart'] * cartProvider.cart[index]['price']).toStringAsFixed(2)}',
                                                   style: TextStyle(
-                                                    color: AppColors.primaryColor,
+                                                    color: AppColors2.primaryColor,
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
                                                   ),
                                                 ),
                                                 Text(
                                                   'MXN',
                                                   style: TextStyle(
-                                                      color: AppColors.primaryColor.withOpacity(0.3),
+                                                      color: AppColors2.primaryColor.withOpacity(0.3),
                                                       fontSize: MediaQuery.of(context).size.width * 0.04
                                                   ),
                                                 )
@@ -376,7 +376,7 @@ class _CartState extends State<Cart> {
                 Text(
                   'Total:',
                   style: TextStyle(
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.08,
                   ),
@@ -387,7 +387,7 @@ class _CartState extends State<Cart> {
                     Text(
                       '\$${totalCart.toStringAsFixed(2)}',
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.08,
                       ),
@@ -395,7 +395,7 @@ class _CartState extends State<Cart> {
                     Text(
                       'MXN ',
                       style: TextStyle(
-                        color: AppColors.primaryColor.withOpacity(0.3),
+                        color: AppColors2.primaryColor.withOpacity(0.3),
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.04,
                       ),
@@ -410,7 +410,7 @@ class _CartState extends State<Cart> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                backgroundColor: AppColors.primaryColor,
+                backgroundColor: AppColors2.primaryColor,
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
                 horizontal: MediaQuery.of(context).size.width * 0.08)

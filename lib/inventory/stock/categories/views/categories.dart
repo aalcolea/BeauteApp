@@ -197,7 +197,7 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     int itemsPerPage = 6;
     return Container(
-      color: AppColors.BgprimaryColor,
+      color: AppColors2.BgprimaryColor,
       child: Column(
         children: [
           _selectedCategory == null
@@ -289,7 +289,7 @@ class _CategoriesState extends State<Categories> {
                                                 borderRadius: BorderRadius.circular(10),
                                                 child: Icon(
                                                   CupertinoIcons.add,
-                                                  color: AppColors.primaryColor.withOpacity(0.3),
+                                                  color: AppColors2.primaryColor.withOpacity(0.3),
                                                   size: MediaQuery.of(context).size.width * 0.15,
                                                 )
                                             )
@@ -391,7 +391,7 @@ class _CategoriesState extends State<Categories> {
                                                     color: Colors.black54.withOpacity(0.5),
                                                     borderRadius: BorderRadius.circular(10),
                                                     border: Border.all(
-                                                      color: AppColors.primaryColor,
+                                                      color: AppColors2.primaryColor,
                                                       width: MediaQuery.of(context).size.width * 0.01
                                                     )
                                                   ),
@@ -399,7 +399,7 @@ class _CategoriesState extends State<Categories> {
                                                   width: MediaQuery.of(context).size.width * 0.5,
                                                   child: Icon(
                                                     CupertinoIcons.check_mark_circled,
-                                                    color: AppColors.primaryColor,
+                                                    color: AppColors2.primaryColor,
                                                   ),
                                                 ),
                                               ),
@@ -411,7 +411,7 @@ class _CategoriesState extends State<Categories> {
                                           child: Text(
                                               "${item['category']}",
                                               style: TextStyle(
-                                                color: AppColors.primaryColor,
+                                                color: AppColors2.primaryColor,
                                                 fontSize: MediaQuery.of(context).size.height * 0.017,
                                               )
                                           ),

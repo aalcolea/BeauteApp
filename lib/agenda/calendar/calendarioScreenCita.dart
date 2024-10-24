@@ -83,7 +83,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
             IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_rounded,
-                color: AppColors.primaryColor,
+                color: AppColors2.primaryColor,
                 size: MediaQuery.of(context).size.width * 0.07,
               ),
               onPressed: () {
@@ -109,7 +109,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
             IconButton(
               icon: Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: AppColors.primaryColor,
+                color: AppColors2.primaryColor,
                 size: MediaQuery.of(context).size.width * 0.07,
               ),
               onPressed: () {
@@ -195,7 +195,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                 child: Text(
                                   details.date.day.toString(),
                                   style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.05,
@@ -220,7 +220,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                               child: Text(
                                 details.date.day.toString(),
                                 style: TextStyle(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   fontSize:
                                       MediaQuery.of(context).size.width * 0.05,
                                 ),

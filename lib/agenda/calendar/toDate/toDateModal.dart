@@ -344,7 +344,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                         DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
                                         style: TextStyle(
                                           color: isSelected
-                                              ? AppColors.primaryColor
+                                              ? AppColors2.primaryColor
                                               : Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
@@ -356,7 +356,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                         "${date.day}",
                                         style: TextStyle(
                                           color: isSelected
-                                              ? AppColors.primaryColor
+                                              ? AppColors2.primaryColor
                                               : Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
@@ -433,14 +433,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
             ///
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
+                  backgroundColor: AppColors2.primaryColor,
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.0,
                   ),
-                  surfaceTintColor: AppColors.primaryColor,
+                  surfaceTintColor: AppColors2.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
-                    side: BorderSide(color: lockBtn ? Colors.grey.withOpacity(0.3) : AppColors.primaryColor, width: 2),
+                    side: BorderSide(color: lockBtn ? Colors.grey.withOpacity(0.3) : AppColors2.primaryColor, width: 2),
                   ),
                 ),
                 onPressed: lockBtn ? null : () {

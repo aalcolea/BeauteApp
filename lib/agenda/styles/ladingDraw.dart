@@ -10,7 +10,7 @@ class LadingDraw extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(color: Color(0xFFC5B6CD)),
+      decoration: const BoxDecoration(color: Color(0xFFA6D8DF)),//const BoxDecoration(color: Color(0xFFC5B6CD)),
       child: CustomPaint(
         painter: _LadingDraw(),
       ),
@@ -24,7 +24,7 @@ class _LadingDraw extends CustomPainter {
     // TODO: implement paint
 
     final paintSubline = Paint();
-    paintSubline.color = AppColors.primaryColor;
+    paintSubline.color = AppColors2.primaryColor;
     paintSubline.style = PaintingStyle.stroke;
     paintSubline.strokeWidth = 10;
     paintSubline.maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);

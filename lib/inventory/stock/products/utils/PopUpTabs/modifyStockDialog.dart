@@ -200,7 +200,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(40, 40),
-                            backgroundColor: AppColors.primaryColor,
+                            backgroundColor: AppColors2.primaryColor,
                             padding: EdgeInsets.symmetric(
                               horizontal: MediaQuery.of(context).size.width * 0.02,
                               vertical: MediaQuery.of(context).size.width * 0.02,

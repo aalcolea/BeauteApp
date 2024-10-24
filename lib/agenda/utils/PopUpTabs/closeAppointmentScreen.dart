@@ -68,7 +68,7 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                       '¿Deseas salir \nsin guardar?',
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.075,
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                       ),
                     ),
                   ),
@@ -118,11 +118,11 @@ class _AlertCloseAppointmentScreen extends State<AlertCloseAppointmentScreen> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: AppColors.primaryColor, width: 2))
+                            border: Border(bottom: BorderSide(color: AppColors2.primaryColor, width: 2))
                           ),
                           child: const Text(
                             'Cancelar',
-                            style: TextStyle(color: AppColors.primaryColor, fontSize: 20),
+                            style: TextStyle(color: AppColors2.primaryColor, fontSize: 20),
                           ),
                         )
                       ),
