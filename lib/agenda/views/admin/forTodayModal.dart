@@ -162,7 +162,7 @@ class _FortodaymodalState extends State<Fortodaymodal> with SingleTickerProvider
                     bottom: MediaQuery.of(context).size.width * 0.25,
                   ),
                   decoration: const BoxDecoration(
-                    color: AppColors.BgprimaryColor,
+                    color: AppColors2.BgprimaryColor,
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
                       bottomRight: Radius.circular(15),

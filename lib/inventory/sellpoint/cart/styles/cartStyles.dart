@@ -20,14 +20,14 @@ class _BackgroundState extends State<Background> {
             alignment: Alignment.topLeft,
             width: widget.widthItem1,
             decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: AppColors.primaryColor.withOpacity(0.1), width: 2))
+                border: Border(right: BorderSide(color: AppColors2.primaryColor.withOpacity(0.1), width: 2))
             ),
             child: Column(
               children: [
                 Text(
                   'Producto',
                   style: TextStyle(
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
@@ -40,14 +40,14 @@ class _BackgroundState extends State<Background> {
             alignment: Alignment.topLeft,
             width: widget.widthItem2,
             decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: AppColors.primaryColor.withOpacity(0.1), width: 2))
+                border: Border(right: BorderSide(color: AppColors2.primaryColor.withOpacity(0.1), width: 2))
             ),
             child: Column(
               children: [
                 Text(
                   'Cant.',
                   style: TextStyle(
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
@@ -63,7 +63,7 @@ class _BackgroundState extends State<Background> {
                 Text(
                   'Precio',
                   style: TextStyle(
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),

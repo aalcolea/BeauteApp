@@ -32,7 +32,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width * 0.07,
-                      color: AppColors.primaryColor,
+                      color: AppColors2.primaryColor,
                     ),
                   ),
                 ),
@@ -62,7 +62,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: AppColors.primaryColor,
+                              color: AppColors2.primaryColor,
                               width: 2.5,
                             ),
                           ),
@@ -71,7 +71,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                           'Cancelar',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.05,
-                            color: AppColors.primaryColor,
+                            color: AppColors2.primaryColor,
                           ),
                         ),
                       ),

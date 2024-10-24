@@ -151,8 +151,8 @@ class _NotiCardsState extends State<NotiCards> {
                     right: MediaQuery.of(context).size.height * 0.01),
                 decoration: BoxDecoration(
                   color: !isRead
-                      ? AppColors.primaryColor
-                      : AppColors.primaryColor.withOpacity(0.3),
+                      ? AppColors2.primaryColor
+                      : AppColors2.primaryColor.withOpacity(0.3),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15),
@@ -222,8 +222,8 @@ class _NotiCardsState extends State<NotiCards> {
                     EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                 decoration: BoxDecoration(
                   color: !isRead
-                      ? AppColors.primaryColor.withOpacity(0.3)
-                      : AppColors.primaryColor.withOpacity(0.1),
+                      ? AppColors2.primaryColor.withOpacity(0.3)
+                      : AppColors2.primaryColor.withOpacity(0.1),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(15),
                     bottomRight: Radius.circular(15),

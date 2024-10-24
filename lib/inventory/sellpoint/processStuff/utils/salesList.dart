@@ -52,7 +52,7 @@ class _SalesListState extends State<SalesList> {
       itemCount: products.length,
       itemBuilder: (context, index) {
         return Container(
-          color: AppColors.calendarBg,
+          color: AppColors2.calendarBg,
           padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
           child: Column(
             children: [
@@ -69,7 +69,7 @@ class _SalesListState extends State<SalesList> {
                         Text(
                           "${products[index]['nombre']}",
                           style: TextStyle(
-                            color: AppColors.primaryColor,
+                            color: AppColors2.primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.of(context).size.width * 0.04,
                           ),
@@ -79,13 +79,13 @@ class _SalesListState extends State<SalesList> {
                             Text(
                               "Cant.:",
                               style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
+                                  color: AppColors2.primaryColor.withOpacity(0.5),
                                   fontSize: MediaQuery.of(context).size.width * 0.035),
                             ),
                             Text(
                               '${products[index]['cantidad']} pzs',
                               style: TextStyle(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.width * 0.035),
                             ),
@@ -96,13 +96,13 @@ class _SalesListState extends State<SalesList> {
                             Text(
                               "Precio unitario: ",
                               style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
+                                  color: AppColors2.primaryColor.withOpacity(0.5),
                                   fontSize: MediaQuery.of(context).size.width * 0.035),
                             ),
                             Text(
                               '\$${products[index]['precio']}',
                               style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: MediaQuery.of(context).size.width * 0.035,
                               ),
@@ -114,13 +114,13 @@ class _SalesListState extends State<SalesList> {
                             Text(
                               "Total: ",
                               style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
+                                  color: AppColors2.primaryColor.withOpacity(0.5),
                                   fontSize: MediaQuery.of(context).size.width * 0.035),
                             ),
                             Text(
                               '${products[index]['total'].toStringAsFixed(2)}',
                               style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: MediaQuery.of(context).size.width * 0.035,
                               ),
@@ -132,13 +132,13 @@ class _SalesListState extends State<SalesList> {
                             Text(
                               "Fecha de venta: ",
                               style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.5),
+                                  color: AppColors2.primaryColor.withOpacity(0.5),
                                   fontSize: MediaQuery.of(context).size.width * 0.035),
                             ),
                             Text(
                               '${products[index]['fecha']}',
                               style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: MediaQuery.of(context).size.width * 0.035,
                               ),
@@ -151,7 +151,7 @@ class _SalesListState extends State<SalesList> {
                 ),
               ),
               Divider(
-                color: AppColors.primaryColor,
+                color: AppColors2.primaryColor,
                 thickness: MediaQuery.of(context).size.width * 0.0055,
               ),
             ],

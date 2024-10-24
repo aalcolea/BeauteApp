@@ -152,7 +152,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         });
                       }, child: Text('Cancelar',
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.05,
                         fontWeight: FontWeight.bold,
                       ),), )),
@@ -166,7 +166,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     icon: Icon(
                       CupertinoIcons.back,
                       size: MediaQuery.of(context).size.width * 0.08,
-                      color: AppColors.primaryColor,
+                      color: AppColors2.primaryColor,
                     ),
                   ),),
                   Visibility(
@@ -180,7 +180,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           textAlign: TextAlign.start,
                           'Modificar',
                           style: TextStyle(
-                            color: AppColors.primaryColor,
+                            color: AppColors2.primaryColor,
                             fontSize: screenWidth! < 370.00
                                 ? MediaQuery.of(context).size.width * 0.078
                                 : MediaQuery.of(context).size.width * 0.082,
@@ -214,9 +214,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                       },
                       icon: !editProd ? const Icon(
                         Icons.edit,
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                       ) : Text('Guardar ', style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.05,
                         fontWeight: FontWeight.bold,
                       ),))
@@ -291,7 +291,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       ),
                                       height: MediaQuery.of(context).size.width * 0.09,
                                       decoration: const BoxDecoration(
-                                        color: AppColors.primaryColor,
+                                        color: AppColors2.primaryColor,
                                         borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(10.0),
                                           topRight: Radius.circular(10.0),
@@ -332,7 +332,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       ),
                                       height: MediaQuery.of(context).size.width * 0.09,
                                       decoration: const BoxDecoration(
-                                        color: AppColors.primaryColor,
+                                        color: AppColors2.primaryColor,
                                         borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(10.0),
                                           topRight: Radius.circular(10.0),
@@ -366,7 +366,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           Visibility(
                               visible: isLoading,
                               child: const CircularProgressIndicator(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                               )),
                           Visibility(
                             visible: editProd,
@@ -379,7 +379,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               child:  ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  side: const BorderSide(color: AppColors.primaryColor,),
+                                  side: const BorderSide(color: AppColors2.primaryColor,),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
