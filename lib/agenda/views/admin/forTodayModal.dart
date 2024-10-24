@@ -7,6 +7,7 @@ import '../../themes/colors.dart';
 import '../../utils/sliverlist/notiCards.dart';
 
 class Fortodaymodal extends StatefulWidget {
+
   @override
   _FortodaymodalState createState() => _FortodaymodalState();
 

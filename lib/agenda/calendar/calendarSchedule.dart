@@ -494,7 +494,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                             child: Text(
                                               details.date.day.toString(),
                                               style: TextStyle(
-                                                color: AppColors.lettersMultipleDrsDate.withOpacity(0.3),
+                                                color: AppColors.lettersMultipleDrsDate,
                                                 fontSize: MediaQuery.of(context).size.width * 0.06,
                                               ),
                                             ),
