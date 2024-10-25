@@ -23,24 +23,25 @@ class _TicketslistState extends State<Ticketslist> {
   double widgetHeight = 0.0;
   bool isLoading = false;
   List<Map<String, dynamic>> tickets = [];
+  List<AnimationController> aniControllers = [];
+  List<int> cantHelper = [];
+  List<int> tapedIndices = [];
 
-  /*List<Map<String, dynamic>> ticket1 = [
-    {'ticketID':1, 'fecha':'17-10-2024', 'cant':15, 'total': 300},
-    {'ticketID':2, 'fecha':'20-10-2024', 'cant':10, 'total': 1500},
-    {'ticketID':3, 'fecha':'12-10-2024', 'cant':5, 'total': 600},
-    {'ticketID':4, 'fecha':'15-10-2024', 'cant':20, 'total': 700},
-  ];*/
+  void itemCount (index, action){
+    if(action == false){
+      cantHelper[index] > 0 ? cantHelper[index]-- : cantHelper[index] = 0;
+      if(cantHelper[index] == 0){
+        tapedIndices.remove(index);
+        aniControllers[index].reverse().then((_){
+          aniControllers[index].reset();
+        });
+      }
+    }else{
+      cantHelper[index]++;
+    }
+  }
 
-  List<Map<String, dynamic>> ticketProducts = [
-    {'ticketID':1, 'producto':'Shampoo para calvos', 'cant':10, 'precio_uni':100},
-    {'ticketID':1, 'producto':'Botox de nalgas', 'cant':5, 'precio_uni':50},
-    {'ticketID':2, 'producto':'Jirafa amarilla', 'cant':10, 'precio_uni':50},
-    {'ticketID':3, 'producto':'Crema para pies', 'cant':2, 'precio_uni':500},
-    {'ticketID':3, 'producto':'Agua de horchata', 'cant':10, 'precio_uni':25},
-    {'ticketID':4, 'producto':'Agua de jamaica', 'cant':5, 'precio_uni':25},
-  ];
-
-  /*Map<int, List<Map<String, dynamic>>> groupByTicket(List<Map<String, dynamic>> ticketProducts) {
+  Map<int, List<Map<String, dynamic>>> groupByTicket(List<Map<String, dynamic>> ticketProducts) {
     Map<int, List<Map<String, dynamic>>> groupedTickets = {};
     for (var product in ticketProducts) {
       if (!groupedTickets.containsKey(product['ticketID'])) {
@@ -49,12 +50,12 @@ class _TicketslistState extends State<Ticketslist> {
       groupedTickets[product['ticketID']]!.add(product);
     }
     return groupedTickets;
-  }*/
+  }
 
   @override
   void initState() {
     super.initState();
-    ticketKeys = List.generate(tickets.length, (index) => GlobalKey());
+    ticketKeys = List.generate(products_global.length, (index) => GlobalKey());
     fetchSales();
     print(fetchSales());
   }
@@ -69,6 +70,8 @@ class _TicketslistState extends State<Ticketslist> {
       setState(() {
         tickets = tickets2;
         tickets2.sort((a, b) => b['id'].compareTo(a['id']));
+        ticketKeys = List.generate(tickets.length, (index) => GlobalKey());  // Actualiza ticketKeys
+        cantHelper = List.generate(tickets.length, (index) => 0);
         isLoading = false;
       });
     }catch (e) {
@@ -82,43 +85,48 @@ class _TicketslistState extends State<Ticketslist> {
   }
 
   void showTicketOptions(int index) {
-    removeOverlay();
     if (index >= 0 && index < tickets.length) {
+      removeOverlay();
       final key = ticketKeys[index];
-      final RenderBox renderBox = key.currentContext?.findRenderObject() as RenderBox;
-      final size = renderBox.size;
-      final position = renderBox.localToGlobal(Offset.zero);
-      final screenHeight = MediaQuery.of(context).size.height;
-      final availableSpaceBelow = screenHeight - position.dy;
+      if (key.currentContext != null && key.currentContext!.findRenderObject() is RenderBox) {
+        final RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
+        final size = renderBox.size;
+        final position = renderBox.localToGlobal(Offset.zero);
+        final screenHeight = MediaQuery.of(context).size.height;
+        final availableSpaceBelow = screenHeight - position.dy;
 
-      double topPosition;
+        double topPosition;
 
-      if (availableSpaceBelow >= widgetHeight) {
-        topPosition = position.dy;
-      } else {
-        topPosition = screenHeight - widgetHeight - MediaQuery.of(context).size.height*0.03;
-      }
+        if (availableSpaceBelow >= widgetHeight) {
+          topPosition = position.dy;
+        } else {
+          topPosition = screenHeight - widgetHeight - MediaQuery.of(context).size.height * 0.03;
+        }
 
-      overlayEntry = OverlayEntry(
-        builder: (context) {
-          return Positioned(
-            top: topPosition - 7,
-            left: position.dx,
-            width: size.width,
-            child: IntrinsicHeight(
-              child: TicketOptions(
-                onClose: removeOverlay,
-                columnHeight: colHeight,
-                onShowBlur: widget.onShowBlur, columnH: null
+        overlayEntry = OverlayEntry(
+          builder: (context) {
+            return Positioned(
+              top: topPosition - 7,
+              left: position.dx,
+              width: size.width,
+              child: IntrinsicHeight(
+                child: TicketOptions(
+                  onClose: removeOverlay,
+                  columnHeight: colHeight,
+                  onShowBlur: widget.onShowBlur,
+                  columnH: null,
+                ),
               ),
-            ),
-          );
-        },
-      );
-      Overlay.of(context).insert(overlayEntry!);
-      widget.onShowBlur(1);
+            );
+          },
+        );
+        Overlay.of(context).insert(overlayEntry!);
+        widget.onShowBlur(1);
+      } else {
+        print("RenderBox is null or not valid for ticket $index");
+      }
     } else {
-      print("Invalid index: $index");
+      print("Invalid index or no tickets available");
     }
   }
 
@@ -126,6 +134,11 @@ class _TicketslistState extends State<Ticketslist> {
     if (overlayEntry != null) {
       overlayEntry!.remove();
       overlayEntry = null;
+    }
+    for (var controller in aniControllers) {
+      if (controller.isAnimating) {
+        controller.stop();
+      }
     }
     if (mounted) {
       widget.onShowBlur(0);
@@ -142,11 +155,11 @@ class _TicketslistState extends State<Ticketslist> {
         itemCount: tickets.length,
         itemBuilder: (context, index) {
           return Container(
+              key: ticketKeys[index],
               margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
               decoration: BoxDecoration(
                 color: AppColors.calendarBg,
                 borderRadius: BorderRadius.circular(10),
-
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black54.withOpacity(0.2),
@@ -158,8 +171,8 @@ class _TicketslistState extends State<Ticketslist> {
               ),
               child: GestureDetector(
                 onLongPress: () {
-                  widget.onShowBlur(1);
                   showTicketOptions(index);
+                  widget.onShowBlur(2);
                 },
                 child: ExpansionTile(
                   iconColor: AppColors.calendarBg,
@@ -186,7 +199,7 @@ class _TicketslistState extends State<Ticketslist> {
                     'Ticket ${tickets[index]['id']}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width * 0.055,
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
                     ),
                   ),
                   subtitle: Column(
