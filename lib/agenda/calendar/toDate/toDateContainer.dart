@@ -255,7 +255,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator(
-                  color: AppColors.primaryColor
+                  color: AppColors2.primaryColor
                 ));
               } else if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");
@@ -334,7 +334,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                           widget.onShowBlurr(false);
                                         }
                                     },
-                                    backgroundColor: AppColors.redDelete,
+                                    backgroundColor: AppColors2.redDelete,
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,
                                     label: 'Eliminar',

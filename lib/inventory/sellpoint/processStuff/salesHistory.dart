@@ -92,7 +92,7 @@ class _SalesHistoryState extends State<SalesHistory> {
             physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
-                backgroundColor: AppColors.calendarBg,
+                backgroundColor: AppColors2.calendarBg,
                 leadingWidth: MediaQuery.of(context).size.width,
                 pinned: true,
                 leading: Row(
@@ -104,7 +104,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                       icon: Icon(
                         CupertinoIcons.back,
                         size: MediaQuery.of(context).size.width * 0.08,
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                       ),
                     ),
                     Row(
@@ -117,7 +117,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             height: MediaQuery.of(context).size.width * 0.1,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(1),
-                              color: AppColors.primaryColor.withOpacity(0.7),
+                              color: AppColors2.primaryColor.withOpacity(0.7),
                             ),
                           ),
                           _buildTabButton('Ventas por dia', 1)
@@ -128,7 +128,7 @@ class _SalesHistoryState extends State<SalesHistory> {
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  color: AppColors.calendarBg,
+                  color: AppColors2.calendarBg,
                   padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03, vertical: MediaQuery.of(context).size.width * 0.02),
                   child: Column(
                     children: [
@@ -139,7 +139,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
-                                color: AppColors.calendarBg,
+                                color: AppColors2.calendarBg,
                               ),
                               margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
                               width: MediaQuery.of(context).size.width * 0.25,
@@ -153,24 +153,24 @@ class _SalesHistoryState extends State<SalesHistory> {
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
                                     hintText: selectedPage == 0 ? 'Fecha' : formattedDate,
                                   hintStyle: TextStyle(
-                                    color: AppColors.primaryColor.withOpacity(0.3),
+                                    color: AppColors2.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
                                     disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                 ),
                                 style: TextStyle(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors2.primaryColor,
                                   fontSize: MediaQuery.of(context).size.width * 0.035,
                                 ),
                                 onTap: (){
@@ -186,7 +186,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  color: AppColors.calendarBg,
+                                  color: AppColors2.calendarBg,
                                 ),
                                 child: TextFormField(
                                   controller: seekController,
@@ -201,24 +201,24 @@ class _SalesHistoryState extends State<SalesHistory> {
                                     ),
                                     hintText: 'Buscar por nombre o categoria...',
                                     hintStyle: TextStyle(
-                                      color: AppColors.primaryColor.withOpacity(0.3),
+                                      color: AppColors2.primaryColor.withOpacity(0.3),
                                       fontSize: MediaQuery.of(context).size.width * 0.035,
                                     ),
                                     disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   ),
                                   style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
                                 ),
@@ -236,7 +236,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                             textAlign: TextAlign.left,
                             '*Productos vendidos el ${dateController.text}',
                             style: TextStyle(
-                              color: AppColors.calendarBg,
+                              color: AppColors2.calendarBg,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
                             ),
                           ),
@@ -300,21 +300,21 @@ class _SalesHistoryState extends State<SalesHistory> {
                               floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
                               hintText: 'DD-MM-AAAA',
                               hintStyle: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 fontSize: MediaQuery.of(context).size.width * 0.03,
                               ),
                               filled: true,
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                                borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                borderSide: BorderSide(color: AppColors2.primaryColor, width: 2.0),
                               ),
                               enabledBorder: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                                borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                                borderSide: BorderSide(color: AppColors2.primaryColor, width: 2.0),
                               ),
                             ),
                             style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 fontSize: MediaQuery.of(context).size.width * 0.035
                             ),
                           ),
@@ -324,8 +324,8 @@ class _SalesHistoryState extends State<SalesHistory> {
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height * 0.45,
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.primaryColor, width: 2.0),
-                              color: AppColors.calendarBg,
+                              border: Border.all(color: AppColors2.primaryColor, width: 2.0),
+                              color: AppColors2.calendarBg,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: CalendarioCita(
@@ -375,12 +375,12 @@ class _SalesHistoryState extends State<SalesHistory> {
         title,
         style: selectedPage == pageIndex
             ? TextStyle(
-          color: AppColors.primaryColor,
+          color: AppColors2.primaryColor,
           fontSize: MediaQuery.of(context).size.width * 0.06,
           fontWeight: FontWeight.bold,
         )
             : TextStyle(
-          color: AppColors.primaryColor.withOpacity(0.2),
+          color: AppColors2.primaryColor.withOpacity(0.2),
           fontSize: MediaQuery.of(context).size.width * 0.035,
           fontWeight: FontWeight.bold,
         ),

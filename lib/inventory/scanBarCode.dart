@@ -62,7 +62,7 @@ class _ScanBarCodeState extends State<ScanBarCode> {
             onQRViewCreated: _onQRViewCreated,
             overlay: QrScannerOverlayShape(
               overlayColor: Colors.black54,
-              borderColor: AppColors.primaryColor,
+              borderColor: AppColors2.primaryColor,
               borderRadius: 10,
               borderLength: 30,
               borderWidth: 10,

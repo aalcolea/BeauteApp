@@ -74,7 +74,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         color: Colors.transparent,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
-                                          color: AppColors.primaryColor,
+                                          color: AppColors2.primaryColor,
                                           width: 2.5,
                                         ))))
                           ]),
@@ -109,7 +109,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.BgprimaryColor.withOpacity(0.5),
+              color: AppColors2.BgprimaryColor.withOpacity(0.5),
             ),
             child: IconButton(
               onPressed: (){
@@ -148,7 +148,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.0035,
           decoration: const BoxDecoration(
-            color: AppColors.primaryColor,
+            color: AppColors2.primaryColor,
           ),
         ),
         FutureBuilder<List<Appointment2>>(
