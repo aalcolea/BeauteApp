@@ -44,7 +44,7 @@ class _TicketOptionsState extends State<TicketOptions> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
         child: Column(
           key: _columnKey,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,9 @@ class _TicketOptionsState extends State<TicketOptions> {
             Material(
               color: Colors.transparent,
               child: GestureDetector(
-                onTap: widget.onClose,
+                onTap: () {
+                  widget.onClose();
+                },
                 child: Container(
                     padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.02,
@@ -73,7 +75,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                           Text(
                             'Hola',
                             style: TextStyle(
-                              color: AppColors.primaryColor,
+                              color: AppColors2.primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: MediaQuery.of(context).size.width * 0.04,
                             ),
@@ -82,12 +84,12 @@ class _TicketOptionsState extends State<TicketOptions> {
                             children: [
                               Text(
                                 "Cant.: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
                               Text(
                                 'cant',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
                                 style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.035
                                 ),
@@ -98,14 +100,14 @@ class _TicketOptionsState extends State<TicketOptions> {
                             children: [
                               Text(
                                 "Precio: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
                               Container(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: Text(
                                   '\$precio MXN',//"\$${products_global[]['price']} MXN",
                                   style: TextStyle(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
@@ -149,7 +151,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                             child: const Text(
                               'Editar producto',
                               style: TextStyle(
-                                  color: AppColors.primaryColor
+                                  color: AppColors2.primaryColor
                               ),
                             ),
                           ),
@@ -158,7 +160,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                     ),
                   ),
                   Divider(
-                    color: AppColors.primaryColor.withOpacity(0.1),
+                    color: AppColors2.primaryColor.withOpacity(0.1),
                     thickness: MediaQuery.of(context).size.width * 0.004,
                   ),
                   Flexible(
@@ -176,7 +178,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                             child: const Text(
                               'Modificar stock',
                               style: TextStyle(
-                                  color: AppColors.primaryColor
+                                  color: AppColors2.primaryColor
                               ),
                             ),
                           ),
@@ -185,7 +187,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                     ),
                   ),
                   Divider(
-                    color: AppColors.primaryColor.withOpacity(0.1),
+                    color: AppColors2.primaryColor.withOpacity(0.1),
                     thickness: MediaQuery.of(context).size.width * 0.004,
                   ),
                   Flexible(

@@ -138,7 +138,7 @@ class _CategoryFormState extends State<CategoryForm> {
                       child: Text(
                         'Crear Categoria',
                         style: TextStyle(
-                          color: AppColors.primaryColor,
+                          color: AppColors2.primaryColor,
                           fontSize: MediaQuery.of(context).size.width * 0.075,
                           fontWeight: FontWeight.bold,
                         ),
@@ -151,7 +151,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         },
                         icon: const Icon(
                           Icons.close,
-                          color: AppColors.primaryColor,
+                          color: AppColors2.primaryColor,
                         ),
                       ),
                     )
@@ -169,7 +169,7 @@ class _CategoryFormState extends State<CategoryForm> {
                   ),
                   alignment: Alignment.centerLeft,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
+                    color: AppColors2.primaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -192,10 +192,10 @@ class _CategoryFormState extends State<CategoryForm> {
                           horizontal: MediaQuery.of(context).size.width * 0.03),
                       hintText: 'Nombre de la categoria...',
                       hintStyle: TextStyle(
-                        color: AppColors.primaryColor.withOpacity(0.5),
+                        color: AppColors2.primaryColor.withOpacity(0.5),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                        borderSide: BorderSide(color: AppColors2.primaryColor, width: 2.0),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       border: OutlineInputBorder(
@@ -220,7 +220,7 @@ class _CategoryFormState extends State<CategoryForm> {
                       ),
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
+                        color: AppColors2.primaryColor,
                         borderRadius: BorderRadius.only(
                             topRight: Radius.circular(10),
                             topLeft: Radius.circular(10)
@@ -243,7 +243,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         onPressed: _requestPermission,
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                            side: const BorderSide(color: AppColors2.primaryColor, width: 1.5),
                             shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                     bottomRight: Radius.circular(10),
@@ -268,7 +268,7 @@ class _CategoryFormState extends State<CategoryForm> {
                             onPressed: _requestPermission,
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                                side: const BorderSide(color: AppColors2.primaryColor, width: 1.5),
                                 shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
                                         bottomRight: Radius.circular(10),
@@ -279,7 +279,7 @@ class _CategoryFormState extends State<CategoryForm> {
                             child: Text(
                               'Seleccionar Imagen',
                               style: TextStyle(
-                                color: AppColors.primaryColor.withOpacity(0.5),
+                                color: AppColors2.primaryColor.withOpacity(0.5),
                               ),
                             ),
                           ),
@@ -291,7 +291,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           child: Text(
                             '*No se ha seleccionado una imagen',
                             style: TextStyle(
-                              color: AppColors.primaryColor
+                              color: AppColors2.primaryColor
                             ),
                           ),
                         )
@@ -313,7 +313,7 @@ class _CategoryFormState extends State<CategoryForm> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors2.primaryColor, width: 2),
                       ),
                       fixedSize: Size(
                         MediaQuery.of(context).size.width * 0.5,
@@ -326,7 +326,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           fontSize:
                           MediaQuery.of(context).size.width *
                               0.055,
-                          color: AppColors.primaryColor,
+                          color: AppColors2.primaryColor,
                         )
                     )
                 ),

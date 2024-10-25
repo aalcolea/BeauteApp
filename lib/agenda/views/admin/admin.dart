@@ -149,7 +149,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
           children: [
             Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
-              color: AppColors.BgprimaryColor,
+              color: AppColors2.BgprimaryColor,
               child: Column(
                 children: [
                   Padding(
@@ -178,7 +178,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   icon: Icon(
                                     CupertinoIcons.back,
                                     size: MediaQuery.of(context).size.width * 0.08,
-                                    color: AppColors.primaryColor,
+                                    color: AppColors2.primaryColor,
                                   )),
                             ),
                             Text(
@@ -190,7 +190,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   ? 'Para hoy'
                                   : '',
                               style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 fontSize: screenWidth! < 370.00
                                     ? MediaQuery.of(context).size.width * 0.078
                                     : MediaQuery.of(context).size.width * 0.082,
@@ -213,7 +213,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               icon: Icon(
                                 CupertinoIcons.calendar_today,
                                 size: MediaQuery.of(context).size.width * 0.095,
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                               ),
                             ),
                             Builder(builder: (BuildContext context){
@@ -223,7 +223,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 },
                                 icon: SvgPicture.asset(
                                   'assets/imgLog/navBar.svg',
-                                  colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                                  colorFilter: const ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.105,
                                 ),);
                             }),
@@ -240,7 +240,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             : MediaQuery.of(context).size.width * 0.0,
                       ),
                       decoration: BoxDecoration(
-                          color: AppColors.BgprimaryColor,
+                          color: AppColors2.BgprimaryColor,
                           borderRadius: BorderRadius.only(
                               topLeft: _selectedScreen == 4
                                   ? const Radius.circular(15)
@@ -253,7 +253,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           border: _selectedScreen != 4
                               ? const Border(
                               bottom: BorderSide(
-                                color: AppColors.primaryColor,
+                                color: AppColors2.primaryColor,
                                 width: 2.5,
                               ))
                               : null,
@@ -286,7 +286,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               : MediaQuery.of(context).size.width * 0.0,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.BgprimaryColor,
+                          color: AppColors2.BgprimaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: _buildBody(),
@@ -325,8 +325,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                         ? CupertinoIcons.calendar
                                         : CupertinoIcons.calendar,
                                     color: _selectedScreen == 1
-                                        ? AppColors.primaryColor
-                                        : AppColors.primaryColor.withOpacity(0.2),
+                                        ? AppColors2.primaryColor
+                                        : AppColors2.primaryColor.withOpacity(0.2),
                                     size: MediaQuery.of(context).size.width * 0.12,
                                   ),
                                 ),
@@ -335,15 +335,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
+                              backgroundColor: AppColors2.primaryColor,
                               padding: EdgeInsets.symmetric(
                                   horizontal:
                                   MediaQuery.of(context).size.width * 0.06),
-                              surfaceTintColor: AppColors.primaryColor,
+                              surfaceTintColor: AppColors2.primaryColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                                 side: const BorderSide(
-                                    color: AppColors.primaryColor, width: 2),
+                                    color: AppColors2.primaryColor, width: 2),
                               ),
                             ),
                             onPressed: () {
@@ -385,8 +385,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                     _selectedScreen == 3 ?
                                     CupertinoIcons.person_fill :CupertinoIcons.person,
                                     color: _selectedScreen == 3
-                                        ? AppColors.primaryColor
-                                        : AppColors.primaryColor.withOpacity(0.2),
+                                        ? AppColors2.primaryColor
+                                        : AppColors2.primaryColor.withOpacity(0.2),
                                     size: MediaQuery.of(context).size.width * 0.11,
                                   ),
                                 ),

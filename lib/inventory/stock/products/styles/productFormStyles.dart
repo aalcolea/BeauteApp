@@ -16,7 +16,7 @@ class TitleContainer extends StatelessWidget {
     this.margin,
     this.alignment = Alignment.centerLeft,
     this.decoration = const BoxDecoration(
-      color: AppColors.primaryColor,
+      color: AppColors2.primaryColor,
       borderRadius: BorderRadius.all(Radius.circular(10)),
     ),
     this.child,
@@ -72,7 +72,7 @@ class TitleModContainer extends StatelessWidget {
       padding: padding ?? defaultPadding,
       width: width ?? defaultWidth,
       decoration: const BoxDecoration(
-        color: AppColors.primaryColor,
+        color: AppColors2.primaryColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10.0),
           topRight: Radius.circular(10.0),
@@ -116,7 +116,7 @@ class TextProdField extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final defaultStyleLetterColor = TextStyle(
-        color: AppColors.primaryColor.withOpacity(0.5),
+        color: AppColors2.primaryColor.withOpacity(0.5),
     );
 
     return TextFormField(
@@ -141,7 +141,7 @@ class TextProdField extends StatelessWidget {
             bottomLeft: Radius.circular(10.0),
             bottomRight: Radius.circular(10.0),
           ),
-          borderSide: BorderSide(color: AppColors.primaryColor),
+          borderSide: BorderSide(color: AppColors2.primaryColor),
         ),
       ),
     );

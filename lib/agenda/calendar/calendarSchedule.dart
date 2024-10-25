@@ -221,7 +221,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
              margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.width * 0.035),
              decoration: BoxDecoration(
-               color: AppColors.primaryColor,
+               color: AppColors2.primaryColor,
                borderRadius: BorderRadius.circular(10),
              ),
              child: Row(
@@ -368,10 +368,10 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: AppColors.dotDr1Calendar,
+                            color: AppColors2.dotDr1Calendar,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: AppColors.multipleDrsBorde,
+                              color: AppColors2.multipleDrsBorde,
                               width: 1.0,
                             ),
                           ),
@@ -391,13 +391,13 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                       return Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            border: Border.all( color: AppColors.primaryColor, width: 2),
+                            border: Border.all( color: AppColors2.primaryColor, width: 2),
                             shape: BoxShape.circle,
                           ),
                           child: Text(
                             details.date.day.toString(),
                             style: TextStyle(
-                              color: AppColors.primaryColor,
+                              color: AppColors2.primaryColor,
                               fontSize: MediaQuery.of(context).size.width * 0.07,
                             ),
                           ),
@@ -408,7 +408,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppColors.dotDr1Calendar.withOpacity(0.3),
+                                  color: AppColors2.dotDr1Calendar.withOpacity(0.3),
                                 ),
                               ),
                               child: Stack(
@@ -418,7 +418,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                     child: Text(
                                       details.date.day.toString(),
                                       style: TextStyle(
-                                        color: isInCurrentMonth ? AppColors.tecxtCellDr1 : AppColors.lettersNotCurrentMonth.withOpacity(0.3),
+                                        color: isInCurrentMonth ? AppColors2.tecxtCellDr1 : AppColors2.lettersNotCurrentMonth.withOpacity(0.3),
                                         fontSize: MediaQuery.of(context).size.width * 0.06,
                                       ),
                                     ),
@@ -429,9 +429,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                       margin: EdgeInsets.only(
                                           bottom: MediaQuery.of(context).size.width * 0.01),
                                       decoration: BoxDecoration(
-                                          border: Border.all(color: isInCurrentMonth ? AppColors.borderDotDr1Calendar 
-                                              : AppColors.borderDotDr1Calendar.withOpacity(0.35)),
-                                          color: isInCurrentMonth ? AppColors.dotDr1Calendar : AppColors.dotDr1Calendar.withOpacity(0.35),
+                                          border: Border.all(color: isInCurrentMonth ? AppColors2.borderDotDr1Calendar 
+                                              : AppColors2.borderDotDr1Calendar.withOpacity(0.35)),
+                                          color: isInCurrentMonth ? AppColors2.dotDr1Calendar : AppColors2.dotDr1Calendar.withOpacity(0.35),
                                           //Colors.purple.withOpacity(0.35),
                                           shape: BoxShape.circle),
                                       width: MediaQuery.of(context).size.width * 0.055,
@@ -448,8 +448,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                   decoration: BoxDecoration(
                                     //Colors.blue.withOpacity(0.35),
                                     border: Border.all(
-                                      color: isInCurrentMonth ? AppColors.bordeDr2CellCalendar.withOpacity(0.5) :
-                                      AppColors.bordeDr2CellCalendar.withOpacity(0.35),
+                                      color: isInCurrentMonth ? AppColors2.bordeDr2CellCalendar.withOpacity(0.5) :
+                                      AppColors2.bordeDr2CellCalendar.withOpacity(0.35),
                                     ),
                                   ),
                                   child: Stack(
@@ -459,7 +459,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                         child: Text(
                                           details.date.day.toString(),
                                           style: TextStyle(
-                                            color: isInCurrentMonth ? AppColors.tecxtCellDr2 : AppColors.tecxtCellDr2.withOpacity(0.55),
+                                            color: isInCurrentMonth ? AppColors2.tecxtCellDr2 : AppColors2.tecxtCellDr2.withOpacity(0.55),
                                             fontSize: MediaQuery.of(context).size.width * 0.06,
                                           ),
                                         ),
@@ -471,9 +471,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                               bottom: MediaQuery.of(context).size.width * 0.01),
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                color: isInCurrentMonth ? AppColors.borderDotDr2Calendar : AppColors.borderDotDr2Calendar.withOpacity(0.6),
+                                                color: isInCurrentMonth ? AppColors2.borderDotDr2Calendar : AppColors2.borderDotDr2Calendar.withOpacity(0.6),
                                               ),
-                                              color: isInCurrentMonth ? AppColors.dotDr2Calendar.withOpacity(0.35) : AppColors.dotDr2Calendar.withOpacity(0.2),
+                                              color: isInCurrentMonth ? AppColors2.dotDr2Calendar.withOpacity(0.35) : AppColors2.dotDr2Calendar.withOpacity(0.2),
                                               shape: BoxShape.circle),
                                           width: MediaQuery.of(context).size.width * 0.055,
                                           height: MediaQuery.of(context).size.width * 0.055,
@@ -485,7 +485,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               : hasEventDoc1 && hasEventDoc2
                                   ? Container(
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: AppColors.multipleDrsBorde.withOpacity(0.35)),
+                                        border: Border.all(color: AppColors2.multipleDrsBorde.withOpacity(0.35)),
                                       ),
                                       child: Stack(
                                         children: [
@@ -494,7 +494,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                             child: Text(
                                               details.date.day.toString(),
                                               style: TextStyle(
-                                                color: AppColors.lettersMultipleDrsDate.withOpacity(0.3),
+                                                color: AppColors2.lettersMultipleDrsDate,
                                                 fontSize: MediaQuery.of(context).size.width * 0.06,
                                               ),
                                             ),
@@ -510,8 +510,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                                       bottom: MediaQuery.of(context).size.width * 0.01),
                                                   decoration: BoxDecoration(
                                                       border: Border.all(
-                                                          color: AppColors.borderDotDr1Calendar), //const Color(0xFF9C27B0)),
-                                                      color: AppColors.dotDr1Calendar,
+                                                          color: AppColors2.borderDotDr1Calendar), //const Color(0xFF9C27B0)),
+                                                      color: AppColors2.dotDr1Calendar,
                                                       shape: BoxShape.circle),
                                                   width: MediaQuery.of(context).size.width * 0.055,
                                                   height: MediaQuery.of(context).size.width * 0.055,
@@ -519,8 +519,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                                 Container(
                                                   margin: EdgeInsets.only(
                                                       bottom: MediaQuery.of(context).size.width * 0.01),
-                                                  decoration: BoxDecoration(border: Border.all(color: AppColors.borderDotDr2Calendar),//const Color(0xFF8AB6DD),),
-                                                      color: AppColors.dotDr2Calendar.withOpacity(0.35),
+                                                  decoration: BoxDecoration(border: Border.all(color: AppColors2.borderDotDr2Calendar),//const Color(0xFF8AB6DD),),
+                                                      color: AppColors2.dotDr2Calendar.withOpacity(0.35),
                                                       shape: BoxShape.circle),
                                                   width: MediaQuery.of(context).size.width * 0.055,
                                                   height: MediaQuery.of(context).size.width * 0.055,
@@ -534,9 +534,9 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                       width: null,
                                       height: null,
                                       decoration: BoxDecoration(
-                                        color: AppColors.calendarBg,
+                                        color: AppColors2.calendarBg,
                                         border: Border.all(
-                                          color: AppColors.calendarBorder,
+                                          color: AppColors2.calendarBorder,
                                           width: 0.2,
                                         ),
                                       ),
@@ -545,8 +545,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                           details.date.day.toString(),
                                           style: TextStyle(
                                             color: isInCurrentMonth
-                                                ? AppColors.lettersCurrentMonth
-                                                : AppColors.lettersNotCurrentMonth.withOpacity(0.3),
+                                                ? AppColors2.lettersCurrentMonth
+                                                : AppColors2.lettersNotCurrentMonth,
                                             fontSize: MediaQuery.of(context).size.width * 0.055,
                                           ),
                                         ),
