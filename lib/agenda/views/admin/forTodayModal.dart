@@ -162,7 +162,7 @@ class _FortodaymodalState extends State<Fortodaymodal> with SingleTickerProvider
                     bottom: MediaQuery.of(context).size.width * 0.25,
                   ),
                   decoration: const BoxDecoration(
-                    color: AppColors2.BgprimaryColor,
+                    color: AppColors3.whiteColor,
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
                       bottomRight: Radius.circular(15),
@@ -194,7 +194,7 @@ class _FortodaymodalState extends State<Fortodaymodal> with SingleTickerProvider
                         },
                         child: Container(
                           decoration: const BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors3.whiteColor,
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(15),
                               bottomRight: Radius.circular(15),
@@ -209,7 +209,7 @@ class _FortodaymodalState extends State<Fortodaymodal> with SingleTickerProvider
                               icon: Icon(
                                 CupertinoIcons.chevron_compact_up,
                                 size: MediaQuery.of(context).size.width * 0.15,
-                                color: Colors.black54,
+                                color: AppColors3.blackColor.withOpacity(0.5),
                               ))))
                 ])),
             builder: (context, modal) {

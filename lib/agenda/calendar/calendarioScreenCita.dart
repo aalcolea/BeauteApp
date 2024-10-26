@@ -83,7 +83,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
             IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_rounded,
-                color: AppColors2.primaryColor,
+                color: AppColors3.primaryColor,
                 size: MediaQuery.of(context).size.width * 0.07,
               ),
               onPressed: () {
@@ -109,7 +109,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
             IconButton(
               icon: Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: AppColors2.primaryColor,
+                color: AppColors3.primaryColor,
                 size: MediaQuery.of(context).size.width * 0.07,
               ),
               onPressed: () {
@@ -130,7 +130,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
           child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(0),
-                border: Border.all(color: Colors.grey, width: 1.2),
+                border: Border.all(color: AppColors3.greyColor, width: 1.2),
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(0),
@@ -184,10 +184,10 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                               width: null,
                               height: null,
                               decoration: BoxDecoration(
-                                color: Colors.purple[100],
+                                color: AppColors3.primaryColor,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.purple,
+                                  color: AppColors3.blackColor,
                                   width: 1.0,
                                 ),
                               ),
@@ -195,7 +195,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                 child: Text(
                                   details.date.day.toString(),
                                   style: TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors3.whiteColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.05,
@@ -209,10 +209,10 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                             width: null,
                             height: null,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors3.whiteColor,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.purple,
+                                color: AppColors3.secundaryColor,
                                 width: 1.0,
                               ),
                             ),
@@ -220,7 +220,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                               child: Text(
                                 details.date.day.toString(),
                                 style: TextStyle(
-                                  color: AppColors2.primaryColor,
+                                  color: AppColors3.primaryColor,
                                   fontSize:
                                       MediaQuery.of(context).size.width * 0.05,
                                 ),
@@ -231,9 +231,9 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                           return Center(
                               child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: AppColors3.whiteColor,
                                     border: Border.all(
-                                      color: Colors.grey,
+                                      color: AppColors3.greyColor,
                                       width: 0.2,
                                     ),
                                   ),
@@ -242,7 +242,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                           style: TextStyle(
                                             color: isInCurrentMonth
                                                 ? const Color(0xFF72A5D0)
-                                                : const Color(0xFFC5B6CD),
+                                                : AppColors3.secundaryColor,
                                             fontSize: MediaQuery.of(context)
                                                     .size
                                                     .width *

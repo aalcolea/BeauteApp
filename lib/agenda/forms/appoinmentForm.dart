@@ -417,7 +417,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
         onBackPressed(didPop);
       },
       child: Scaffold(
-        backgroundColor: AppColors2.BgprimaryColor,
+        backgroundColor: AppColors3.whiteColor,
         body: Form(
           child: Stack(
             children: [
@@ -425,7 +425,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                 physics: visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppColors3.whiteColor,
                     pinned: true,
                     leadingWidth: MediaQuery.of(context).size.width,
                     leading: Container(
@@ -445,7 +445,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                       icon: Icon(
                                         CupertinoIcons.back,
                                         size: MediaQuery.of(context).size.width * 0.08,
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                       ),
                                     ),
                                     Text(
@@ -453,7 +453,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                         style: TextStyle(
                                           fontSize: MediaQuery.of(context).size.width * 0.095,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors2.primaryColor,
+                                          color: AppColors3.primaryColor,
                                         ))
                                   ])
                             ])),
@@ -468,7 +468,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               child: Text(
                                 'Doctor: ',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors3.whiteColor,
                                   fontSize: MediaQuery.of(context).size.width * 0.045,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -489,28 +489,28 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                       borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                         width: 1,
                                       )
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                       borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                         width: 1,
                                       )
                                   ),
                                   focusedBorder:  OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                       borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                         width: 1,
                                       )
                                   ),
                                   suffixIcon: Icon(
                                     Icons.arrow_drop_down_circle_outlined,
                                     size: MediaQuery.of(context).size.width * 0.085,
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors3.primaryColor,
                                   ),
                                 ),
                                 readOnly: true,
@@ -540,7 +540,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                           TitleContainer(
                             child: Text('Cliente:',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors3.whiteColor,
                                 fontSize: MediaQuery.of(context).size.width * 0.045,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -579,7 +579,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                   labelText: 'Cliente',
                                   suffixIcon: Icon(
                                     CupertinoIcons.person,
-                                    color: widget.nameClient != null ? Colors.grey : AppColors2.primaryColor,
+                                    color: widget.nameClient != null ? AppColors3.greyColor : AppColors3.primaryColor,
                                     size: MediaQuery.of(context).size.width * 0.075,
                                   ),
                                   controller: widget.nameClient != null ? _clientTextController : fieldTextEditingController,
@@ -606,7 +606,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                           TitleContainer(
                             child: Text('Fecha:',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors3.whiteColor,
                                 fontSize: MediaQuery.of(context).size.width * 0.045,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -626,8 +626,8 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               suffixIcon: Icon(
                                 Icons.calendar_today,
                                 color: drFieldDone && clientFieldDone && widget.dateFromCalendarSchedule == null
-                                    ? AppColors2.primaryColor : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
-                                AppColors2.primaryColor : AppColors2.primaryColor.withOpacity(0.3),
+                                    ? AppColors3.primaryColor : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
+                                AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
                                 size: MediaQuery.of(context).size.width * 0.07,
                               ),
                               onTap: () {
@@ -646,7 +646,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                             child: Text(
                               'Hora:',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors3.whiteColor,
                                 fontSize: MediaQuery.of(context).size.width * 0.045,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -664,7 +664,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               suffixIcon: Icon(
                                 Icons.access_time,
                                 color: _dateController.text.isNotEmpty
-                                    ? AppColors2.primaryColor : AppColors2.primaryColor.withOpacity(0.3),
+                                    ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
                                 size: MediaQuery.of(context).size.width * 0.075,
                               ),
                               onTap: () {
@@ -682,7 +682,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                             child: Text(
                               'Tratamiento:',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors3.whiteColor,
                                 fontSize:
                                 MediaQuery.of(context).size.width *
                                     0.045,
@@ -702,8 +702,8 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                 CupertinoIcons.pencil_ellipsis_rectangle,
                                 size: MediaQuery.of(context).size.width *
                                     0.085,
-                                color: _timeController.text.isNotEmpty && isHourCorrect ? AppColors2.primaryColor
-                                    : AppColors2.primaryColor.withOpacity(0.3),
+                                color: _timeController.text.isNotEmpty && isHourCorrect ? AppColors3.primaryColor
+                                    : AppColors3.primaryColor.withOpacity(0.3),
                               ),
                               eneabled: _timeController.text.isNotEmpty && isHourCorrect ? true : false,
                               labelText: 'Tratamiento',
@@ -714,7 +714,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                           Row(
                             children: [
                               Checkbox(
-                                checkColor: Colors.white,
+                                checkColor: AppColors3.whiteColor,
                                 value: saveNewClient,
                                 onChanged: clientInDB == null || clientInDB == true ? null : (bool? value) {
                                   setState(() {
@@ -725,7 +725,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                         (states) {
                                           if (states
                                               .contains(WidgetState.selected)) {
-                                            return AppColors2.primaryColor;
+                                            return AppColors3.primaryColor;
                                           } else {
                                             return Colors.transparent;
                                           }
@@ -743,8 +743,8 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                   style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width * 0.045,
                                     color: clientInDB == null || clientInDB == true
-                                        ? AppColors2.primaryColor.withOpacity(0.3)
-                                        : AppColors2.primaryColor,
+                                        ? AppColors3.primaryColor.withOpacity(0.3)
+                                        : AppColors3.primaryColor,
                                   ),
                                 ),
                               ),
@@ -755,7 +755,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                 ? submitAppointment :  isLoading == false && saveNewClient && treatmentController.text.isNotEmpty && isHourCorrect && _clientTextController.text.isNotEmpty
                                 ? addClientAndSubmitAppointment : null,
                             style: ElevatedButton.styleFrom(
-                              surfaceTintColor: Colors.white,
+                              surfaceTintColor: AppColors3.whiteColor,
                               splashFactory: InkRipple.splashFactory,
                               padding: EdgeInsets.symmetric(
                                   vertical: MediaQuery.of(context).size.height * 0.0225,
@@ -763,17 +763,17 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25.0),
                                 side: BorderSide(
-                                    color: treatmentController.text.isNotEmpty ? AppColors2.primaryColor : AppColors2.primaryColor.withOpacity(0.3),
+                                    color: treatmentController.text.isNotEmpty ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
                                     width: 2),
                               ),
                             ),
                             child: isLoading ? const CircularProgressIndicator(
-                              color: AppColors2.primaryColor,
+                              color: AppColors3.primaryColor,
                             ) : Text(
                                 'Crear cita',
                                 style: TextStyle(
                                   fontSize: MediaQuery.of(context).size.width * 0.06,
-                                  color: AppColors2.primaryColor,
+                                  color: AppColors3.primaryColor,
                                 )),)
                         ])
                   )
@@ -787,7 +787,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                       child: Container(
-                        color: Colors.black54.withOpacity(0.27),
+                        color: AppColors3.blackColor.withOpacity(0.27),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -796,7 +796,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               child: Text(
                                 'Hora:',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors3.whiteColor,
                                   fontSize:
                                   MediaQuery.of(context).size.width * 0.045,
                                   fontWeight: FontWeight.bold,
@@ -805,7 +805,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                             ),
                             FieldsPading(
                               child: FieldsToWrite(
-                                fillColor: AppColors2.BgprimaryColor,
+                                fillColor: AppColors3.whiteColor,
                                 labelText: 'HH:MM',
                                 readOnly: true,
                                 controller: _timeController,
@@ -829,8 +829,8 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               height: MediaQuery.of(context).size.height * 0.35,
                               decoration: BoxDecoration(
                                 border:
-                                Border.all(color: Colors.black54, width: 0.5),
-                                color: Colors.white,
+                                Border.all(color: AppColors3.blackColor.withOpacity(0.5), width: 0.5),
+                                color: AppColors3.whiteColor,
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: TimerFly(onTimeChoose: _onTimeChoose),
@@ -853,7 +853,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                       child: Container(
                         padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.022),
-                        color: Colors.black54.withOpacity(0.27),
+                        color: AppColors3.blackColor.withOpacity(0.27),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -861,7 +861,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                               child: Text(
                                 'Fecha:',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors3.whiteColor,
                                   fontSize: MediaQuery.of(context).size.width * 0.045,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -872,7 +872,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                   vertical: MediaQuery.of(context).size.width * 0.02,
                                   horizontal: MediaQuery.of(context).size.width * 0.02),
                               child: FieldsToWrite(
-                                fillColor: AppColors2.BgprimaryColor,
+                                fillColor: AppColors3.whiteColor,
                                 readOnly: true,
                                 labelText: 'DD/M/AAAA',
                                 controller: _dateController,
@@ -903,7 +903,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                   child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                       child: Container(
-                        color: Colors.black54.withOpacity(0.27),
+                        color: AppColors3.blackColor.withOpacity(0.27),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height,
@@ -918,7 +918,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                 child: Text(
                                   'Doctor: ',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors3.whiteColor,
                                     fontSize: MediaQuery.of(context).size.width * 0.045,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -932,7 +932,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                 child: TextFormField(
                                   controller: _drSelected,
                                   decoration: InputDecoration(
-                                    fillColor: AppColors2.BgprimaryColor,
+                                    fillColor: AppColors3.whiteColor,
                                     filled: true,
                                     hintText: 'Seleccione una opción...',
                                     contentPadding: EdgeInsets.symmetric(
@@ -944,12 +944,12 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                                     suffixIcon: Icon(
                                       Icons.arrow_drop_down_circle_outlined,
                                       size: MediaQuery.of(context).size.width * 0.085,
-                                      color: AppColors2.primaryColor,
+                                      color: AppColors3.primaryColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                       borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                         width: 1,
                                       ),
                                     ),
@@ -980,7 +980,7 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
                 child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                     child: Container(
-                      color: Colors.black54.withOpacity(0.27),
+                      color: AppColors3.blackColor.withOpacity(0.27),
                     )),
               ),
             ]))));

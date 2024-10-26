@@ -50,5 +50,14 @@ class AppColors2 {
   static const Color dotmultipleDrs = Colors.deepPurple;
   static const Color calendarBorder = Colors.grey;
   static const Color calendarBg = Colors.white;
-
+}
+class AppColors3 {
+  static const Color primaryColor = Colors.blueGrey;
+  static const Color secundaryColor = Color(0xFFCFD8DC);
+  static const Color thirdColor = Color(0xFF757575);
+  static const Color bgColor = Colors.white;
+  static const Color blackColor = Colors.black;
+  static const Color whiteColor = Colors.white;
+  static const Color redDelete = Color(0xFFBC1313);
+  static const Color greyColor = Colors.grey;
 }
