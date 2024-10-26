@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:beaute_app/inventory/sellpoint/processStuff/services/salesServices.dart';
+import 'package:beaute_app/inventory/sellpoint/processStuff/utils/sales/calendarSales.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +18,10 @@ class SalesHistory extends StatefulWidget {
   State<SalesHistory> createState() => _SalesHistoryState();
 }
 
-class _SalesHistoryState extends State<SalesHistory> {
+class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderStateMixin {
 
+  late AnimationController animationController;
+  late Animation<double> opacidad;
   late String formattedDate;
   late KeyboardVisibilityManager keyboardVisibilityManager;
   //
@@ -39,10 +42,13 @@ class _SalesHistoryState extends State<SalesHistory> {
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
     setState(() {
+      animationController.reverse().then((_){
+        showBlurr = showCalendar;
+        animationController.reset();
+      });
       DateTime parsedDate = DateTime.parse(dateToAppointmentForm);
       String formattedDate = DateFormat('dd-MM-yyyy').format(parsedDate);
       dateController.text = formattedDate;
-      showBlurr = showCalendar;
     });
   }
 
@@ -68,6 +74,13 @@ class _SalesHistoryState extends State<SalesHistory> {
   @override
   void initState() {
     // TODO: implement initState
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+    opacidad = Tween(begin: 0.0, end:  1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
+    animationController.addListener((){
+      setState(() {
+        print('stat ${animationController.status}');
+      });
+    });
     keyboardVisibilityManager = KeyboardVisibilityManager();
     super.initState();
     DateTime now = DateTime.now();
@@ -142,9 +155,10 @@ class _SalesHistoryState extends State<SalesHistory> {
                                 color: AppColors2.calendarBg,
                               ),
                               margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
-                              width: MediaQuery.of(context).size.width * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.32,
                               height: MediaQuery.of(context).size.width * 0.105,
                               child: TextFormField(
+                                enableInteractiveSelection: false,
                                 readOnly: true,
                                 controller: dateController,
                                 focusNode: dateNode,
@@ -171,13 +185,13 @@ class _SalesHistoryState extends State<SalesHistory> {
                                 ),
                                 style: TextStyle(
                                   color: AppColors2.primaryColor,
-                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                  fontSize: MediaQuery.of(context).size.width * 0.04,
                                 ),
                                 onTap: (){
                                   setState(() {
-                                    print('tap');
                                     showBlurr = true;
                                     blurShowed = 1;
+                                    animationController.forward();
                                   });
                                 },
                               ),
@@ -219,7 +233,7 @@ class _SalesHistoryState extends State<SalesHistory> {
                                   ),
                                   style: TextStyle(
                                     color: AppColors2.primaryColor,
-                                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                                    fontSize: MediaQuery.of(context).size.width * 0.0425,
                                   ),
                                 ),
                               )
@@ -262,82 +276,58 @@ class _SalesHistoryState extends State<SalesHistory> {
               ),
             ],
           ),
-          blurShowed == 1 ? Visibility(
-            visible: showBlurr,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    showBlurr = false;
-                  });
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.black54.withOpacity(0.3),
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.width * 0.2943,
-                        bottom: MediaQuery.of(context).size.width * 0.03,
-                        left: MediaQuery.of(context).size.width * 0.03,
-                        right: MediaQuery.of(context).size.width * 0.03,
+          blurShowed == 1 ? AnimatedBuilder(
+              animation: animationController,
+              child: Visibility(
+                visible: showBlurr,
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      animationController.reverse().then((_){
+                        showBlurr = false;
+                        animationController.reset();
+                      });
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black54.withOpacity(0.3),
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                          padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.width * 0.25,
+                            bottom: MediaQuery.of(context).size.width * 0.03,
+                            left: MediaQuery.of(context).size.width * 0.02,
+                            right: MediaQuery.of(context).size.width * 0.02,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.03),
+                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height * 0.45,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.transparent, width: 2.0),
+                                  color: const Color(0xFF7BBABA),
+                                  borderRadius: BorderRadius.circular(10),
+                                ), child: SalesCalendar(
+                                onDayToAppointFormSelected: _onDateToAppointmentForm, dateInit: dateController.text),
+                              ),
+                            ],
+                          )
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            readOnly: true,
-                            controller: dateController,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              constraints: BoxConstraints(
-                                  maxHeight: MediaQuery.of(context).size.width * 0.105,
-                                  maxWidth: MediaQuery.of(context).size.width * 0.25
-                              ),
-                              floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
-                              hintText: 'DD-MM-AAAA',
-                              hintStyle: TextStyle(
-                                color: AppColors2.primaryColor,
-                                fontSize: MediaQuery.of(context).size.width * 0.03,
-                              ),
-                              filled: true,
-                              border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                borderSide: BorderSide(color: AppColors2.primaryColor, width: 2.0),
-                              ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                borderSide: BorderSide(color: AppColors2.primaryColor, width: 2.0),
-                              ),
-                            ),
-                            style: TextStyle(
-                                color: AppColors2.primaryColor,
-                                fontSize: MediaQuery.of(context).size.width * 0.035
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.03),
-                            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColors2.primaryColor, width: 2.0),
-                              color: AppColors2.calendarBg,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: CalendarioCita(
-                                onDayToAppointFormSelected: _onDateToAppointmentForm),
-                          ),
-                        ],
-                      )
+                    ),
                   ),
                 ),
               ),
-            ),
-          ) : Visibility(
+              builder: (context, selCalendarOp,){
+                return Opacity(
+                    opacity: opacidad.value,
+                    child: selCalendarOp);
+              }) : Visibility(
               visible: showBlurr,
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
