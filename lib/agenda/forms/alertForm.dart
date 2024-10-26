@@ -351,6 +351,6 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
             )
           ],
         ),
-        );
+    );
   }
 }
