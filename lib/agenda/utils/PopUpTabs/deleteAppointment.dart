@@ -69,7 +69,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                           '¿Seguro que desea eliminar esta cita?',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.075,
-                            color: AppColors2.primaryColor,
+                            color: AppColors3.primaryColor,
                           ),
                         ),
                       ),
@@ -97,7 +97,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                             ),
                             decoration: const BoxDecoration(
                               border: Border(
-                                bottom: BorderSide(color: AppColors2.primaryColor,
+                                bottom: BorderSide(color: AppColors3.primaryColor,
                                   width: 2.0,
                                 ),
                               ),
@@ -107,7 +107,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
                               style: TextStyle(
                                 fontSize:
                                 MediaQuery.of(context).size.width * 0.05,
-                                color: AppColors2.primaryColor,
+                                color: AppColors3.primaryColor,
                               ),
                             ),
                           ),

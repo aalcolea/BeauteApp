@@ -198,7 +198,7 @@ class _ClientInfoState extends State<ClientInfo> {
           children: [
             AppBar(
               leadingWidth: !editInfo ? null : 100,
-              backgroundColor: AppColors2.primaryColor,
+              backgroundColor: AppColors3.primaryColor,
               leading: !editInfo
                   ? IconButton(
                 onPressed: () {
@@ -248,7 +248,6 @@ class _ClientInfoState extends State<ClientInfo> {
                       }
                           : () {
                         setState(() {
-
                           maxLines = 2;
                           editInfo = false;
                           phoneController.text = '\n${phoneController.text}';
@@ -271,7 +270,7 @@ class _ClientInfoState extends State<ClientInfo> {
             Container(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.035),
               decoration: const BoxDecoration(
-                color: AppColors2.primaryColor,
+                color: AppColors3.primaryColor,
               ),
               child: Column(
                 children: [
@@ -284,7 +283,7 @@ class _ClientInfoState extends State<ClientInfo> {
                       child: Text(
                         initials,
                         style: TextStyle(
-                          color: AppColors2.primaryColor,
+                          color: AppColors3.primaryColor,
                             fontSize: !visibleKeyboard ? MediaQuery.of(context).size.width * 0.085 : 0),
                       ),
                     ),
@@ -312,7 +311,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                         decoration: InputDecoration(
                                           contentPadding: EdgeInsets.zero,
                                           filled: editInfo,
-                                          fillColor: AppColors2.primaryColorMoreStrong,
+                                          fillColor:  AppColors3.primaryColorMoreStrong,
                                           border: InputBorder.none,
                                           enabledBorder: InputBorder.none,
                                           focusedBorder: InputBorder.none,
@@ -356,10 +355,10 @@ class _ClientInfoState extends State<ClientInfo> {
                                   children: [
                                     Icon(FontAwesomeIcons.whatsapp,
                                       size: MediaQuery.of(context).size.width * 0.12,
-                                      color: editInfo ? AppColors2.primaryColor.withOpacity(0.3) : AppColors2.primaryColor,),
+                                      color: editInfo ? AppColors3.primaryColor.withOpacity(0.3) : AppColors3.primaryColor,),
                                     Text('Mensaje',
                                       style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.055,
-                                        color: editInfo ? AppColors2.primaryColor.withOpacity(0.3) : AppColors2.primaryColor,),),
+                                        color: editInfo ? AppColors3.primaryColor.withOpacity(0.3) : AppColors3.primaryColor,),),
                                   ],
                                 ),
                               ),
@@ -391,10 +390,10 @@ class _ClientInfoState extends State<ClientInfo> {
                                   children: [
                                     Icon(Icons.call,
                                       size: MediaQuery.of(context).size.width * 0.12,
-                                      color: editInfo ? AppColors2.primaryColor.withOpacity(0.3) : AppColors2.primaryColor,),
+                                      color: editInfo ? AppColors3.primaryColor.withOpacity(0.3) : AppColors3.primaryColor,),
                                     Text('Llamar',
                                       style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.055,
-                                        color: editInfo ? AppColors2.primaryColor.withOpacity(0.3) : AppColors2.primaryColor,),),
+                                        color: editInfo ? AppColors3.primaryColor.withOpacity(0.3) : AppColors3.primaryColor,),),
                                   ],
                                 ),
                               ),
@@ -430,10 +429,10 @@ class _ClientInfoState extends State<ClientInfo> {
                                   children: [
                                     Icon(Icons.add_card,
                                         size: MediaQuery.of(context).size.width * 0.12,
-                                        color: editInfo ? AppColors2.primaryColor.withOpacity(0.3) : AppColors2.primaryColor),
+                                        color: editInfo ? AppColors3.primaryColor.withOpacity(0.3) : AppColors3.primaryColor),
                                     Text('Crear cita',
                                       style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.055,
-                                          color: editInfo ? AppColors2.primaryColor.withOpacity(0.3) : AppColors2.primaryColor),),
+                                          color: editInfo ? AppColors3.primaryColor.withOpacity(0.3) : AppColors3.primaryColor),),
                                   ],
                                 ),
                               ),
@@ -460,19 +459,19 @@ class _ClientInfoState extends State<ClientInfo> {
                                 bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
                               decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                  border: editInfo ? null : Border.all(color: AppColors2.primaryColor,)
+                                  border: editInfo ? null : Border.all(color: AppColors3.primaryColor,)
                               ),
                               child: !editInfo ? RichText(
                                 text: TextSpan(
                                   children: [
                                     const TextSpan(
                                       text: 'No. Celular',
-                                      style: TextStyle(color: AppColors2.primaryColor,
+                                      style: TextStyle(color: AppColors3.primaryColor,
                                           fontSize: 22), // Color para "No. Celular"
                                     ),
                                     TextSpan(
                                       text: phoneController.text,
-                                      style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.3),
+                                      style: TextStyle(color: AppColors3.primaryColor.withOpacity(0.35),
                                           fontSize: 20), // Color para el texto del controlador
                                     ),
                                   ],
@@ -488,26 +487,26 @@ class _ClientInfoState extends State<ClientInfo> {
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
                                   disabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor, width: 2.0),
+                                        color: AppColors3.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   //unfocus
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor, width: 1.0),
+                                        color: AppColors3.primaryColor, width: 1.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor, width: 1),
+                                        color: AppColors3.primaryColor, width: 1),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   labelText: 'No. Celuar',
                                   labelStyle: const TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors3.primaryColor,
                                   )
                                 ),
-                                style: const TextStyle(fontSize: 20, color: AppColors2.primaryColor),
+                                style: const TextStyle(fontSize: 20, color: AppColors3.primaryColor),
                               ),
                             ),
                           ),
@@ -523,19 +522,19 @@ class _ClientInfoState extends State<ClientInfo> {
                                 bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
                               decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                  border: editInfo ? null : Border.all(color: AppColors2.primaryColor,)
+                                  border: editInfo ? null : Border.all(color: AppColors3.primaryColor,)
                               ),
                               child: !editInfo ? RichText(
                                 text: TextSpan(
                                   children: [
                                     const TextSpan(
                                       text: 'Correo electronico',
-                                      style: TextStyle(color: AppColors2.primaryColor,
+                                      style: TextStyle(color: AppColors3.primaryColor,
                                           fontSize: 22), // Color para "No. Celular"
                                     ),
                                     TextSpan(
                                       text: emailController.text,
-                                      style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.3),
+                                      style: TextStyle(color: AppColors3.primaryColor.withOpacity(0.3),
                                           fontSize: 20), // Color para el texto del controlador
                                     ),
                                   ],
@@ -547,24 +546,24 @@ class _ClientInfoState extends State<ClientInfo> {
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
                                   disabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor, width: 2.0),
+                                        color: AppColors3.primaryColor, width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   //unfocus
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor, width: 1.0),
+                                        color: AppColors3.primaryColor, width: 1.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: AppColors2.primaryColor, width: 1),
+                                        color: AppColors3.primaryColor, width: 1),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   labelText: 'Correo electronico',
-                                  labelStyle: const TextStyle(color: AppColors2.primaryColor),
+                                  labelStyle: const TextStyle(color: AppColors3.primaryColor),
                                 ),
-                                style: const TextStyle(fontSize: 20, color: AppColors2.primaryColor,),
+                                style: const TextStyle(fontSize: 20, color: AppColors3.primaryColor,),
                               ),
                             ),
                           ),
@@ -582,14 +581,14 @@ class _ClientInfoState extends State<ClientInfo> {
                               bottom: editInfo ? 0 : MediaQuery.of(context).size.width * 0.03,),
                             decoration: BoxDecoration(
                                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                border: Border.all(color: AppColors2.primaryColor,)
+                                border: Border.all(color: AppColors3.primaryColor,)
                             ),
                             child:Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
                                   'Citas',
-                                  style: TextStyle(color: AppColors2.primaryColor, fontSize: 22),
+                                  style: TextStyle(color: AppColors3.primaryColor, fontSize: 22),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -597,14 +596,14 @@ class _ClientInfoState extends State<ClientInfo> {
                                     Text(
                                       'Próxima: ',
                                       style: TextStyle(
-                                        color: AppColors2.primaryColor.withOpacity(0.3),
+                                        color: AppColors3.primaryColor.withOpacity(0.3),
                                         fontSize: 20,
                                       ),
                                     ),
                                     Text(
                                       appointmentData?['appointment_date'] ?? 'No hay cita proxima',
                                       style: const TextStyle(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                         fontSize: 20,
                                       ),
                                     ),
@@ -616,14 +615,14 @@ class _ClientInfoState extends State<ClientInfo> {
                                     Text(
                                       'Cant. de citas:',
                                       style: TextStyle(
-                                        color: AppColors2.primaryColor.withOpacity(0.3),
+                                        color: AppColors3.primaryColor.withOpacity(0.3),
                                         fontSize: 20,
                                       ),
                                     ),
                                     Text(
                                       appointmentData?['visit_count']?.toString() ?? '0',
                                       style: const TextStyle(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors3.primaryColor,
                                         fontSize: 20,
                                       ),
                                     ),
@@ -641,7 +640,7 @@ class _ClientInfoState extends State<ClientInfo> {
                           width: MediaQuery.of(context).size.width,
                           child:  ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              side: const BorderSide(color: AppColors2.primaryColor,),
+                              side: const BorderSide(color: AppColors3.primaryColor,),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
