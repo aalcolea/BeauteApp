@@ -35,7 +35,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.07,
-                        color: AppColors2.primaryColor,
+                        color: AppColors3.primaryColor,
                       ),
                     ),
                   ),
@@ -90,7 +90,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                           decoration: const BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: AppColors2.primaryColor,
+                                color: AppColors3.primaryColor,
                                 width: 2.5,
                               ),
                             ),
@@ -99,7 +99,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                             'Eliminar',
                             style: TextStyle(
                               fontSize: MediaQuery.of(context).size.width * 0.05,
-                              color: AppColors2.primaryColor,
+                              color: AppColors3.primaryColor,
                             ),
                           ),
                         ),

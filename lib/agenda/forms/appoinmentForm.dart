@@ -20,7 +20,6 @@ import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
 import '../utils/timer.dart';
 
-
 class AppointmentForm extends StatefulWidget {
   final bool docLog;
   final String? dateFromCalendarSchedule;
@@ -255,8 +254,16 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
         isHourCorrect = false;
         _timeController.text = 'Seleccione hora válida';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pueden seleccionar horarios pasados'),
+          SnackBar(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width * 0.08,
+              bottom: MediaQuery.of(context).size.width * 0.08,
+              left: MediaQuery.of(context).size.width * 0.02,
+            ),
+            content: Text('No se pueden seleccionar horarios pasados',
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.045
+            ),),
           ),
         );
       } else {
@@ -393,7 +400,6 @@ class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProv
     }
     animationController.addListener((){
       setState(() {
-        print('stat ${animationController.status}');
       });
     });
   }

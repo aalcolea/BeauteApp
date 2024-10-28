@@ -104,7 +104,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.07,
-                  color: const Color(0xFF72A5D0)),
+                  color: AppColors3.primaryColor),
             ),
             IconButton(
               icon: Icon(
@@ -147,7 +147,16 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                           if (selectedDate.isBefore(
                               DateTime(now.year, now.month, now.day))) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('No se pueden seleccionar fechas pasadas')),
+                              SnackBar(
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.width * 0.08,
+                                      bottom: MediaQuery.of(context).size.width * 0.08,
+                                      left: MediaQuery.of(context).size.width * 0.02,
+                                  ),
+                                  content: Text('No se pueden seleccionar fechas pasadas',
+                                  style: TextStyle(
+                                      color: AppColors3.whiteColor,
+                                      fontSize: MediaQuery.of(context).size.width * 0.045),)),
                             );
                           } else {
                             String dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate);

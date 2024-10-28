@@ -165,7 +165,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.08,
                             fontWeight: FontWeight.bold,
-                            color: AppColors2.primaryColor,
+                            color: AppColors3.primaryColor,
                           ),
                         ),),
 
@@ -176,7 +176,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                 Navigator.pop(context);
                               });
                             },
-                            icon: const Icon(Icons.close, color: AppColors2.primaryColor)
+                            icon: const Icon(Icons.close, color: AppColors3.primaryColor)
                         ),
                       ],
                     ),
@@ -199,7 +199,7 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                             width: MediaQuery.of(context).size.width,
                                             decoration: const BoxDecoration(
-                                              color: AppColors2.primaryColor,
+                                              color: AppColors3.primaryColor,
                                               borderRadius: BorderRadius.all(Radius.circular(10)),
                                             ),
                                             child: Text('Doctor:', style: TextStyle(
@@ -223,19 +223,19 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                               border: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
                                                   borderSide: const BorderSide(
-                                                      color: AppColors2.primaryColor)),
+                                                      color: AppColors3.primaryColor)),
                                               enabledBorder: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
-                                                  borderSide: const BorderSide(color: AppColors2.primaryColor)),
+                                                  borderSide: const BorderSide(color: AppColors3.primaryColor)),
                                               focusedBorder: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
-                                                  borderSide: const BorderSide(color: AppColors2.primaryColor, width: 1.5),),
+                                                  borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),),
                                                 suffixIcon: AnimatedBuilder(
                                                   animation: animationController,
                                                   child: Icon(
                                                     Icons.arrow_drop_down_circle_outlined,
                                                     size: MediaQuery.of(context).size.width * 0.085,
-                                                    color: AppColors2.primaryColor,
+                                                    color: AppColors3.primaryColor,
                                                   ),
                                                   builder: (context, iconToRotate){
                                                     return Transform.rotate(angle: rotate.value, child:  iconToRotate,);
@@ -260,18 +260,18 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                             },
                                           ),
                                         ),
-                                        AnimatedContainer(duration: Duration(milliseconds: 85),
+                                        AnimatedContainer(duration: const Duration(milliseconds: 85),
                                           margin: EdgeInsets.only(bottom: _showdrChooseWidget ? MediaQuery.of(context).size.width * 0.02 : 0),
                                           height: _showdrChooseWidget ? 94 : 0,
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           clipBehavior: Clip.hardEdge, // Recort
                                           child: DoctorsMenu(onAssignedDoctor: _onAssignedDoctor, optSelectedToRecieve: _optSelected),
                                         ),
                                         Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                             width: MediaQuery.of(context).size.width,
-                                            decoration: BoxDecoration(
-                                              color: AppColors2.primaryColor,
+                                            decoration: const BoxDecoration(
+                                              color: AppColors3.primaryColor,
                                               borderRadius: BorderRadius.all(Radius.circular(10)),
                                             ),
                                             child: Text('Mensaje:', style: TextStyle(
@@ -317,18 +317,18 @@ class _AlertFormState extends State<AlertForm> with SingleTickerProviderStateMix
                                                   onPressed: () {
                                                     sendNotification(_optSelected);
                                                   },
-                                                  child: Text('Mandar Alerta',
-                                                    style: TextStyle(
-                                                        fontSize: 20
-                                                    ),),
                                                   style: ElevatedButton.styleFrom(
                                                     padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.04),
                                                     backgroundColor: Colors.white,
-                                                    side: BorderSide(color: Color(0XFF4F2263), width: 1.5),
+                                                    side: const BorderSide(color: Color(0XFF4F2263), width: 1.5),
                                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                                     elevation: 5.0,
                                                     shadowColor: Colors.black54,
                                                   ),
+                                                  child: const Text('Mandar Alerta',
+                                                    style: TextStyle(
+                                                        fontSize: 20
+                                                    ),),
                                                 ),
                                               ),
                                             ],
