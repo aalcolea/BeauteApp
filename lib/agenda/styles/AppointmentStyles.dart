@@ -202,7 +202,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                           )
                         : SvgPicture.asset(
                             'assets/imgLog/docVector2.svg',
-                              colorFilter: const ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn),
+                              colorFilter: const ColorFilter.mode(AppColors3.primaryColor, BlendMode.srcIn),
                             width: MediaQuery.of(context).size.width * 0.07,
                             height: MediaQuery.of(context).size.width * 0.07,
                           ),
@@ -264,7 +264,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                         )
                         : SvgPicture.asset(
                           'assets/imgLog/docVector2.svg',
-                          colorFilter: const ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn),
+                          colorFilter: const ColorFilter.mode(AppColors3.primaryColor, BlendMode.srcIn),
                           width: MediaQuery.of(context).size.width * 0.07,
                           height: MediaQuery.of(context).size.width * 0.07,
                         ),

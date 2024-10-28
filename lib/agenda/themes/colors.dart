@@ -53,6 +53,7 @@ class AppColors2 {
 }
 class AppColors3 {
   static const Color primaryColor = Colors.blueGrey;
+  static const Color primaryColorMoreStrong = Color(0xFF455A64);
   static const Color secundaryColor = Color(0xFFCFD8DC);
   static const Color thirdColor = Color(0xFF757575);
   static const Color bgColor = Colors.white;
