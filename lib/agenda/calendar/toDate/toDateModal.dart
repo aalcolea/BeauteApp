@@ -252,7 +252,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-            color: Colors.white,
+            color: AppColors3.whiteColor,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -260,7 +260,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
             children: <Widget>[
               Container(
                 height: MediaQuery.of(context).size.height * 0.08,
-                color: Colors.white,
+                color: AppColors3.whiteColor,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -270,13 +270,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                       margin: EdgeInsets.only(
                           bottom: MediaQuery.of(context).size.width * 0.01),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors3.whiteColor,
                         border: Border(
                             top: BorderSide(
-                                color: Colors.grey.withOpacity(0.6),
+                                color: AppColors3.greyColor.withOpacity(0.6),
                                 width: isSelectedHelper == 0 ? 1.5 : 3.5),
                             bottom: BorderSide(
-                                color: Colors.grey.withOpacity(0.6),
+                                color: AppColors3.greyColor.withOpacity(0.6),
                                 width: isSelectedHelper == 0 ? 1.5 : 1.5)),
                         boxShadow: isSelectedHelper == 0
                             ? normallyShadowLookandFill
@@ -314,20 +314,20 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                       bottom: MediaQuery.of(context).size.width * 0.01),
                                   width: itemWidth,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: AppColors3.whiteColor,
                                     borderRadius: BorderRadius.circular(0),
                                     border: index <= 5
                                         ? Border(
                                             left: BorderSide(
-                                              color: Colors.grey.withOpacity(0.6),
+                                              color: AppColors3.greyColor.withOpacity(0.6),
                                               width: 1.5,
                                             ),
                                             top: BorderSide(
-                                              color: Colors.grey.withOpacity(0.6),
+                                              color: AppColors3.greyColor.withOpacity(0.6),
                                               width: isSelected == true ? 1 : 3.5,
                                             ),
                                             bottom: BorderSide(
-                                              color: Colors.grey.withOpacity(0.6),
+                                              color: AppColors3.greyColor.withOpacity(0.6),
                                               width: 1.5,
                                             ),
                                           )
@@ -344,8 +344,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                         DateFormat('EEE', 'es_ES').format(date).toUpperCase(),
                                         style: TextStyle(
                                           color: isSelected
-                                              ? AppColors2.primaryColor
-                                              : Colors.grey,
+                                              ? AppColors3.primaryColor
+                                              : AppColors3.greyColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
                                               ? MediaQuery.of(context).size.width * 0.057
@@ -356,8 +356,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                                         "${date.day}",
                                         style: TextStyle(
                                           color: isSelected
-                                              ? AppColors2.primaryColor
-                                              : Colors.grey,
+                                              ? AppColors3.primaryColor
+                                              : AppColors3.greyColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: isSelected
                                               ? MediaQuery.of(context).size.width * 0.051
@@ -372,18 +372,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                       margin: EdgeInsets.only(
                           bottom: MediaQuery.of(context).size.width * 0.01),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors3.whiteColor,
                         border: Border(
                           top: BorderSide(
-                              color: Colors.grey.withOpacity(0.6),
+                              color: AppColors3.greyColor.withOpacity(0.6),
                               width: isSelectedHelper == 4 ? 1.5 : 3.5),
                           bottom: BorderSide(
                             width: 1.5,
-                            color: Colors.grey.withOpacity(0.6),
+                            color: AppColors3.greyColor.withOpacity(0.6),
                           ),
                           left: BorderSide(
                             width: 1.5,
-                            color: Colors.grey.withOpacity(0.6),
+                            color: AppColors3.greyColor.withOpacity(0.6),
                           ),
                         ),
                         boxShadow: isSelectedHelper == 4
@@ -433,14 +433,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
             ///
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors2.primaryColor,
+                  backgroundColor: AppColors3.primaryColor,
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.0,
                   ),
-                  surfaceTintColor: AppColors2.primaryColor,
+                  surfaceTintColor: AppColors3.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
-                    side: BorderSide(color: lockBtn ? Colors.grey.withOpacity(0.3) : AppColors2.primaryColor, width: 2),
+                    side: BorderSide(color: lockBtn ? AppColors3.greyColor.withOpacity(0.3) : AppColors3.primaryColor, width: 2),
                   ),
                 ),
                 onPressed: lockBtn ? null : () {
@@ -455,7 +455,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
                 },
                 child: Icon(
                   CupertinoIcons.add,
-                  color: Colors.white,
+                  color: AppColors3.whiteColor,
                   size: MediaQuery.of(context).size.width * 0.09,
                 ),
               ),
@@ -520,7 +520,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
               !positionBtnIcon
                   ? CupertinoIcons.chevron_compact_up
                   : CupertinoIcons.chevron_compact_down,
-              color: _showBlurr ? Colors.grey.withOpacity(0.1) : Colors.grey,
+              color: _showBlurr ? AppColors3.greyColor.withOpacity(0.1) : AppColors3.greyColor,
               size: MediaQuery.of(context).size.width * 0.11,
             ),
           ),

@@ -151,8 +151,8 @@ class _NotiCardsState extends State<NotiCards> {
                     right: MediaQuery.of(context).size.height * 0.01),
                 decoration: BoxDecoration(
                   color: !isRead
-                      ? AppColors2.primaryColor
-                      : AppColors2.primaryColor.withOpacity(0.3),
+                      ? AppColors3.primaryColor
+                      : AppColors3.primaryColor.withOpacity(0.3),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15),
@@ -165,7 +165,7 @@ class _NotiCardsState extends State<NotiCards> {
                       '¡Cita próxima!',
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.055,
-                        color: !isRead ? Colors.white : Colors.white,
+                        color: !isRead ? AppColors3.whiteColor : AppColors3.whiteColor,
                       ),
                     ),
                     const Spacer(),
@@ -177,11 +177,11 @@ class _NotiCardsState extends State<NotiCards> {
                       ),
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: Colors.white
+                          color: AppColors3.whiteColor
                       ),
                       child: Text( widget.appointment.doctorId == 1 ? 'Doctor 1' : 'Doctor 2',
                         style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04,
-                        color: isRead ? Colors.black.withOpacity(0.3) : Colors.black),),
+                        color: isRead ? AppColors3.blackColor.withOpacity(0.3) : AppColors3.blackColor),),
                     ),),
                     Row(
                       children: [
@@ -211,7 +211,7 @@ class _NotiCardsState extends State<NotiCards> {
                                 },
                           icon: Icon(
                             isRead ? Icons.mark_email_read_outlined : Icons.markunread_mailbox_sharp,
-                            color: Colors.white,
+                            color: AppColors3.whiteColor,
                             size: MediaQuery.of(context).size.width * 0.07,
                           ))
                       ])
@@ -222,8 +222,8 @@ class _NotiCardsState extends State<NotiCards> {
                     EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                 decoration: BoxDecoration(
                   color: !isRead
-                      ? AppColors2.primaryColor.withOpacity(0.3)
-                      : AppColors2.primaryColor.withOpacity(0.1),
+                      ? AppColors3.primaryColor.withOpacity(0.3)
+                      : AppColors3.primaryColor.withOpacity(0.1),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(15),
                     bottomRight: Radius.circular(15),
@@ -238,7 +238,7 @@ class _NotiCardsState extends State<NotiCards> {
                             isToday(widget.appointment.appointmentDate!) ? 'Prepárate para tu cita de hoy.' : 'Prepárate para tu cita de mañana.',
                           style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white.withOpacity(0.75),
+                          color: !isRead ? AppColors3.blackColor : AppColors3.whiteColor.withOpacity(0.75),
                         ))
                   ]),
                   Row(
@@ -249,8 +249,8 @@ class _NotiCardsState extends State<NotiCards> {
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.04,
                             color: !isRead
-                                ? Colors.black
-                                : Colors.white.withOpacity(0.75),
+                                ? AppColors3.blackColor
+                                : AppColors3.whiteColor.withOpacity(0.75),
                           ),
                         ),
                         Text(
@@ -258,8 +258,8 @@ class _NotiCardsState extends State<NotiCards> {
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.04,
                             color: !isRead
-                                ? Colors.black
-                                : Colors.white.withOpacity(0.75),
+                                ? AppColors3.blackColor
+                                : AppColors3.whiteColor.withOpacity(0.75),
                         ))
                   ]),
                   Row(
@@ -269,7 +269,7 @@ class _NotiCardsState extends State<NotiCards> {
                           'Hora: ',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.04,
-                            color: !isRead ? Colors.black : Colors.white,
+                            color: !isRead ? AppColors3.blackColor : AppColors3.whiteColor,
                           ),
                         ),
                         Text(
@@ -278,7 +278,7 @@ class _NotiCardsState extends State<NotiCards> {
                               : 'Desconocido',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.04,
-                          color: !isRead ? Colors.black : Colors.white,
+                          color: !isRead ? AppColors3.blackColor : AppColors3.whiteColor,
                         ))
                   ])
                 ]))
