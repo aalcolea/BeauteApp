@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 
 class CategoryForm extends StatefulWidget {
 
@@ -120,11 +120,11 @@ class _CategoryFormState extends State<CategoryForm> {
             padding: EdgeInsets.only(
               left: MediaQuery.of(context).size.width * 0.02,
               right: MediaQuery.of(context).size.width * 0.02,
-              bottom: MediaQuery.of(context).size.width * 0.085,
+              bottom: MediaQuery.of(context).size.width * 0.05,
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: Colors.white,
+              color: AppColors.whiteColor,
             ),
             child: Column(
 
@@ -138,23 +138,21 @@ class _CategoryFormState extends State<CategoryForm> {
                       child: Text(
                         'Crear Categoria',
                         style: TextStyle(
-                          color: AppColors2.primaryColor,
+                          color: AppColors.primaryColor,
                           fontSize: MediaQuery.of(context).size.width * 0.075,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    Container(
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                        icon: const Icon(
-                          Icons.close,
-                          color: AppColors2.primaryColor,
-                        ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      icon: const Icon(
+                        Icons.close,
+                        color: AppColors.primaryColor,
                       ),
-                    )
+                    ),
                   ],
                 ),
                 Container(
@@ -169,13 +167,13 @@ class _CategoryFormState extends State<CategoryForm> {
                   ),
                   alignment: Alignment.centerLeft,
                   decoration: BoxDecoration(
-                    color: AppColors2.primaryColor,
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     'Nombre de la categoria:',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                       fontSize: MediaQuery.of(context).size.width * 0.05,
                       fontWeight: FontWeight.bold,
                     ),
@@ -192,10 +190,10 @@ class _CategoryFormState extends State<CategoryForm> {
                           horizontal: MediaQuery.of(context).size.width * 0.03),
                       hintText: 'Nombre de la categoria...',
                       hintStyle: TextStyle(
-                        color: AppColors2.primaryColor.withOpacity(0.5),
+                        color: AppColors.primaryColor.withOpacity(0.5),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors2.primaryColor, width: 2.0),
+                        borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       border: OutlineInputBorder(
@@ -219,8 +217,8 @@ class _CategoryFormState extends State<CategoryForm> {
                         horizontal: MediaQuery.of(context).size.width * 0.03,
                       ),
                       alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        color: AppColors2.primaryColor,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryColor,
                         borderRadius: BorderRadius.only(
                             topRight: Radius.circular(10),
                             topLeft: Radius.circular(10)
@@ -229,21 +227,21 @@ class _CategoryFormState extends State<CategoryForm> {
                       child: Text(
                         'Cargar imagen',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.whiteColor,
                           fontSize: MediaQuery.of(context).size.width * 0.05,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                     _selectedImage != null ?
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.width * 0.4,
                       child: ElevatedButton(
                         onPressed: _requestPermission,
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            side: const BorderSide(color: AppColors2.primaryColor, width: 1.5),
+                            backgroundColor: AppColors.whiteColor,
+                            side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
                             shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                     bottomRight: Radius.circular(10),
@@ -261,14 +259,14 @@ class _CategoryFormState extends State<CategoryForm> {
                     )
                     : Column(
                       children: [
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           height: MediaQuery.of(context).size.width * 0.10,
                           child: ElevatedButton(
                             onPressed: _requestPermission,
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                side: const BorderSide(color: AppColors2.primaryColor, width: 1.5),
+                                backgroundColor: AppColors.whiteColor,
+                                side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
                                 shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
                                         bottomRight: Radius.circular(10),
@@ -279,19 +277,19 @@ class _CategoryFormState extends State<CategoryForm> {
                             child: Text(
                               'Seleccionar Imagen',
                               style: TextStyle(
-                                color: AppColors2.primaryColor.withOpacity(0.5),
+                                color: AppColors.primaryColor.withOpacity(0.5),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 5),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                         Container(
                           alignment: Alignment.centerLeft,
                           padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
-                          child: Text(
+                          child: const Text(
                             '*No se ha seleccionado una imagen',
                             style: TextStyle(
-                              color: AppColors2.primaryColor
+                              color: AppColors.primaryColor
                             ),
                           ),
                         )
@@ -299,9 +297,9 @@ class _CategoryFormState extends State<CategoryForm> {
                     )
                   ],
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                 isLoading
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: createCategory,
                     style: ElevatedButton.styleFrom(
@@ -309,24 +307,24 @@ class _CategoryFormState extends State<CategoryForm> {
                       padding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.01,
                           vertical: MediaQuery.of(context).size.width * 0.0112),
-                      surfaceTintColor: Colors.white,
+                      surfaceTintColor: AppColors.whiteColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors2.primaryColor, width: 2),
+                            color: AppColors.primaryColor, width: 2),
                       ),
                       fixedSize: Size(
                         MediaQuery.of(context).size.width * 0.5,
                         MediaQuery.of(context).size.height * 0.07,
                       ),
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.whiteColor,
                     ),
-                    child: Text('Crear categoria',
+                    child: Text(
+                        'Crear categoria',
                         style: TextStyle(
                           fontSize:
-                          MediaQuery.of(context).size.width *
-                              0.055,
-                          color: AppColors2.primaryColor,
+                          MediaQuery.of(context).size.width * 0.055,
+                          color: AppColors.primaryColor,
                         )
                     )
                 ),

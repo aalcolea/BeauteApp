@@ -1,6 +1,6 @@
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketOptions.dart';
 import 'package:flutter/material.dart';
-import '../../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../../stock/products/services/productsService.dart';
 import '../services/salesServices.dart';
 
@@ -149,7 +149,7 @@ class _TicketslistState extends State<Ticketslist> {
   Widget build(BuildContext context) {
     // final groupedTickets = groupByTicket(ticketProducts);
     return Container(
-      color: AppColors2.calendarBg,
+      color: AppColors.bgColor,
       child: ListView.builder(
         padding: EdgeInsets.zero,
         itemCount: tickets.length,
@@ -158,11 +158,11 @@ class _TicketslistState extends State<Ticketslist> {
               key: ticketKeys[index],
               margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03, right: MediaQuery.of(context).size.width * 0.03, bottom: MediaQuery.of(context).size.width * 0.03),
               decoration: BoxDecoration(
-                color: AppColors2.calendarBg,
+                color: AppColors.bgColor,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black54.withOpacity(0.2),
+                    color: AppColors.blackColor.withOpacity(0.1),
                     offset: const Offset(4, 4),
                     blurRadius: 2,
                     spreadRadius: 0.1,
@@ -175,12 +175,12 @@ class _TicketslistState extends State<Ticketslist> {
                   widget.onShowBlur(2);
                 },
                 child: ExpansionTile(
-                  iconColor: AppColors2.calendarBg,
-                  collapsedIconColor: AppColors2.primaryColor,
-                  backgroundColor: AppColors2.primaryColor,
+                  iconColor: AppColors.bgColor,
+                  collapsedIconColor: AppColors.primaryColor,
+                  backgroundColor: AppColors.primaryColor,
                   collapsedBackgroundColor: Colors.transparent,
-                  textColor: AppColors2.calendarBg,
-                  collapsedTextColor: AppColors2.primaryColor,
+                  textColor: AppColors.bgColor,
+                  collapsedTextColor: AppColors.primaryColor,
                   tilePadding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.04,
                       right: MediaQuery.of(context).size.width * 0.02,
@@ -191,7 +191,7 @@ class _TicketslistState extends State<Ticketslist> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                     side: const BorderSide(
-                      color: AppColors2.primaryColor,
+                      color: AppColors.primaryColor,
                       width: 2
                     )
                   ),
@@ -259,10 +259,10 @@ class _TicketslistState extends State<Ticketslist> {
                     Container(
                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.04, top: MediaQuery.of(context).size.width * 0.04, left: MediaQuery.of(context).size.width * 0.04),
                       decoration: const BoxDecoration(
-                        color: AppColors2.calendarBg,
+                        color: AppColors.bgColor,
                         borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
                         border: Border(
-                          top: BorderSide(color: AppColors2.primaryColor, width: 2)
+                          top: BorderSide(color: AppColors.primaryColor, width: 2)
                         )
                       ),
                       child: Column(
@@ -276,7 +276,7 @@ class _TicketslistState extends State<Ticketslist> {
                                 Text(
                                   '${detalle['producto']['nombre']}',
                                   style: TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.04,
                                   ),
@@ -286,13 +286,13 @@ class _TicketslistState extends State<Ticketslist> {
                                     Text(
                                       "Cant.: ",
                                       style: TextStyle(
-                                          color: AppColors2.primaryColor,
+                                          color: AppColors.primaryColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
                                       '${detalle['cantidad']} pzs',
                                       style: TextStyle(
-                                          color: AppColors2.primaryColor,
+                                          color: AppColors.primaryColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
@@ -303,13 +303,13 @@ class _TicketslistState extends State<Ticketslist> {
                                     Text(
                                       "Precio unitario: ",
                                       style: TextStyle(
-                                          color: AppColors2.primaryColor,
+                                          color: AppColors.primaryColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
                                       '\$${detalle['precio']}',
                                       style: TextStyle(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: MediaQuery.of(context).size.width * 0.035,
                                       ),
@@ -321,13 +321,13 @@ class _TicketslistState extends State<Ticketslist> {
                                     Text(
                                       "Total: ",
                                       style: TextStyle(
-                                          color: AppColors2.primaryColor,
+                                          color: AppColors.primaryColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
                                       '\$${detalle['cantidad'] * double.parse(detalle['precio'])}',
                                       style: TextStyle(
-                                        color: AppColors2.primaryColor,
+                                        color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: MediaQuery.of(context).size.width * 0.035,
                                       ),

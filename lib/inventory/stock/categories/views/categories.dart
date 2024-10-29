@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../forms/categoryForm.dart';
 import '../../products/views/products.dart';
 import 'package:flutter/cupertino.dart';
@@ -197,157 +197,151 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     int itemsPerPage = 6;
     return Container(
-      color: AppColors2.BgprimaryColor,
+      color: AppColors.bgColor,
       child: Column(
         children: [
-          _selectedCategory == null
-              ? Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.025),
-              child: SizedBox(
-                height: 580,
-                ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && hasMoreItems) {
-                      loadItems();
-                    }
-                    return true;
-                  },
-                  child: PageView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: (items.length / itemsPerPage).ceil(),
-                      itemBuilder: (context, pageIndex) {
-                        int startIndex = pageIndex * itemsPerPage;
-                        int endIndex = startIndex + itemsPerPage;
-                        if (endIndex > items.length) {
-                          endIndex = items.length;
-                        }
-                        var currentPageItems = items.sublist(startIndex, endIndex);
-                        return GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.width * 0.01,
-                            bottom: MediaQuery.of(context).size.width * 0.01,
-                            left: MediaQuery.of(context).size.width * 0.01,
-                            right: MediaQuery.of(context).size.width * 0.01,
-                          ),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                          ),
-                          itemCount: currentPageItems.length,
-                          itemBuilder: (context, index) {
-                            var item = currentPageItems[index];
-                            return item['category'] == 'addCat' ?
-                            InkWell(
-                              onTap: () {
-                                if (isSelecting) {
+          Expanded(
+            child: SizedBox(
+              height: 580,
+              ///ENVOLVER EN NOTIFICATION DECIA GPT, AUN EN PRUEBAS
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && hasMoreItems) {
+                    loadItems();
+                  }
+                  return true;
+                },
+                child: PageView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: (items.length / itemsPerPage).ceil(),
+                    itemBuilder: (context, pageIndex) {
+                      int startIndex = pageIndex * itemsPerPage;
+                      int endIndex = startIndex + itemsPerPage;
+                      if (endIndex > items.length) {
+                        endIndex = items.length;
+                      }
+                      var currentPageItems = items.sublist(startIndex, endIndex);
+                      return GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.width * 0.02,
+                          bottom: MediaQuery.of(context).size.width * 0.01,
+                          left: MediaQuery.of(context).size.width * 0.01,
+                          right: MediaQuery.of(context).size.width * 0.01,
+                        ),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                        ),
+                        itemCount: currentPageItems.length,
+                        itemBuilder: (context, index) {
+                          var item = currentPageItems[index];
+                          return item['category'] == 'addCat' ?
+                          InkWell(
+                            onTap: () {
+                              if (isSelecting) {
 
-                                } else {
-                                  widget.onShowBlur(true);
-                                  showDialog(
-                                    context: context,
-                                    barrierColor: Colors.transparent,
-                                    builder: (BuildContext context) {
-                                      return CategoryForm();
-                                    },
-                                  ).then((_){
-                                    loadFirstItems();
-                                    widget.onShowBlur(false);
-                                  });
-                                }
-                              },
-                              child: Card(
-                                color: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: MediaQuery.of(context).size.width * 0.02,
-                                        right: MediaQuery.of(context).size.width * 0.02
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            padding: const EdgeInsets.all(1),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(10),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black54.withOpacity(0.3),
-                                                  offset: const Offset(4, 4),
-                                                  blurRadius: 5,
-                                                  spreadRadius: 0.1,
-                                                )
-                                              ],
-                                            ),
-                                            height: MediaQuery.of(context).size.width * 0.35,
-                                            width: MediaQuery.of(context).size.width * 0.5,
-                                            child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(10),
-                                                child: Icon(
-                                                  CupertinoIcons.add,
-                                                  color: AppColors2.primaryColor.withOpacity(0.3),
-                                                  size: MediaQuery.of(context).size.width * 0.15,
-                                                )
-                                            )
-                                        ),
-                                      ],
-                                    )
-                                ),
-                              ),
-                            ) : InkWell(
-                              onTap: () {
-                                selectedCategoryId = item['id'];
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => Products(selectedCategory: item['id'].toString(), onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
+                              } else {
+                                widget.onShowBlur(true);
+                                showDialog(
+                                  context: context,
+                                  barrierColor: Colors.transparent,
+                                  builder: (BuildContext context) {
+                                    return const CategoryForm();
+                                  },
+                                ).then((_){
+                                  loadFirstItems();
+                                  widget.onShowBlur(false);
+                                });
+                              }
+                            },
+                            child: Card(
+                              margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.1),
+                              color: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: MediaQuery.of(context).size.width * 0.02,
+                                    right: MediaQuery.of(context).size.width * 0.02,
                                   ),
-                                );
-                               /* setState(() {
-                                  print('here');
-                                  selectedCategoryId = item['id'];
-                                  if (isSelecting) {
-                                    if (selectedCategories.contains(item['id'].toString())) {
-                                      selectedCategories.remove(item['id'].toString());
-                                      if (selectedCategories.isEmpty) {
-                                        isSelecting = false;
-                                      }
-                                    } else {
-                                      selectedCategories.add(item['id'].toString());
-                                    }
-                                  } else {
-                                    _selectedCategory = item['category'].toString();
-                                  }
-                                });*/
-                                print("${item['category']}");
-                              },
-                              onLongPress: () {
-                                toggleSelection(item['id'].toString());
-                                print('Long Pressed on: ${item['id']}');
-                              },
-                              child: Card(
-                                  color: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: MediaQuery.of(context).size.width * 0.02,
-                                        right: MediaQuery.of(context).size.width * 0.02
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
                                           padding: const EdgeInsets.all(1),
                                           decoration: BoxDecoration(
-                                            color: Colors.white,
+                                            color: AppColors.whiteColor,
                                             borderRadius: BorderRadius.circular(10),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black54.withOpacity(0.3),
+                                                color: AppColors.blackColor.withOpacity(0.3),
+                                                offset: const Offset(4, 4),
+                                                blurRadius: 5,
+                                                spreadRadius: 0.1,
+                                              )
+                                            ],
+                                          ),
+                                          height: MediaQuery.of(context).size.width * 0.35,
+                                          width: MediaQuery.of(context).size.width * 0.5,
+                                          child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(10),
+                                              child: Icon(
+                                                CupertinoIcons.add,
+                                                color: AppColors.primaryColor.withOpacity(0.3),
+                                                size: MediaQuery.of(context).size.width * 0.15,
+                                              )
+                                          )
+                                      ),
+                                    ],
+                                  )
+                              ),
+                            ),
+                          ) : InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectedCategoryId = item['id'];
+                                if (isSelecting) {
+                                  if (selectedCategories.contains(item['id'].toString())) {
+                                    selectedCategories.remove(item['id'].toString());
+                                    if (selectedCategories.isEmpty) {
+                                      isSelecting = false;
+                                    }
+                                  } else {
+                                    selectedCategories.add(item['id'].toString());
+                                  }
+                                } else {
+                                  Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (context) => Products(selectedCategory: item['category'].toString(), onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                            onLongPress: () {
+                              toggleSelection(item['id'].toString());
+                            },
+                            child: Card(
+                                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.07),
+                                color: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width * 0.02,
+                                      right: MediaQuery.of(context).size.width * 0.02
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                          padding: const EdgeInsets.all(1),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.whiteColor,
+                                            borderRadius: BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppColors.blackColor.withOpacity(0.3),
                                                 offset: const Offset(4, 4),
                                                 blurRadius: 5,
                                                 spreadRadius: 0.1,
@@ -388,80 +382,82 @@ class _CategoriesState extends State<Categories> {
                                                   padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01, left: MediaQuery.of(context).size.width * 0.01),
                                                   alignment: Alignment.topLeft,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black54.withOpacity(0.5),
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    border: Border.all(
-                                                      color: AppColors2.primaryColor,
-                                                      width: MediaQuery.of(context).size.width * 0.01
-                                                    )
+                                                      color: AppColors.blackColor.withOpacity(0.3),
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      border: Border.all(
+                                                          color: AppColors.primaryColor,
+                                                          width: MediaQuery.of(context).size.width * 0.01
+                                                      )
                                                   ),
                                                   height: MediaQuery.of(context).size.width * 0.4,
                                                   width: MediaQuery.of(context).size.width * 0.5,
-                                                  child: Icon(
+                                                  child: const Icon(
                                                     CupertinoIcons.check_mark_circled,
-                                                    color: AppColors2.primaryColor,
+                                                    color: AppColors.primaryColor,
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           )
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Expanded(
+                                        child: Text(
+                                            "${item['category']}",
+                                            style: TextStyle(
+                                              color: AppColors.primaryColor,
+                                              fontSize: MediaQuery.of(context).size.height * 0.017,
+                                            )
                                         ),
-                                        const SizedBox(height: 8),
-                                        Expanded(
-                                          child: Text(
-                                              "${item['category']}",
-                                              style: TextStyle(
-                                                color: AppColors2.primaryColor,
-                                                fontSize: MediaQuery.of(context).size.height * 0.017,
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                              ),
-                            );
-                          },
-                        );
-                      }
-                  ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                            ),
+                          );
+                        },
+                      );
+                    }
                 ),
               ),
             ),
-          ) : Container(),/*Expanded(
-            child: Products(key: widget.productsKey, selectedCategory: _selectedCategory!, onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
-          ),*/
-          if (isSelecting) Container(
-            height: MediaQuery.of(context).size.height * 0.05,
-            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.62, bottom: MediaQuery.of(context).size.width * 0.01),
-            child: Row(
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedCategories.clear();
-                      isSelecting = false;
-                    });
-                  },
-                  backgroundColor: Colors.white,
-                  child: const Icon(Icons.cancel),
-                  heroTag: null,
-                ),
-                const SizedBox(width: 16),
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      List<String> categoriesToDelete = List.from(selectedCategories);
-                      for (String categoryId in categoriesToDelete) {
-                        deleteItem(categoryId);
-                      }
-                    });
-                  },
-                  backgroundColor: Colors.white,
-                  child: const Icon(Icons.delete, color: Colors.red,),
-                  heroTag: null,
-                ),
-              ],
+          ),
+          Visibility(
+            visible: isSelecting,
+            child: Container(
+              color: Colors.transparent,
+              height: MediaQuery.of(context).size.height * 0.05,
+              padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.04, bottom: MediaQuery.of(context).size.width * 0.01),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedCategories.clear();
+                        isSelecting = false;
+                      });
+                    },
+                    backgroundColor: AppColors.whiteColor,
+                    heroTag: null,
+                    child: const Icon(Icons.cancel, color: AppColors.primaryColor),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+                  FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        List<String> categoriesToDelete = List.from(selectedCategories);
+                        for (String categoryId in categoriesToDelete) {
+                          deleteItem(categoryId);
+                        }
+                      });
+                    },
+                    backgroundColor: AppColors.whiteColor,
+                    heroTag: null,
+                    child: const Icon(Icons.delete, color: AppColors.redDelete,),
+                  ),
+                ],
+              ),
             ),
           )
         ],

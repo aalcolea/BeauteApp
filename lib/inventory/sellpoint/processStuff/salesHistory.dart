@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../agenda/calendar/calendarioScreenCita.dart';
-import '../../../agenda/themes/colors.dart';
+import '../../themes/colors.dart';
 import '../../../regEx.dart';
 import '../../kboardVisibilityManager.dart';
 import '../processStuff/utils/salesList.dart';
@@ -105,7 +105,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
             physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
-                backgroundColor: AppColors2.calendarBg,
+                backgroundColor: AppColors.bgColor,
                 leadingWidth: MediaQuery.of(context).size.width,
                 pinned: true,
                 leading: Row(
@@ -117,7 +117,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                       icon: Icon(
                         CupertinoIcons.back,
                         size: MediaQuery.of(context).size.width * 0.08,
-                        color: AppColors2.primaryColor,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                     Row(
@@ -130,7 +130,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                             height: MediaQuery.of(context).size.width * 0.1,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(1),
-                              color: AppColors2.primaryColor.withOpacity(0.7),
+                              color: AppColors.primaryColor.withOpacity(0.7),
                             ),
                           ),
                           _buildTabButton('Ventas por dia', 1)
@@ -141,7 +141,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  color: AppColors2.calendarBg,
+                  color: AppColors.bgColor,
                   padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03, vertical: MediaQuery.of(context).size.width * 0.02),
                   child: Column(
                     children: [
@@ -152,7 +152,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
-                                color: AppColors2.calendarBg,
+                                color: AppColors.bgColor,
                               ),
                               margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
                               width: MediaQuery.of(context).size.width * 0.32,
@@ -167,24 +167,24 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
                                     hintText: selectedPage == 0 ? 'Fecha' : formattedDate,
                                   hintStyle: TextStyle(
-                                    color: AppColors2.primaryColor.withOpacity(0.3),
+                                    color: AppColors.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
                                     disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                    borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                 ),
                                 style: TextStyle(
-                                  color: AppColors2.primaryColor,
+                                  color: AppColors.primaryColor,
                                   fontSize: MediaQuery.of(context).size.width * 0.04,
                                 ),
                                 onTap: (){
@@ -200,7 +200,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  color: AppColors2.calendarBg,
+                                  color: AppColors.bgColor,
                                 ),
                                 child: TextFormField(
                                   controller: seekController,
@@ -209,30 +209,30 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                     RegEx(type: InputFormatterType.alphanumeric),
                                   ],
                                   decoration: InputDecoration(
-                                    isDense: true,
+                                    isDense: false,
                                     constraints: BoxConstraints(
                                       maxHeight: MediaQuery.of(context).size.width * 0.105,
                                     ),
                                     hintText: 'Buscar por nombre o categoria...',
                                     hintStyle: TextStyle(
-                                      color: AppColors2.primaryColor.withOpacity(0.3),
+                                      color: AppColors.primaryColor.withOpacity(0.3),
                                       fontSize: MediaQuery.of(context).size.width * 0.035,
                                     ),
                                     disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   ),
                                   style: TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors.primaryColor,
                                     fontSize: MediaQuery.of(context).size.width * 0.0425,
                                   ),
                                 ),
@@ -250,7 +250,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                             textAlign: TextAlign.left,
                             '*Productos vendidos el ${dateController.text}',
                             style: TextStyle(
-                              color: AppColors2.calendarBg,
+                              color: AppColors.bgColor,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
                             ),
                           ),
@@ -292,7 +292,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
-                      color: Colors.black54.withOpacity(0.3),
+                      color: AppColors.blackColor.withOpacity(0.1),
                       alignment: Alignment.centerLeft,
                       child: Padding(
                           padding: EdgeInsets.only(
@@ -311,7 +311,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                 height: MediaQuery.of(context).size.height * 0.45,
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.transparent, width: 2.0),
-                                  color: const Color(0xFF7BBABA),
+                                  color: AppColors.primaryColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ), child: SalesCalendar(
                                 onDayToAppointFormSelected: _onDateToAppointmentForm, dateInit: dateController.text),
@@ -341,7 +341,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    color: Colors.black54.withOpacity(0.3),
+                    color: AppColors.blackColor.withOpacity(0.1),
                     alignment: Alignment.centerLeft,
                   ),
                 ),
@@ -365,12 +365,12 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
         title,
         style: selectedPage == pageIndex
             ? TextStyle(
-          color: AppColors2.primaryColor,
+          color: AppColors.primaryColor,
           fontSize: MediaQuery.of(context).size.width * 0.06,
           fontWeight: FontWeight.bold,
         )
             : TextStyle(
-          color: AppColors2.primaryColor.withOpacity(0.2),
+          color: AppColors.primaryColor.withOpacity(0.2),
           fontSize: MediaQuery.of(context).size.width * 0.035,
           fontWeight: FontWeight.bold,
         ),

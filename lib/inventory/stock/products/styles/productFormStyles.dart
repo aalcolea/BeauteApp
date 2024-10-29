@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
@@ -16,7 +16,7 @@ class TitleContainer extends StatelessWidget {
     this.margin,
     this.alignment = Alignment.centerLeft,
     this.decoration = const BoxDecoration(
-      color: AppColors2.primaryColor,
+      color: AppColors.primaryColor,
       borderRadius: BorderRadius.all(Radius.circular(10)),
     ),
     this.child,
@@ -72,7 +72,7 @@ class TitleModContainer extends StatelessWidget {
       padding: padding ?? defaultPadding,
       width: width ?? defaultWidth,
       decoration: const BoxDecoration(
-        color: AppColors2.primaryColor,
+        color: AppColors.primaryColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10.0),
           topRight: Radius.circular(10.0),
@@ -81,7 +81,7 @@ class TitleModContainer extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           fontSize: MediaQuery.of(context).size.width * 0.045,
           fontWeight: FontWeight.bold,
         ),
@@ -116,7 +116,7 @@ class TextProdField extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final defaultStyleLetterColor = TextStyle(
-        color: AppColors2.primaryColor.withOpacity(0.5),
+        color: AppColors.primaryColor.withOpacity(0.5),
     );
 
     return TextFormField(
@@ -141,7 +141,7 @@ class TextProdField extends StatelessWidget {
             bottomLeft: Radius.circular(10.0),
             bottomRight: Radius.circular(10.0),
           ),
-          borderSide: BorderSide(color: AppColors2.primaryColor),
+          borderSide: BorderSide(color: AppColors.primaryColor),
         ),
       ),
     );

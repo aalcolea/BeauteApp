@@ -4,9 +4,7 @@ import 'package:beaute_app/inventory/stock/categories/forms/categoryBox.dart';
 import 'package:beaute_app/inventory/stock/products/styles/productFormStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../../regEx.dart';
@@ -103,13 +101,13 @@ class _ProductFormState extends State<ProductForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.whiteColor,
       body: CustomScrollView(
         physics: keyboardVisibilityManager.visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             leadingWidth: MediaQuery.of(context).size.width,
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.whiteColor,
             stretch: false,
             pinned: true,
             leading: Row(
@@ -122,7 +120,7 @@ class _ProductFormState extends State<ProductForm> {
                   icon: Icon(
                     CupertinoIcons.back,
                     size: MediaQuery.of(context).size.width * 0.08,
-                    color: AppColors2.primaryColor,
+                    color: AppColors.primaryColor,
                   ),
                 ),
                 Padding(
@@ -134,7 +132,7 @@ class _ProductFormState extends State<ProductForm> {
                           textAlign: TextAlign.start,
                           'Agregar Producto',
                         style: TextStyle(
-                          color: AppColors2.primaryColor,
+                          color: AppColors.primaryColor,
                           fontSize: screenWidth! < 370.00
                               ? MediaQuery.of(context).size.width * 0.078
                               : MediaQuery.of(context).size.width * 0.082,
@@ -164,7 +162,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Nombre del producto',
                            textStyle: const TextStyle(
-                             color: AppColors2.primaryColor,
+                             color: AppColors.primaryColor,
                            ),
                            onEditingComplete: () => changeFocus(context, nameFocus, descriptionFocus),
                          )),
@@ -186,7 +184,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Descripción del producto',
                            textStyle: const TextStyle(
-                             color: AppColors2.primaryColor,
+                             color: AppColors.primaryColor,
                            ),
                            onEditingComplete: () => changeFocus(context, descriptionFocus, precioFocus),
                          )),
@@ -209,7 +207,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Precio del producto',
                            textStyle: const TextStyle(
-                             color: AppColors2.primaryColor,
+                             color: AppColors.primaryColor,
                            ),
                            onEditingComplete: () => changeFocus(context, precioFocus, barCodeFocus),
                          )),
@@ -232,7 +230,7 @@ class _ProductFormState extends State<ProductForm> {
                            ],
                            text: 'Código de barras del producto',
                            textStyle: const TextStyle(
-                             color: AppColors2.primaryColor,
+                             color: AppColors.primaryColor,
                            ),
                          )),
                    ],
@@ -246,26 +244,25 @@ class _ProductFormState extends State<ProductForm> {
                            child: CategoryBox(formType: 1, onSelectedCat: onSelectedCat))]),
 
                  Padding(padding: EdgeInsets.only(
-                     top: MediaQuery.of(context).size.width * 0.04,
+                     top: MediaQuery.of(context).size.width * 0.07,
                      left: MediaQuery.of(context).size.width * 0.03,
                      right: MediaQuery.of(context).size.width * 0.03,
                  ),
                  child: ElevatedButton(
                    onPressed: createProduct,
                    style: ElevatedButton.styleFrom(
-                     minimumSize: Size(double.infinity, 0),
                      shape: RoundedRectangleBorder(
                        borderRadius: BorderRadius.circular(10),
                      ),
-                     backgroundColor: AppColors2.primaryColor,
+                     backgroundColor: AppColors.primaryColor,
                      padding: EdgeInsets.symmetric(
                        horizontal: MediaQuery.of(context).size.width * 0.15,
                        vertical: MediaQuery.of(context).size.width * 0.03,
                      ),
                    ), child: !isLoading ? Text('Crear Producto', style: TextStyle(
                      fontSize: MediaQuery.of(context).size.width * 0.06,
-                     color: Colors.white
-                 ),) : CircularProgressIndicator(color: Colors.white,),
+                     color: AppColors.whiteColor
+                 ),) : const CircularProgressIndicator(color: Colors.white,),
                  ),),
 
                ],
