@@ -18,7 +18,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
 
-import '../agenda/themes/colors.dart';
+import 'themes/colors.dart';
 
 class adminInv extends StatefulWidget {
   final bool docLog;
@@ -139,7 +139,7 @@ class _adminInvState extends State<adminInv> {
       body: Stack(
         children: [
           Container(
-            color: Colors.transparent,
+            color: AppColors.whiteColor,
             padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.04),
             child: Column(
@@ -163,7 +163,7 @@ class _adminInvState extends State<adminInv> {
                                 ? 'Venta'
                                 : '',
                             style: TextStyle(
-                              color: AppColors2.primaryColor,
+                              color: AppColors.primaryColor,
                               fontSize: screenWidth! < 370.00
                                   ? MediaQuery.of(context).size.width * 0.078
                                   : MediaQuery.of(context).size.width * 0.082,
@@ -191,7 +191,7 @@ class _adminInvState extends State<adminInv> {
                             },
                             icon: Icon(
                               CupertinoIcons.add_circled_solid,
-                              color: AppColors2.primaryColor,
+                              color: AppColors.primaryColor,
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
                           )),
@@ -208,7 +208,7 @@ class _adminInvState extends State<adminInv> {
                             },
                             icon: Icon(
                               CupertinoIcons.tickets,
-                              color: AppColors2.primaryColor,
+                              color: AppColors.primaryColor,
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
                           ),),
@@ -219,7 +219,7 @@ class _adminInvState extends State<adminInv> {
                               },
                               icon: SvgPicture.asset(
                                 'assets/imgLog/navBar.svg',
-                                colorFilter: const ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn),
+                                colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
                                 width: MediaQuery.of(context).size.width * 0.105,
                               ),
                             );
@@ -246,23 +246,23 @@ class _adminInvState extends State<adminInv> {
                                 contentPadding: EdgeInsets.zero,
                                 hintText: 'Buscar producto...',
                                 hintStyle: TextStyle(
-                                    color: AppColors2.primaryColor.withOpacity(0.2)
+                                    color: AppColors.primaryColor.withOpacity(0.2)
                                 ),
-                                prefixIcon: Icon(Icons.search, color: AppColors2.primaryColor.withOpacity(0.2)),
+                                prefixIcon: Icon(Icons.search, color: AppColors.primaryColor.withOpacity(0.2)),
                                 suffixIcon: InkWell(
                                     onTap: () {
                                       setState(() {
                                         showScaner == false ? showScaner = true : showScaner = false;
                                       });
                                     },
-                                    child: const Icon(CupertinoIcons.barcode_viewfinder, color: AppColors2.primaryColor)
+                                    child: const Icon(CupertinoIcons.barcode_viewfinder, color: AppColors.primaryColor)
                                 ),
                                 disabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                  borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: AppColors2.primaryColor.withOpacity(0.2), width: 2.0),
+                                  borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 border: OutlineInputBorder(
@@ -279,30 +279,18 @@ class _adminInvState extends State<adminInv> {
                 ),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.04),
-                    decoration: BoxDecoration(
-                      color: AppColors2.BgprimaryColor,
-                        borderRadius: const BorderRadius.only(
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
+                    decoration: const BoxDecoration(
+                      color: AppColors.bgColor,
+                        borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(15),
                             bottomRight: Radius.circular(15)
                         ),
-                        border: const Border(
+                        border: Border(
                             bottom: BorderSide(
-                              color: AppColors2.primaryColor,
+                              color: AppColors.primaryColor,
                               width: 2.5,
                             )),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black54,
-                            blurRadius: 10,
-                            offset: Offset(0, MediaQuery.of(context).size.width * 0.012),
-                          ),
-                          BoxShadow(
-                            color: Colors.white,
-                            offset: Offset(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width * -0.025),
-                          )
-                        ]
                     ),
                     child: Container(
                       margin: EdgeInsets.only(
@@ -347,8 +335,8 @@ class _adminInvState extends State<adminInv> {
                                 child: SvgPicture.asset(
                                   'assets/imgLog/inv.svg',
                                   colorFilter: _selectedScreen == 1
-                                      ? ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn)
-                                      : ColorFilter.mode(AppColors2.primaryColor.withOpacity(0.2), BlendMode.srcIn),
+                                      ? const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)
+                                      : ColorFilter.mode(AppColors.primaryColor.withOpacity(0.2), BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.12,
                                 ),
                               ),
@@ -360,7 +348,7 @@ class _adminInvState extends State<adminInv> {
                           height: MediaQuery.of(context).size.width * 0.15,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(1),
-                            color: AppColors2.primaryColor.withOpacity(0.2),
+                            color: AppColors.primaryColor.withOpacity(0.2),
                           ),
                         ),
                         Expanded(
@@ -384,8 +372,8 @@ class _adminInvState extends State<adminInv> {
                                 child: SvgPicture.asset(
                                   'assets/imgLog/cart.svg',
                                   colorFilter: _selectedScreen == 2
-                                      ? ColorFilter.mode(AppColors2.primaryColor, BlendMode.srcIn)
-                                      : ColorFilter.mode(AppColors2.primaryColor.withOpacity(0.2), BlendMode.srcIn),
+                                      ? const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)
+                                      : ColorFilter.mode(AppColors.primaryColor.withOpacity(0.2), BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.12,
                                 ),
                               ),
@@ -413,7 +401,7 @@ class _adminInvState extends State<adminInv> {
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    color: Colors.black54.withOpacity(0.3),
+                    color: AppColors.blackColor.withOpacity(0.3),
                   ),
                 )
             ),

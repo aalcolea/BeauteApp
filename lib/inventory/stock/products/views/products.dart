@@ -6,12 +6,12 @@ import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../kboardVisibilityManager.dart';
 import '../../../sellpoint/cart/services/cartService.dart';
 import '../utils/productOptions.dart';
+import '../../../themes/colors.dart';
 
 class Products extends StatefulWidget {
 
@@ -44,8 +44,6 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   bool isLoading = true;
   bool showBlurr = false;
   late KeyboardVisibilityManager keyboardVisibilityManager;
-
-
 
   void itemCount (index, action){
     if(action == false){
@@ -133,7 +131,6 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
     }
   }
 
-
   void colHeight (double _colHeight) {
     widgetHeight = _colHeight;
   }
@@ -186,7 +183,8 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                 onProductModified: () async {
                   await refreshProducts();
                 },
-                onShowBlur: widget.onShowBlur, columnH: null, onShowBlureight: (bool p1) {  },
+                onShowBlur: onShowBlurHandler,
+                columnH: null, onShowBlureight: (bool p1) {  },
               ),
             ),
           );
@@ -197,6 +195,12 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
     } else {
       print("Invalid index: $index");
     }
+  }
+
+  void onShowBlurHandler(bool shouldShow) {
+    setState(() {
+      showBlurr = shouldShow;
+    });
   }
 
   void removeOverlay() {
@@ -217,6 +221,10 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   Future<void> refreshProducts() async {
     try {
       await fetchProducts();
+      removeOverlay();
+      setState(() {
+        showBlurr = false;
+      });
     } catch (e) {
       print('Error en refresh productos $e');
     }
@@ -225,7 +233,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    return isLoading ? const Material(child: Center(child: CircularProgressIndicator(color: AppColors2.primaryColor,)))
+    return isLoading ? const Material(child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor,)))
         : Scaffold(
       body: Stack(
         children: [
@@ -246,7 +254,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios_new,
-                            color: AppColors2.primaryColor,
+                            color: AppColors.primaryColor,
                           )
                       ),
                       Padding(
@@ -256,9 +264,9 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                           children: [
                             Text(
                               textAlign: TextAlign.start,
-                              'Productos',
+                              '${widget.selectedCategory}',
                               style: TextStyle(
-                                color: AppColors2.primaryColor,
+                                color: AppColors.primaryColor,
                                 fontSize: screenWidth! < 370.00
                                     ? MediaQuery.of(context).size.width * 0.078
                                     : MediaQuery.of(context).size.width * 0.082,
@@ -293,6 +301,8 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                   child: ListView.builder(
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).size.width * 0.01,
+                        left: MediaQuery.of(context).size.width * 0.02,
+                        right: MediaQuery.of(context).size.width * 0.02
                       ),
                       physics: const BouncingScrollPhysics(),
                       itemCount: products_global.length,
@@ -315,6 +325,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                     removeOverlay();
                                     setState(() {});
                                   },
+                                  onShowBlur: widget.onShowBlur,
                                 ),
                               ),
                             );
@@ -343,7 +354,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                         Text(
                                           "${products_global[index]['product']}",
                                           style: TextStyle(
-                                            color: AppColors2.primaryColor,
+                                            color: AppColors.primaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context).size.width * 0.04,
                                           ),
@@ -352,12 +363,12 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                           children: [
                                             Text(
                                               "Cant.: ",
-                                              style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                              style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                             ),
                                             Text(
-                                              products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
+                                              products_global[index]['cant_cart']['cantidad'] == null ? 'Agotado' : products_global[index]['cant_cart']['cantidad'] == 0 ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
                                               style: TextStyle(
-                                                  color: AppColors2.primaryColor,
+                                                  color: AppColors.primaryColor,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: MediaQuery.of(context).size.width * 0.035
                                               ),
@@ -368,14 +379,14 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                           children: [
                                             Text(
                                               "Precio: ",
-                                              style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                              style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                                             ),
                                             Container(
                                               padding: const EdgeInsets.only(right: 10),
                                               child: Text(
                                                 "\$${products_global[index]['price']} MXN",
                                                 style: TextStyle(
-                                                  color: AppColors2.primaryColor,
+                                                  color: AppColors.primaryColor,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: MediaQuery.of(context).size.width * 0.035,
                                                 ),
@@ -385,14 +396,14 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                         ),
                                       ],
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     AnimatedContainer(
                                         alignment: Alignment.bottomRight,
                                         duration: const Duration(milliseconds: 225),
                                         width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.13,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(10),
-                                          color: AppColors2.primaryColor,
+                                          color: AppColors.primaryColor,
                                         ),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
@@ -419,7 +430,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                                     },
                                                     child: Icon(
                                                       CupertinoIcons.minus,
-                                                      color: Colors.white,
+                                                      color: AppColors.whiteColor,
                                                       size: MediaQuery.of(context).size.width * 0.07,
                                                     ),
                                                   ),),
@@ -433,7 +444,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                                     visible: tapedIndices.contains(index),
                                                     child: Container(
                                                       decoration: const BoxDecoration(
-                                                        color: AppColors2.primaryColor,
+                                                        color: AppColors.primaryColor,
                                                       ),
                                                       padding: EdgeInsets.symmetric(
                                                         horizontal: MediaQuery.of(context).size.width * 0.0,
@@ -443,7 +454,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                                         textAlign: TextAlign.center,
                                                         '${cantHelper[index]}',
                                                         style: TextStyle(
-                                                            color: Colors.white,
+                                                            color: AppColors.whiteColor,
                                                             fontSize: MediaQuery.of(context).size.width * 0.05,
                                                             fontWeight: FontWeight.bold),
                                                       ),
@@ -484,7 +495,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                               },
                                               child: Icon(
                                                 CupertinoIcons.add,
-                                                color: Colors.white,
+                                                color: AppColors.whiteColor,
                                                 size: MediaQuery.of(context).size.width * 0.07,
                                               ),
                                             ),
@@ -496,7 +507,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                               Divider(
                                 indent: MediaQuery.of(context).size.width * 0.05,
                                 endIndent: MediaQuery.of(context).size.width * 0.05,
-                                color: AppColors2.primaryColor.withOpacity(0.1),
+                                color: AppColors.primaryColor.withOpacity(0.1),
                                 thickness: MediaQuery.of(context).size.width * 0.005,
                               )
                             ],
@@ -522,7 +533,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                              child: Container(
                                width: double.infinity,
                                height: double.infinity,
-                               color: Colors.black54.withOpacity(0.3),
+                               color: AppColors.blackColor.withOpacity(0.3),
                              ),
                            )
                        ),

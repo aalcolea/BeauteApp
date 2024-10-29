@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../stock/products/services/productsService.dart';
@@ -119,7 +119,7 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     return Container(
-      color: AppColors2.BgprimaryColor,
+      color: AppColors.bgColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -133,7 +133,7 @@ class _CartState extends State<Cart> {
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: AppColors2.primaryColor.withOpacity(0.1),
+                  color: AppColors.primaryColor.withOpacity(0.1),
                   width: 2,
                 ),
               ),
@@ -174,14 +174,14 @@ class _CartState extends State<Cart> {
                                               Text(
                                                 '${cartProvider.cart[index]['product']}',
                                                 style: TextStyle(
-                                                  color: AppColors2.primaryColor,
+                                                  color: AppColors.primaryColor,
                                                   fontSize: MediaQuery.of(context).size.width * 0.05,
                                                 ),
                                               ),
                                               Text(
                                                 'Codigo ${cartProvider.cart[index]['product_id']}',
                                                 style: TextStyle(
-                                                    color: AppColors2.primaryColor.withOpacity(0.3),
+                                                    color: AppColors.primaryColor.withOpacity(0.3),
                                                     fontSize: MediaQuery.of(context).size.width * 0.04
                                                 ),
                                               ),
@@ -196,7 +196,7 @@ class _CartState extends State<Cart> {
                                                     ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           minimumSize: const Size(0, 0),
-                                                          backgroundColor: AppColors2.primaryColor.withOpacity(0.5),
+                                                          backgroundColor: AppColors.primaryColor.withOpacity(0.5),
                                                           padding: EdgeInsets.symmetric(
                                                               horizontal: MediaQuery.of(context).size.width * 0.02,
                                                               vertical: MediaQuery.of(context).size.width * 0.02,
@@ -213,7 +213,7 @@ class _CartState extends State<Cart> {
                                                         },
                                                         child: Icon(
                                                           CupertinoIcons.minus,
-                                                          color: Colors.white,
+                                                          color: AppColors.whiteColor,
                                                           size: MediaQuery.of(context).size.width * 0.04,
                                                         ),
                                                       ),
@@ -232,14 +232,14 @@ class _CartState extends State<Cart> {
                                                           focusedBorder: OutlineInputBorder(
                                                             borderRadius: BorderRadius.circular(10),
                                                             borderSide: const BorderSide(
-                                                              color: AppColors2.primaryColor,
+                                                              color: AppColors.primaryColor,
                                                               width: 1.5,
                                                             ),
                                                           ),
                                                           enabledBorder: OutlineInputBorder(
                                                             borderRadius: BorderRadius.circular(10),
-                                                            borderSide: const BorderSide(
-                                                              color: Colors.black54,
+                                                            borderSide: BorderSide(
+                                                              color: AppColors.blackColor.withOpacity(0.5),
                                                               width: 1.5,
                                                             ),
                                                           ),
@@ -249,7 +249,7 @@ class _CartState extends State<Cart> {
                                                     ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           minimumSize: const Size(0, 0),
-                                                          backgroundColor: AppColors2.primaryColor.withOpacity(0.5),
+                                                          backgroundColor: AppColors.primaryColor.withOpacity(0.5),
                                                           padding: EdgeInsets.symmetric(
                                                             horizontal: MediaQuery.of(context).size.width * 0.02,
                                                             vertical: MediaQuery.of(context).size.width * 0.02,
@@ -315,7 +315,7 @@ class _CartState extends State<Cart> {
                                                       },
                                                       child: Icon(
                                                           CupertinoIcons.add,
-                                                          color: Colors.white,
+                                                          color: AppColors.whiteColor,
                                                           size: MediaQuery.of(context).size.width * 0.04,
                                                         ),
                                                     )
@@ -333,14 +333,14 @@ class _CartState extends State<Cart> {
                                                 Text(
                                                   '\$${(cartProvider.cart[index]['cant_cart'] * cartProvider.cart[index]['price']).toStringAsFixed(2)}',
                                                   style: TextStyle(
-                                                    color: AppColors2.primaryColor,
+                                                    color: AppColors.primaryColor,
                                                     fontSize: MediaQuery.of(context).size.width * 0.05,
                                                   ),
                                                 ),
                                                 Text(
                                                   'MXN',
                                                   style: TextStyle(
-                                                      color: AppColors2.primaryColor.withOpacity(0.3),
+                                                      color: AppColors.primaryColor.withOpacity(0.3),
                                                       fontSize: MediaQuery.of(context).size.width * 0.04
                                                   ),
                                                 )
@@ -366,7 +366,7 @@ class _CartState extends State<Cart> {
             padding: EdgeInsets.only(
               left: MediaQuery.of(context).size.width * 0.03,
               right: MediaQuery.of(context).size.width * 0.03,
-              top: MediaQuery.of(context).size.width * 0.0,
+              top: MediaQuery.of(context).size.width * 0.02,
               bottom: MediaQuery.of(context).size.width * 0.01
             ),
             child: Row(
@@ -376,7 +376,7 @@ class _CartState extends State<Cart> {
                 Text(
                   'Total:',
                   style: TextStyle(
-                    color: AppColors2.primaryColor,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.08,
                   ),
@@ -387,7 +387,7 @@ class _CartState extends State<Cart> {
                     Text(
                       '\$${totalCart.toStringAsFixed(2)}',
                       style: TextStyle(
-                        color: AppColors2.primaryColor,
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.08,
                       ),
@@ -395,7 +395,7 @@ class _CartState extends State<Cart> {
                     Text(
                       'MXN ',
                       style: TextStyle(
-                        color: AppColors2.primaryColor.withOpacity(0.3),
+                        color: AppColors.primaryColor.withOpacity(0.3),
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.04,
                       ),
@@ -405,15 +405,17 @@ class _CartState extends State<Cart> {
               ],
             ),
           ),
-          ElevatedButton(
+          Container(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.01),
+            child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                backgroundColor: AppColors2.primaryColor,
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
-                horizontal: MediaQuery.of(context).size.width * 0.08)
+                  backgroundColor: AppColors.primaryColor,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                      horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
                 bool confirm = await showConfirmSellDialog(context);
@@ -422,19 +424,21 @@ class _CartState extends State<Cart> {
                   if(result) {
                     widget.printService.printImage('assets/imgLog/logoBeauteWhiteSqr.png', widget.printService.characteristic, 400);
                     //widget.printService.printImage(widget.printService.characteristic!);
-                   // widget.printService.characteristic != null ?
+                    // widget.printService.characteristic != null ?
                     //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
                   }
                 }
               },
               child: Text(
-              'Pagar',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: MediaQuery.of(context).size.width * 0.08,
+                'Pagar',
+                style: TextStyle(
+                  color: AppColors.whiteColor,
+                  fontSize: MediaQuery.of(context).size.width * 0.08,
+                ),
               ),
-            ),)
+            ),
+          )
         ],
       ),
     );

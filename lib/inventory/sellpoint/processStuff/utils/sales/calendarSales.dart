@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import '../../../../../agenda/themes/colors.dart';
+import '../../../../themes/colors.dart';
 
 class SalesCalendar extends StatefulWidget {
   final String? dateInit;
@@ -97,7 +97,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10),
                         bottomRight: Radius.circular(-10)),
-                    color: AppColors2.secundaryColor,
+                    color: AppColors.secundaryColor,
                   ),
                   child: TextFormField(
                     enableInteractiveSelection: false,
@@ -131,7 +131,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     Icons.arrow_back_ios_rounded,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     size: MediaQuery.of(context).size.width * 0.055,
                   ),
                   onPressed: () {
@@ -151,13 +151,13 @@ class _SalesCalendarState extends State<SalesCalendar> {
                       : '${getMonthName(initMonth)} $visibleYear',
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.05,
-                      color: Colors.white),
+                      color: AppColors.whiteColor),
                 ),
                 IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     size: MediaQuery.of(context).size.width * 0.055,
                   ),
                   onPressed: () {
@@ -179,9 +179,9 @@ class _SalesCalendarState extends State<SalesCalendar> {
       Expanded(
           child: Container(
               decoration: BoxDecoration(
-                color: AppColors2.secundaryColor,//AppColors2.secundaryColor,
+                color: AppColors.secundaryColor,//AppColors2.secundaryColor,
                 borderRadius: BorderRadius.circular(0),
-                border: Border.all(color: AppColors2.secundaryColor, width: 1.2),
+                border: Border.all(color: AppColors.secundaryColor, width: 1.2),
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(0),
@@ -233,10 +233,10 @@ class _SalesCalendarState extends State<SalesCalendar> {
                               width: null,
                               height: null,
                               decoration: BoxDecoration(
-                                color: Colors.purple[100],
+                                color: AppColors.primaryColor,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.purple,
+                                  color: AppColors.blackColor,
                                   width: 1.0,
                                 ),
                               ),
@@ -244,7 +244,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                                 child: Text(
                                   details.date.day.toString(),
                                   style: TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors.whiteColor,
                                     fontSize:
                                     MediaQuery.of(context).size.width *
                                         0.05,
@@ -258,10 +258,10 @@ class _SalesCalendarState extends State<SalesCalendar> {
                             width: null,
                             height: null,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.whiteColor,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.purple,
+                                color: AppColors.primaryColor,
                                 width: 1.0,
                               ),
                             ),
@@ -269,7 +269,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                               child: Text(
                                 details.date.day.toString(),
                                 style: TextStyle(
-                                  color: AppColors2.primaryColor,
+                                  color: AppColors.primaryColor,
                                   fontSize:
                                   MediaQuery.of(context).size.width * 0.05,
                                 ),
@@ -280,9 +280,9 @@ class _SalesCalendarState extends State<SalesCalendar> {
                           return Center(
                               child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: AppColors.whiteColor,
                                     border: Border.all(
-                                      color: Colors.grey,
+                                      color: AppColors.greyColor,
                                       width: 0.2,
                                     ),
                                   ),
@@ -290,12 +290,9 @@ class _SalesCalendarState extends State<SalesCalendar> {
                                       child: Text(details.date.day.toString(),
                                           style: TextStyle(
                                             color: isInCurrentMonth
-                                                ? const Color(0xFF72A5D0)
-                                                : const Color(0xFFC5B6CD),
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                0.05,
+                                                ? AppColors.blackColor
+                                                : AppColors.primaryColor.withOpacity(0.4),
+                                            fontSize: MediaQuery.of(context).size.width * 0.05,
                                           )))));
                         }
                       }))))

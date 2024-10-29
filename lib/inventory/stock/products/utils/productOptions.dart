@@ -4,7 +4,7 @@ import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/deleteProduc
 import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/modifyStockDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../views/productDetails.dart';
@@ -67,7 +67,7 @@ class _ProductOptionsState extends State<ProductOptions> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02, bottom: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
       child: Column(
         key: _columnKey,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +75,10 @@ class _ProductOptionsState extends State<ProductOptions> {
           Material(
               color: Colors.transparent,
               child: GestureDetector(
-                onTap: widget.onClose,
+                onTap: () {
+                  widget.onShowBlur(false);
+                  widget.onClose();
+                },
                 child: Container(
                     padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.02,
@@ -85,7 +88,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                     ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02, horizontal: MediaQuery.of(context).size.width * 0.0247),
@@ -96,7 +99,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           Text(
                             '${widget.nombre}',
                             style: TextStyle(
-                              color: AppColors2.primaryColor,
+                              color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: MediaQuery.of(context).size.width * 0.04,
                             ),
@@ -105,12 +108,13 @@ class _ProductOptionsState extends State<ProductOptions> {
                             children: [
                               Text(
                                 "Cant.: ",
-                                style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
                               Text(
-                                '${widget.cant}',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
+                                //'${widget.cant}',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
+                                widget.cant == '0' ? 'Agotado' : '${widget.cant}',
                                 style: TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.035
                                 ),
@@ -121,14 +125,14 @@ class _ProductOptionsState extends State<ProductOptions> {
                             children: [
                               Text(
                                 "Precio: ",
-                                style: TextStyle(color: AppColors2.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
                               ),
                               Container(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: Text(
                                   '\$${widget.precio} MXN',//"\$${products_global[]['price']} MXN",
                                   style: TextStyle(
-                                    color: AppColors2.primaryColor,
+                                    color: AppColors.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
                                   ),
@@ -154,7 +158,7 @@ class _ProductOptionsState extends State<ProductOptions> {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: Colors.white,
+              color: AppColors.whiteColor,
             ),
             child: Column(
               children: [
@@ -177,18 +181,21 @@ class _ProductOptionsState extends State<ProductOptions> {
                                   precio: widget.precio,
                                   onProductModified: () async {
                                   await productService.refreshProducts(widget.catId);
-                                  }
+                                  },
+                                  onShowBlur: widget.onShowBlur
                                 ),
                               ),
-                            );
+                            ).then((_) {
+                              widget.onShowBlur(false);
+                            });
                           },
                           style: const ButtonStyle(
                             alignment: Alignment.centerLeft,
                           ),
                           child: const Text(
-                            'Editar producto',
+                            'Detalles',
                             style: TextStyle(
-                                color: AppColors2.primaryColor
+                                color: AppColors.primaryColor
                             ),
                           ),
                         ),
@@ -197,7 +204,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                   ),
                 ),
                 Divider(
-                  color: AppColors2.primaryColor.withOpacity(0.1),
+                  color: AppColors.primaryColor.withOpacity(0.1),
                   thickness: MediaQuery.of(context).size.width * 0.004,
                 ),
                 Flexible(
@@ -207,7 +214,6 @@ class _ProductOptionsState extends State<ProductOptions> {
                         child: TextButton(
                           onPressed: () {
                             widget.onClose();
-                            widget.onShowBlur(true);
                             showDialog(
                                 context: context,
                                 builder: (builder) {
@@ -237,7 +243,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           child: const Text(
                             'Modificar stock',
                             style: TextStyle(
-                                color: AppColors2.primaryColor
+                                color: AppColors.primaryColor
                             ),
                           ),
                         ),
@@ -246,7 +252,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                   ),
                 ),
                 Divider(
-                  color: AppColors2.primaryColor.withOpacity(0.1),
+                  color: AppColors.primaryColor.withOpacity(0.1),
                   thickness: MediaQuery.of(context).size.width * 0.004,
                 ),
                 Flexible(
@@ -278,7 +284,7 @@ class _ProductOptionsState extends State<ProductOptions> {
                           child: const Text(
                             'Eliminar',
                             style: TextStyle(
-                                color: Colors.red
+                                color: AppColors.redDelete
                             ),
                           ),
                         ),
