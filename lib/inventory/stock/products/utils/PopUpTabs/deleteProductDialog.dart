@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../agenda/themes/colors.dart';
+import '../../../../themes/colors.dart';
 
 Future<bool> showDeleteProductConfirmationDialog(
     BuildContext context, Future<void> Function() onDelete) {
@@ -14,13 +14,11 @@ Future<bool> showDeleteProductConfirmationDialog(
           child: Container(
             margin: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.04),
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.05),
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.30,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: Colors.white,
+              color: AppColors.whiteColor,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +30,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width * 0.07,
-                      color: AppColors2.primaryColor,
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -45,7 +43,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.045,
-                      color: Colors.black,
+                      color: AppColors.blackColor,
                     ),
                   ),
                 ),
@@ -62,7 +60,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: AppColors2.primaryColor,
+                              color: AppColors.primaryColor,
                               width: 2.5,
                             ),
                           ),
@@ -71,7 +69,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                           'Cancelar',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.05,
-                            color: AppColors2.primaryColor,
+                            color: AppColors.primaryColor,
                           ),
                         ),
                       ),
@@ -87,7 +85,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: Colors.red,
+                              color: AppColors.redDelete,
                               width: 2.5,
                             ),
                           ),
@@ -96,7 +94,7 @@ Future<bool> showDeleteProductConfirmationDialog(
                           'Eliminar',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.05,
-                            color: Colors.red,
+                            color: AppColors.redDelete,
                           ),
                         ),
                       ),

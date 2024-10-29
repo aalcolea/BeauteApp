@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 
 class Background extends StatefulWidget {
   final double widthItem1;
@@ -17,58 +16,61 @@ class _BackgroundState extends State<Background> {
     return Row(
       children: [
         Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
             alignment: Alignment.topLeft,
             width: widget.widthItem1,
             decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: AppColors2.primaryColor.withOpacity(0.1), width: 2))
+                border: Border(right: BorderSide(color: AppColors.primaryColor.withOpacity(0.1), width: 2))
             ),
             child: Column(
               children: [
                 Text(
                   'Producto',
                   style: TextStyle(
-                    color: AppColors2.primaryColor,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
                 ),
-                Divider()
+                Divider(color: AppColors.primaryColor.withOpacity(0.1), thickness: 2)
               ],
             )
         ),
         Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
             alignment: Alignment.topLeft,
             width: widget.widthItem2,
             decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: AppColors2.primaryColor.withOpacity(0.1), width: 2))
+                border: Border(right: BorderSide(color: AppColors.primaryColor.withOpacity(0.1), width: 2))
             ),
             child: Column(
               children: [
                 Text(
                   'Cant.',
                   style: TextStyle(
-                    color: AppColors2.primaryColor,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
                 ),
-                Divider()
+                Divider(color: AppColors.primaryColor.withOpacity(0.1), thickness: 2)
               ],
             )
         ),
         Expanded(child: Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
             alignment: Alignment.topLeft,
             child: Column(
               children: [
                 Text(
                   'Precio',
                   style: TextStyle(
-                    color: AppColors2.primaryColor,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
                 ),
-                Divider(color: Colors.grey,)
+                Divider(color: AppColors.primaryColor.withOpacity(0.1), thickness: 2)
               ],
             )
         ),),

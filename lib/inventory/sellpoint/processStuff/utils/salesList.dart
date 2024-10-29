@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../services/salesServices.dart';
 
 class SalesList extends StatefulWidget {
@@ -48,7 +48,7 @@ class _SalesListState extends State<SalesList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.calendarBg,
+      color: AppColors.bgColor,
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
         itemCount: products.length,
