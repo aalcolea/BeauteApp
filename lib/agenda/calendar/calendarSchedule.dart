@@ -391,10 +391,16 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
 
                     } else if (isToday) {
                       return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors3.primaryColor),
+                          color: AppColors3.whiteColor,
+                        ),
+                        child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            border: Border.all( color: AppColors3.primaryColor, width: 2),
-                            shape: BoxShape.circle,
+                              border: Border.all( color: AppColors3.primaryColor, width: 2),
+                              shape: BoxShape.circle,
+                              color: AppColors3.whiteColor
                           ),
                           child: Text(
                             details.date.day.toString(),
@@ -403,7 +409,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               fontSize: MediaQuery.of(context).size.width * 0.07,
                             ),
                           ),
-                        );
+                        ),
+                      );
                     } else {
                       return hasEventDoc1 == true && hasEventDoc2 == false// && isInCurrentMonth == true
                           ? Container(
@@ -454,7 +461,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                       color: isInCurrentMonth ? AppColors3.primaryColor.withOpacity(0.5) :
                                       AppColors3.primaryColor.withOpacity(0.35),
                                     ),
-                                    color: AppColors3.primaryColor.withOpacity(0.0)
+                                      color: isInCurrentMonth ? Colors.transparent : AppColors3.secundaryColor
                                   ),
                                   child: Stack(
                                     children: [
@@ -463,7 +470,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                         child: Text(
                                           details.date.day.toString(),
                                           style: TextStyle(
-                                            color: isInCurrentMonth ? AppColors3.blackColor : AppColors3.blackColor.withOpacity(0.55),
+                                            color: isInCurrentMonth ? AppColors3.whiteColor : AppColors3.whiteColor.withOpacity(0.9),
                                             fontSize: MediaQuery.of(context).size.width * 0.06,
                                           ),
                                         ),
@@ -474,10 +481,7 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                           margin: EdgeInsets.only(
                                               bottom: MediaQuery.of(context).size.width * 0.01),
                                           decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: isInCurrentMonth ? AppColors3.blackColor : AppColors3.blackColor.withOpacity(0.6),
-                                              ),
-                                              color: isInCurrentMonth ? AppColors3.secundaryColor.withOpacity(0.35) : AppColors3.thirdColor.withOpacity(0.2),
+                                              color: isInCurrentMonth ? AppColors3.blackColor : AppColors3.blackColor.withOpacity(0.2),
                                               shape: BoxShape.circle),
                                           width: MediaQuery.of(context).size.width * 0.055,
                                           height: MediaQuery.of(context).size.width * 0.055,
@@ -489,7 +493,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                               : hasEventDoc1 && hasEventDoc2
                                   ? Container(
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: AppColors3.primaryColor.withOpacity(0.35)),
+                                        border: Border.all(
+                                            color: AppColors3.primaryColor.withOpacity(0.35)),
                                         color: isInCurrentMonth ? Colors.transparent : AppColors3.secundaryColor
                                       ),
                                       child: Stack(
@@ -514,9 +519,8 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
                                                   margin: EdgeInsets.only(
                                                       bottom: MediaQuery.of(context).size.width * 0.01),
                                                   decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: isInCurrentMonth ? AppColors3.blackColor : AppColors3.blackColor.withOpacity(0.3)), //const Color(0xFF9C27B0)),
-                                                      color: isInCurrentMonth ? AppColors3.blackColor : AppColors3.blackColor.withOpacity(0.5),
+                                                       //const Color(0xFF9C27B0)),
+                                                      color: isInCurrentMonth ? AppColors3.blackColor : AppColors3.blackColor.withOpacity(0.2),
                                                       shape: BoxShape.circle),
                                                   width: MediaQuery.of(context).size.width * 0.055,
                                                   height: MediaQuery.of(context).size.width * 0.055,

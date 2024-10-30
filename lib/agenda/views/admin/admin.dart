@@ -43,6 +43,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
+        print('holadamin');
         visibleKeyboard = visible;
         if(_selectedScreen == 3){
         }
@@ -406,12 +407,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                   filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                   child: Container(
                     color: Colors.black54.withOpacity(0.3),
-                  ),
-                ),)
-          ],
-        )
-      ));
-  }
+                  )))])));}
 
   Widget _buildBody() {
     switch (_selectedScreen) {

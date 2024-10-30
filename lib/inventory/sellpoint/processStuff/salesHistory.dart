@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:beaute_app/inventory/sellpoint/processStuff/services/salesServices.dart';
+import 'package:beaute_app/inventory/sellpoint/processStuff/utils/listenerRemoverOL.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/sales/calendarSales.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +21,7 @@ class SalesHistory extends StatefulWidget {
 
 class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderStateMixin {
 
+  ListenerremoverOL listenerremoverOL = ListenerremoverOL();
   late AnimationController animationController;
   late Animation<double> opacidad;
   late String formattedDate;
@@ -27,6 +29,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
   //
   double? screenWidth;
   double? screenHeight;
+  double optSize = 0;
   bool showBlurr = false;
   int blurShowed = 0;
   int selectedPage = 0;
@@ -38,6 +41,12 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
   PageController pageController = PageController();
 
   List<Map<String, dynamic>> tickets = [];
+
+  void onOptnSize(double optSize){
+    setState(() {
+      this.optSize = optSize;
+    });
+  }
 
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
@@ -82,10 +91,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
       });
     });
     keyboardVisibilityManager = KeyboardVisibilityManager();
-    super.initState();
     DateTime now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
     formattedDate = formatter.format(now);
+    super.initState();
   }
 
   @override
@@ -95,6 +104,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
     super.dispose();
   }
   bool isLoading = false;
+
+  void removerOverL(){
+    listenerremoverOL.setChange(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,36 +122,40 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                 leadingWidth: MediaQuery.of(context).size.width,
                 pinned: true,
                 leading: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        CupertinoIcons.back,
-                        size: MediaQuery.of(context).size.width * 0.08,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          _buildTabButton('Historial de ventas', 0),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.005,
-                            height: MediaQuery.of(context).size.width * 0.1,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(1),
-                              color: AppColors.primaryColor.withOpacity(0.7),
-                            ),
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            CupertinoIcons.back,
+                            size: MediaQuery.of(context).size.width * 0.08,
+                            color: AppColors.primaryColor,
                           ),
-                          _buildTabButton('Ventas por dia', 1)
-                        ]
-                    ),
-                  ],
-                ),
+                        ),
+                      Expanded(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                          _buildTabButton('Tickets', 0),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                          height: MediaQuery.of(context).size.width * 034,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withOpacity(0.7),
+                          ),
+                        ),
+                        _buildTabButton('Ventas', 1),
+                      ],
+                    )),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.12,)
+
+                    ],
+                  ),
               ),
+
               SliverToBoxAdapter(
                 child: Container(
                   color: AppColors.bgColor,
@@ -165,7 +182,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                 decoration: InputDecoration(
                                   isDense: true,
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
-                                    hintText: selectedPage == 0 ? 'Fecha' : formattedDate,
+                                    hintText: formattedDate,
                                   hintStyle: TextStyle(
                                     color: AppColors.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -269,7 +286,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                     });
                   },
                   children: [
-                    Ticketslist(onShowBlur: _onShowBlurr),
+                    Ticketslist(onShowBlur: _onShowBlurr, onOptnSize: onOptnSize, listenerremoverOL: listenerremoverOL,),
                     SalesList(onShowBlur: _onShowBlurr,),
                   ],
                 ),
@@ -333,6 +350,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                 filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                 child: GestureDetector(
                   onTap: () {
+                    removerOverL();
                     setState(() {
                       showBlurr = false;
                       blurShowed = 0;

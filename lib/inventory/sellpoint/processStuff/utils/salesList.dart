@@ -3,11 +3,7 @@ import '../../../themes/colors.dart';
 import '../services/salesServices.dart';
 
 class SalesList extends StatefulWidget {
-
-  final void Function(
-      int
-      ) onShowBlur;
-
+  final void Function(int) onShowBlur;
   const SalesList({super.key, required this.onShowBlur});
 
   @override
@@ -23,7 +19,6 @@ class _SalesListState extends State<SalesList> {
   void initState() {
     super.initState();
     fetchSales();
-    print(fetchSales());
   }
 
   Future<void> fetchSales() async{

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../../agenda/themes/colors.dart';
 import '../../../themes/colors.dart';
 
 class TicketOptions extends StatefulWidget {
-
+  final double heigthCard;
+  final List<dynamic> ticketInfo;
   final VoidCallback onClose;
   final Function(double) columnHeight;
-  final void Function(
-      int
-      ) onShowBlur;
+  final void Function(int) onShowBlur;
   final dynamic columnH;
 
-  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight,
+  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo,
   });
 
   @override
@@ -56,6 +56,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                   widget.onClose();
                 },
                 child: Container(
+                    height: widget.heigthCard,
                     padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.02,
                       right: MediaQuery.of(context).size.width * 0.02,
@@ -64,34 +65,22 @@ class _TicketOptionsState extends State<TicketOptions> {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: AppColors.whiteColor,
+                      color: AppColors3.whiteColor,
                     ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02, horizontal: MediaQuery.of(context).size.width * 0.0247),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Hola',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.04,
-                            ),
-                          ),
                           Row(
                             children: [
                               Text(
-                                "Cant.: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
-                              ),
-                              Text(
-                                'cant',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
+                                'Ticket ${widget.ticketInfo[0]}',
                                 style: TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width * 0.035
+                                  color: AppColors3.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.05,
                                 ),
                               ),
                             ],
@@ -99,19 +88,37 @@ class _TicketOptionsState extends State<TicketOptions> {
                           Row(
                             children: [
                               Text(
-                                "Precio: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                "Fecha: ${widget.ticketInfo[1]}",
+                                style: TextStyle(
+                                    color: AppColors3.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.04),
                               ),
-                              Container(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Text(
-                                  '\$precio MXN',//"\$${products_global[]['price']} MXN",
-                                  style: TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width * 0.035,
-                                  ),
-                                ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Cantidad total: ${widget.ticketInfo[2]} pzs",
+                                style: TextStyle(
+                                    color: AppColors3.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.04),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Importe: ",
+                                style: TextStyle(
+                                    color: AppColors3.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.04),
+                              ),
+                              Text(
+                                "\$${widget.ticketInfo[3]}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                    color: AppColors3.primaryColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.04),
                               ),
                             ],
                           ),
@@ -133,7 +140,7 @@ class _TicketOptionsState extends State<TicketOptions> {
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: AppColors.whiteColor,
+                color: AppColors3.whiteColor,
               ),
               child: Column(
                 children: [
@@ -151,7 +158,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                             child: const Text(
                               'Editar producto',
                               style: TextStyle(
-                                  color: AppColors.primaryColor
+                                  color: AppColors3.primaryColor
                               ),
                             ),
                           ),
@@ -160,7 +167,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                     ),
                   ),
                   Divider(
-                    color: AppColors.primaryColor.withOpacity(0.1),
+                    color: AppColors3.primaryColor.withOpacity(0.1),
                     thickness: MediaQuery.of(context).size.width * 0.004,
                   ),
                   Flexible(
@@ -178,7 +185,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                             child: const Text(
                               'Modificar stock',
                               style: TextStyle(
-                                  color: AppColors.primaryColor
+                                  color: AppColors3.primaryColor
                               ),
                             ),
                           ),
@@ -187,7 +194,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                     ),
                   ),
                   Divider(
-                    color: AppColors.primaryColor.withOpacity(0.1),
+                    color: AppColors3.primaryColor.withOpacity(0.1),
                     thickness: MediaQuery.of(context).size.width * 0.004,
                   ),
                   Flexible(
@@ -205,7 +212,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                             child: const Text(
                               'Eliminar',
                               style: TextStyle(
-                                  color: AppColors.redDelete
+                                  color: AppColors3.redDelete
                               ),
                             ),
                           ),
