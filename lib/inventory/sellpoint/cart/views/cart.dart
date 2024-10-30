@@ -429,7 +429,8 @@ class _CartState extends State<Cart> {
                     //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
                     widget.onShowBlurr(false);
-                  }}else{
+                  }
+                }else{
                   widget.onShowBlurr(false);
                 }
               },

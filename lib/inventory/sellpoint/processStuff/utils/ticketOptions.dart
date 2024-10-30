@@ -43,32 +43,28 @@ class _TicketOptionsState extends State<TicketOptions> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-        child: Column(
-          key: _columnKey,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Material(
-              color: Colors.transparent,
-              child: GestureDetector(
-                onTap: () {
-                  widget.onClose();
-                },
-                child: Container(
-                    height: widget.heigthCard,
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.02,
-                      right: MediaQuery.of(context).size.width * 0.02,
-                      top: MediaQuery.of(context).size.width * 0.009,
-                      bottom: MediaQuery.of(context).size.width * 0.009,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: AppColors3.whiteColor,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02, horizontal: MediaQuery.of(context).size.width * 0.0247),
+    return Material(
+      color: Colors.transparent,
+      child: GestureDetector(
+        onTap: (){
+          widget.onClose();
+        },
+        child: Container(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+            child: Column(
+              key: _columnKey,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                      height: widget.heigthCard,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04,
+                        vertical: MediaQuery.of(context).size.width * 0.009,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: AppColors3.whiteColor,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +112,7 @@ class _TicketOptionsState extends State<TicketOptions> {
                               Text(
                                 "\$${widget.ticketInfo[3]}",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.bold,
                                     color: AppColors3.primaryColor,
                                     fontSize: MediaQuery.of(context).size.width * 0.04),
                               ),
@@ -124,107 +120,75 @@ class _TicketOptionsState extends State<TicketOptions> {
                           ),
                         ],
                       ),
-                    )
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
-              width: MediaQuery.of(context).size.width * 0.4,
-              height: MediaQuery.of(context).size.width * 0.4,
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.02,
-                  right: MediaQuery.of(context).size.width * 0.02,
-                  bottom: MediaQuery.of(context).size.width * 0.02,
-                  top: MediaQuery.of(context).size.width * 0.02
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: AppColors3.whiteColor,
-              ),
-              child: Column(
-                children: [
-                  Flexible(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-
-                            },
-                            style: const ButtonStyle(
-                              alignment: Alignment.centerLeft,
-                            ),
-                            child: const Text(
-                              'Editar producto',
-                              style: TextStyle(
-                                  color: AppColors3.primaryColor
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
                     ),
+                Container(
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.03,
+                      vertical: MediaQuery.of(context).size.width * 0.02,
                   ),
-                  Divider(
-                    color: AppColors3.primaryColor.withOpacity(0.1),
-                    thickness: MediaQuery.of(context).size.width * 0.004,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: AppColors3.whiteColor,
                   ),
-                  Flexible(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: AppColors3.primaryColor.withOpacity(0.3),),
+                              )
+                            ),
+                            child: TextButton(
+                                onPressed: () {
+                                },
+                                style: const ButtonStyle(
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Text(
+                                      'Compartir   ',
+                                      style: TextStyle(
+                                          color: AppColors3.primaryColor
+                                      ),
+                                    ),
+                                    Icon(Icons.share),
+                                  ],
+                                )
+                            )
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton(
                             onPressed: () {
                               widget.onClose();
-                              widget.onShowBlur(1);
+                              //widget.onShowBlur(1);
                             },
                             style: const ButtonStyle(
                                 alignment: Alignment.centerLeft
                             ),
-                            child: const Text(
-                              'Modificar stock',
-                              style: TextStyle(
-                                  color: AppColors3.primaryColor
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    color: AppColors3.primaryColor.withOpacity(0.1),
-                    thickness: MediaQuery.of(context).size.width * 0.004,
-                  ),
-                  Flexible(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              widget.onClose();
-                              widget.onShowBlur(1);
-                            },
-                            style: const ButtonStyle(
-                                alignment: Alignment.centerLeft
-                            ),
-                            child: const Text(
-                              'Eliminar',
-                              style: TextStyle(
-                                  color: AppColors3.redDelete
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        )
-    );
+                            child: const Row(
+                              children: [
+                                Text(
+                                  'Imprimir      ',
+                                  style: TextStyle(
+                                      color: AppColors3.primaryColor
+                                  ),
+                                ),
+                                Icon(Icons.print),
+                                      ]))
+                                ])
+                              ]))
+                    ]))));
   }
 }
