@@ -93,6 +93,12 @@ class _adminInvState extends State<adminInv> {
     });
   }
 
+  void onShowBlurr(bool showBlurr){
+    setState(() {
+      _showBlurr = showBlurr;
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -127,7 +133,7 @@ class _adminInvState extends State<adminInv> {
           case 1:
             return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
           case 2:
-            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService);
+            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService, onShowBlurr: onShowBlurr);
           default:
             return Container();
         }

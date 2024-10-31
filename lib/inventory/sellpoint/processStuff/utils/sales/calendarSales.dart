@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../../../../../agenda/themes/colors.dart';
 import '../../../../themes/colors.dart';
 
 class SalesCalendar extends StatefulWidget {
@@ -97,7 +98,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10),
                         bottomRight: Radius.circular(-10)),
-                    color: AppColors.secundaryColor,
+                    color: AppColors3.secundaryColor,
                   ),
                   child: TextFormField(
                     enableInteractiveSelection: false,
@@ -131,7 +132,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     Icons.arrow_back_ios_rounded,
-                    color: AppColors.whiteColor,
+                    color: AppColors3.whiteColor,
                     size: MediaQuery.of(context).size.width * 0.055,
                   ),
                   onPressed: () {
@@ -151,13 +152,13 @@ class _SalesCalendarState extends State<SalesCalendar> {
                       : '${getMonthName(initMonth)} $visibleYear',
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.05,
-                      color: AppColors.whiteColor),
+                      color: AppColors3.whiteColor),
                 ),
                 IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: AppColors.whiteColor,
+                    color: AppColors3.whiteColor,
                     size: MediaQuery.of(context).size.width * 0.055,
                   ),
                   onPressed: () {
@@ -179,9 +180,9 @@ class _SalesCalendarState extends State<SalesCalendar> {
       Expanded(
           child: Container(
               decoration: BoxDecoration(
-                color: AppColors.secundaryColor,//AppColors2.secundaryColor,
+                color: AppColors3.secundaryColor,//AppColors32.secundaryColor,
                 borderRadius: BorderRadius.circular(0),
-                border: Border.all(color: AppColors.secundaryColor, width: 1.2),
+                border: Border.all(color: AppColors3.secundaryColor, width: 1.2),
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(0),
@@ -197,7 +198,17 @@ class _SalesCalendarState extends State<SalesCalendar> {
                           if (selectedDate.isAfter(
                               DateTime(now.year, now.month, now.day))) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('No se pueden seleccionar fechas futuras')),
+                                SnackBar(
+                                  padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.width * 0.08,
+                                    bottom: MediaQuery.of(context).size.width * 0.08,
+                                    left: MediaQuery.of(context).size.width * 0.02,
+                                  ),
+                                  content: Text('No se pueden seleccionar fechas futuras',
+                                    style: TextStyle(
+                                        color: AppColors3.whiteColor,
+                                        fontSize: MediaQuery.of(context).size.width * 0.045),
+                                  )),
                             );
                           } else {
                             String dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate);
@@ -233,10 +244,10 @@ class _SalesCalendarState extends State<SalesCalendar> {
                               width: null,
                               height: null,
                               decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: AppColors.blackColor,
+                                  color: AppColors3.blackColor,
                                   width: 1.0,
                                 ),
                               ),
@@ -244,7 +255,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                                 child: Text(
                                   details.date.day.toString(),
                                   style: TextStyle(
-                                    color: AppColors.whiteColor,
+                                    color: AppColors3.whiteColor,
                                     fontSize:
                                     MediaQuery.of(context).size.width *
                                         0.05,
@@ -258,10 +269,10 @@ class _SalesCalendarState extends State<SalesCalendar> {
                             width: null,
                             height: null,
                             decoration: BoxDecoration(
-                              color: AppColors.whiteColor,
+                              color: AppColors3.whiteColor,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 width: 1.0,
                               ),
                             ),
@@ -269,7 +280,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                               child: Text(
                                 details.date.day.toString(),
                                 style: TextStyle(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors3.primaryColor,
                                   fontSize:
                                   MediaQuery.of(context).size.width * 0.05,
                                 ),
@@ -280,9 +291,9 @@ class _SalesCalendarState extends State<SalesCalendar> {
                           return Center(
                               child: Container(
                                   decoration: BoxDecoration(
-                                    color: AppColors.whiteColor,
+                                    color: AppColors3.whiteColor,
                                     border: Border.all(
-                                      color: AppColors.greyColor,
+                                      color: AppColors3.greyColor,
                                       width: 0.2,
                                     ),
                                   ),
@@ -290,8 +301,8 @@ class _SalesCalendarState extends State<SalesCalendar> {
                                       child: Text(details.date.day.toString(),
                                           style: TextStyle(
                                             color: isInCurrentMonth
-                                                ? AppColors.blackColor
-                                                : AppColors.primaryColor.withOpacity(0.4),
+                                                ? AppColors3.blackColor
+                                                : AppColors3.primaryColor.withOpacity(0.4),
                                             fontSize: MediaQuery.of(context).size.width * 0.05,
                                           )))));
                         }
