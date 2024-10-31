@@ -14,12 +14,11 @@ import '../utils/popUpTabs/showConfirmSellDialog.dart';
 
 class Cart extends StatefulWidget {
   final PrintService printService;
-  final void Function(
-      bool,
-      ) onHideBtnsBottom;
+  final void Function(bool) onHideBtnsBottom;
+  final Function(bool) onShowBlurr;
 
   final Future<void> Function()? onCartSent;
-  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService});
+  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService, required this.onShowBlurr});
 
   @override
   State<Cart> createState() => _CartState();
@@ -418,16 +417,21 @@ class _CartState extends State<Cart> {
                       horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
+                widget.onShowBlurr(true);
                 bool confirm = await showConfirmSellDialog(context);
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
+                  widget.onShowBlurr(false);
                   if(result) {
                     widget.printService.printImage('assets/imgLog/logoBeauteWhiteSqr.png', widget.printService.characteristic, 400);
                     //widget.printService.printImage(widget.printService.characteristic!);
                     // widget.printService.characteristic != null ?
                     //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
                     cartProvider.refreshCart();
+                    widget.onShowBlurr(false);
                   }
+                }else{
+                  widget.onShowBlurr(false);
                 }
               },
               child: Text(

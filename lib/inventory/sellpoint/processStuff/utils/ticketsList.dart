@@ -1,16 +1,16 @@
+import 'package:beaute_app/inventory/sellpoint/processStuff/utils/listenerRemoverOL.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketOptions.dart';
 import 'package:flutter/material.dart';
+import '../../../kboardVisibilityManager.dart';
 import '../../../themes/colors.dart';
 import '../../../stock/products/services/productsService.dart';
 import '../services/salesServices.dart';
 
 class Ticketslist extends StatefulWidget {
-
-  final void Function(
-      int
-  ) onShowBlur;
-
-  const Ticketslist({super.key, required this.onShowBlur});
+  final ListenerremoverOL listenerremoverOL;
+  final void Function(int) onShowBlur;
+  final Function(double) onOptnSize;
+  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL});
 
   @override
   State<Ticketslist> createState() => _TicketslistState();
@@ -18,6 +18,7 @@ class Ticketslist extends StatefulWidget {
 
 class _TicketslistState extends State<Ticketslist> {
 
+  double optnSize = 0;
   List<GlobalKey> ticketKeys = [];
   OverlayEntry? overlayEntry;
   double widgetHeight = 0.0;
@@ -26,6 +27,11 @@ class _TicketslistState extends State<Ticketslist> {
   List<AnimationController> aniControllers = [];
   List<int> cantHelper = [];
   List<int> tapedIndices = [];
+  List<dynamic> ticketInfo = [];
+
+  late KeyboardVisibilityManager keyboardVisibilityManager;
+  List<ExpansionTileController> tileController = [];
+
 
   void itemCount (index, action){
     if(action == false){
@@ -53,11 +59,27 @@ class _TicketslistState extends State<Ticketslist> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    keyboardVisibilityManager.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
+    keyboardVisibilityManager = KeyboardVisibilityManager();
     ticketKeys = List.generate(products_global.length, (index) => GlobalKey());
-    fetchSales();
-    print(fetchSales());
+    fetchSales().then((_){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        optnSize = ticketKeys[0].currentContext!.size!.height;
+      });
+    });
+    widget.listenerremoverOL.registrarObservador((newValue){
+      if(newValue == true){
+        removeOverlay();
+      }
+    });
   }
 
   Future<void> fetchSales() async{
@@ -70,7 +92,10 @@ class _TicketslistState extends State<Ticketslist> {
       setState(() {
         tickets = tickets2;
         tickets2.sort((a, b) => b['id'].compareTo(a['id']));
-        ticketKeys = List.generate(tickets.length, (index) => GlobalKey());  // Actualiza ticketKeys
+        ticketKeys = List.generate(tickets.length, (index) => GlobalKey()); // Actualiza ticketKeys
+        for (int i = 0; i <= tickets.length; i++) {
+          tileController.add(ExpansionTileController());
+        }
         cantHelper = List.generate(tickets.length, (index) => 0);
         isLoading = false;
       });
@@ -85,6 +110,13 @@ class _TicketslistState extends State<Ticketslist> {
   }
 
   void showTicketOptions(int index) {
+    tileController[index].isExpanded ? tileController[index].collapse() : null;
+    ticketInfo.addAll([
+      tickets[index]['id'],
+      tickets[index]['fecha'],
+      tickets[index]['cantidad'],
+      tickets[index]['total']
+    ]);
     if (index >= 0 && index < tickets.length) {
       removeOverlay();
       final key = ticketKeys[index];
@@ -111,10 +143,12 @@ class _TicketslistState extends State<Ticketslist> {
               width: size.width,
               child: IntrinsicHeight(
                 child: TicketOptions(
+                  heigthCard: optnSize,
                   onClose: removeOverlay,
                   columnHeight: colHeight,
                   onShowBlur: widget.onShowBlur,
-                  columnH: null,
+                  columnH: null, 
+                  ticketInfo: ticketInfo,
                 ),
               ),
             );
@@ -134,6 +168,8 @@ class _TicketslistState extends State<Ticketslist> {
     if (overlayEntry != null) {
       overlayEntry!.remove();
       overlayEntry = null;
+      ticketInfo.clear();
+
     }
     for (var controller in aniControllers) {
       if (controller.isAnimating) {
@@ -144,6 +180,8 @@ class _TicketslistState extends State<Ticketslist> {
       widget.onShowBlur(0);
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -171,10 +209,12 @@ class _TicketslistState extends State<Ticketslist> {
               ),
               child: GestureDetector(
                 onLongPress: () {
+                  keyboardVisibilityManager.hideKeyboard(context);
                   showTicketOptions(index);
                   widget.onShowBlur(2);
                 },
                 child: ExpansionTile(
+                  controller: tileController[index],
                   iconColor: AppColors.bgColor,
                   collapsedIconColor: AppColors.primaryColor,
                   backgroundColor: AppColors.primaryColor,

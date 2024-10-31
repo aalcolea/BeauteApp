@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/deleteProductDialog.dart';
 import 'package:beaute_app/inventory/stock/products/utils/PopUpTabs/modifyStockDialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,237 +67,208 @@ class _ProductOptionsState extends State<ProductOptions> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-      child: Column(
-        key: _columnKey,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Material(
-              color: Colors.transparent,
-              child: GestureDetector(
-                onTap: () {
-                  widget.onShowBlur(false);
-                  widget.onClose();
-                },
-                child: Container(
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.02,
-                      right: MediaQuery.of(context).size.width * 0.02,
-                      top: MediaQuery.of(context).size.width * 0.009,
-                      bottom: MediaQuery.of(context).size.width * 0.009,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: AppColors.whiteColor,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02, horizontal: MediaQuery.of(context).size.width * 0.0247),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${widget.nombre}',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.04,
-                            ),
-                          ),
-                          Row(
+    return Material(
+      color: Colors.transparent,
+      child: GestureDetector(
+        onTap: (){
+          widget.onShowBlur(false);
+          widget.onClose();
+        },
+        child: Container(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
+            child: Column(
+              key: _columnKey,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.02,
+                          vertical: MediaQuery.of(context).size.width * 0.009,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: AppColors3.whiteColor,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02, horizontal: MediaQuery.of(context).size.width * 0.0247),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Cant.: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
-                              ),
-                              Text(
-                                //'${widget.cant}',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
-                                widget.cant == '0' ? 'Agotado' : '${widget.cant}',
+                                widget.nombre,
                                 style: TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width * 0.035
+                                  color: AppColors3.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width * 0.04,
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "Precio: ",
-                                style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Cant.: ",
+                                    style: TextStyle(color: AppColors3.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                  ),
+                                  Text(
+                                    //'${widget.cant}',//products_global[index]['cant_cart'] == null ? 'Agotado' : '${products_global[index]['cant_cart']['cantidad']}',
+                                    widget.cant == '0' ? 'Agotado' : '${widget.cant}',
+                                    style: TextStyle(
+                                        color: AppColors3.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width * 0.035
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Container(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Text(
-                                  '\$${widget.precio} MXN',//"\$${products_global[]['price']} MXN",
+                              Row(
+                                children: [
+                                  Text(
+                                    "Precio: ",
+                                    style: TextStyle(color: AppColors3.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Text(
+                                      '\$${widget.precio} MXN',//"\$${products_global[]['price']} MXN",
+                                      style: TextStyle(
+                                        color: AppColors3.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                                        )))
+                              ])
+                            ]))),
+                Container(
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
+                  padding: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.width * 0.01,
+                      horizontal: MediaQuery.of(context).size.width * 0.02,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: AppColors3.whiteColor,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                            TextButton(
+                                onPressed: () {
+                                  widget.onClose();
+                                  Navigator.push(context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => ProductDetails(
+                                          idProduct: widget.id,
+                                          nameProd: widget.nombre,
+                                          descriptionProd: widget.descripcion,
+                                          catId: widget.catId,
+                                          barCode: widget.barCode,
+                                          stock: widget.stock,
+                                          precio: widget.precio,
+                                          onProductModified: () async {
+                                            await productService.refreshProducts(widget.catId);
+                                          },
+                                          onShowBlur: widget.onShowBlur
+                                      ),
+                                    ),
+                                  ).then((_) {
+                                    widget.onShowBlur(false);
+                                  });
+                                },
+                                style: const ButtonStyle(
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                child: const Text(
+                                  'Detalles',
                                   style: TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                                      color: AppColors3.primaryColor
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                ),
-              ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
-            width: MediaQuery.of(context).size.width * 0.4,
-            height: MediaQuery.of(context).size.width * 0.4,
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.02,
-                right: MediaQuery.of(context).size.width * 0.02,
-                bottom: MediaQuery.of(context).size.width * 0.02,
-                top: MediaQuery.of(context).size.width * 0.02
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: AppColors.whiteColor,
-            ),
-            child: Column(
-              children: [
-                Flexible(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            widget.onClose();
-                            Navigator.push(context,
-                              CupertinoPageRoute(
-                                builder: (context) => ProductDetails(
-                                  idProduct: widget.id,
-                                  nameProd: widget.nombre,
-                                  descriptionProd: widget.descripcion,
-                                  catId: widget.catId,
-                                  barCode: widget.barCode,
-                                  stock: widget.stock,
-                                  precio: widget.precio,
-                                  onProductModified: () async {
-                                  await productService.refreshProducts(widget.catId);
-                                  },
-                                  onShowBlur: widget.onShowBlur
+                          ],
+                        ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: AppColors3.primaryColor.withOpacity(0.3)),
+                            bottom: BorderSide(color: AppColors3.primaryColor.withOpacity(0.3)),
+                          )
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                widget.onClose();
+                                showDialog(
+                                    context: context,
+                                    builder: (builder) {
+                                      return ModifyProductStockDialog(nombreProd: widget.nombre, cantProd: widget.stock, onModify: (int currentStock) async {
+                                        await stockService.updateProductStock(idProduct: widget.id, stockValue: widget.stock, controllerValue: currentStock);
+                                        if (mounted) {
+                                          print('hola');
+                                          showOverlay(
+                                            context,
+                                            const CustomToast(
+                                              message: 'Producto modificado',
+                                            ),
+                                          );
+                                        }
+                                        await widget.onProductModified();
+                                      },
+                                        idProd: widget.id,
+                                      );
+                                    }
+                                ).then((_) {
+                                  widget.onShowBlur(false);
+                                });
+                              },
+                              style: const ButtonStyle(
+                                  alignment: Alignment.centerLeft
+                              ),
+                              child: const Text(
+                                'Modificar stock',
+                                style: TextStyle(
+                                    color: AppColors3.primaryColor
                                 ),
                               ),
-                            ).then((_) {
-                              widget.onShowBlur(false);
-                            });
-                          },
-                          style: const ButtonStyle(
-                            alignment: Alignment.centerLeft,
-                          ),
-                          child: const Text(
-                            'Detalles',
-                            style: TextStyle(
-                                color: AppColors.primaryColor
                             ),
-                          ),
+                          ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                Divider(
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                  thickness: MediaQuery.of(context).size.width * 0.004,
-                ),
-                Flexible(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            widget.onClose();
-                            showDialog(
-                                context: context,
-                                builder: (builder) {
-                                  return ModifyProductStockDialog(nombreProd: widget.nombre, cantProd: widget.stock, onModify: (int currentStock) async {
-                                    await stockService.updateProductStock(idProduct: widget.id, stockValue: widget.stock, controllerValue: currentStock);
+                      ),
+                     Row(
+                       mainAxisSize: MainAxisSize.min,
+                       children: [
+                            TextButton(
+                                onPressed: () {
+                                  widget.onClose();
+                                  widget.onShowBlur(true);
+                                  showDeleteProductConfirmationDialog(context, () async {
+                                    await productService.deleteProduct(widget.id);
                                     if (mounted) {
-                                      print('hola');
                                       showOverlay(
                                         context,
                                         const CustomToast(
-                                          message: 'Producto modificado',
+                                          message: 'Producto eliminado',
                                         ),
                                       );
                                     }
-                                    await widget.onProductModified();
-                                  },
-                                  idProd: widget.id,
-                                  );
-                                }
-                            ).then((_) {
-                              widget.onShowBlur(false);
-                            });
-                          },
-                          style: const ButtonStyle(
-                              alignment: Alignment.centerLeft
-                          ),
-                          child: const Text(
-                            'Modificar stock',
-                            style: TextStyle(
-                                color: AppColors.primaryColor
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Divider(
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                  thickness: MediaQuery.of(context).size.width * 0.004,
-                ),
-                Flexible(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            widget.onClose();
-                            widget.onShowBlur(true);
-                            showDeleteProductConfirmationDialog(context, () async {
-                              await productService.deleteProduct(widget.id);
-                              if (mounted) {
-                                showOverlay(
-                                  context,
-                                  const CustomToast(
-                                    message: 'Producto eliminado',
-                                  ),
-                                );
-                              }
-                              await widget.onProductDeleted();
-                            }).then((_) {
-                              widget.onShowBlur(false);
-                            });
-                          },
-                          style: const ButtonStyle(
-                              alignment: Alignment.centerLeft
-                          ),
-                          child: const Text(
-                            'Eliminar',
-                            style: TextStyle(
-                                color: AppColors.redDelete
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      )
-    );
+                                    await widget.onProductDeleted();
+                                  }).then((_) {
+                                    widget.onShowBlur(false);
+                                  });
+                                },
+                                style: const ButtonStyle(
+                                    alignment: Alignment.centerLeft
+                                ),
+                                child: const Text(
+                                  'Eliminar',
+                                  style: TextStyle(
+                                      color: AppColors3.redDelete)))
+                                ])
+                              ]))
+                    ]))));
   }
 }
