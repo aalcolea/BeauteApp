@@ -31,17 +31,32 @@ class PrintService extends ChangeNotifier {
   bool isConnected = false;
   ListenerPrintService listenerPrintService = ListenerPrintService();
   String nameTargetDevice = 'MP210';
-
-  void discoverServices(BluetoothDevice device) async {
+  Future<void> ensureCharacteristicAvailable() async {
+    if (characteristic == null && selectedDevice != null) {
+      await discoverServices(selectedDevice!);
+    }
+    int retryCount = 0;
+    while (characteristic == null && retryCount < 10) {
+      await Future.delayed(Duration(milliseconds: 500));
+      retryCount++;
+    }
+    if (characteristic == null) {
+      throw Exception("Error: Característica de impresión no disponible");
+    }
+  }
+  Future<void> discoverServices(BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
     for (BluetoothService service in services) {
       for (BluetoothCharacteristic charac in service.characteristics) {
         if (charac.properties.write) {
-            characteristic = charac;
+          characteristic = charac;
+          notifyListeners();
+          return;
         }
       }
     }
   }
+
     void initDeviceStatus() {
       isConnected = selectedDevice != null;
       selectedDevice !=null ? listenerPrintService.setChange(3) : null;
