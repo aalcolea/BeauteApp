@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
+import 'package:beaute_app/inventory/testPrinter/test2.dart';
 import 'package:beaute_app/inventory/testPrinter/printService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -422,14 +423,15 @@ class _CartState extends State<Cart> {
                   if(result) {*/
 
 
-                int maxWidth = 384; // Ancho máximo de la impresora
-                int maxHeight = 800; // Altura deseada
-                widget.printService.generateEscPosTicketWithImageMultipleTimes('assets/imgLog/test2.jpeg', widget.printService.characteristic, maxWidth, maxHeight);
+                await widget.printService.ensureCharacteristicAvailable();
 
-                //widget.printService.printImageDirectWithManualMargins('assets/imgLog/test2.jpeg', widget.printService.characteristic, maxWidth, maxHeight);// Usa un ancho adecuado
-                    //widget.printService.printImage(widget.printService.characteristic!);
-                   // widget.printService.characteristic != null ?
-                    //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
+                if (widget.printService.characteristic != null) {
+                PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test.jpeg');
+                } else {
+                print("Error: Característica de impresión no disponible después de esperar");
+                }
+
                     cartProvider.refreshCart();
                   /*}
                 }*/

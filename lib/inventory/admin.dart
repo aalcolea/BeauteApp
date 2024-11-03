@@ -10,6 +10,7 @@ import 'package:beaute_app/inventory/sellpoint/cart/views/cart.dart';
 import 'package:beaute_app/inventory/scanBarCode.dart';
 import 'package:beaute_app/inventory/stock/products/views/products.dart';
 import 'package:beaute_app/inventory/testPrinter/printService.dart';
+import 'package:beaute_app/inventory/testPrinter/test2.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -118,10 +119,6 @@ class _adminInvState extends State<adminInv> {
 
   @override
   Widget build(BuildContext context) {
-   /* return ChangeNotifierProvider<PrintService>(
-        create: (_) => printService,
-        child: Consumer<PrintService>(
-            builder: (context, printService, child) {*/
       Widget _buildBody() {
         switch (_selectedScreen) {
           case 1:
