@@ -417,10 +417,11 @@ class _CartState extends State<Cart> {
                 horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
-               /* bool confirm = await showConfirmSellDialog(context);
+                widget.onShowBlurr(false);
+               bool confirm = await showConfirmSellDialog(context);
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
-                  if(result) {*/
+                  if(result) {
 
 
                 await widget.printService.ensureCharacteristicAvailable();
@@ -433,8 +434,8 @@ class _CartState extends State<Cart> {
                 }
 
                     cartProvider.refreshCart();
-                  /*}
-                }*/
+                  }
+                }
               },
               child: Text(
               'Pagar',
