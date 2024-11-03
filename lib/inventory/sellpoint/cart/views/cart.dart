@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
+import 'package:beaute_app/inventory/testPrinter/test2.dart';
 import 'package:beaute_app/inventory/testPrinter/printService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -417,16 +418,22 @@ class _CartState extends State<Cart> {
                       horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
-                widget.onShowBlurr(true);
-                bool confirm = await showConfirmSellDialog(context);
+               widget.onShowBlurr(false);
+               bool confirm = await showConfirmSellDialog(context);
+
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
                   widget.onShowBlurr(false);
                   if(result) {
-                    widget.printService.printImage('assets/imgLog/logoBeauteWhiteSqr.png', widget.printService.characteristic, 400);
-                    //widget.printService.printImage(widget.printService.characteristic!);
-                    // widget.printService.characteristic != null ?
-                    //widget.printService.generateEscPosTicket(carrito, widget.printService.characteristic) : null;
+                await widget.printService.ensureCharacteristicAvailable();
+
+                if (widget.printService.characteristic != null) {
+                PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test.jpeg');
+                } else {
+                print("Error: Característica de impresión no disponible después de esperar");
+                }
+
                     cartProvider.refreshCart();
                     widget.onShowBlurr(false);
                   }
