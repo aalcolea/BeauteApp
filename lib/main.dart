@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors3.primaryColor),
         useMaterial3: true,
       ),
       routes: {
@@ -135,7 +135,7 @@ class SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              color: AppColors.primaryColor,
+              color: AppColors3.primaryColor,
             ),
             SizedBox(height: 20),
             Text('Cargando...', style: TextStyle(fontSize: 18)),

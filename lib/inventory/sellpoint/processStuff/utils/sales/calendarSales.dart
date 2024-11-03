@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../../../../../agenda/themes/colors.dart';
+import '../../../../themes/colors.dart';
 
-import '../themes/colors.dart';
-
-class CalendarioCita extends StatefulWidget {
+class SalesCalendar extends StatefulWidget {
+  final String? dateInit;
   final void Function(String, bool) onDayToAppointFormSelected;
-  CalendarioCita({Key? key, required this.onDayToAppointFormSelected})
-      : super(key: key);
+  SalesCalendar({Key? key, required this.onDayToAppointFormSelected, this.dateInit}) : super(key: key);
 
   @override
-  State<CalendarioCita> createState() => _CalendarioCitaState();
+  State<SalesCalendar> createState() => _SalesCalendarState();
 }
 
-class _CalendarioCitaState extends State<CalendarioCita> {
+class _SalesCalendarState extends State<SalesCalendar> {
+
+  TextEditingController saleDateController = TextEditingController();
+
   String getMonthName(int month) {
     switch (month) {
       case 1:
@@ -54,6 +57,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
   @override
   void initState() {
     super.initState();
+    widget.dateInit != null ? saleDateController.text = widget.dateInit! : null;
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -68,69 +72,117 @@ class _CalendarioCitaState extends State<CalendarioCita> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(
+        children: [
       Container(
-        alignment: Alignment.centerLeft,
+        alignment: Alignment.topRight,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07,
         decoration: BoxDecoration(
-          color: Colors.transparent,
+            color: Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_rounded,
-                color: AppColors3.primaryColor,
-                size: MediaQuery.of(context).size.width * 0.07,
+            Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width  * 0.02,
+                  ),
+                  padding: EdgeInsets.only(
+                    top:  MediaQuery.of(context).size.width * 0.02,
+                    bottom:  MediaQuery.of(context).size.width * 0.02,
+                    left:  MediaQuery.of(context).size.width * 0.02,
+                    right: MediaQuery.of(context).size.width * 0.02,),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(-10)),
+                    color: AppColors3.secundaryColor,
+                  ),
+                  child: TextFormField(
+                    enableInteractiveSelection: false,
+                    controller: saleDateController,
+                    readOnly: true,
+                    textAlignVertical: TextAlignVertical.bottom,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
+                      isDense: true,
+                      isCollapsed: true,
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.width * 0.1,
+                        minWidth: 0,
+                        ),
+                        hintText: 'DD-MM--AA',
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                    ),
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.035,
+                    ),
+                  ),
+                )
               ),
-              onPressed: () {
-                int previousMonth = currentMonth! - 1;
-                int previousYear = visibleYear!;
-                if (previousMonth < 1) {
-                  previousMonth = 12;
-                  previousYear--;
-                }
-                _calendarController.displayDate =
-                    DateTime(previousYear, previousMonth, 1);
-              },
-            ),
-            Text(
-              currentMonth != null
-                  ? '${getMonthName(currentMonth!)} $visibleYear'
-                  : '${getMonthName(initMonth)} $visibleYear',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.07,
-                  color: AppColors3.primaryColor),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: AppColors3.primaryColor,
-                size: MediaQuery.of(context).size.width * 0.07,
-              ),
-              onPressed: () {
-                int nextMonth = currentMonth! + 1;
-                int nextYear = visibleYear!;
-                if (nextMonth > 12) {
-                  nextMonth = 1;
-                  nextYear++;
-                }
-                _calendarController.displayDate =
-                    DateTime(nextYear, nextMonth, 1);
-              },
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.arrow_back_ios_rounded,
+                    color: AppColors3.whiteColor,
+                    size: MediaQuery.of(context).size.width * 0.055,
+                  ),
+                  onPressed: () {
+                    int previousMonth = currentMonth! - 1;
+                    int previousYear = visibleYear!;
+                    if (previousMonth < 1) {
+                      previousMonth = 12;
+                      previousYear--;
+                    }
+                    _calendarController.displayDate =
+                        DateTime(previousYear, previousMonth, 1);
+                  },
+                ),
+                Text(
+                  currentMonth != null
+                      ? '${getMonthName(currentMonth!)} $visibleYear'
+                      : '${getMonthName(initMonth)} $visibleYear',
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                      color: AppColors3.whiteColor),
+                ),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: AppColors3.whiteColor,
+                    size: MediaQuery.of(context).size.width * 0.055,
+                  ),
+                  onPressed: () {
+                    int nextMonth = currentMonth! + 1;
+                    int nextYear = visibleYear!;
+                    if (nextMonth > 12) {
+                      nextMonth = 1;
+                      nextYear++;
+                    }
+                    _calendarController.displayDate =
+                        DateTime(nextYear, nextMonth, 1);
+                  },
+                ),
+              ],
+            )
           ],
         ),
       ),
       Expanded(
           child: Container(
               decoration: BoxDecoration(
+                color: AppColors3.secundaryColor,//AppColors32.secundaryColor,
                 borderRadius: BorderRadius.circular(0),
-                border: Border.all(color: AppColors3.greyColor, width: 1.2),
+                border: Border.all(color: AppColors3.secundaryColor, width: 1.2),
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(0),
@@ -143,20 +195,20 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                         if (details.date != null) {
                           DateTime selectedDate = details.date!;
                           DateTime now = DateTime.now();
-
-                          if (selectedDate.isBefore(
+                          if (selectedDate.isAfter(
                               DateTime(now.year, now.month, now.day))) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                                SnackBar(
                                   padding: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.width * 0.08,
-                                      bottom: MediaQuery.of(context).size.width * 0.08,
-                                      left: MediaQuery.of(context).size.width * 0.02,
+                                    top: MediaQuery.of(context).size.width * 0.08,
+                                    bottom: MediaQuery.of(context).size.width * 0.08,
+                                    left: MediaQuery.of(context).size.width * 0.02,
                                   ),
-                                  content: Text('No se pueden seleccionar fechas pasadas',
-                                  style: TextStyle(
-                                      color: AppColors3.whiteColor,
-                                      fontSize: MediaQuery.of(context).size.width * 0.045),)),
+                                  content: Text('No se pueden seleccionar fechas futuras',
+                                    style: TextStyle(
+                                        color: AppColors3.whiteColor,
+                                        fontSize: MediaQuery.of(context).size.width * 0.045),
+                                  )),
                             );
                           } else {
                             String dateOnly = DateFormat('yyyy-MM-dd').format(selectedDate);
@@ -176,8 +228,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                         });
                       },
                       initialDisplayDate: DateTime.now(),
-                      monthCellBuilder:
-                          (BuildContext context, MonthCellDetails details) {
+                      monthCellBuilder: (BuildContext context, MonthCellDetails details) {
                         final bool isToday =
                             details.date.month == DateTime.now().month &&
                                 details.date.day == DateTime.now().day &&
@@ -206,8 +257,8 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                   style: TextStyle(
                                     color: AppColors3.whiteColor,
                                     fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.05,
+                                    MediaQuery.of(context).size.width *
+                                        0.05,
                                   ),
                                 ),
                               ),
@@ -221,7 +272,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                               color: AppColors3.whiteColor,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: AppColors3.secundaryColor,
+                                color: AppColors3.primaryColor,
                                 width: 1.0,
                               ),
                             ),
@@ -231,7 +282,7 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                 style: TextStyle(
                                   color: AppColors3.primaryColor,
                                   fontSize:
-                                      MediaQuery.of(context).size.width * 0.05,
+                                  MediaQuery.of(context).size.width * 0.05,
                                 ),
                               ),
                             ),
@@ -250,12 +301,9 @@ class _CalendarioCitaState extends State<CalendarioCita> {
                                       child: Text(details.date.day.toString(),
                                           style: TextStyle(
                                             color: isInCurrentMonth
-                                                ? const Color(0xFF72A5D0)
-                                                : AppColors3.secundaryColor,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05,
+                                                ? AppColors3.blackColor
+                                                : AppColors3.primaryColor.withOpacity(0.4),
+                                            fontSize: MediaQuery.of(context).size.width * 0.05,
                                           )))));
                         }
                       }))))

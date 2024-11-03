@@ -24,7 +24,7 @@ class TitleContainer extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final BoxDecoration defaultDecoration = const BoxDecoration(
-      color: AppColors.primaryColor,
+      color: AppColors3.primaryColor,
       borderRadius: BorderRadius.all(Radius.circular(10)),
     );
 
@@ -92,8 +92,8 @@ class CalendarContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final BoxDecoration defaultDecoration = BoxDecoration(
-      border: Border.all(color: Colors.black54, width: 0.5),
-      color: Colors.white,
+      border: Border.all(color: AppColors3.blackColor.withOpacity(0.5), width: 0.5),
+      color: AppColors3.whiteColor,
       borderRadius: BorderRadius.circular(15),
     );
 
@@ -159,8 +159,8 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black54, width: 0.5),
-        color: AppColors.BgprimaryColor,
+        border: Border.all(color: AppColors3.blackColor.withOpacity(0.5), width: 0.5),
+        color: AppColors3.whiteColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -184,7 +184,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
                   color:
-                      optSelected == 1 || optSelectedToSend == 1 ? AppColors.primaryColor : AppColors.BgprimaryColor,
+                      optSelected == 1 || optSelectedToSend == 1 ? AppColors3.primaryColor : AppColors3.whiteColor,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10))),
@@ -202,7 +202,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                           )
                         : SvgPicture.asset(
                             'assets/imgLog/docVector2.svg',
-                              colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                              colorFilter: const ColorFilter.mode(AppColors3.primaryColor, BlendMode.srcIn),
                             width: MediaQuery.of(context).size.width * 0.07,
                             height: MediaQuery.of(context).size.width * 0.07,
                           ),
@@ -211,8 +211,8 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     'Doctor 1',
                     style: TextStyle(
                         color: optSelected == 1 ||  optSelectedToSend == 1
-                            ? Colors.white
-                            : AppColors.primaryColor,
+                            ? AppColors3.whiteColor
+                            : AppColors3.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.054),
                   )
                 ],
@@ -224,7 +224,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
           Container(
             padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.width * 0.02),
-            color: Colors.black54,
+            color: AppColors3.blackColor.withOpacity(0.5),
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.0009,
           ),
@@ -246,7 +246,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.width * 0.02),
               decoration: BoxDecoration(
-                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors.primaryColor : AppColors.BgprimaryColor,
+                  color: optSelected == 2 ||  optSelectedToSend == 2 ? AppColors3.primaryColor : AppColors3.whiteColor,
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
@@ -264,7 +264,7 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                         )
                         : SvgPicture.asset(
                           'assets/imgLog/docVector2.svg',
-                          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                          colorFilter: const ColorFilter.mode(AppColors3.primaryColor, BlendMode.srcIn),
                           width: MediaQuery.of(context).size.width * 0.07,
                           height: MediaQuery.of(context).size.width * 0.07,
                         ),
@@ -273,8 +273,8 @@ class _DoctorsMenuState extends State<DoctorsMenu> {
                     'Doctor 2',
                     style: TextStyle(
                         color: optSelected == 2 ||  optSelectedToSend == 2
-                            ? Colors.white
-                            : AppColors.primaryColor,
+                            ? AppColors3.whiteColor
+                            : AppColors3.primaryColor,
                         fontSize: MediaQuery.of(context).size.width * 0.054),
                   )
                 ],
@@ -337,20 +337,20 @@ class FieldsToWrite extends StatelessWidget {
       contentPadding: contentPadding ?? defaultContentPadding,
       prefixIcon: preffixIcon,
       filled: fillColor != null,
-      fillColor: fillColor ?? Colors.white,
+      fillColor: fillColor ?? AppColors3.whiteColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
     ),
       enabledBorder: OutlineInputBorder(
         borderSide: const BorderSide(
-          color: AppColors.primaryColor, // Cambia este color al que prefieras
+          color: AppColors3.primaryColor, // Cambia este color al que prefieras
           width: 1.0, // El grosor del borde
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
         focusedBorder: OutlineInputBorder(
         borderSide: const BorderSide(
-          color: AppColors.primaryColor,
+          color: AppColors3.primaryColor,
           width: 1.0,
         ),
         borderRadius: BorderRadius.circular(10.0),

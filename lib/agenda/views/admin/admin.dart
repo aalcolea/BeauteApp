@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/agenda/views/admin/clientList.dart';
+import 'package:beaute_app/agenda/views/admin/forTodayModal.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class AssistantAdmin extends StatefulWidget {
 
 class _AssistantAdminState extends State<AssistantAdmin> {
 
+  Fortodaymodal fortodaymodal = Fortodaymodal();
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
@@ -41,6 +43,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     keyboardVisibilitySubscription =
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
+        print('holadamin');
         visibleKeyboard = visible;
         if(_selectedScreen == 3){
         }
@@ -54,6 +57,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
     });
   }
 
+  Future<void> onOpenModal() async {
+    bool? result = await fortodaymodal.showModal(context);
+    if (result == true) {
+      setState(() {
+        _showBlurr = false;
+      });
+      print('El modal fue cerrado');
+    }
+  }
 
   void _onshowContentToModify(bool showContentToModify) {
   }
@@ -115,7 +127,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                 }
               });
       });
-
       return;
     }
   }
@@ -139,7 +150,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
           children: [
             Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
-              color: Colors.transparent,
+              color: AppColors3.bgColor,
               child: Column(
                 children: [
                   Padding(
@@ -168,7 +179,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   icon: Icon(
                                     CupertinoIcons.back,
                                     size: MediaQuery.of(context).size.width * 0.08,
-                                    color: AppColors.primaryColor,
+                                    color: AppColors3.primaryColor,
                                   )),
                             ),
                             Text(
@@ -180,7 +191,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   ? 'Para hoy'
                                   : '',
                               style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 fontSize: screenWidth! < 370.00
                                     ? MediaQuery.of(context).size.width * 0.078
                                     : MediaQuery.of(context).size.width * 0.082,
@@ -194,26 +205,16 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           children: [
                             IconButton(
                               padding: EdgeInsets.zero,
-                              onPressed: () {
-                                /*Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => NotificationsScreen(),
-                                  ),
-                                );*/
+                              onPressed: () async {
                                 setState(() {
-                                  if (_selectedScreen != 4) {
-                                    _selectedScreen = 4;
-                                    _hideBtnsBottom = true;
-                                  } else {
-                                    _selectedScreen = 1;
-                                    _hideBtnsBottom = false;
-                                  }
+                                  _showBlurr = true;
                                 });
+                                await onOpenModal();
                               },
                               icon: Icon(
                                 CupertinoIcons.calendar_today,
                                 size: MediaQuery.of(context).size.width * 0.095,
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                               ),
                             ),
                             Builder(builder: (BuildContext context){
@@ -223,7 +224,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 },
                                 icon: SvgPicture.asset(
                                   'assets/imgLog/navBar.svg',
-                                  colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                                  colorFilter: const ColorFilter.mode(AppColors3.primaryColor, BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.105,
                                 ),);
                             }),
@@ -240,7 +241,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                             : MediaQuery.of(context).size.width * 0.0,
                       ),
                       decoration: BoxDecoration(
-                          color: AppColors.BgprimaryColor,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.only(
                               topLeft: _selectedScreen == 4
                                   ? const Radius.circular(15)
@@ -253,11 +254,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           border: _selectedScreen != 4
                               ? const Border(
                               bottom: BorderSide(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 width: 2.5,
                               ))
                               : null,
-                          boxShadow: [
+                          /*boxShadow: [
                             BoxShadow(
                               color: _selectedScreen != 4
                                   ? Colors.black54
@@ -271,7 +272,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               offset: Offset(
                                   MediaQuery.of(context).size.height, MediaQuery.of(context).size.width * -0.025),
                             ),
-                          ]),
+                          ]*/),
                       child: Container(
                         margin: EdgeInsets.only(
                           top: _selectedScreen == 1
@@ -325,8 +326,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                         ? CupertinoIcons.calendar
                                         : CupertinoIcons.calendar,
                                     color: _selectedScreen == 1
-                                        ? AppColors.primaryColor
-                                        : AppColors.primaryColor.withOpacity(0.2),
+                                        ? AppColors3.primaryColor
+                                        : AppColors3.primaryColor.withOpacity(0.3),
                                     size: MediaQuery.of(context).size.width * 0.12,
                                   ),
                                 ),
@@ -335,15 +336,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
+                              backgroundColor: AppColors3.primaryColor,
                               padding: EdgeInsets.symmetric(
                                   horizontal:
                                   MediaQuery.of(context).size.width * 0.06),
-                              surfaceTintColor: AppColors.primaryColor,
+                              surfaceTintColor: AppColors3.primaryColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                                 side: const BorderSide(
-                                    color: AppColors.primaryColor, width: 2),
+                                    color: AppColors3.primaryColor, width: 2),
                               ),
                             ),
                             onPressed: () {
@@ -358,8 +359,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                   ? CupertinoIcons.add
                                   : CupertinoIcons.add,
                               color: _selectedScreen == 2
-                                  ? Colors.white
-                                  : Colors.white,
+                                  ? AppColors3.whiteColor
+                                  : AppColors3.whiteColor,
                               size: MediaQuery.of(context).size.width * 0.1,
                             ),
                           ),
@@ -385,8 +386,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                     _selectedScreen == 3 ?
                                     CupertinoIcons.person_fill :CupertinoIcons.person,
                                     color: _selectedScreen == 3
-                                        ? AppColors.primaryColor
-                                        : AppColors.primaryColor.withOpacity(0.2),
+                                        ? AppColors3.primaryColor
+                                        : AppColors3.primaryColor.withOpacity(0.3),
                                     size: MediaQuery.of(context).size.width * 0.11,
                                   ),
                                 ),
@@ -406,12 +407,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                   filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                   child: Container(
                     color: Colors.black54.withOpacity(0.3),
-                  ),
-                ),)
-          ],
-        )
-      ));
-  }
+                  )))])));}
 
   Widget _buildBody() {
     switch (_selectedScreen) {

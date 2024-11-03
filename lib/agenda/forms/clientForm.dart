@@ -202,7 +202,7 @@ class ClientFormState extends State<ClientForm> {
                 top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
             padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
-              color: AppColors.BgprimaryColor,
+              color: AppColors3.whiteColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -217,7 +217,7 @@ class ClientFormState extends State<ClientForm> {
                         fontSize:
                         MediaQuery.of(context).size.width * 0.08,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor,
+                        color: AppColors3.primaryColor,
                       ),
                     ),
                     IconButton(
@@ -227,7 +227,7 @@ class ClientFormState extends State<ClientForm> {
                             Navigator.pop(context);
                           });
                         },
-                        icon: const Icon(Icons.close, color: AppColors.primaryColor,))
+                        icon: const Icon(Icons.close, color: AppColors3.primaryColor,))
                   ],
                 ),
                 Container(
@@ -254,7 +254,7 @@ class ClientFormState extends State<ClientForm> {
                                     vertical: MediaQuery.of(context).size.width * 0.025),
                                 alignment: Alignment.centerLeft,
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
+                                  color: AppColors3.primaryColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Row(
@@ -295,14 +295,14 @@ class ClientFormState extends State<ClientForm> {
                                   hintText: 'Nombre completo',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors.primaryColor)
+                                    borderSide: const BorderSide(color: AppColors3.primaryColor)
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10.0),
-                                        borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                        borderSide: const BorderSide(color: AppColors3.primaryColor)),
                                     focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                                    borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),
                                   ),
                                 ),
                                 onTap: () {
@@ -324,7 +324,7 @@ class ClientFormState extends State<ClientForm> {
                                   horizontal: MediaQuery.of(context).size.width * 0.0),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Text(
@@ -365,13 +365,13 @@ class ClientFormState extends State<ClientForm> {
                                   border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10.0),
                                         borderSide: const BorderSide(
-                                            color: AppColors.primaryColor)),
+                                            color: AppColors3.primaryColor)),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                      borderSide: const BorderSide(color: AppColors3.primaryColor)),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                                    borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),
                                   ),
                                 ),
                                 onTap: () {
@@ -402,7 +402,7 @@ class ClientFormState extends State<ClientForm> {
                                   horizontal: MediaQuery.of(context).size.width * 0.0),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Text(
@@ -434,13 +434,13 @@ class ClientFormState extends State<ClientForm> {
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                       borderSide: const BorderSide(
-                                          color: AppColors.primaryColor)),
+                                          color: AppColors3.primaryColor)),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(color: AppColors.primaryColor)),
+                                      borderSide: const BorderSide(color: AppColors3.primaryColor)),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                                    borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),
                                   ),
                                   hintText: 'Correo electrónico',
                                 ),
@@ -466,11 +466,11 @@ class ClientFormState extends State<ClientForm> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: MediaQuery.of(context).size.width * 0.01,
                                           vertical: MediaQuery.of(context).size.width * 0.0112),
-                                      surfaceTintColor: AppColors.BgprimaryColor,
+                                      surfaceTintColor: AppColors3.primaryColorMoreStrong,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10.0),
                                         side: const BorderSide(
-                                            color: AppColors.primaryColor, width: 2),
+                                            color: AppColors3.primaryColor, width: 2),
                                       ),
                                       fixedSize: Size(
                                         MediaQuery.of(context).size.width * 0.6,
@@ -483,7 +483,7 @@ class ClientFormState extends State<ClientForm> {
                                           fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.055,
-                                          color: AppColors.primaryColor,
+                                          color: AppColors3.primaryColor,
                                         ))))
                           ])),
                 ),

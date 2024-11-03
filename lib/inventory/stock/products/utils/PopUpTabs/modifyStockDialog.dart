@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../agenda/utils/showToast.dart';
 import '../../../../../agenda/utils/toastWidget.dart';
 import '../../services/stockService.dart';
-import '../../../../../agenda/themes/colors.dart';
+import '../../../../themes/colors.dart';
 
 class ModifyProductStockDialog extends StatefulWidget {
   final String nombreProd;
@@ -76,7 +76,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: Colors.white,
+              color: AppColors.whiteColor,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -95,7 +95,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: MediaQuery.of(context).size.width * 0.07,
-                              color: const Color(0xFF4F2263),
+                              color: AppColors.primaryColor,
                             ),
                           ),
                         ),
@@ -113,7 +113,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                                 },
                                 icon: const Icon(
                                   CupertinoIcons.check_mark,
-                                  color: Color(0xFF4F2263),
+                                  color: AppColors.primaryColor,
                                 )
                               ),
                             ),
@@ -123,7 +123,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                               },
                               icon: const Icon(
                                 CupertinoIcons.xmark,
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                               ),
                             )
                           ],
@@ -135,7 +135,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.045,
-                        color: const Color(0xFF4F2263),
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ],
@@ -149,7 +149,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(40, 40),
-                          backgroundColor: const Color(0xFF4F2263),
+                          backgroundColor: AppColors.primaryColor,
                           padding: EdgeInsets.symmetric(
                             horizontal: MediaQuery.of(context).size.width * 0.02,
                             vertical: MediaQuery.of(context).size.width * 0.02,
@@ -161,7 +161,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                         onPressed: _decrementStock,
                         child: Icon(
                           CupertinoIcons.minus,
-                          color: Colors.white,
+                          color: AppColors.whiteColor,
                           size: MediaQuery.of(context).size.width * 0.04,
                         ),
                       ),
@@ -178,14 +178,14 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               borderSide: const BorderSide(
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 width: 1.5,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               borderSide: const BorderSide(
-                                color: Color(0xFF4F2263),
+                                color: AppColors.primaryColor,
                                 width: 1.5,
                               ),
                             ),
@@ -212,7 +212,7 @@ class _ModifyProductStockDialogState extends State<ModifyProductStockDialog> {
                         onPressed: _incrementStock,
                         child: Icon(
                           CupertinoIcons.add,
-                          color: Colors.white,
+                          color: AppColors.whiteColor,
                           size: MediaQuery.of(context).size.width * 0.04,
                         ),
                       ),

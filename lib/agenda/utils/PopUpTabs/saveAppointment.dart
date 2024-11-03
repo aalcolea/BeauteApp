@@ -102,7 +102,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                     '¿Seguro que desea guardar los cambios?',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.075,
-                      color: AppColors.primaryColor,
+                      color: AppColors3.primaryColor,
                     ),
                   ),
                 ),
@@ -120,7 +120,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: AppColors.primaryColor,
+                              color: AppColors3.primaryColor,
                               width: 2.0,
                             ),
                           ),
@@ -129,7 +129,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                           'Cancelar',
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.055,
-                            color: AppColors.primaryColor,
+                            color: AppColors3.primaryColor,
                           ),
                         ),
                       ),
@@ -140,7 +140,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           side: const BorderSide(
-                              color: AppColors.primaryColor, width: 1),
+                              color: AppColors3.primaryColor, width: 1),
                         ),
                         backgroundColor: Colors.white,
                         surfaceTintColor: Colors.white,

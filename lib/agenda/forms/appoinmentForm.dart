@@ -20,7 +20,6 @@ import '../utils/PopUpTabs/appointmetSuccessfullyCreated.dart';
 import '../utils/PopUpTabs/closeAppointmentScreen.dart';
 import '../utils/timer.dart';
 
-
 class AppointmentForm extends StatefulWidget {
   final bool docLog;
   final String? dateFromCalendarSchedule;
@@ -39,7 +38,10 @@ class AppointmentForm extends StatefulWidget {
   _AppointmentFormState createState() => _AppointmentFormState();
 }
 
-class _AppointmentFormState extends State<AppointmentForm> {
+class _AppointmentFormState extends State<AppointmentForm> with SingleTickerProviderStateMixin {
+
+  late AnimationController animationController;
+  late Animation<double> opacidad;
   final GlobalKey<ClientFormState> myWidgetKey = GlobalKey<ClientFormState>();
   final DropdownDataManager dropdownDataManager = DropdownDataManager();
   Client? _selectedClient;
@@ -80,6 +82,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   String toTime = '';
   int? newClientID;
   bool showBlurr = false;
+  bool isLoading = false;
   //
   String nameDr1 = 'Doctor1';
   String nameDr2 = 'Doctor2';
@@ -197,12 +200,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
     }
   }
 
-  void _onAssignedDoctor(
-      bool dr1sel,
-      bool dr2sel,
-      TextEditingController drSelected,
-      int optSelected,
-      bool showdrChooseWidget) {
+  void _onAssignedDoctor(bool dr1sel, bool dr2sel, TextEditingController drSelected,
+      int optSelected, bool showdrChooseWidget) {
     setState(() {
       _drSelected = drSelected;
       if (_drSelected!.text == nameDr1) {
@@ -211,7 +210,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
         doctor_id_body = 2;
       }//si hay mas drs habra que hacer un swicht o if else
       _optSelected = optSelected;
-      _showdrChooseWidget = showdrChooseWidget;
+      animationController.reverse().then((_){
+        _showdrChooseWidget = showdrChooseWidget;
+        animationController.reset();
+      });
     });
   }
 
@@ -227,7 +229,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
   void _onTimeChoose(bool _isTimerShow, TextEditingController selectedTime,
       int selectedIndexAmPm) {
     setState(() {
-      isTimerShow = _isTimerShow;
+      animationController.reverse().then((_){
+        isTimerShow = _isTimerShow;
+        animationController.reset();
+      });
       String toCompare = selectedTime.text;
       List<String> timeToCompare = toCompare.split(':');
       int hourToCompareConvert = int.parse(timeToCompare[0]);
@@ -249,8 +254,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
         isHourCorrect = false;
         _timeController.text = 'Seleccione hora válida';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pueden seleccionar horarios pasados'),
+          SnackBar(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width * 0.08,
+              bottom: MediaQuery.of(context).size.width * 0.08,
+              left: MediaQuery.of(context).size.width * 0.02,
+            ),
+            content: Text('No se pueden seleccionar horarios pasados',
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.045
+            ),),
           ),
         );
       } else {
@@ -266,8 +279,11 @@ class _AppointmentFormState extends State<AppointmentForm> {
   void _onDateToAppointmentForm(
       String dateToAppointmentForm, bool showCalendar) {
     setState(() {
+      animationController.reverse().then((_){
+        _showCalendar = showCalendar;
+        animationController.reset();
+      });
       _dateController.text = dateToAppointmentForm;
-      _showCalendar = showCalendar;
     });
   }
 
@@ -302,6 +318,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   Future<void> submitAppointment() async {
+    setState(() {
+      isLoading = true;
+
+    });
     toTime = _timeController.text;
     DateFormat dateFormat12Hour = DateFormat('hh:mm a');
     DateFormat dateFormat24Hour = DateFormat('HH:mm');
@@ -336,6 +356,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       if (response.statusCode == 201) {
         if (mounted) {
           setState(() {
+            isLoading = false;
             showBlurr = true;
             showDialog(context: context,  barrierDismissible: false, builder: (BuildContext context){
               return Appointmetsuccessfullycreated(docLog: widget.docLog);
@@ -359,6 +380,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+    opacidad = Tween(begin: 0.0, end:  1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
     if (widget.dateFromCalendarSchedule != null) {
       _dateController.text = widget.dateFromCalendarSchedule!;
     }
@@ -375,10 +398,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
         });
       });
     }
+    animationController.addListener((){
+      setState(() {
+      });
+    });
   }
 
   @override
   void dispose() {
+    animationController.dispose();
     keyboardVisibilitySubscription.cancel();
     _clientTextController.dispose();
     _dateController.dispose();
@@ -395,655 +423,572 @@ class _AppointmentFormState extends State<AppointmentForm> {
         onBackPressed(didPop);
       },
       child: Scaffold(
+        backgroundColor: AppColors3.whiteColor,
         body: Form(
           child: Stack(
             children: [
-              Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.02,
-                        bottom: MediaQuery.of(context).size.width * 0.02),
-                    height: MediaQuery.of(context).size.height * 0.08,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(color: Colors.transparent),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(
-                                CupertinoIcons.back,
-                                size: MediaQuery.of(context).size.width * 0.08,
-                                color: AppColors.primaryColor,
+              CustomScrollView(
+                physics: visibleKeyboard ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    backgroundColor: AppColors3.whiteColor,
+                    pinned: true,
+                    leadingWidth: MediaQuery.of(context).size.width,
+                    leading: Container(
+                        margin: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.width * 0.02),
+                        decoration: const BoxDecoration(color: Colors.transparent),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: Icon(
+                                        CupertinoIcons.back,
+                                        size: MediaQuery.of(context).size.width * 0.08,
+                                        color: AppColors3.primaryColor,
+                                      ),
+                                    ),
+                                    Text(
+                                        'Nueva cita',
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context).size.width * 0.095,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors3.primaryColor,
+                                        ))
+                                  ])
+                            ])),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Visibility(
+                            visible: isDocLog ? false : true,
+                            child: TitleContainer(
+                              child: Text(
+                                'Doctor: ',
+                                style: TextStyle(
+                                  color: AppColors3.whiteColor,
+                                  fontSize: MediaQuery.of(context).size.width * 0.045,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            Text(
-                              'Nueva cita',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.095,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryColor,
-                            ))
-                      ])
-                    ])),
-            Column(
-                    children: [
-                      Visibility(
-                        visible: _showdrChooseWidget ? true : false,
-                        child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.19),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: visibleKeyboard ? MediaQuery.of(context).size.height * 0.52
-                            : _showdrChooseWidget ? MediaQuery.of(context).size.height * 0.7
-                                : MediaQuery.of(context).size.height * 0.88,
-                        color: Colors.transparent,
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Visibility(
-                                visible: isDocLog ? false : _showdrChooseWidget ? false : true,
-                                child: TitleContainer(
-                                  child: Text(
-                                    'Doctor: ',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                          ),
+                          Visibility(
+                            visible: isDocLog ? false : true,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                                  horizontal: MediaQuery.of(context).size.width * 0.026),
+                              child: TextFormField(
+                                controller: _drSelected,
+                                decoration: InputDecoration(
+                                  hintText: 'Seleccione una opción...',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: MediaQuery.of(context).size.width * 0.03),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(
+                                        color: AppColors3.primaryColor,
+                                        width: 1,
+                                      )
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(
+                                        color: AppColors3.primaryColor,
+                                        width: 1,
+                                      )
+                                  ),
+                                  focusedBorder:  OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(
+                                        color: AppColors3.primaryColor,
+                                        width: 1,
+                                      )
+                                  ),
+                                  suffixIcon: Icon(
+                                    Icons.arrow_drop_down_circle_outlined,
+                                    size: MediaQuery.of(context).size.width * 0.085,
+                                    color: AppColors3.primaryColor,
                                   ),
                                 ),
-                              ),
-
-                              Visibility(
-                                visible: isDocLog ? false : _showdrChooseWidget ? false : true,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
-                                      horizontal: MediaQuery.of(context).size.width * 0.026),
-                                  child: TextFormField(
-                                    controller: _drSelected,
-                                    decoration: InputDecoration(
-                                      hintText: 'Seleccione una opción...',
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context).size.width * 0.03),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        borderSide: const BorderSide(
-                                          color: AppColors.primaryColor,
-                                          width: 1,
-                                        )
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                          borderSide: const BorderSide(
-                                            color: AppColors.primaryColor,
-                                            width: 1,
-                                          )
-                                      ),
-                                      focusedBorder:  OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                          borderSide: const BorderSide(
-                                            color: AppColors.primaryColor,
-                                            width: 1,
-                                          )
-                                      ),
-                                      suffixIcon: Icon(
-                                        Icons.arrow_drop_down_circle_outlined,
-                                        size: MediaQuery.of(context).size.width * 0.085,
-                                        color: AppColors.primaryColor,
-                                      ),
-                                    ),
-                                    readOnly: true,
-                                    onTap: () {
-                                      setState(
-                                        () {
-                                          _showdrChooseWidget = _showdrChooseWidget ? false : true;
-                                          drFieldDone = true;
-                                        },
-                                      );
-                                    },
-                                    onEditingComplete: () {
-                                      setState(() {
-                                        drFieldDone = true;
+                                readOnly: true,
+                                onTap: () {
+                                  setState(() {
+                                    if(_showdrChooseWidget == false){
+                                      _showdrChooseWidget = true;
+                                      animationController.forward();
+                                    } else{
+                                      animationController.reverse().then((_){
+                                        _showdrChooseWidget = false;
+                                        animationController.reset();
                                       });
+                                    }
+                                    drFieldDone = true;
                                     },
+                                  );
+                                  },
+                                onEditingComplete: () {
+                                  setState(() {
+                                    drFieldDone = true;
+                                  });
+                                  },
+                              ),
+                            ),
+                          ),
+                          TitleContainer(
+                            child: Text('Cliente:',
+                              style: TextStyle(
+                                color: AppColors3.whiteColor,
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                                horizontal: MediaQuery.of(context).size.width * 0.026),
+                            child: Autocomplete<Client>(
+                              optionsBuilder: (TextEditingValue textEditingValue) {
+                                if (textEditingValue.text == '') {
+                                  return const Iterable<Client>.empty();
+                                }
+                                return dropdownDataManager.getSuggestions(textEditingValue.text).where((Client client) => client.id != 1);;
+                                },
+                              displayStringForOption: (Client option) => option.name,
+                              onSelected: (Client selection) {
+                                setState(() {
+                                  _clientTextController.text = selection.name;
+                                  nameToCompare = selection.name;
+                                  _updateSelectedClient(selection);
+                                  fieldClientNode.unfocus();
+                                });
+                                },
+                              fieldViewBuilder: (BuildContext context, fieldTextEditingController /*TextEditingController fieldTextEditingController*/,
+                                  FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
+                                fieldClientNode = fieldFocusNode;
+                                _clientTextController = fieldTextEditingController;
+                                return FieldsToWrite(
+                                  inputFormatters: [
+                                    RegEx(type: InputFormatterType.alphanumeric),
+                                  ],
+                                  eneabled: widget.nameClient == null ? true : false,
+                                  textInputAction: TextInputAction.done,
+                                  readOnly: false,
+                                  labelText: 'Cliente',
+                                  suffixIcon: Icon(
+                                    CupertinoIcons.person,
+                                    color: widget.nameClient != null ? AppColors3.greyColor : AppColors3.primaryColor,
+                                    size: MediaQuery.of(context).size.width * 0.075,
+                                  ),
+                                  controller: widget.nameClient != null ? _clientTextController : fieldTextEditingController,
+                                  fillColor: Colors.transparent,
+                                  focusNode: fieldFocusNode,
+                                  onChanged: (text) {},
+                                  onEdComplete: () {
+                                    setState(() {
+                                      clientFieldDone = true;
+                                      nameToCompare == _clientTextController.text ? null : _updateSelectedClient(null);
+                                      fieldFocusNode.unfocus();
+                                    });
+                                    },
+                                  onTapOutside: (PointerDownEvent tapout) {
+                                    setState(() {
+                                      _clientTextController.text.isEmpty ? clientFieldDone = false : clientFieldDone = true;
+                                      nameToCompare == _clientTextController.text ? null : _updateSelectedClient(null);
+                                    });
+                                    },
+                                );
+                                },
+                            ),
+                          ),
+                          TitleContainer(
+                            child: Text('Fecha:',
+                              style: TextStyle(
+                                color: AppColors3.whiteColor,
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MediaQuery.of(context).size.width * 0.02,
+                                horizontal: MediaQuery.of(context).size.width * 0.026),
+                            child: FieldsToWrite(
+                              eneabled: drFieldDone && clientFieldDone &&
+                                  widget.dateFromCalendarSchedule == null ? true : isDocLog && clientFieldDone &&
+                                  widget.dateFromCalendarSchedule == null ? true : false,
+                              readOnly: true,
+                              labelText: 'DD/M/AAAA',
+                              controller: _dateController,
+                              suffixIcon: Icon(
+                                Icons.calendar_today,
+                                color: drFieldDone && clientFieldDone && widget.dateFromCalendarSchedule == null
+                                    ? AppColors3.primaryColor : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
+                                AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
+                                size: MediaQuery.of(context).size.width * 0.07,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  _clientTextController.text.isNotEmpty ? drFieldDone = true : null;
+                                  hideKeyBoard();
+                                  if(_showCalendar == false){
+                                    _showCalendar = true;
+                                    animationController.forward();
+                                  }
+                                });
+                                },
+                            ),
+                          ),
+                          TitleContainer(
+                            child: Text(
+                              'Hora:',
+                              style: TextStyle(
+                                color: AppColors3.whiteColor,
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MediaQuery.of(context).size.width * 0.02,
+                                horizontal: MediaQuery.of(context).size.width * 0.026),
+                            child: FieldsToWrite(
+                              eneabled: _dateController.text.isNotEmpty ? true : false,
+                              labelText: 'HH:MM',
+                              readOnly: true,
+                              controller: _timeController,
+                              suffixIcon: Icon(
+                                Icons.access_time,
+                                color: _dateController.text.isNotEmpty
+                                    ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
+                                size: MediaQuery.of(context).size.width * 0.075,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  hideKeyBoard();
+                                  if (isTimerShow == false) {
+                                    isTimerShow = true;
+                                    animationController.forward();
+                                  }
+                                });
+                                },
+                            ),
+                          ),
+                          TitleContainer(
+                            child: Text(
+                              'Tratamiento:',
+                              style: TextStyle(
+                                color: AppColors3.whiteColor,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MediaQuery.of(context).size.width * 0.02,
+                                horizontal: MediaQuery.of(context).size.width * 0.026),
+                            child: FieldsToWrite(
+                              inputFormatters: [
+                                RegEx(type: InputFormatterType.alphanumeric),
+                              ],
+                              suffixIcon: Icon(
+                                CupertinoIcons.pencil_ellipsis_rectangle,
+                                size: MediaQuery.of(context).size.width *
+                                    0.085,
+                                color: _timeController.text.isNotEmpty && isHourCorrect ? AppColors3.primaryColor
+                                    : AppColors3.primaryColor.withOpacity(0.3),
+                              ),
+                              eneabled: _timeController.text.isNotEmpty && isHourCorrect ? true : false,
+                              labelText: 'Tratamiento',
+                              readOnly: false,
+                              controller: treatmentController,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Checkbox(
+                                checkColor: AppColors3.whiteColor,
+                                value: saveNewClient,
+                                onChanged: clientInDB == null || clientInDB == true ? null : (bool? value) {
+                                  setState(() {
+                                    saveNewClient = value ?? false;
+                                  });
+                                  },
+                                fillColor: WidgetStateColor.resolveWith(
+                                        (states) {
+                                          if (states
+                                              .contains(WidgetState.selected)) {
+                                            return AppColors3.primaryColor;
+                                          } else {
+                                            return Colors.transparent;
+                                          }
+                                        }),
+                              ),
+                              TextButton(
+                                onPressed: clientInDB == null || clientInDB == true
+                                    ? null : () {
+                                  setState(() {
+                                    saveNewClient == false ? saveNewClient = true : saveNewClient = false;
+                                  });
+                                  },
+                                child: Text(
+                                  'Agregar nuevo cliente',
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width * 0.045,
+                                    color: clientInDB == null || clientInDB == true
+                                        ? AppColors3.primaryColor.withOpacity(0.3)
+                                        : AppColors3.primaryColor,
                                   ),
                                 ),
                               ),
-                              Visibility(
-                                visible: !_showdrChooseWidget,
-                                child: TitleContainer(
-                                  child: Text('Cliente:',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            ],
+                          ),
+                          ElevatedButton(
+                            onPressed: treatmentController.text.isNotEmpty && !saveNewClient && isHourCorrect && isLoading == false && _clientTextController.text.isNotEmpty
+                                ? submitAppointment :  isLoading == false && saveNewClient && treatmentController.text.isNotEmpty && isHourCorrect && _clientTextController.text.isNotEmpty
+                                ? addClientAndSubmitAppointment : null,
+                            style: ElevatedButton.styleFrom(
+                              surfaceTintColor: AppColors3.whiteColor,
+                              splashFactory: InkRipple.splashFactory,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: MediaQuery.of(context).size.height * 0.0225,
+                                  horizontal: MediaQuery.of(context).size.width * 0.2),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                side: BorderSide(
+                                    color: treatmentController.text.isNotEmpty ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
+                                    width: 2),
+                              ),
+                            ),
+                            child: isLoading ? const CircularProgressIndicator(
+                              color: AppColors3.primaryColor,
+                            ) : Text(
+                                'Crear cita',
+                                style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width * 0.06,
+                                  color: AppColors3.primaryColor,
+                                )),)
+                        ])
+                  )
+                ],
+              ),
+              ///timer
+                Visibility(
+                  visible: isTimerShow,
+                  child: AnimatedBuilder(
+                    animation: animationController,
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                      child: Container(
+                        color: AppColors3.blackColor.withOpacity(0.27),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: MediaQuery.of(context).size.width * 0.46),
+                            TitleContainer(
+                              child: Text(
+                                'Hora:',
+                                style: TextStyle(
+                                  color: AppColors3.whiteColor,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            FieldsPading(
+                              child: FieldsToWrite(
+                                fillColor: AppColors3.whiteColor,
+                                labelText: 'HH:MM',
+                                readOnly: true,
+                                controller: _timeController,
+                                suffixIcon: const Icon(Icons.access_time),
+                                onTap: () {
+                                  animationController.reverse().then((_){
+                                    isTimerShow = false;
+                                    animationController.reset();
+                                  });},
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: MediaQuery.of(context).size.width * 0.02,
+                              ),
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.width * 0.025,
+                                left: MediaQuery.of(context).size.width * 0.038,
+                              ),
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * 0.35,
+                              decoration: BoxDecoration(
+                                border:
+                                Border.all(color: AppColors3.blackColor.withOpacity(0.5), width: 0.5),
+                                color: AppColors3.whiteColor,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: TimerFly(onTimeChoose: _onTimeChoose),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    builder: (context, timerOp){
+                      return Opacity(opacity: opacidad.value, child: timerOp);
+                    },
+                  )
+                ),
+              ///calendario
+              Visibility(
+                  visible: _showCalendar,
+                  child: AnimatedBuilder(
+                    animation: animationController,
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                      child: Container(
+                        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.022),
+                        color: AppColors3.blackColor.withOpacity(0.27),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TitleContainer(
+                              child: Text(
+                                'Fecha:',
+                                style: TextStyle(
+                                  color: AppColors3.whiteColor,
+                                  fontSize: MediaQuery.of(context).size.width * 0.045,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: MediaQuery.of(context).size.width * 0.02,
+                                  horizontal: MediaQuery.of(context).size.width * 0.02),
+                              child: FieldsToWrite(
+                                fillColor: AppColors3.whiteColor,
+                                readOnly: true,
+                                labelText: 'DD/M/AAAA',
+                                controller: _dateController,
+                                suffixIcon: const Icon(Icons.calendar_today),
+                                onTap: () {
+                                    animationController.reverse().then((_){
+                                      _showCalendar = false;
+                                      animationController.reset();
+                                  });
+                                },
+                              ),
+                            ),
+                            CalendarContainer(
+                              child: CalendarioCita(
+                                  onDayToAppointFormSelected: _onDateToAppointmentForm),
+                                  )
+                                ]))),
+                    builder: (context, calendarOp){
+                      return Opacity(opacity: opacidad.value, child: calendarOp,);
+                    },
+                  )),
+
+              ///widgetChooseDr
+              Visibility(
+                visible: _showdrChooseWidget, // Solo será visible cuando sea true
+                child: AnimatedBuilder(
+                  animation: animationController,
+                  child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                      child: Container(
+                        color: AppColors3.blackColor.withOpacity(0.27),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            children: [
+                              TitleContainer(
+                                margin: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height * 0.12,
+                                  left: MediaQuery.of(context).size.width * 0.03,
+                                  right: MediaQuery.of(context).size.width * 0.03,
+                                ),
+                                child: Text(
+                                  'Doctor: ',
+                                  style: TextStyle(
+                                    color: AppColors3.whiteColor,
+                                    fontSize: MediaQuery.of(context).size.width * 0.045,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
-                                    horizontal: MediaQuery.of(context).size.width * 0.026),
-                                child: Autocomplete<Client>(
-                                  optionsBuilder: (TextEditingValue textEditingValue) {
-                                    if (textEditingValue.text == '') {
-                                      return const Iterable<Client>.empty();
-                                    }
-                                    return dropdownDataManager.getSuggestions(textEditingValue.text).where((Client client) => client.id != 1);;
-                                  },
-                                  displayStringForOption: (Client option) => option.name,
-                                  onSelected: (Client selection) {
-                                    setState(() {
-                                      _clientTextController.text = selection.name;
-                                      nameToCompare = selection.name;
-                                      _updateSelectedClient(selection);
-                                      fieldClientNode.unfocus();
+                                padding: EdgeInsets.symmetric(
+                                  vertical: MediaQuery.of(context).size.width * 0.02,
+                                  horizontal: MediaQuery.of(context).size.width * 0.026,
+                                ),
+                                child: TextFormField(
+                                  controller: _drSelected,
+                                  decoration: InputDecoration(
+                                    fillColor: AppColors3.whiteColor,
+                                    filled: true,
+                                    hintText: 'Seleccione una opción...',
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: MediaQuery.of(context).size.width * 0.03,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    suffixIcon: Icon(
+                                      Icons.arrow_drop_down_circle_outlined,
+                                      size: MediaQuery.of(context).size.width * 0.085,
+                                      color: AppColors3.primaryColor,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(
+                                        color: AppColors3.primaryColor,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  readOnly: true,
+                                  onTap: () {
+                                      animationController.reverse().then((_){
+                                        _showdrChooseWidget = false;
+                                        animationController.reset();
                                     });
                                   },
-                                  fieldViewBuilder: (BuildContext context, fieldTextEditingController /*TextEditingController fieldTextEditingController*/,
-                                      FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
-                                    fieldClientNode = fieldFocusNode;
-                                    _clientTextController = fieldTextEditingController;
-                                    return FieldsToWrite(
-                                      inputFormatters: [
-                                        RegEx(type: InputFormatterType.alphanumeric),
-                                      ],
-                                      eneabled: widget.nameClient == null ? true : false,
-                                      textInputAction: TextInputAction.done,
-                                      readOnly: false,
-                                      labelText: 'Cliente',
-                                      suffixIcon: Icon(
-                                        CupertinoIcons.person,
-                                        color: widget.nameClient != null ? Colors.grey : AppColors.primaryColor,
-                                        size: MediaQuery.of(context).size.width * 0.075,
-                                      ),
-                                      controller: widget.nameClient != null ? _clientTextController : fieldTextEditingController,
-                                      fillColor: Colors.transparent,
-                                      focusNode: fieldFocusNode,
-                                      onChanged: (text) {},
-                                      onEdComplete: () {
-                                        setState(() {
-                                          clientFieldDone = true;
-                                          nameToCompare == _clientTextController.text ? null : _updateSelectedClient(null);
-                                          fieldFocusNode.unfocus();
-                                        });
-                                      },
-                                      onTapOutside: (PointerDownEvent tapout) {
-                                        setState(() {
-                                          _clientTextController.text.isEmpty ? clientFieldDone = false : clientFieldDone = true;
-                                          nameToCompare == _clientTextController.text ? null : _updateSelectedClient(null);
-                                          fieldFocusNode.unfocus();
-                                        });
-                                      },
-                                    );
-                                  },
                                 ),
                               ),
-                              Visibility(
-                                visible: isTimerShow ? true : _showCalendar ? false : true,
-                                child: TitleContainer(
-                                  child: Text('Fecha:',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: MediaQuery.of(context).size.width * 0.025,
                                 ),
-                              ),
-                              Visibility(
-                                visible: isTimerShow ? true : _showCalendar ? false : true,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: MediaQuery.of(context).size.width * 0.02,
-                                      horizontal: MediaQuery.of(context).size.width * 0.026),
-                                  child: FieldsToWrite(
-                                    eneabled: drFieldDone && clientFieldDone &&
-                                        widget.dateFromCalendarSchedule == null ? true : isDocLog && clientFieldDone &&
-                                        widget.dateFromCalendarSchedule == null ? true : false,
-                                    readOnly: true,
-                                    labelText: 'DD/M/AAAA',
-                                    controller: _dateController,
-                                    suffixIcon: Icon(
-                                      Icons.calendar_today,
-                                      color: drFieldDone && clientFieldDone && widget.dateFromCalendarSchedule == null
-                                          ? AppColors.primaryColor : isDocLog && clientFieldDone && widget.dateFromCalendarSchedule == null ?
-                                      AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
-                                      size: MediaQuery.of(context).size.width * 0.07,
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        _clientTextController.text.isNotEmpty ? drFieldDone = true : null;
-                                        hideKeyBoard();
-                                        !_showCalendar ? _showCalendar = true : _showCalendar = false;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: _showCalendar
-                                    ? false
-                                    : isTimerShow
-                                        ? false
-                                        : true,
-                                child: TitleContainer(
-                                  child: Text(
-                                    'Hora:',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: !_showCalendar,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.width *
-                                              0.02,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.026),
-                                  child: FieldsToWrite(
-                                    eneabled: _dateController.text.isNotEmpty ? true : false,
-                                    labelText: 'HH:MM',
-                                    readOnly: true,
-                                    controller: _timeController,
-                                    suffixIcon: Icon(
-                                      Icons.access_time,
-                                      color: _dateController.text.isNotEmpty
-                                          ? AppColors.primaryColor
-                                          : AppColors.primaryColor
-                                              .withOpacity(0.3),
-                                      size: MediaQuery.of(context).size.width * 0.075,
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        hideKeyBoard();
-                                        if (isTimerShow == false) {
-                                          isTimerShow = true;
-                                        } else if (isTimerShow == true) {
-                                          isTimerShow = false;
-                                        }
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-
-                              Visibility(
-                                visible: !isTimerShow && !_showCalendar,
-                                child: TitleContainer(
-                                  child: Text(
-                                    'Tratamiento:',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.045,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              Visibility(
-                                visible: !isTimerShow && !_showCalendar,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.width *
-                                              0.02,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.026),
-                                  child: FieldsToWrite(
-                                    inputFormatters: [
-                                      RegEx(type: InputFormatterType.alphanumeric),
-                                    ],
-                                    suffixIcon: Icon(
-                                      CupertinoIcons.pencil_ellipsis_rectangle,
-                                      size: MediaQuery.of(context).size.width *
-                                          0.085,
-                                      color: _timeController.text.isNotEmpty && isHourCorrect ? AppColors.primaryColor
-                                          : AppColors.primaryColor.withOpacity(0.3),
-                                    ),
-                                    eneabled: _timeController.text.isNotEmpty && isHourCorrect ? true : false,
-                                    labelText: 'Tratamiento',
-                                    readOnly: false,
-                                    controller: treatmentController,
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: !_showCalendar || isTimerShow,
-                                child: Row(
-                                  children: [
-                                    Checkbox(
-                                      checkColor: Colors.white,
-                                      value: saveNewClient,
-                                      onChanged: clientInDB == null || clientInDB == true ? null : (bool? value) {
-                                              setState(() {
-                                                saveNewClient = value ?? false;
-                                              });
-                                            },
-                                      fillColor: MaterialStateColor.resolveWith(
-                                          (states) {
-                                        if (states
-                                            .contains(MaterialState.selected)) {
-                                          return AppColors.primaryColor;
-                                        } else {
-                                          return Colors.transparent;
-                                        }
-                                      }),
-                                    ),
-                                    TextButton(
-                                      onPressed: clientInDB == null || clientInDB == true
-                                          ? null : () {
-                                              setState(() {
-                                                saveNewClient == false ? saveNewClient = true : saveNewClient = false;
-                                              });
-                                            },
-                                      child: Text(
-                                        'Agregar nuevo cliente',
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                                          color: clientInDB == null ||
-                                                  clientInDB == true
-                                              ? AppColors.primaryColor
-                                                  .withOpacity(0.3)
-                                              : AppColors.primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Visibility(
-                                visible: !isTimerShow && !_showCalendar
-                                    ? true
-                                    : false,
-                                child: ElevatedButton(
-                                  onPressed:
-                                      treatmentController.text.isNotEmpty && !saveNewClient && isHourCorrect
-                                          ? submitAppointment : saveNewClient && treatmentController.text.isNotEmpty && isHourCorrect
-                                              ? addClientAndSubmitAppointment : null,
-                                  style: ElevatedButton.styleFrom(
-                                    surfaceTintColor: Colors.white,
-                                    splashFactory: InkRipple.splashFactory,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: MediaQuery.of(context).size.height * 0.0225,
-                                        horizontal: MediaQuery.of(context).size.width * 0.2),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                      side: BorderSide(
-                                          color: treatmentController.text.isNotEmpty ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
-                                          width: 2),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                  child: Text(
-                                    'Crear cita',
-                                    style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.06,
-                                      color: AppColors.primaryColor,
-                                        ))))
-                          ])))
-                ])
-              ]),
-
-              ///timer
-              if (isTimerShow)
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isTimerShow = false;
-                    });
-                  },
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                    child: Container(
-                      color: Colors.black54.withOpacity(0.27),
-                    ),
-                  ),
-                ),
-
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.11,
-                child: Visibility(
-                  visible: isTimerShow,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 1,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.365,
-                        ),
-                        TitleContainer(
-                          child: Text(
-                            'Hora:',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        FieldsPading(
-                          child: FieldsToWrite(
-                            fillColor: AppColors.BgprimaryColor,
-                            labelText: 'HH:MM',
-                            readOnly: true,
-                            controller: _timeController,
-                            suffixIcon: const Icon(Icons.access_time),
-                            onTap: () {
-                              setState(() {
-                                if (isTimerShow == false) {
-                                  isTimerShow = true;
-                                } else if (isTimerShow == true) {
-                                  isTimerShow = false;
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.02,
-                          ),
-                          padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).size.width * 0.025,
-                            left: MediaQuery.of(context).size.width * 0.038,
-                          ),
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.35,
-                          decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Colors.black54, width: 0.5),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: TimerFly(onTimeChoose: _onTimeChoose),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              ///calendario
-              if (_showCalendar)
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showCalendar = false;
-                    });
-                  },
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                    child: Container(
-                      color: Colors.black54.withOpacity(0.27),
-                    ),
-                  ),
-                ),
-
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.11,
-                child: Visibility(
-                  visible: _showCalendar,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.25,
-                        ),
-                        TitleContainer(
-                          child: Text(
-                            'Fecha:',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: MediaQuery.of(context).size.width * 0.02,
-                              horizontal: MediaQuery.of(context).size.width * 0.026),
-                          child: FieldsToWrite(
-                            fillColor: AppColors.BgprimaryColor,
-                            readOnly: true,
-                            labelText: 'DD/M/AAAA',
-                            controller: _dateController,
-                            suffixIcon: const Icon(Icons.calendar_today),
-                            onTap: () {
-                              setState(() {
-                                !_showCalendar
-                                    ? _showCalendar = true
-                                    : _showCalendar = false;
-                              });
-                            },
-                          ),
-                        ),
-                        CalendarContainer(
-                          child: CalendarioCita(
-                              onDayToAppointFormSelected: _onDateToAppointmentForm),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              ///widgetChooseDr
-              if (_showdrChooseWidget)
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                  child: Container(
-                    color: Colors.black54.withOpacity(0.27),
-                  ),
-                ),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.11,
-                child: Visibility(
-                  visible: _showdrChooseWidget,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: Column(
-                      children: [
-                        TitleContainer(
-                          child: Text(
-                            'Doctor: ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.width * 0.02,
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.026),
-                          child: TextFormField(
-                            controller: _drSelected,
-                            decoration: InputDecoration(
-                              fillColor: AppColors.BgprimaryColor,
-                              filled: true,
-                              hintText: 'Seleccione una opción...',
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.03),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              suffixIcon: Icon(
-                                Icons.arrow_drop_down_circle_outlined,
-                                size: MediaQuery.of(context).size.width * 0.085,
-                                color: AppColors.primaryColor,
-                              ),
-                              enabledBorder:  OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.primaryColor,
-                                    width: 1,
-                                  )
-                              ),
-                            ),
-                            readOnly: true,
-                            onTap: () {
-                              setState(() {
-                                  _showdrChooseWidget =
-                                      _showdrChooseWidget ? false : true;
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.025),
-                          child: DoctorsMenu(onAssignedDoctor: _onAssignedDoctor, optSelectedToRecieve: _optSelected),
-                        )
-                      ])))),
+                                child: DoctorsMenu(
+                                  onAssignedDoctor: _onAssignedDoctor,
+                                  optSelectedToRecieve: _optSelected,
+                                      ))
+                                ])))),
+                    builder: (context, doctorChooseOp){
+                    return Opacity(opacity: opacidad.value,child: doctorChooseOp);
+                  },)),
               Visibility(
-            visible: showBlurr,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-              child: Container(
-                color: Colors.black54.withOpacity(0.3),
+                visible: showBlurr,
+                child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                    child: Container(
+                      color: AppColors3.blackColor.withOpacity(0.27),
+                    )),
               ),
-            ),
-          )
-        ]))));
+            ]))));
   }
 }

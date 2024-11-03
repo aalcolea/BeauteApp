@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../utils/listenerCatBox.dart';
 
 class CategoryBox extends StatefulWidget {
@@ -96,8 +96,8 @@ class _CategoryBoxState extends State<CategoryBox> {
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.width * 0.5,
         ),
-        focusedBorder: widget.formType == 1 ? OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+        focusedBorder: widget.formType == 1 ? const OutlineInputBorder(
+          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
           borderSide: const BorderSide(
             color: AppColors.primaryColor,
             width: 0.7,
@@ -118,7 +118,7 @@ class _CategoryBoxState extends State<CategoryBox> {
             bottomRight: Radius.circular(10),
           ),
           borderSide: BorderSide(
-            color: lock == false  ? Colors.black54 : AppColors.primaryColor.withOpacity(0.3),
+            color: lock == false  ? AppColors.blackColor.withOpacity(0.5) : AppColors.primaryColor.withOpacity(0.3),
             width: 1.5,
           ),
         ),

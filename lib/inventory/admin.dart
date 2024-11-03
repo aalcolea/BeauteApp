@@ -19,7 +19,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
 
-import '../agenda/themes/colors.dart';
+import 'themes/colors.dart';
 
 class adminInv extends StatefulWidget {
   final bool docLog;
@@ -94,6 +94,12 @@ class _adminInvState extends State<adminInv> {
     });
   }
 
+  void onShowBlurr(bool showBlurr){
+    setState(() {
+      _showBlurr = showBlurr;
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -124,7 +130,7 @@ class _adminInvState extends State<adminInv> {
           case 1:
             return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
           case 2:
-            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService);
+            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService, onShowBlurr: onShowBlurr);
           default:
             return Container();
         }
@@ -136,7 +142,7 @@ class _adminInvState extends State<adminInv> {
       body: Stack(
         children: [
           Container(
-            color: Colors.transparent,
+            color: AppColors.whiteColor,
             padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.04),
             child: Column(
@@ -276,30 +282,18 @@ class _adminInvState extends State<adminInv> {
                 ),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.04),
-                    decoration: BoxDecoration(
-                      color: AppColors.BgprimaryColor,
-                        borderRadius: const BorderRadius.only(
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
+                    decoration: const BoxDecoration(
+                      color: AppColors.bgColor,
+                        borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(15),
                             bottomRight: Radius.circular(15)
                         ),
-                        border: const Border(
+                        border: Border(
                             bottom: BorderSide(
                               color: AppColors.primaryColor,
                               width: 2.5,
                             )),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black54,
-                            blurRadius: 10,
-                            offset: Offset(0, MediaQuery.of(context).size.width * 0.012),
-                          ),
-                          BoxShadow(
-                            color: Colors.white,
-                            offset: Offset(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width * -0.025),
-                          )
-                        ]
                     ),
                     child: Container(
                       margin: EdgeInsets.only(
@@ -344,7 +338,7 @@ class _adminInvState extends State<adminInv> {
                                 child: SvgPicture.asset(
                                   'assets/imgLog/inv.svg',
                                   colorFilter: _selectedScreen == 1
-                                      ? ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)
+                                      ? const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)
                                       : ColorFilter.mode(AppColors.primaryColor.withOpacity(0.2), BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.12,
                                 ),
@@ -381,7 +375,7 @@ class _adminInvState extends State<adminInv> {
                                 child: SvgPicture.asset(
                                   'assets/imgLog/cart.svg',
                                   colorFilter: _selectedScreen == 2
-                                      ? ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)
+                                      ? const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn)
                                       : ColorFilter.mode(AppColors.primaryColor.withOpacity(0.2), BlendMode.srcIn),
                                   width: MediaQuery.of(context).size.width * 0.12,
                                 ),
@@ -410,7 +404,7 @@ class _adminInvState extends State<adminInv> {
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    color: Colors.black54.withOpacity(0.3),
+                    color: AppColors.blackColor.withOpacity(0.3),
                   ),
                 )
             ),

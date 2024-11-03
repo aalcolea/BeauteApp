@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../stock/products/services/productsService.dart';
@@ -15,12 +15,11 @@ import '../utils/popUpTabs/showConfirmSellDialog.dart';
 
 class Cart extends StatefulWidget {
   final PrintService printService;
-  final void Function(
-      bool,
-      ) onHideBtnsBottom;
+  final void Function(bool) onHideBtnsBottom;
+  final Function(bool) onShowBlurr;
 
   final Future<void> Function()? onCartSent;
-  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService});
+  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService, required this.onShowBlurr});
 
   @override
   State<Cart> createState() => _CartState();
@@ -120,7 +119,7 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     return Container(
-      color: AppColors.BgprimaryColor,
+      color: AppColors.bgColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -214,7 +213,7 @@ class _CartState extends State<Cart> {
                                                         },
                                                         child: Icon(
                                                           CupertinoIcons.minus,
-                                                          color: Colors.white,
+                                                          color: AppColors.whiteColor,
                                                           size: MediaQuery.of(context).size.width * 0.04,
                                                         ),
                                                       ),
@@ -239,8 +238,8 @@ class _CartState extends State<Cart> {
                                                           ),
                                                           enabledBorder: OutlineInputBorder(
                                                             borderRadius: BorderRadius.circular(10),
-                                                            borderSide: const BorderSide(
-                                                              color: Colors.black54,
+                                                            borderSide: BorderSide(
+                                                              color: AppColors.blackColor.withOpacity(0.5),
                                                               width: 1.5,
                                                             ),
                                                           ),
@@ -316,7 +315,7 @@ class _CartState extends State<Cart> {
                                                       },
                                                       child: Icon(
                                                           CupertinoIcons.add,
-                                                          color: Colors.white,
+                                                          color: AppColors.whiteColor,
                                                           size: MediaQuery.of(context).size.width * 0.04,
                                                         ),
                                                     )
@@ -367,7 +366,7 @@ class _CartState extends State<Cart> {
             padding: EdgeInsets.only(
               left: MediaQuery.of(context).size.width * 0.03,
               right: MediaQuery.of(context).size.width * 0.03,
-              top: MediaQuery.of(context).size.width * 0.0,
+              top: MediaQuery.of(context).size.width * 0.02,
               bottom: MediaQuery.of(context).size.width * 0.01
             ),
             child: Row(
@@ -406,24 +405,26 @@ class _CartState extends State<Cart> {
               ],
             ),
           ),
-          ElevatedButton(
+          Container(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.01),
+            child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                backgroundColor: AppColors.primaryColor,
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
-                horizontal: MediaQuery.of(context).size.width * 0.08)
+                  backgroundColor: AppColors.primaryColor,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
+                      horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
-                widget.onShowBlurr(false);
+               widget.onShowBlurr(false);
                bool confirm = await showConfirmSellDialog(context);
+
                 if (confirm) {
                   bool result = await cartProvider.sendCart();
+                  widget.onShowBlurr(false);
                   if(result) {
-
-
                 await widget.printService.ensureCharacteristicAvailable();
 
                 if (widget.printService.characteristic != null) {
@@ -434,16 +435,21 @@ class _CartState extends State<Cart> {
                 }
 
                     cartProvider.refreshCart();
+                    widget.onShowBlurr(false);
                   }
+                }else{
+                  widget.onShowBlurr(false);
                 }
               },
               child: Text(
-              'Pagar',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: MediaQuery.of(context).size.width * 0.08,
+                'Pagar',
+                style: TextStyle(
+                  color: AppColors.whiteColor,
+                  fontSize: MediaQuery.of(context).size.width * 0.08,
+                ),
               ),
-            ),)
+            ),
+          )
         ],
       ),
     );

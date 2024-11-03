@@ -5,21 +5,25 @@ import 'package:intl/intl.dart';
 
 List<Map<String, dynamic>> sales = [];
 List<Map<String, dynamic>> salesByProduct = [];
+
 class SalesServices{
+
   final String baseURL = '${SessionManager.instance.baseURL}/ventas/carrito';//?fecha_inicio=2024-10-15&fecha_fin=2024-10-15
-  Future<void> fetchSales() async{
+
+  Future<List<Map<String,dynamic>>> fetchSales() async{
     final response=  await http.get(Uri.parse(baseURL));
     if(response.statusCode == 200){
       final List<dynamic> data = json.decode(response.body);
-      print(data);
+
       var formatter = new DateFormat('dd-MM-yyyy');
-      sales = data.map((sales){
+      return sales = data.map((sales){
         DateTime fecha = DateTime.parse(sales['created_at']);
         return {
           'id' : sales['id'],
           'total' : sales['total'],
           'fecha' : formatter.format(fecha),
           'cantidad' : sales['cantidad'],
+          'detalles' : sales['detalles'],
 
         };
       }).toList();
@@ -29,15 +33,17 @@ class SalesServices{
     }
   }
 
-  Future<void> getSalesByProduct({String? fechaInicio, String? fechaFin}) async{
+  Future<List<Map<String,dynamic>>> getSalesByProduct({String? fechaInicio, String? fechaFin}) async{
     String url = '$baseURL?fecha_inicio=${fechaInicio ?? DateFormat('yyyy-MM-dd').format(DateTime.now())}&fecha_fin=${fechaFin ?? DateFormat('yyyy-MM-dd').format(DateTime.now())}';
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       Map<String, Map<String, dynamic>> productosMap = {};
+      var formatter = new DateFormat('dd-MM-yyyy');
       data.expand((venta) => venta['detalles']).forEach((detalle) {
         final producto = detalle['producto'];
         final nombreProducto = producto['nombre'];
+        DateTime fecha = DateTime.parse(producto['created_at']);
         final int cantidad = int.tryParse(detalle['cantidad'].toString()) ?? 0;
         final double precio = double.tryParse(detalle['precio'].toString()) ?? 0.0;
         if (productosMap.containsKey(nombreProducto)) {
@@ -48,18 +54,19 @@ class SalesServices{
             'cantidad': cantidad,
             'precio': precio,
             'total': cantidad * precio,
+            'fecha': formatter.format(fecha),
           };
         }
       });
-      final productos = productosMap.entries.map((entry){
+      return productosMap.entries.map((entry){
         return {
           'nombre': entry.key,
           'cantidad': entry.value['cantidad'],
           'precio': entry.value['precio'],
           'total': entry.value['total'],
+          'fecha': entry.value['fecha']
         };
       }).toList();
-      print('Productos vendidos: $productos');
     } else{
       throw Exception('Error al obtener los productos vendidos');
     }

@@ -32,10 +32,10 @@ class _LoginState extends State<Login> {
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.width * 0.32),
                 child: CircleAvatar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors3.whiteColor,
                   radius: MediaQuery.of(context).size.height * 0.21,
-                  backgroundImage:
-                      const AssetImage("assets/imgLog/logoBeauteWhite.png"),
+                  /*backgroundImage:
+                      const AssetImage("assets/imgLog/logoBeauteWhite.png")*/
                 ),
               ),
               Container(
@@ -65,21 +65,22 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: AppColors.primaryColor,
+                      surfaceTintColor: AppColors3.secundaryColor.withOpacity(0.1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors3.secundaryColor, width: 2),
                       ),
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors3.secundaryColor,
                     ),
                     child: Row(
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.035),
+                              left: MediaQuery.of(context).size.width * 0.035, right: MediaQuery.of(context).size.width * 0.015),
                           child: SvgPicture.asset(
-                            'assets/imgLog/docVector2.svg'
+                            'assets/imgLog/docVector2.svg',
+                            color: AppColors3.primaryColor,
                           ),
                         ),
                         Container(
@@ -89,15 +90,15 @@ class _LoginState extends State<Login> {
                           height: MediaQuery.of(context).size.width * 0.09,
                           width: MediaQuery.of(context).size.width * 0.006,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFFFFF),
-                            border: Border.all(width: 0.5),
+                            color: AppColors3.primaryColor,
+                            border: Border.all(width: 0.5, color: AppColors3.primaryColor),
                           ),
                         ),
                         const Center(
                           child: Text(
                             'Doctor1',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors3.primaryColor,
                               fontSize: 26,
                             ),
                           ),
@@ -132,22 +133,22 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: AppColors.primaryColor,
+                      surfaceTintColor: AppColors3.secundaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors3.secundaryColor, width: 2),
                       ),
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors3.secundaryColor,
                     ),
                     child: Row(
                       children: [
                         Padding(
                             padding: EdgeInsets.only(
                                 left:
-                                    MediaQuery.of(context).size.width * 0.035),
+                                    MediaQuery.of(context).size.width * 0.035, right: MediaQuery.of(context).size.width * 0.015),
                             child: SvgPicture.asset(
-                                'assets/imgLog/docVector2.svg') /*Icon(
+                                'assets/imgLog/docVector2.svg', color: AppColors3.primaryColor,) /*Icon(
                             Icons.person,
                             color: Colors.white,
                             size: MediaQuery.of(context).size.width * 0.1,
@@ -160,15 +161,15 @@ class _LoginState extends State<Login> {
                           height: MediaQuery.of(context).size.width * 0.09,
                           width: MediaQuery.of(context).size.width * 0.006,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFFFFF),
-                            border: Border.all(width: 0.5),
+                            color: AppColors3.primaryColor,
+                            border: Border.all(width: 0.5, color: AppColors3.primaryColor),
                           ),
                         ),
                         const Center(
                           child: Text(
                             'Doctor2',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors3.primaryColor,
                               fontSize: 26,
                             ),
                           ),
@@ -202,21 +203,22 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.zero,
                       splashFactory: InkRipple.splashFactory,
                       elevation: 10,
-                      surfaceTintColor: AppColors.primaryColor,
+                      surfaceTintColor: AppColors3.secundaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 2),
+                            color: AppColors3.secundaryColor, width: 2),
                       ),
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors3.secundaryColor,
                     ),
                     child: Row(
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.035),
+                              left: MediaQuery.of(context).size.width * 0.035, right: MediaQuery.of(context).size.width * 0.015),
                           child: SvgPicture.asset(
-                                  'assets/imgLog/asisVector.svg')),
+                                  'assets/imgLog/asisVector.svg', color: AppColors3.primaryColor,)
+                        ),
                         Container(
                           margin: EdgeInsets.only(
                               left: MediaQuery.of(context).size.width * 0.015,
@@ -224,15 +226,15 @@ class _LoginState extends State<Login> {
                           height: MediaQuery.of(context).size.width * 0.09,
                           width: MediaQuery.of(context).size.width * 0.006,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFFFFF),
-                            border: Border.all(width: 0.5),
+                            color: AppColors3.primaryColor,
+                            border: Border.all(width: 0.5, color: AppColors3.primaryColor),
                           ),
                         ),
                         const Center(
                           child: Text(
                             'Asistente',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors3.primaryColor,
                               fontSize: 26,
                             ),
                           ),
@@ -248,7 +250,7 @@ class _LoginState extends State<Login> {
                     decoration: const BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryColor,
+                          color: AppColors3.primaryColor,
                           spreadRadius: 1,
                           blurRadius: 2,
                           offset: Offset(2, -0),

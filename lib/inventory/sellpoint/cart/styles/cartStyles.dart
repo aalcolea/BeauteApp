@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 
 class Background extends StatefulWidget {
   final double widthItem1;
@@ -17,6 +16,7 @@ class _BackgroundState extends State<Background> {
     return Row(
       children: [
         Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
             alignment: Alignment.topLeft,
             width: widget.widthItem1,
             decoration: BoxDecoration(
@@ -32,11 +32,12 @@ class _BackgroundState extends State<Background> {
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
                 ),
-                Divider()
+                Divider(color: AppColors.primaryColor.withOpacity(0.1), thickness: 2)
               ],
             )
         ),
         Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
             alignment: Alignment.topLeft,
             width: widget.widthItem2,
             decoration: BoxDecoration(
@@ -52,11 +53,12 @@ class _BackgroundState extends State<Background> {
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
                 ),
-                Divider()
+                Divider(color: AppColors.primaryColor.withOpacity(0.1), thickness: 2)
               ],
             )
         ),
         Expanded(child: Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
             alignment: Alignment.topLeft,
             child: Column(
               children: [
@@ -68,7 +70,7 @@ class _BackgroundState extends State<Background> {
                     fontSize: MediaQuery.of(context).size.width * 0.06,
                   ),
                 ),
-                Divider(color: Colors.grey,)
+                Divider(color: AppColors.primaryColor.withOpacity(0.1), thickness: 2)
               ],
             )
         ),),

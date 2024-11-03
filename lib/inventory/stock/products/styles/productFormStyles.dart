@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 
 class TitleContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
@@ -81,7 +81,7 @@ class TitleModContainer extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           fontSize: MediaQuery.of(context).size.width * 0.045,
           fontWeight: FontWeight.bold,
         ),

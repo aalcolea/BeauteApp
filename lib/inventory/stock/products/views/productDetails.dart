@@ -6,7 +6,7 @@ import 'package:beaute_app/regEx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import '../../../../agenda/themes/colors.dart';
+import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../kboardVisibilityManager.dart';
@@ -22,8 +22,11 @@ class ProductDetails extends StatefulWidget {
   final double precio;
   final int catId;
   final Future<void> Function() onProductModified;
+  final void Function(
+      bool
+      ) onShowBlur;
 
-  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId, required this.onProductModified});
+  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId, required this.onProductModified, required this.onShowBlur});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -116,7 +119,6 @@ class _ProductDetailsState extends State<ProductDetails> {
     precioController.text = widget.precio.toString();
     _catID =  widget.catId;
     keyboardVisibilityManager = KeyboardVisibilityManager();
-
     // TODO: implement initState
     super.initState();
   }
@@ -161,6 +163,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     child: IconButton(
                     padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.0),
                     onPressed: () {
+                      widget.onShowBlur(false);
                       Navigator.pop(context);
                     },
                     icon: Icon(
@@ -300,7 +303,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       child: Text(
                                         'Cant. Disponible',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.whiteColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.045,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -341,7 +344,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       child: Text(
                                         'Precio',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.whiteColor,
                                           fontSize: MediaQuery.of(context).size.width * 0.045,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -378,7 +381,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               width: MediaQuery.of(context).size.width,
                               child:  ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: AppColors.whiteColor,
                                   side: const BorderSide(color: AppColors.primaryColor,),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -388,7 +391,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   setState(() {
                                   });
                                 },
-                                child: const Text('Eliminar Producto', style: TextStyle(color: Colors.red),),
+                                child: const Text('Eliminar Producto', style: TextStyle(color: AppColors.redDelete),),
                               ),
                             ),),
                         ],

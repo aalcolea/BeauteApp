@@ -36,7 +36,7 @@ class Appointmetsuccessfullycreated extends StatelessWidget {
                     '¡Cita creada!',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.085,
-                      color: AppColors.primaryColor,
+                      color: AppColors3.primaryColor,
                     ),
                   ),
                 ),
@@ -56,7 +56,7 @@ class Appointmetsuccessfullycreated extends StatelessWidget {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: AppColors.primaryColor,
+                          color: AppColors3.primaryColor,
                           width: 2.5,
                         ),
                       ),
@@ -65,7 +65,7 @@ class Appointmetsuccessfullycreated extends StatelessWidget {
                       'Inicio',
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.05,
-                        color: AppColors.primaryColor,
+                        color: AppColors3.primaryColor,
                       ))))
                     ])))
       ],

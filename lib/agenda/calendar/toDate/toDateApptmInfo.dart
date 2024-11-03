@@ -237,15 +237,15 @@ class _ApptmInfoState extends State<ApptmInfo> {
                 bottomLeft: const Radius.circular(15),
               ),
               border: _oldIndex != index ? Border.all(
-                color: expandedIndex == index ? AppColors.primaryColor : !isTaped && expandedIndex != index ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
+                color: expandedIndex == index ? AppColors3.primaryColor : !isTaped && expandedIndex != index ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
                 width: 1.5,
               ) : const Border(
-                left: BorderSide(color: AppColors.primaryColor, width: 1.5),
-                top: BorderSide(color: AppColors.primaryColor, width: 1.5),
-                bottom: BorderSide(color: AppColors.primaryColor, width: 1.5),
-                right: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                left: BorderSide(color: AppColors3.primaryColor, width: 1.5),
+                top: BorderSide(color: AppColors3.primaryColor, width: 1.5),
+                bottom: BorderSide(color: AppColors3.primaryColor, width: 1.5),
+                right: BorderSide(color: AppColors3.primaryColor, width: 1.5),
               ),
-              color: Colors.white,
+              color: AppColors3.whiteColor,
             ),
             alignment: Alignment.center,
             child: Row(
@@ -264,14 +264,14 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                                  color: expandedIndex == widget.index ? AppColors.primaryColor : !isTaped && expandedIndex != index ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
+                                  color: expandedIndex == widget.index ? AppColors3.primaryColor : !isTaped && expandedIndex != index ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
                                 ),
                               ),
                               Text(
                                 ' ${widget.clientName}',
                                 style: TextStyle(
                                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                                  color: expandedIndex == index ? Colors.black : !isTaped && expandedIndex!= index ? Colors.black : AppColors.primaryColor.withOpacity(0.3),
+                                  color: expandedIndex == index ? AppColors3.blackColor : !isTaped && expandedIndex!= index ? AppColors3.blackColor : AppColors3.primaryColor.withOpacity(0.3),
                                 ))]),
                           const Spacer(),
                           Visibility(
@@ -289,13 +289,13 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                       icon: Icon(
                                         CupertinoIcons.minus,
                                         size: MediaQuery.of(context).size.width * 0.09,
-                                        color: AppColors.primaryColor,
+                                        color: AppColors3.primaryColor,
                                       ))))]),
                       Text(
                         widget.treatmentType,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.05,
-                          color: expandedIndex == widget.index ? Colors.black : !isTaped && expandedIndex != widget.index ? Colors.black : AppColors.primaryColor.withOpacity(0.3),
+                          color: expandedIndex == widget.index ? AppColors3.blackColor : !isTaped && expandedIndex != widget.index ? AppColors3.blackColor : AppColors3.primaryColor.withOpacity(0.3),
                         ),
                       ),
                       ///componentes de la segunda card >>>>>>
@@ -311,14 +311,14 @@ class _ApptmInfoState extends State<ApptmInfo> {
                               padding: EdgeInsets.symmetric(vertical: 8, horizontal: MediaQuery.of(context).size.width * .026),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
+                                color: AppColors3.primaryColor,
                                 borderRadius: BorderRadius.circular(
                                     10),
                               ),
                               child: const Text(
                                 'Fecha:',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors3.whiteColor,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -338,7 +338,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   labelText: 'DD/M/AAAA',
-                                  suffixIcon: const Icon(Icons.calendar_today)),
+                                  suffixIcon: const Icon(Icons.calendar_today, color: AppColors3.primaryColor,)),
                                 readOnly: true,
                                 onTap: () {
                                   setState(() {
@@ -353,7 +353,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                             margin: EdgeInsets.only(bottom: isCalendarShow ? MediaQuery.of(context).size.width * 0.02 : 0),
                             height: isCalendarShow ? 300 : 0,
                             decoration: const BoxDecoration(
-                                color: Colors.white
+                                color: AppColors3.whiteColor
                             ),
                             clipBehavior: Clip.hardEdge, // Recort
                             child: CalendarioCita(onDayToAppointFormSelected: _onDateToAppointmentForm),
@@ -363,13 +363,13 @@ class _ApptmInfoState extends State<ApptmInfo> {
                             margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.03),
                             alignment: Alignment.centerLeft,
                             decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
+                              color: AppColors3.primaryColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Text(
                               'Hora:',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors3.whiteColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -388,7 +388,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                     ),
                                     labelText: 'HH:MM',
                                     suffixIcon: const Icon(
-                                        Icons.access_time),
+                                        Icons.access_time, color: AppColors3.primaryColor,),
                                   ),
                                   readOnly: true,
                                   onTap: () {
@@ -409,7 +409,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                             ),
                             height: _isTimerShow ? 250 : 0,
                             decoration: const BoxDecoration(
-                                color: Colors.white
+                                color: AppColors3.whiteColor
                             ),
                             clipBehavior: Clip.hardEdge,
                             child: TimerFly(onTimeChoose: _onTimeChoose),
@@ -433,10 +433,10 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                             elevation: 4,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10.0),
-                                              side: const BorderSide(color: Colors.red, width: 1),
+                                              side: const BorderSide(color: AppColors3.redDelete, width: 1),
                                             ),
-                                            backgroundColor: Colors.white,
-                                            surfaceTintColor: Colors.white,
+                                            backgroundColor: AppColors3.whiteColor,
+                                            surfaceTintColor: AppColors3.whiteColor,
                                             padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05,
                                             ),
                                           ),
@@ -451,7 +451,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                           },
                                           child: Icon(
                                             Icons.delete,
-                                            color: Colors.red,
+                                            color: AppColors3.redDelete,
                                             size: MediaQuery.of(context).size.width * 0.085,
                                           ))),
                                     ElevatedButton(
@@ -460,11 +460,11 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10.0),
                                               side: const BorderSide(
-                                                  color: AppColors.primaryColor,
+                                                  color: AppColors3.primaryColor,
                                                   width: 1),
                                             ),
-                                            backgroundColor: AppColors.primaryColor,
-                                            surfaceTintColor: AppColors.primaryColor,
+                                            backgroundColor: AppColors3.primaryColor,
+                                            surfaceTintColor: AppColors3.primaryColor,
                                             padding: EdgeInsets.symmetric(
                                               horizontal: MediaQuery.of(context).size.width * 0.05,
                                             ),
@@ -512,7 +512,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                           },
                                           child: Icon(
                                             CupertinoIcons.checkmark,
-                                            color: Colors.white,
+                                            color: AppColors3.whiteColor,
                                             size: MediaQuery.of(context).size.width * 0.09,
                                           ),
                                         )
@@ -531,10 +531,10 @@ class _ApptmInfoState extends State<ApptmInfo> {
                     padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: !isTaped ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3), //const Color(0xFFC5B6CD),
+                      color: !isTaped ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3), //const Color(0xFFC5B6CD),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: !isTaped ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
+                        color: !isTaped ? AppColors3.primaryColor : AppColors3.primaryColor.withOpacity(0.3),
                         width: 1.5,
                       ),
                     ),
@@ -543,7 +543,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                       text: TextSpan(
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.06,
-                          color: Colors.white,
+                          color: AppColors3.whiteColor,
                         ),
                         children: [
                           TextSpan(
