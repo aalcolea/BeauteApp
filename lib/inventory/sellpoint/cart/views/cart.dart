@@ -422,17 +422,17 @@ class _CartState extends State<Cart> {
                bool confirm = await showConfirmSellDialog(context);
 
                 if (confirm) {
+                  await widget.printService.ensureCharacteristicAvailable();
+
+                if (widget.printService.characteristic != null) {
+                  PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                  await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test.jpeg');
+                } else {
+                  print("Error: Característica de impresión no disponible después de esperar");
+                }
                   bool result = await cartProvider.sendCart();
                   widget.onShowBlurr(false);
                   if(result) {
-                await widget.printService.ensureCharacteristicAvailable();
-
-                if (widget.printService.characteristic != null) {
-                PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
-                await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test.jpeg');
-                } else {
-                print("Error: Característica de impresión no disponible después de esperar");
-                }
 
                     cartProvider.refreshCart();
                     widget.onShowBlurr(false);
