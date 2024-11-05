@@ -7,9 +7,14 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
     context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) {
-      return Material(
-        color: Colors.transparent,
-        child:
+      return Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+            child: Container(
+              color: Colors.black54.withOpacity(0.3),
+            ),
+          ),
           Center(
             child: Container(
               margin: EdgeInsets.symmetric(
@@ -33,7 +38,6 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                     child: Text(
                       'Confirmar eliminación',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.07,
                         color: AppColors3.primaryColor,
                       ),
@@ -48,7 +52,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.045,
-                        color: Colors.black,
+                        color: Colors.black54,
                       ),
                     ),
                   ),
@@ -110,6 +114,7 @@ Future<bool> showDeleteConfirmationDialog(BuildContext context, Function onDelet
               ),
             ),
           ),
+        ],
       );
     },
   ).then((value) => value ?? false);

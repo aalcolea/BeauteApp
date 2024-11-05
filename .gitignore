@@ -47,8 +47,6 @@ ios/Runner.xcworkspace/contents.xcworkspacedata
 ios/Runner.xcworkspace/xcshareddata/
 ios/Runner.xcodeproj/project.pbxproj
 
-
-
 # Symbolication related
 app.*.symbols
 

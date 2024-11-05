@@ -6,16 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
-import '../../../main.dart';
+import '../../main.dart';
 import '../../models/clientModel.dart';
 import '../../services/clienteService.dart';
-import '../../themes/colors.dart';
 import '../../utils/PopUpTabs/deleteClientDialog.dart';
 import '../../utils/showToast.dart';
 import '../../utils/toastWidget.dart';
 import 'clientInfo.dart';
 import 'package:http/http.dart' as http;
-
 class Person {
   String name;
   String tag;
@@ -54,7 +52,7 @@ class DropdownDataManager {
 
 
 class ClientDetails extends StatefulWidget {
-  final bool docLog;
+  final bool isDoctorLog;
   final void Function(
     bool,
   ) onHideBtnsBottom;
@@ -62,7 +60,7 @@ class ClientDetails extends StatefulWidget {
     bool,
   ) onShowBlur;
 
-  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.docLog, required this.onShowBlur});
+  const ClientDetails({super.key, required this.onHideBtnsBottom, required this.isDoctorLog, required this.onShowBlur});
 
   @override
   State<ClientDetails> createState() => _ClientDetailsState();
@@ -71,6 +69,8 @@ class ClientDetails extends StatefulWidget {
 class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTickerProviderStateMixin{
 
   late AnimationController aniController;
+  late Animation<double> movLeftToCenter;
+
   final FocusNode focusNode = FocusNode();
   final dropdownDataManager = DropdownDataManager();
   late KeyboardVisibilityController keyboardVisibilityController;
@@ -88,8 +88,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
   double maxOffset = 0;
   double avance = 0;
   double sumAvance = 0;
-  double scaleValue = 0;
-  int letterCherlper = 0;
 
   @override
   void didPopNext() {
@@ -124,6 +122,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
 
   Future<void> getNombres() async {
     List<String> fetchedNames = (await dropdownDataManager.fetchUser()).cast<String>();
+
     setState(() {
       clients = fetchedNames.cast<Client>();
       _alphabetizedData = _createAlphabetizedData(clients);
@@ -136,17 +135,21 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
       print('ID: ${client.id}, Nombre: ${client.name}, Email: ${client.email}, Número: ${client.number}');
     }
   }
-
   Future<void> addClient() async {
     return showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (BuildContext context) {
-          return ClientForm(
-              onHideBtnsBottom: _onHideBtnsBottom,
-              onFinishedAddClient: _onFinishedAddClient);
-        }).then((_) {
+          return Stack(
+            children: [
+              ClientForm(
+                    onHideBtnsBottom: _onHideBtnsBottom,
+                    onFinishedAddClient: _onFinishedAddClient),
+            ],
+          );
+        }).then((_){
       widget.onShowBlur(false);
+
     });
   }
 
@@ -154,13 +157,14 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
   void initState() {
     super.initState();
     aniController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    movLeftToCenter = Tween(begin: 0.0, end: 100.0 ).animate(CurvedAnimation(parent: aniController, curve: Curves.easeInOut));
     scrollController = ScrollController();
     scrollController.addListener(onScroll);
     _alphabetizedData = _createAlphabetizedData(clients);
     keyboardVisibilityController = KeyboardVisibilityController();
     Platform.isIOS ? platform = false : platform = true;
     checkKeyboardVisibility();
-    isDocLog = widget.docLog;
+    isDocLog = widget.isDoctorLog;
     searchController.addListener(onSearchChanged);
     dropdownDataManager.fetchUser().then((fetchedClients) {
       setState(() {
@@ -239,7 +243,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
         text: source.substring(index, index + query.length),
         style: baseStyle.copyWith(
           fontWeight: FontWeight.bold,
-          color: AppColors3.primaryColor,
+          color: const Color(0xFF4F2263),
         ),
       ));
       start = index + query.length;
@@ -271,7 +275,6 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
       value.sort((a, b) => a.name.compareTo(b.name));
     });
 
-    letterCherlper = data['C']?.length ?? 0;
     final sortedKeys = data.keys.toList()..sort();
     final clientService = ClientService();
     final List<AlphabetListViewItemGroup> groups = sortedKeys.map((key) {
@@ -281,36 +284,31 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
           return Dismissible(
             onUpdate: (details){
               setState(() {
+                //aniController.status == AnimationStatus.forward ? null : aniController.forward();
                 progress = details.progress;
                 progress = details.progress * 100;
                 aniController.value = progress;
+                print('progress $progress');
                 sumAvance = avance * progress;
-                scaleValue = 0.6 + (progress/100) * 1.1;
               });
             },
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             background: Container(
-              margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.005,
-                  right: MediaQuery.of(context).size.width * 0.02,
-                  top: MediaQuery.of(context).size.width * 0.02,
-                  bottom: MediaQuery.of(context).size.width * 0.02,
-              ),
-              color: AppColors3.redDelete,
+              margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02),
+              color: Colors.red,
               alignment: Alignment.centerRight,
               child: AnimatedBuilder(
                 animation: aniController,
-                child: const Icon(Icons.delete, color: AppColors3.whiteColor),
+                child: const Icon(Icons.delete, color: Colors.white),
                 builder: (aniController, iconToMove){
+                  double maxOffset = MediaQuery.of(context).size.width/2;
                   return Transform.translate(
-                      offset: Offset(-sumAvance, 0),
-                      child: Transform.scale(scale: scaleValue, child: Icon(Icons.delete, color: AppColors3.whiteColor, size: MediaQuery.of(context).size.width * 0.06,)));
+                      offset: Offset(-sumAvance, 0), child: Icon(Icons.delete, color: Colors.white, size: MediaQuery.of(context).size.width * 0.07,));
                 }
               )
             ),
             confirmDismiss: (direction) async {
-              widget.onShowBlur(true);
               bool shouldDelete = await showDeleteConfirmationDialog(context, () async {
                 await clientService.deleteClient(client.id);
                 if(mounted){
@@ -326,21 +324,17 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 setState(() {
                   clients.remove(client);
                 });
-                widget.onShowBlur(false);
                 return true;
               } else {
-                widget.onShowBlur(false);
                 return false;
               }
             },
-            child: Visibility(
-              visible: client.id != 1,
-              child: ListTile(
+            child: ListTile(
               onTap: () {
                 Navigator.push(context,
                   CupertinoPageRoute(
                     builder: (context) => ClientInfo(
-                      docLog: isDocLog,
+                      isDoctorLog: isDocLog,
                       id: client.id,
                       name: client.name,
                       phone: client.number,
@@ -355,7 +349,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                   text: highlightOccurrences(client.name, query,
                     TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      color: AppColors3.primaryColor,
+                      color: const Color(0xFF4F2264),
                       fontSize: MediaQuery.of(context).size.width * 0.055,
                     ),
                   ),
@@ -372,7 +366,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                             query,
                             TextStyle(
                               overflow: TextOverflow.ellipsis,
-                              color: AppColors3.primaryColor.withOpacity(0.5),
+                              color: const Color(0xFF4F2263).withOpacity(0.3),
                               fontSize: MediaQuery.of(context).size.width * 0.045,
                             ),
                           ),
@@ -385,7 +379,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: AppColors3.primaryColor.withOpacity(0.5),
+                            color: const Color(0xFF4F2263).withOpacity(0.3),
                             fontSize: MediaQuery.of(context).size.width * 0.045,
                           ),
                         ),
@@ -396,47 +390,45 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                     margin: const EdgeInsets.only(top: 8),
                     height: 2,
                     decoration: const BoxDecoration(
-                      color: AppColors3.primaryColor,
+                      color: Color(0xFF4F2263),
                     ),
                   ),
                 ],
               ),
-            ),)
+            ),
           );
         }).toList(),
       );
     }).toList();
     return groups;
   }
-//
+
   @override
   Widget build(BuildContext context) {
     final AlphabetListViewOptions options = AlphabetListViewOptions(
       listOptions: ListOptions(
         listHeaderBuilder: (context, symbol) {
-          return  Visibility(
-            visible: symbol == 'C' && letterCherlper == 1 ? false : true,
-            child: Container(
+          return Container(
             margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.only(left: 6.0, top: 6, bottom: 6),
             decoration: BoxDecoration(
-              color: AppColors3.primaryColor,
+              color: const Color(0xFF4F2263),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               symbol,
-              style: const TextStyle(color: AppColors3.whiteColor, fontSize: 20),
+              style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
-          ),);
+          );
         },
       ),
       scrollbarOptions: ScrollbarOptions(
         jumpToSymbolsWithNoEntries: true,
         symbolBuilder: (context, symbol, state) {
           final color = switch (state) {
-            AlphabetScrollbarItemState.active => AppColors3.whiteColor,
-            AlphabetScrollbarItemState.deactivated => AppColors3.primaryColor,
-            _ => AppColors3.primaryColor.withOpacity(0.6),
+            AlphabetScrollbarItemState.active => Colors.white,
+            AlphabetScrollbarItemState.deactivated => const Color(0xFF4F2263),
+            _ => const Color(0xFF4F2263).withOpacity(0.6),
           };
 
           return Container(
@@ -446,7 +438,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                 left: Radius.circular(100),
               ),
               color: state == AlphabetScrollbarItemState.active
-                  ? AppColors3.primaryColor.withOpacity(0.3)
+                  ? const Color(0xFF4F2263).withOpacity(0.3)
                   : null,
             ),
             child: Center(
@@ -468,11 +460,11 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
             height: 150,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: AppColors3.blackColor.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.4),
             ),
             child: Text(
               symbol,
-              style: const TextStyle(color: AppColors3.whiteColor, fontSize: 100),
+              style: const TextStyle(color: Colors.white, fontSize: 100),
             ),
           );
         },
@@ -480,7 +472,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
     );
 
     return Container(
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.04),
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.0),
       child: Column(
         children: [
           Row(
@@ -497,25 +489,18 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                         focusNode: focusNode,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.zero,
-                          hintText: 'Buscar...',
-                          hintStyle: TextStyle(
-                            color: AppColors3.primaryColor.withOpacity(0.3)
-                          ),
-                          prefixIcon: Icon(Icons.search, color: AppColors3.primaryColor.withOpacity(0.3)),
+                          hintText: 'Buscar..',
+                          prefixIcon: const Icon(Icons.search),
                           disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors3.primaryColor.withOpacity(0.3), width: 2.0),
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors3.primaryColor.withOpacity(0.3), width: 2.0),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: AppColors3.primaryColor, width: 2.0),
+                            borderSide: BorderSide(color: const Color(0xFF4F2263).withOpacity(0.3), width: 2.0),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(color: AppColors3.primaryColor),
+                            borderSide: const BorderSide(),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
@@ -538,7 +523,7 @@ class _ClientDetailsState extends State<ClientDetails> with RouteAware, SingleTi
                   icon: Icon(
                     Icons.person_add_alt_outlined,
                     size: MediaQuery.of(context).size.width * 0.11,
-                    color: AppColors3.primaryColor,
+                    color: const Color(0xFF4F2263),
                   ),
                 ),
               ),

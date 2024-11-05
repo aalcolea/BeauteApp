@@ -1,14 +1,40 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../regEx.dart';
-import '../themes/colors.dart';
 import '../utils/PopUpTabs/clientSuccessfullyAdded.dart';
 
+class NameInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Verificar si el nuevo texto comienza con un espacio
+    if (newValue.text.startsWith(' ')) {
+      // Si comienza con un espacio, no permitimos la actualización y devolvemos el valor anterior
+      return oldValue;
+    }
+
+    // Verificar si el texto anterior termina con un espacio y el nuevo texto no
+    // Esto indica que el usuario está intentando eliminar un espacio final
+    if (oldValue.text.endsWith(' ') &&
+        !newValue.text.endsWith(' ') &&
+        newValue.text.length == oldValue.text.length - 1 &&
+        oldValue.text.length > 1) {
+      // Permitimos la eliminación del espacio final
+      return newValue;
+    }
+    return FilteringTextInputFormatter.allow(
+      RegExp(r'[a-zA-ZñÑ0-9\s]'), // Expresión regular que permite letras y espacios
+    ).formatEditUpdate(oldValue, newValue);
+  }
+}
 
 class EmailInputFormatter extends TextInputFormatter {
   @override
@@ -84,12 +110,9 @@ class ClientFormState extends State<ClientForm> {
   bool errorInit = false;
   double? screenWidth;
   double? screenHeight;
-  bool showBlurr = false;
-  //errores
-  bool nameError = false;
-  bool celError = false;
-  bool emailError = false;
-  //
+
+  //final RegExp letterRegex = RegExp(r'^[a-zA-Z]+$');
+
   void hideKeyBoard() {
     if (visibleKeyboard) {
       FocusScope.of(context).unfocus();
@@ -107,14 +130,10 @@ class ClientFormState extends State<ClientForm> {
   }
 
   Future<void> createClient() async {
-    setState(() {
-      _nameController.text.isEmpty ? nameError = true : nameError = false;
-      _emailController.text.isEmpty ? emailError = true : emailError = false;
-      _numberController.text.isEmpty || _numberController.text.length < 10 ? celError = true : celError = false;
-    });
     try {
       var response = await http.post(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
+        Uri.parse(
+            'https://beauteapp-dd0175830cc2.herokuapp.com/api/createClient'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -124,27 +143,20 @@ class ClientFormState extends State<ClientForm> {
           'email': _emailController.text,
         }),
       );
+      print(response.statusCode);
       if (response.statusCode == 201) {
-        setState(() {
-          if (mounted) {
-            showBlurr = true;
-            hideKeyBoard();
-            showDialog(context: context, builder: (BuildContext context){
-              return const ClienteAddedDialog();
-            }).then((_){
-              if(mounted){
-                Navigator.of(context).pop();
-              }
-            });
-          }
-        });
-
+        if (mounted) {
+          hideKeyBoard();
+          Navigator.pop(context);
+          showClienteSuccessfullyAdded(context, widget, () {
+            widget.onFinishedAddClient(1, false);
+          });
+        }
       } else if(response.statusCode == 422) {
         var errorResponse = jsonDecode(response.body);
         if(errorResponse['errors'] != null && errorResponse['errors']['number'] != null) {
           showClienteNumberExistsAlert(context, errorResponse['errors']['number'][0]);
         }else {
-          _numberController.text.isEmpty ? null :
           showClienteNumberExistsAlert(context, 'Error al crear cliente: ${response.body}');
         }
       }else {
@@ -199,10 +211,10 @@ class ClientFormState extends State<ClientForm> {
             margin: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.03,
                 right: MediaQuery.of(context).size.width * 0.03,
-                top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
+            top: visibleKeyboard ? screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.04 : MediaQuery.of(context).size.width * 0.05 : screenWidth! < 391.0 ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.45),
             padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
             decoration: BoxDecoration(
-              color: AppColors3.whiteColor,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -217,7 +229,7 @@ class ClientFormState extends State<ClientForm> {
                         fontSize:
                         MediaQuery.of(context).size.width * 0.08,
                         fontWeight: FontWeight.bold,
-                        color: AppColors3.primaryColor,
+                        color: const Color(0xFF4F2263),
                       ),
                     ),
                     IconButton(
@@ -227,13 +239,14 @@ class ClientFormState extends State<ClientForm> {
                             Navigator.pop(context);
                           });
                         },
-                        icon: const Icon(Icons.close, color: AppColors3.primaryColor,))
+                        icon: const Icon(Icons.close, color: const Color(0xFF4F2263),))
                   ],
                 ),
                 Container(
                   padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
                     height: visibleKeyboard
-                        ? (screenWidth! < 391 ? MediaQuery.of(context).size.height * 0.46
+                        ? (screenWidth! < 391
+                            ? MediaQuery.of(context).size.height * 0.46
                             : MediaQuery.of(context).size.height * 0.5)
                         : screenWidth! < 391.0 ? MediaQuery.of(context).size.height * 0.535
                   : MediaQuery.of(context).size.height * 0.6,
@@ -254,7 +267,7 @@ class ClientFormState extends State<ClientForm> {
                                     vertical: MediaQuery.of(context).size.width * 0.025),
                                 alignment: Alignment.centerLeft,
                                 decoration: BoxDecoration(
-                                  color: AppColors3.primaryColor,
+                                  color: const Color(0xFF4F2263),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Row(
@@ -268,6 +281,9 @@ class ClientFormState extends State<ClientForm> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    /*IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.white,))*/
                                   ],
                                 )
                             ),
@@ -277,15 +293,11 @@ class ClientFormState extends State<ClientForm> {
                                   top: 0),
                               child: TextFormField(
                                 inputFormatters: [
-                                  RegEx(type: InputFormatterType.name),
-                                  //NameInputFormatter(),
+                                  NameInputFormatter(),
                                 ],
                                 focusNode: focusNodeClient,
                                 controller: _nameController,
                                 decoration: InputDecoration(
-                                  error: nameError ? const Text('Agregar nombre', style: TextStyle(
-                                    color: Colors.red,
-                                  ),) : null,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: screenWidth! < 370
                                           ? MediaQuery.of(context).size.width * 0.02
@@ -295,14 +307,6 @@ class ClientFormState extends State<ClientForm> {
                                   hintText: 'Nombre completo',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors3.primaryColor)
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        borderSide: const BorderSide(color: AppColors3.primaryColor)),
-                                    focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),
                                   ),
                                 ),
                                 onTap: () {
@@ -324,7 +328,7 @@ class ClientFormState extends State<ClientForm> {
                                   horizontal: MediaQuery.of(context).size.width * 0.0),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: AppColors3.primaryColor,
+                                color: const Color(0xFF4F2263),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Text(
@@ -341,20 +345,16 @@ class ClientFormState extends State<ClientForm> {
                                   bottom: MediaQuery.of(context).size.width * 0.045,
                                   top: MediaQuery.of(context).size.width * 0.0225),
                               child: TextFormField(
-                                textInputAction: TextInputAction.done,
                                 focusNode: focusNodeCel,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(10),
-                                  RegEx(type: InputFormatterType.numeric),
                                 ],
                                 controller: _numberController,
                                 decoration: InputDecoration(
-                                  error: celError && _numberController.text.isEmpty? const Text('Agregar número', style: TextStyle(
-                                    color: Colors.red,
-                                  ),) : celError && _numberController.text.length < 10 ? const Text('El número debe tener 10 digitos', style: TextStyle(
-                                    color: Colors.red,
-                                  ),) : null,
+                                  errorText: errorInit
+                                      ? 'El número debe ser de 10 dígitos'
+                                      : null,
                                   hintText: 'No. Celular',
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: screenWidth! < 370
@@ -363,15 +363,7 @@ class ClientFormState extends State<ClientForm> {
                                       horizontal:
                                       MediaQuery.of(context).size.width * 0.02),
                                   border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        borderSide: const BorderSide(
-                                            color: AppColors3.primaryColor)),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(color: AppColors3.primaryColor)),
-                                  focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),
                                   ),
                                 ),
                                 onTap: () {
@@ -402,7 +394,7 @@ class ClientFormState extends State<ClientForm> {
                                   horizontal: MediaQuery.of(context).size.width * 0.0),
                               alignment: Alignment.centerLeft,
                               decoration: BoxDecoration(
-                                color: AppColors3.primaryColor,
+                                color: const Color(0xFF4F2263),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Text(
@@ -420,27 +412,19 @@ class ClientFormState extends State<ClientForm> {
                                   top: MediaQuery.of(context).size.width * 0.0225),
                               child: TextFormField(
                                 inputFormatters: [
-                                  RegEx(type: InputFormatterType.email),
-                                  ],
+                                  EmailInputFormatter(),
+                                ],
                                 focusNode: focusNodeEmail,
                                 controller: _emailController,
                                 decoration: InputDecoration(
-                                  error: emailError ? const Text('Agregar correo', style: TextStyle(color: Colors.red),) : null,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: screenWidth! < 370
                                           ? MediaQuery.of(context).size.width * 0.02
                                           : MediaQuery.of(context).size.width * 0.0325,
-                                      horizontal: MediaQuery.of(context).size.width * 0.02),
+                                      horizontal:
+                                      MediaQuery.of(context).size.width * 0.02),
                                   border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(
-                                          color: AppColors3.primaryColor)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide: const BorderSide(color: AppColors3.primaryColor)),
-                                  focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(color: AppColors3.primaryColor, width: 1.5),
                                   ),
                                   hintText: 'Correo electrónico',
                                 ),
@@ -466,11 +450,11 @@ class ClientFormState extends State<ClientForm> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: MediaQuery.of(context).size.width * 0.01,
                                           vertical: MediaQuery.of(context).size.width * 0.0112),
-                                      surfaceTintColor: AppColors3.primaryColorMoreStrong,
+                                      surfaceTintColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10.0),
                                         side: const BorderSide(
-                                            color: AppColors3.primaryColor, width: 2),
+                                            color: Color(0xFF4F2263), width: 2),
                                       ),
                                       fixedSize: Size(
                                         MediaQuery.of(context).size.width * 0.6,
@@ -483,21 +467,13 @@ class ClientFormState extends State<ClientForm> {
                                           fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.055,
-                                          color: AppColors3.primaryColor,
+                                          color: const Color(0xFF4F2263),
                                         ))))
                           ])),
                 ),
 
               ],
-            )),
-          Visibility(
-              visible: showBlurr,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                  child: Container(
-                    color: Colors.black54.withOpacity(0.01),
-                  ),
-                ),),
+            ))
         ]));
   }
 }

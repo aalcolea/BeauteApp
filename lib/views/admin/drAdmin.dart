@@ -1,40 +1,38 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
-import 'package:beaute_app/views/admin/clientDetails.dart';
-import 'package:beaute_app/views/navBar.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../calendar/calendarSchedule.dart';
-import '../../forms/appoinmentForm.dart';
+import 'package:beaute_app/forms/appoinmentForm.dart';
+import 'package:beaute_app/services/auth_service.dart';
+import '../../forms/clientForm.dart';
 import '../../utils/PopUpTabs/closeConfirm.dart';
+import 'clientDetails.dart';
 import 'notifications.dart';
 
-class AssistantAdmin extends StatefulWidget {
+class DoctorAdmin extends StatefulWidget {
   final bool docLog;
 
-  const AssistantAdmin({super.key, required this.docLog});
+  const DoctorAdmin({super.key, required this.docLog});
 
   @override
-  State<AssistantAdmin> createState() => _AssistantAdminState();
+  State<DoctorAdmin> createState() => _DoctorAdminState();
 }
 
-class _AssistantAdminState extends State<AssistantAdmin> {
+class _DoctorAdminState extends State<DoctorAdmin> {
+  bool isDocLog = true;
+  bool _showContentToModify = false;
+  int _selectedScreen = 0;
+  bool _hideBtnsBottom = false;
   late KeyboardVisibilityController keyboardVisibilityController;
   late StreamSubscription<bool> keyboardVisibilitySubscription;
   bool visibleKeyboard = false;
-  bool scrollToDayComplete = false;
-  bool isDocLog = false;
-  bool _showContentToModify = false;
-  bool _hideBtnsBottom = false;
-  int _selectedScreen = 0;
   bool _cancelConfirm = false;
   double? screenWidth;
   double? screenHeight;
-  late bool platform; //0 IOS 1 Androide
   bool _showBlurr = false;
 
   void checkKeyboardVisibility() {
@@ -42,10 +40,23 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         keyboardVisibilityController.onChange.listen((visible) {
       setState(() {
         visibleKeyboard = visible;
-        if(_selectedScreen == 3){
-          //print('estoy en clientdetails y saque el teclado');
-        }
       });
+    });
+  }
+
+  void _onshowContentToModify(bool showContentToModify) {
+    _showContentToModify = showContentToModify;
+  }
+
+  void _onHideBtnsBottom(bool hideBtnsBottom) {
+    setState(() {
+      _hideBtnsBottom = hideBtnsBottom;
+    });
+  }
+
+  void _onCancelConfirm(bool cancelConfirm) {
+    setState(() {
+      _cancelConfirm = cancelConfirm;
     });
   }
 
@@ -56,14 +67,33 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   }
 
 
-  void _onshowContentToModify(bool showContentToModify) {
-    _showContentToModify = showContentToModify;
-  }
-
-  void _onHideBtnsBottom(bool hideBtnsBottom) {
-    setState(() {
-      _hideBtnsBottom = hideBtnsBottom;
-    });
+  onBackPressed(didPop) {
+    if (!didPop) {
+      setState(() {
+        setState(() {
+          _selectedScreen == 3
+              ? _selectedScreen = 1
+              : showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (builder) {
+                    return AlertCloseDialog(
+                      onCancelConfirm: _onCancelConfirm,
+                    );
+                  },
+                ).then((_) {
+                  if (_cancelConfirm == true) {
+                    if (_cancelConfirm) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        SystemNavigator.pop();
+                      });
+                    }
+                  }
+                });
+        });
+      });
+      return;
+    }
   }
 
   @override
@@ -77,8 +107,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   void initState() {
     _selectedScreen = 1;
     keyboardVisibilityController = KeyboardVisibilityController();
-    Platform.isIOS ? platform = false : platform = true;
-    checkKeyboardVisibility();
     super.initState();
   }
 
@@ -86,46 +114,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
   void dispose() {
     keyboardVisibilitySubscription.cancel();
     super.dispose();
-  }
-
-  void _onCancelConfirm(bool cancelConfirm) {
-    setState(() {
-      _cancelConfirm = cancelConfirm;
-    });
-  }
-
-  onBackPressed(didPop) {
-    if (!didPop) {
-      setState(() {
-        _selectedScreen == 3
-            ? _selectedScreen = 1
-            : showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (builder) {
-                  return AlertCloseDialog(
-                    onCancelConfirm: _onCancelConfirm,
-                  );
-                },
-              ).then((_) {
-                if (_cancelConfirm == true) {
-                  if (_cancelConfirm) {
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      SystemNavigator.pop();
-                    });
-                  }
-                }
-              });
-      });
-
-      return;
-    }
-  }
-
-  void _onItemSelected(int option){
-    setState(() {
-       print(option);
-    });
   }
 
   @override
@@ -136,7 +124,6 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         onBackPressed(didPop);
       },
       child: Scaffold(
-        endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: isDocLog,),
         body: Stack(
           children: [
             Container(
@@ -159,7 +146,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Visibility(
-                              visible: false,//_selectedScreen != 1,
+                              visible: false, //_selectedScreen != 1,
                               child: IconButton(
                                   onPressed: () {
                                     setState(() {
@@ -209,21 +196,23 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                 });
                               },
                               icon: Icon(
+
                                 CupertinoIcons.calendar_today,
                                 size: MediaQuery.of(context).size.width * 0.095,
                                 color: const Color(0xFF4F2263),
                               ),
                             ),
-                            Builder(builder: (BuildContext context){
-                              return IconButton(
-                                onPressed: (){
-                                  Scaffold.of(context).openEndDrawer();
-                                },
-                                icon: SvgPicture.asset(
-                                  'assets/imgLog/navBar.svg',
-                                  colorFilter: const ColorFilter.mode(Color(0XFF4F2263), BlendMode.srcIn),
-                                ),);
-                            }),
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                PinEntryScreenState().logout(context);
+                              },
+                              icon: Icon(
+                                Icons.input_outlined,
+                                size: MediaQuery.of(context).size.width * 0.095,
+                                color: const Color(0xFF4F2263),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -274,16 +263,15 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                           top: _selectedScreen == 1
                               ? MediaQuery.of(context).size.width * 0.03
                               : MediaQuery.of(context).size.width * 0.0,
-                          bottom: _selectedScreen == 4 ? MediaQuery.of(context).size.width * 0.02 : MediaQuery.of(context).size.width * 0.04,
-                          left: _selectedScreen != 4 && _selectedScreen != 3
+                          bottom: MediaQuery.of(context).size.width * 0.06,
+                          left: _selectedScreen != 4
                               ? MediaQuery.of(context).size.width * 0.045
                               : MediaQuery.of(context).size.width * 0.0,
-                          right: _selectedScreen != 4 && _selectedScreen != 3
+                          right: _selectedScreen != 4
                               ? MediaQuery.of(context).size.width * 0.045
                               : MediaQuery.of(context).size.width * 0.0,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: _buildBody(),
@@ -344,9 +332,11 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               ),
                             ),
                             onPressed: () {
-                              Navigator.push(context,
+                              Navigator.push(
+                                context,
                                 MaterialPageRoute(
-                                  builder: (context) => AppointmentForm(isDoctorLog: isDocLog),
+                                  builder: (context) =>
+                                      AppointmentForm(isDoctorLog: isDocLog),
                                 ),
                               );
                             },
@@ -366,11 +356,8 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(10),
                                 onTap: () {
-                                  setState(() {
-                                    if (mounted) {
-                                      _selectedScreen = 3;
-                                    }
-                                  });
+                                  _selectedScreen = 3;
+                                  setState(() {});
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
@@ -379,12 +366,13 @@ class _AssistantAdminState extends State<AssistantAdmin> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
-                                    _selectedScreen == 3 ?
-                                    CupertinoIcons.person_fill :CupertinoIcons.person,
+                                    _selectedScreen == 3
+                                        ? Icons.person_add_alt_outlined
+                                        : Icons.person_add_alt_outlined,
                                     color: _selectedScreen == 3
                                         ? const Color(0xFF4F2263)
                                         : const Color(0xFF4F2263).withOpacity(0.2),
-                                    size: MediaQuery.of(context).size.width * 0.11,
+                                    size: MediaQuery.of(context).size.width * 0.12,
                                   ),
                                 ),
                               ),
@@ -399,21 +387,23 @@ class _AssistantAdminState extends State<AssistantAdmin> {
             ),
             Visibility(
               visible: _showBlurr,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                  child: Container(
-                    color: Colors.black54.withOpacity(0.3),
-                  ),
-                ),)
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: Container(
+                  color: Colors.black54.withOpacity(0.3),
+                ),
+              ),)
+
           ],
         )
-      ));
+      ),
+    );
   }
 
-  void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddclient) {
+  void _onFinishedAddClient(int initScreen, bool forShowBtnAfterAddClient) {
     setState(() {
       _selectedScreen = initScreen;
-      _hideBtnsBottom = forShowBtnAfterAddclient;
+      _hideBtnsBottom = forShowBtnAfterAddClient;
     });
   }
 
@@ -423,7 +413,7 @@ class _AssistantAdminState extends State<AssistantAdmin> {
         return AgendaSchedule(
             isDoctorLog: isDocLog, showContentToModify: _onshowContentToModify);
       case 3:
-        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog, onShowBlur: _onShowBlur, );
+        return ClientDetails(onHideBtnsBottom: _onHideBtnsBottom, isDoctorLog: isDocLog, onShowBlur: _onShowBlur);
       case 4:
         return const NotificationsScreen(doctorId: 3);
       default:

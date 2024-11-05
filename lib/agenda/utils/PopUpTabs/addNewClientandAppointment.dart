@@ -39,6 +39,8 @@ class _AddClientAndAppointmentState extends State<AddClientAndAppointment> {
   void initState() {
     super.initState();
     _clientNamefromAppointmetForm.text = widget.clientNamefromAppointmetForm;
+    numberController.text = '9991974946';
+    emailController.text = 'fly@fly';
   }
 
   void onSendDataToAppointmentForm() {
