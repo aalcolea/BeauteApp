@@ -2,12 +2,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
+     /*   maven {
             url 'https://repo.maven.apache.org/maven2'
             content {
                 excludeGroup "com.google.protobuf"
             }
-        }
+        }*/
     }
 }
 
