@@ -418,12 +418,10 @@ class _CartState extends State<Cart> {
                       horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: () async {
-               widget.onShowBlurr(false);
+               widget.onShowBlurr(true);
                bool confirm = await showConfirmSellDialog(context);
-
                 if (confirm) {
                   await widget.printService.ensureCharacteristicAvailable();
-
                 if (widget.printService.characteristic != null) {
                   PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
                   await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test.jpeg');
