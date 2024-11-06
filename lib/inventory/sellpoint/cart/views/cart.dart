@@ -421,10 +421,8 @@ class _CartState extends State<Cart> {
               onPressed: cartProvider.cart.isNotEmpty ? () async {
                widget.onShowBlurr(true);
                bool confirm = await showConfirmSellDialog(context);
-
                 if (confirm) {
                   await widget.printService.ensureCharacteristicAvailable();
-
                 if (widget.printService.characteristic != null) {
                   PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
                   await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test2.jpeg');

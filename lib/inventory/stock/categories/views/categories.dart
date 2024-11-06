@@ -169,6 +169,7 @@ class _CategoriesState extends State<Categories> {
       throw Exception('Error al obtener datos de la API');
     }
   }
+
   Future<void> deleteItem(String categoryId) async {
     try {
       final String deleteUrl = '$baseURL/$categoryId';

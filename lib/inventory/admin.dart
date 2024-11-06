@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:beaute_app/agenda/utils/showToast.dart';
 import 'package:beaute_app/agenda/utils/toastWidget.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/salesHistory.dart';
+import 'package:beaute_app/inventory/stock/searchBar.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
 import 'package:beaute_app/inventory/stock/categories/views/categories.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
 
+import 'kboardVisibilityManager.dart';
 import 'themes/colors.dart';
 
 class adminInv extends StatefulWidget {
@@ -44,6 +46,7 @@ class _adminInvState extends State<adminInv> {
   String? scanedProd;
   Soundpool? pool;
   final Listenerblurr _listenerblurr = Listenerblurr();
+  late KeyboardVisibilityManager keyboardVisibilityManager;
 
   void changeBlurr(){
     if (productsKey.currentState != null) {
@@ -111,8 +114,15 @@ class _adminInvState extends State<adminInv> {
   @override
   void initState() {
     // TODO: implement initState
-
+    keyboardVisibilityManager = KeyboardVisibilityManager();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    keyboardVisibilityManager.dispose();
+    super.dispose();
   }
 
   void onPrintServiceComunication(PrintService printService){
@@ -243,6 +253,18 @@ class _adminInvState extends State<adminInv> {
                             color: Colors.transparent,
                             height: showScaner ? MediaQuery.of(context).size.width * 0.3 : 40,//37
                             child: showScaner ? ScanBarCode(onShowScan: onShowScan, onScanProd: onScanProd) : TextFormField(
+                              onTap: () async {
+                                focusNode.unfocus();
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Seeker(onShowBlur: onShowBlurr, listenerblurr: Listenerblurr(),),
+                                  ),
+                                );
+                                if (mounted) {
+                                  FocusScope.of(context).unfocus();
+                                }
+                              },
                               controller: searchController,
                               focusNode: focusNode,
                               decoration: InputDecoration(
