@@ -152,6 +152,8 @@ class PrintService extends ChangeNotifier {
 
         List<String> partesProducto = [];
 
+
+
         int maxCaracteres = 9;
         for (int i = 0; i < producto.length; i += maxCaracteres) {
           int fin = (i + maxCaracteres < producto.length) ? i + maxCaracteres : producto.length;
@@ -160,7 +162,7 @@ class PrintService extends ChangeNotifier {
 
         for (int j = 0; j < partesProducto.length; j++) {
           if (j == 0) {
-            bytes += utf8.encode(' $cantidad    ${partesProducto[j]}  \$$precio  \$$importe\n');
+            bytes += utf8.encode(' $cantidad    ${partesProducto[j]}  \$$precio \$$importe\n');
           } else if (j < 3){
             bytes += utf8.encode('      ${partesProducto[j]}\n');
           } else{
