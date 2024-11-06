@@ -2,7 +2,7 @@ import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:beaute_app/inventory/listenerPrintService.dart';
-import 'package:beaute_app/inventory/testPrinter/printService.dart';
+import 'package:beaute_app/inventory/testPrinter/printConnections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
