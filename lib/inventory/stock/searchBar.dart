@@ -4,6 +4,7 @@ import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../kboardVisibilityManager.dart';
+import '../sellpoint/cart/services/searchService.dart';
 import '../themes/colors.dart';
 import 'package:http/http.dart' as http;
 import 'products/views/products.dart';
@@ -22,7 +23,38 @@ class Seeker extends StatefulWidget {
 }
 
 class _SeekerState extends State<Seeker> {
+  ///comnfiguracion alan
+  bool isLoading = false;
+  final SearchService searchService = SearchService();
+  List<dynamic> categories = [];
+  List<dynamic> productos = [];
+  Future<void> searchProductsAndCategories(String searchTerm) async {
+    if (searchTerm.isEmpty) {
+      setState(() {
+        categories = [];
+        productos = [];
+      });
+      return;
+    }
 
+    setState(() => isLoading = true);
+
+    try {
+      final data = await searchService.searchProductsAndCategories(searchTerm);
+      setState(() {
+        categories = data['categories'];
+        productos = data['productos'];
+      });
+
+      print(productos);
+    } catch (e) {
+      print('error: $e');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  /// finaliza
   late KeyboardVisibilityManager keyboardVisibilityManager;
   final TextEditingController searchController = TextEditingController();
   final FocusNode focusNode = FocusNode();
@@ -210,6 +242,11 @@ class _SeekerState extends State<Seeker> {
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                               ),
+                              ///test alan
+                              onChanged: (value) {
+                              searchProductsAndCategories(value);
+                            },
+                              ///final onchange alan
                             ),
                           ),
                         ),
