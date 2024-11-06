@@ -31,7 +31,6 @@ class _testPrintState extends State<testPrint> {
 
   void scanForDevices() {
     flutterBlue.startScan(timeout: Duration(seconds: 5));
-
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
         if (!devicesList.contains(r.device)) {
@@ -41,7 +40,6 @@ class _testPrintState extends State<testPrint> {
         }
       }
     });
-
     flutterBlue.stopScan();
   }
 

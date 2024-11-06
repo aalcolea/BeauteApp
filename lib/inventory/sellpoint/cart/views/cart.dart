@@ -38,6 +38,7 @@ class _CartState extends State<Cart> {
   List<TextEditingController> cantControllers = [];
   List<int> cantHelper = [];
   double totalCart = 0;
+  PrintService printService = PrintService();
 
   final FocusNode focusNode = FocusNode();
   final TextEditingController cantidadController = TextEditingController();
@@ -417,8 +418,8 @@ class _CartState extends State<Cart> {
                   padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.02,
                       horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
-              onPressed: () async {
-               widget.onShowBlurr(false);
+              onPressed: cartProvider.cart.isNotEmpty ? () async {
+               widget.onShowBlurr(true);
                bool confirm = await showConfirmSellDialog(context);
 
                 if (confirm) {
@@ -426,21 +427,22 @@ class _CartState extends State<Cart> {
 
                 if (widget.printService.characteristic != null) {
                   PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
-                  await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test.jpeg');
+                  await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test2.jpeg');
                 } else {
+                  showOverlay(context, const CustomToast(message: 'Impresión no disponible después de esperar'));
                   print("Error: Característica de impresión no disponible después de esperar");
                 }
                   bool result = await cartProvider.sendCart();
                   widget.onShowBlurr(false);
                   if(result) {
-
+                    showOverlay(context, const CustomToast(message: 'Venta efectuada correctamente'));
                     cartProvider.refreshCart();
                     widget.onShowBlurr(false);
                   }
                 }else{
                   widget.onShowBlurr(false);
                 }
-              },
+              } : null,
               child: Text(
                 'Pagar',
                 style: TextStyle(
