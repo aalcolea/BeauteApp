@@ -2,7 +2,7 @@ import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:beaute_app/inventory/listenerPrintService.dart';
-import 'package:beaute_app/inventory/testPrinter/printService.dart';
+import 'package:beaute_app/inventory/testPrinter/printConnections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -49,8 +49,6 @@ class _navBarState extends State<navBar> {
 
   @override
   void initState() {
-
-    print('docLOg${widget.isDoctorLog}');
     printService.initDeviceStatus();
     printService.listenerPrintService.registrarObservador((newValue){
       setState(() {
@@ -61,7 +59,7 @@ class _navBarState extends State<navBar> {
             break;
           case 2 :
             isConecct = false;
-            print('desconcetado');
+            print('desconectado');
           case 3:
             isConecct = true;
             print('aun coneectado');
@@ -247,7 +245,8 @@ class _navBarState extends State<navBar> {
                                           left: MediaQuery.of(context).size.width * 0.0,
                                           right: MediaQuery.of(context).size.width * 0.04,
                                         ),
-                                        child: Icon(isConecct ? Icons.print_outlined : Icons.print_disabled_outlined, size: MediaQuery.of(context).size.width * 0.08,
+                                        child: Icon(
+                                          isConecct ? Icons.print_outlined : Icons.print_disabled_outlined, size: MediaQuery.of(context).size.width * 0.08,
                                           color: AppColors3.primaryColor,),),
                                       Expanded(
                                         child: Column(
