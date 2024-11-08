@@ -2,7 +2,10 @@ import 'dart:ui';
 
 import 'package:beaute_app/agenda/utils/showToast.dart';
 import 'package:beaute_app/agenda/utils/toastWidget.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/searchService.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/salesHistory.dart';
+import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
 import 'package:beaute_app/inventory/stock/searchBar.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
@@ -31,6 +34,8 @@ class adminInv extends StatefulWidget {
   State<adminInv> createState() => _adminInvState();
 }
 
+List<Map<String, dynamic>> productsGlobalTemp = [];
+//agregar el tmepo a servicio igual
 class _adminInvState extends State<adminInv> {
   GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   PrintService printService = PrintService();
@@ -47,6 +52,11 @@ class _adminInvState extends State<adminInv> {
   Soundpool? pool;
   final Listenerblurr _listenerblurr = Listenerblurr();
   late KeyboardVisibilityManager keyboardVisibilityManager;
+  ///variables search
+  final SearchService searchService = SearchService();
+  bool isSearching = false;
+  List<String> searchedBarcodes = [];
+  List<dynamic> producto = []; ///despues le quito la lista (alan)
 
   void changeBlurr(){
     if (productsKey.currentState != null) {
@@ -82,15 +92,49 @@ class _adminInvState extends State<adminInv> {
       showScaner = closeScan;
     });
   }
-
-  void onScanProd(String? resultScanedProd){
-    setState(() {
-      scanedProd = resultScanedProd;
-      showScaner = false;
+  void onScanProd(String? resultScanedProd) async {
+    if (resultScanedProd == null || resultScanedProd.isEmpty) {
+      print("codigo invalido");
+      return;
+    }
+    if(isSearching){
+      return;
+    }
+    scanedProd = resultScanedProd;
+    showScaner = false;
+    isSearching = true;
+    try{
+      await searchProductByBCode(scanedProd);
+    }catch(e){
+      print('error en la busqueda: $e');
+    }finally{
       soundScaner();
-    });
+      await Future.delayed(Duration(seconds: 3));
+      isSearching = false;
+    }
+    print('busqueda completada para: $resultScanedProd');
   }
-
+  ///madnar al servivcio
+  Future<void> searchProductByBCode(String? barcode) async {
+    if (barcode == null || barcode.isEmpty) {
+      setState(() {
+        producto = [];
+      });
+      return;
+    }
+    try{
+      final data = await searchService.searchByBCode(barcode);
+      productsGlobalTemp = (data['productos'] as List).map((item) => item as Map<String, dynamic>).toList();
+      if(productsGlobalTemp.isNotEmpty){
+        final product_id = productsGlobalTemp[0]['id'];
+        Provider.of<CartProvider>(context, listen: false).addProductToCart(product_id, isFromBarCode: true);
+      }else{
+        print('prodcut no encontrado:: $barcode');
+      }
+    }catch(e){
+      print('erro en la busqueda :": $e');
+    }
+  }
   void _onItemSelected(int option){
     setState(() {
       print(option);
@@ -145,7 +189,6 @@ class _adminInvState extends State<adminInv> {
             return Container();
         }
       }
-
     return Scaffold(
       endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: widget.docLog, currentScreen: currentScreen,
         onPrintServiceComunication: onPrintServiceComunication),
