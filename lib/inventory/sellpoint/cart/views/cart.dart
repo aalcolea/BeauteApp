@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
 import 'package:beaute_app/inventory/testPrinter/printService.dart';
@@ -39,6 +40,7 @@ class _CartState extends State<Cart> {
   List<int> cantHelper = [];
   double totalCart = 0;
   PrintService printService = PrintService();
+  late PrintService2 printService2;
 
   final FocusNode focusNode = FocusNode();
   final TextEditingController cantidadController = TextEditingController();
@@ -424,8 +426,10 @@ class _CartState extends State<Cart> {
                 if (confirm) {
                   await widget.printService.ensureCharacteristicAvailable();
                 if (widget.printService.characteristic != null) {
-                  PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
-                  await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test2.jpeg');
+                  printService2 = PrintService2(widget.printService.characteristic);
+                  Platform.isAndroid ? await printService2.connectAndPrintAndroide(cartProvider.cart, 'assets/imgLog/test2.jpeg') :
+                  await printService2.connectAndPrintIOS(cartProvider.cart, 'assets/imgLog/test2.jpeg');
+
                 } else {
                   showOverlay(context, const CustomToast(message: 'Impresión no disponible después de esperar'));
                   print("Error: Característica de impresión no disponible después de esperar");
