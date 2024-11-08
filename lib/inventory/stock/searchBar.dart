@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
+import 'package:beaute_app/inventory/stock/products/utils/productOptions.dart';
 import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +28,7 @@ class Seeker extends StatefulWidget {
 
 class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   ///comnfiguracion alan
+  GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   bool isLoading = false;
   final SearchService searchService = SearchService();
   List<dynamic> categories = [];
@@ -33,6 +36,13 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   List<AnimationController> aniControllers = [];
   List<int> cantHelper = [];
   List<GlobalKey> productKeys = [];
+
+  void changeBlurr(){
+    if (productsKey.currentState != null) {
+      productsKey.currentState!.removeOverlay();
+    }
+    widget.listenerblurr.setChange(false);
+  }
 
   Future<void> searchProductsAndCategories(String searchTerm) async {
     if (searchTerm.isEmpty) {
@@ -51,6 +61,7 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
           productos = data['productos'];
         });
       }
+      productKeys = List.generate(productos.length, (index) => GlobalKey());
       print(categories);
       print(productos);
     } catch (e) {
@@ -71,13 +82,15 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
   late int selectedCategoryId;
   String? _selectedCategory;
+  OverlayEntry? overlayEntry;
+  double widgetHeight = 0.0;
+  bool showBlurr = false;
 
   @override
   void initState() {
     keyboardVisibilityManager = KeyboardVisibilityManager();
     loadFirstItems();
-    productKeys = List.generate(products_global.length, (index) => GlobalKey());
-    for (int i = 0; i < products_global.length; i++) {
+    for (int i = 0; i < productos.length; i++) {
       aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
       cantHelper.add(0);
     }
@@ -188,14 +201,14 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
       await productService.fetchProducts(selectedCategoryId);
       setState(() {
         aniControllers = List.generate(
-          products_global.length,
+          productos.length,
               (index) => AnimationController(
             vsync: this,
             duration: const Duration(milliseconds: 450),
           ),
         );
-        cantHelper = List.generate(products_global.length, (index) => 0);
-        productKeys = List.generate(products_global.length, (index) => GlobalKey());
+        cantHelper = List.generate(productos.length, (index) => 0);
+        productKeys = List.generate(productos.length, (index) => GlobalKey());
         setState(() {
           isLoading = false;
         });
@@ -209,12 +222,100 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   Future<void> refreshProducts() async {
     try {
       await fetchProducts();
-      //removeOverlay();
-      /*setState(() {
-         = false;
-      });*/
+      removeOverlay();
+      setState(() {
+         showBlurr = false;
+      });
     } catch (e) {
       print('Error en refresh productos $e');
+    }
+  }
+
+  void colHeight (double _colHeight) {
+    widgetHeight = _colHeight;
+  }
+
+  void showProductOptions(int index) {
+    removeOverlay();
+    print(productKeys.length);
+    if (index >= 0 && index < productKeys.length) {
+      final key = productKeys[index];
+      final RenderBox renderBox = key.currentContext
+          ?.findRenderObject() as RenderBox;
+
+      final size = renderBox.size;
+      final position = renderBox.localToGlobal(Offset.zero);
+
+      final screenHeight = MediaQuery.of(context).size.height;
+      final availableSpaceBelow = screenHeight - position.dy;
+
+      double topPosition;
+
+      if (availableSpaceBelow >= widgetHeight) {
+        topPosition = position.dy;
+      } else {
+        topPosition = screenHeight - widgetHeight - MediaQuery.of(context).size.height*0.03;
+      }
+
+      overlayEntry = OverlayEntry(
+        builder: (context) {
+          return Positioned(
+            top: topPosition - 7,
+            left: position.dx,
+            width: size.width,
+            child: IntrinsicHeight(
+              child: ProductOptions(
+                onClose: removeOverlay,
+                nombre: productos[index]['nombre'] ?? "El producto no existe",
+                cant: productos[index]['stock']['cantidad'] == null
+                    ? 'Agotado'
+                    : '${productos[index]['stock']['cantidad']}',
+                precio: double.parse(productos[index]['precio']),
+                stock: productos[index]['stock']['cantidad'] ?? 0,
+                barCode: productos[index]['codigo_barras'],
+                catId: productos[index]['category_id'],
+                id: productos[index]['id'],
+                descripcion: productos[index]['descripcion'],
+                columnHeight: colHeight,
+                onProductDeleted: () async {
+                  await refreshProducts();
+                  removeOverlay();
+                },
+                onProductModified: () async {
+                  await refreshProducts();
+                },
+                onShowBlur: onShowBlurHandler,
+                columnH: null, onShowBlureight: (bool p1) {  },
+              ),
+            ),
+          );
+        },
+      );
+      Overlay.of(context).insert(overlayEntry!);
+      widget.onShowBlur(true);
+    } else {
+      print("Invalid index: $index");
+    }
+  }
+
+  void onShowBlurHandler(bool shouldShow) {
+    setState(() {
+      showBlurr = shouldShow;
+    });
+  }
+
+  void removeOverlay() {
+    if (overlayEntry != null) {
+      overlayEntry!.remove();
+      overlayEntry = null;
+    }
+    for (var controller in aniControllers) {
+      if (controller.isAnimating) {
+        controller.stop();
+      }
+    }
+    if (mounted) {
+      widget.onShowBlur(false);
     }
   }
 
@@ -459,6 +560,7 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
                             itemCount: productos.length,
                             itemBuilder: (context, index) {
                               return InkWell(
+                                key: productKeys[index],
                                 onTap: () {
                                   Navigator.push(context,
                                     CupertinoPageRoute(
@@ -472,13 +574,19 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
                                         precio: double.parse(productos[index]['precio']),
                                         onProductModified: () async {
                                           await refreshProducts();
-                                          //removeOverlay();
+                                          removeOverlay();
                                           setState(() {});
                                         },
                                         onShowBlur: widget.onShowBlur,
                                       ),
                                     ),
                                   );
+                                },
+                                onLongPress: () {
+                                  setState(() {
+                                    showBlurr = true;
+                                    showProductOptions(index);
+                                  });
                                 },
                                 child: Column(
                                   children: [
@@ -556,7 +664,27 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
                 )
               ],
             )
-          )
+          ),
+          Visibility(
+            visible: showBlurr,
+            child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showBlurr = false;
+                      removeOverlay();
+                      changeBlurr();
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: AppColors.blackColor.withOpacity(0.3),
+                  ),
+                )
+            ),
+          ),
         ],
       )
     );
