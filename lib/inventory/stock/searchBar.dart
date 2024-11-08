@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
+import 'package:beaute_app/inventory/stock/products/utils/productOptions.dart';
+import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +26,24 @@ class Seeker extends StatefulWidget {
   State<Seeker> createState() => _SeekerState();
 }
 
-class _SeekerState extends State<Seeker> {
+class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   ///comnfiguracion alan
+  GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   bool isLoading = false;
   final SearchService searchService = SearchService();
   List<dynamic> categories = [];
   List<dynamic> productos = [];
+  List<AnimationController> aniControllers = [];
+  List<int> cantHelper = [];
+  List<GlobalKey> productKeys = [];
+
+  void changeBlurr(){
+    if (productsKey.currentState != null) {
+      productsKey.currentState!.removeOverlay();
+    }
+    widget.listenerblurr.setChange(false);
+  }
+
   Future<void> searchProductsAndCategories(String searchTerm) async {
     if (searchTerm.isEmpty) {
       setState(() {
@@ -36,21 +52,24 @@ class _SeekerState extends State<Seeker> {
       });
       return;
     }
-
     setState(() => isLoading = true);
-
     try {
       final data = await searchService.searchProductsAndCategories(searchTerm);
-      setState(() {
-        categories = data['categories'];
-        productos = data['productos'];
-      });
-
+      if (searchController.text == searchTerm) {
+        setState(() {
+          categories = data['categories'];
+          productos = data['productos'];
+        });
+      }
+      productKeys = List.generate(productos.length, (index) => GlobalKey());
+      print(categories);
       print(productos);
     } catch (e) {
       print('error: $e');
     } finally {
-      setState(() => isLoading = false);
+      if (searchController.text == searchTerm) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -63,11 +82,19 @@ class _SeekerState extends State<Seeker> {
   final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
   late int selectedCategoryId;
   String? _selectedCategory;
+  OverlayEntry? overlayEntry;
+  double widgetHeight = 0.0;
+  bool showBlurr = false;
 
   @override
   void initState() {
     keyboardVisibilityManager = KeyboardVisibilityManager();
     loadFirstItems();
+    for (int i = 0; i < productos.length; i++) {
+      aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
+      cantHelper.add(0);
+    }
+    fetchProducts();
     widget.listenerblurr.registrarObservador((newValue){
 
     });
@@ -165,6 +192,133 @@ class _SeekerState extends State<Seeker> {
     screenWidth = MediaQuery.of(context).size.width;
   }
 
+  Future<void> fetchProducts() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final productService = ProductService();
+      await productService.fetchProducts(selectedCategoryId);
+      setState(() {
+        aniControllers = List.generate(
+          productos.length,
+              (index) => AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 450),
+          ),
+        );
+        cantHelper = List.generate(productos.length, (index) => 0);
+        productKeys = List.generate(productos.length, (index) => GlobalKey());
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (e) {
+      print('Error fetching productos: $e');
+      isLoading = false;
+    }
+  }
+
+  Future<void> refreshProducts() async {
+    try {
+      await fetchProducts();
+      removeOverlay();
+      setState(() {
+         showBlurr = false;
+      });
+    } catch (e) {
+      print('Error en refresh productos $e');
+    }
+  }
+
+  void colHeight (double _colHeight) {
+    widgetHeight = _colHeight;
+  }
+
+  void showProductOptions(int index) {
+    removeOverlay();
+    print(productKeys.length);
+    if (index >= 0 && index < productKeys.length) {
+      final key = productKeys[index];
+      final RenderBox renderBox = key.currentContext
+          ?.findRenderObject() as RenderBox;
+
+      final size = renderBox.size;
+      final position = renderBox.localToGlobal(Offset.zero);
+
+      final screenHeight = MediaQuery.of(context).size.height;
+      final availableSpaceBelow = screenHeight - position.dy;
+
+      double topPosition;
+
+      if (availableSpaceBelow >= widgetHeight) {
+        topPosition = position.dy;
+      } else {
+        topPosition = screenHeight - widgetHeight - MediaQuery.of(context).size.height*0.03;
+      }
+
+      overlayEntry = OverlayEntry(
+        builder: (context) {
+          return Positioned(
+            top: topPosition - 7,
+            left: position.dx,
+            width: size.width,
+            child: IntrinsicHeight(
+              child: ProductOptions(
+                onClose: removeOverlay,
+                nombre: productos[index]['nombre'] ?? "El producto no existe",
+                cant: productos[index]['stock']['cantidad'] == null
+                    ? 'Agotado'
+                    : '${productos[index]['stock']['cantidad']}',
+                precio: double.parse(productos[index]['precio']),
+                stock: productos[index]['stock']['cantidad'] ?? 0,
+                barCode: productos[index]['codigo_barras'],
+                catId: productos[index]['category_id'],
+                id: productos[index]['id'],
+                descripcion: productos[index]['descripcion'],
+                columnHeight: colHeight,
+                onProductDeleted: () async {
+                  await refreshProducts();
+                  removeOverlay();
+                },
+                onProductModified: () async {
+                  await refreshProducts();
+                },
+                onShowBlur: onShowBlurHandler,
+                columnH: null, onShowBlureight: (bool p1) {  },
+              ),
+            ),
+          );
+        },
+      );
+      Overlay.of(context).insert(overlayEntry!);
+      widget.onShowBlur(true);
+    } else {
+      print("Invalid index: $index");
+    }
+  }
+
+  void onShowBlurHandler(bool shouldShow) {
+    setState(() {
+      showBlurr = shouldShow;
+    });
+  }
+
+  void removeOverlay() {
+    if (overlayEntry != null) {
+      overlayEntry!.remove();
+      overlayEntry = null;
+    }
+    for (var controller in aniControllers) {
+      if (controller.isAnimating) {
+        controller.stop();
+      }
+    }
+    if (mounted) {
+      widget.onShowBlur(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     int itemsPerPage = 6;
@@ -254,138 +408,283 @@ class _SeekerState extends State<Seeker> {
                     ],
                   ),
                 ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
-                  child: Text(
-                    'Categorias',
-                    style: TextStyle(
-                      color: AppColors.primaryColor,
-                      fontSize: screenWidth! < 370.00
-                          ? MediaQuery.of(context).size.width * 0.07
-                          : MediaQuery.of(context).size.width * 0.075,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: PageView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: (items.length / itemsPerPage).ceil(),
-                      itemBuilder: (context, pageIndex) {
-                        int startIndex = pageIndex * itemsPerPage;
-                        int endIndex = startIndex + itemsPerPage - 1;
-                        if (endIndex > items.length) {
-                          endIndex = items.length;
-                        }
-                        var currentPageItems = items.sublist(startIndex, endIndex);
-                        return GridView.builder(
+                Visibility(
+                  visible: categories.isNotEmpty ? true : false,
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
+                        child: Text(
+                          'Categorias',
+                          style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontSize: screenWidth! < 370.00
+                                ? MediaQuery.of(context).size.width * 0.07
+                                : MediaQuery.of(context).size.width * 0.075,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        child: PageView.builder(
                             scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 1,
-                              mainAxisExtent: MediaQuery.of(context).size.width * 0.5
-                            ),
-                            itemCount: currentPageItems.length,
-                            itemBuilder: (context, index) {
-                              var item = currentPageItems[index];
-                              return InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    selectedCategoryId = item['id'];
-                                    Navigator.of(context).push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => Products(selectedCategory: item['category'].toString(), onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
+                            itemCount: (categories.length / itemsPerPage).ceil(),
+                            itemBuilder: (context, pageIndex) {
+                              int startIndex = pageIndex * itemsPerPage;
+                              int endIndex = startIndex + itemsPerPage - 1;
+                              if (endIndex > categories.length) {
+                                endIndex = categories.length;
+                              }
+                              var currentPageItems = categories.sublist(startIndex, endIndex);
+                              return GridView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 1,
+                                      mainAxisExtent: MediaQuery.of(context).size.width * 0.5
+                                  ),
+                                  itemCount: currentPageItems.length,
+                                  itemBuilder: (context, index) {
+                                    var item = currentPageItems[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedCategoryId = categories[index]['id'];
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => Products(selectedCategory: categories[index]['nombre'].toString(), onBack: _clearSelectedCategory, selectedCategoryId: selectedCategoryId, onShowBlur: widget.onShowBlur,listenerblurr: widget.listenerblurr),
+                                            ),
+                                          );
+                                        });
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                              padding: const EdgeInsets.all(1),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.whiteColor,
+                                                borderRadius: BorderRadius.circular(10),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: AppColors.blackColor.withOpacity(0.3),
+                                                    offset: const Offset(4, 4),
+                                                    blurRadius: 5,
+                                                    spreadRadius: 0.1,
+                                                  )
+                                                ],
+                                              ),
+                                              height: MediaQuery.of(context).size.width * 0.35,
+                                              width: MediaQuery.of(context).size.width * 0.4,
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    child: Image.network(
+                                                      categories[index]['foto'],
+                                                      fit: BoxFit.contain,
+                                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                                        if (loadingProgress == null) {
+                                                          return child;
+                                                        } else {
+                                                          return Center(
+                                                            child: CircularProgressIndicator(
+                                                              value: loadingProgress.expectedTotalBytes != null
+                                                                  ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                                                  : null,
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                                        return const Text('Error al cargar la imagen');
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Expanded(
+                                            child: Text(
+                                                "${categories[index]['nombre']}",
+                                                style: TextStyle(
+                                                  color: AppColors.primaryColor,
+                                                  fontSize: MediaQuery.of(context).size.height * 0.017,
+                                                )
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     );
+                                  }
+                              );
+                            }
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Visibility(
+                  visible: productos.isNotEmpty ? true : false,
+                  child: Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
+                          child: Text(
+                            'Productos',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: screenWidth! < 370.00
+                                  ? MediaQuery.of(context).size.width * 0.07
+                                  : MediaQuery.of(context).size.width * 0.075,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.width * 0.01,
+                                left: MediaQuery.of(context).size.width * 0.02,
+                                right: MediaQuery.of(context).size.width * 0.02
+                            ),
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: productos.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                key: productKeys[index],
+                                onTap: () {
+                                  Navigator.push(context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => ProductDetails(
+                                        idProduct: productos[index]['id'],
+                                        nameProd: productos[index]['nombre'],
+                                        descriptionProd: productos[index]['descripcion'],
+                                        catId: productos[index]['category_id'],
+                                        barCode: productos[index]['codigo_barras'],
+                                        stock: productos[index]['stock']['cantidad'] ?? 0,
+                                        precio: double.parse(productos[index]['precio']),
+                                        onProductModified: () async {
+                                          await refreshProducts();
+                                          removeOverlay();
+                                          setState(() {});
+                                        },
+                                        onShowBlur: widget.onShowBlur,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onLongPress: () {
+                                  setState(() {
+                                    showBlurr = true;
+                                    showProductOptions(index);
                                   });
                                 },
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                        padding: const EdgeInsets.all(1),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.whiteColor,
-                                          borderRadius: BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: AppColors.blackColor.withOpacity(0.3),
-                                              offset: const Offset(4, 4),
-                                              blurRadius: 5,
-                                              spreadRadius: 0.1,
-                                            )
-                                          ],
-                                        ),
-                                        height: MediaQuery.of(context).size.width * 0.35,
-                                        width: MediaQuery.of(context).size.width * 0.4,
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(10),
-                                              child: Image.network(
-                                                item['image'],
-                                                fit: BoxFit.contain,
-                                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                                  if (loadingProgress == null) {
-                                                    return child;
-                                                  } else {
-                                                    return Center(
-                                                      child: CircularProgressIndicator(
-                                                        value: loadingProgress.expectedTotalBytes != null
-                                                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                                            : null,
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                                errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                                  return const Text('Error al cargar la imagen');
-                                                },
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.0075, horizontal: MediaQuery.of(context).size.width * 0.0247),
+                                      title: Row(
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${productos[index]['nombre']}",
+                                                style: TextStyle(
+                                                  color: AppColors.primaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: MediaQuery.of(context).size.width * 0.04,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Expanded(
-                                      child: Text(
-                                          "${item['category']}",
-                                          style: TextStyle(
-                                            color: AppColors.primaryColor,
-                                            fontSize: MediaQuery.of(context).size.height * 0.017,
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Cant.: ",
+                                                    style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                                  ),
+                                                  Text(
+                                                    productos[index]['stock']['cantidad'] == null ? 'Agotado' : productos[index]['stock']['cantidad'] == 0 ? 'Agotado' : '${productos[index]['stock']['cantidad']}',
+                                                    style: TextStyle(
+                                                        color: AppColors.primaryColor,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: MediaQuery.of(context).size.width * 0.035
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Precio: ",
+                                                    style: TextStyle(color: AppColors.primaryColor.withOpacity(0.5), fontSize: MediaQuery.of(context).size.width * 0.035),
+                                                  ),
+                                                  Container(
+                                                    padding: const EdgeInsets.only(right: 10),
+                                                    child: Text(
+                                                      "\$${productos[index]['precio']} MXN",
+                                                      style: TextStyle(
+                                                        color: AppColors.primaryColor,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           )
+                                        ],
                                       ),
+                                    ),
+                                    Divider(
+                                      indent: MediaQuery.of(context).size.width * 0.05,
+                                      endIndent: MediaQuery.of(context).size.width * 0.05,
+                                      color: AppColors.primaryColor.withOpacity(0.1),
+                                      thickness: MediaQuery.of(context).size.width * 0.005,
                                     )
                                   ],
                                 ),
                               );
-                            }
-                        );
-                      }
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.03),
-                  child: Text(
-                    'Productos',
-                    style: TextStyle(
-                      color: AppColors.primaryColor,
-                      fontSize: screenWidth! < 370.00
-                          ? MediaQuery.of(context).size.width * 0.07
-                          : MediaQuery.of(context).size.width * 0.075,
-                      fontWeight: FontWeight.bold,
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
+                  )
+                )
               ],
             )
-          )
+          ),
+          Visibility(
+            visible: showBlurr,
+            child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showBlurr = false;
+                      removeOverlay();
+                      changeBlurr();
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: AppColors.blackColor.withOpacity(0.3),
+                  ),
+                )
+            ),
+          ),
         ],
       )
     );
