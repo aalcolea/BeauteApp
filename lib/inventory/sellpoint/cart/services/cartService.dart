@@ -2,43 +2,81 @@ import 'dart:convert';
 import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../admin.dart';
 
 class CartProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _cart = [];
   List<Map<String, dynamic>> get cart => _cart;
   double total_price = 0;
 
-  void addProductToCart(int product_id){
+  void addProductToCart(int product_id, {bool isFromBarCode = false}) {
+    final productSource = isFromBarCode ? productsGlobalTemp : products_global;
+    print(productSource);
     final productInCart = _cart.firstWhere(
           (prod) => prod['product_id'] == product_id,
       orElse: () => <String, dynamic>{},
     );
-    if (productInCart.isNotEmpty){
+    if(productInCart.isNotEmpty){
       final stockDisponible = productInCart['stock'];
-      if (productInCart['cant_cart'] < stockDisponible){
+      if (productInCart['cant_cart'] < stockDisponible) {
         productInCart['cant_cart'] += 1;
+        print('Cantidad incrementada para el producto con id: $product_id');
+      } else {
+        print('No puedes agregar más de lo disponible en stock');
+      }
+    }else{
+      final product = productSource.firstWhere(
+            (prod) => prod['product_id'] == product_id || prod['id'] == product_id,
+        orElse: () => <String, dynamic>{},
+      );
+      if(product.isNotEmpty){
+        int stockDisponible = 0;
+        if (product.containsKey('stock') && product['stock'] is Map) {
+          stockDisponible = product['stock']['cantidad'] ?? 0;
+        }else if(product.containsKey('cant_cart') && product['cant_cart'] is Map) {
+          stockDisponible = product['cant_cart']['cantidad'] ?? 0;
+        }
+        _cart.add({
+          'product': product['product'] ?? product['nombre'],
+          'price': product['price'] ?? double.parse(product['precio']),
+          'cant_cart': 1.0,
+          'product_id': product['id'] ?? product['product_id'],
+          'stock': stockDisponible,
+        });
+        print('Producto agregado al carrito: ${product['product'] ?? product['nombre']}');
+      }else{
+        print('Producto no encontrado en la fuente de productos');
+      }
+    }
+    notifyListeners();
+    print('Estado actual del carrito: $_cart');
+  }
+  void addProductToCartByBarCode(Map<String, dynamic> product) {
+    final int productIndex = _cart.indexWhere((prod) => prod['product_id'] == product['id']);
+    if(productIndex != -1){
+      final productInCart = _cart[productIndex];
+      final stockDisponible = productInCart['stock'];
+      print('hola $stockDisponible');
+      print('adios ${productInCart['cant_cart']}');
+
+      if(productInCart['cant_cart'] < stockDisponible){
+        _cart[productIndex]['cant_cart'] += 1;
+        print('Cantidad incrementada para el producto con id: ${product['id']}');
       }else{
         print('No puedes agregar más de lo disponible en stock');
       }
     }else{
-      final product = products_global.firstWhere(
-            (prod) => prod['product_id'] == product_id,
-        orElse: () => <String, dynamic>{},
-      );
-      if (product.isNotEmpty){
-        _cart.add({
-          'product': product['product'],
-          'price': product['price'],
-          'cant_cart': 1.0,
-          'product_id': product['product_id'],
-          'stock': product['cant_cart']['cantidad'],
-        });
-      }else{
-        print('Producto no encontrado en products_global');
-      }
+      _cart.add({
+        'product': product['nombre'],
+        'price': double.parse(product['precio']),
+        'cant_cart': 1.0,
+        'product_id': product['id'],
+        'stock': product['stock']['cantidad'],
+      });
+      print('Producto agregado al carrito: ${product['nombre']}');
     }
     notifyListeners();
-    print('test : $_cart');
+    print('carrito test: $_cart');
   }
   void decrementProductInCart(int productId){
     for (var item in _cart) {
