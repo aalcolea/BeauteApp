@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
 import 'package:beaute_app/inventory/testPrinter/printService.dart';
@@ -39,6 +40,7 @@ class _CartState extends State<Cart> {
   List<int> cantHelper = [];
   double totalCart = 0;
   PrintService printService = PrintService();
+  late PrintService2 printService2;
 
   final FocusNode focusNode = FocusNode();
   final TextEditingController cantidadController = TextEditingController();
@@ -419,23 +421,36 @@ class _CartState extends State<Cart> {
                       horizontal: MediaQuery.of(context).size.width * 0.08)
               ),
               onPressed: cartProvider.cart.isNotEmpty ? () async {
-               widget.onShowBlurr(true);
-               bool confirm = await showConfirmSellDialog(context);
-                if (confirm) {
-                  await widget.printService.ensureCharacteristicAvailable();
-                if (widget.printService.characteristic != null) {
-                  PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
-                  await printService2.connectAndPrint(cartProvider.cart, 'assets/imgLog/test2.jpeg');
-                } else {
-                  showOverlay(context, const CustomToast(message: 'Impresión no disponible después de esperar'));
-                  print("Error: Característica de impresión no disponible después de esperar");
-                }
+                widget.onShowBlurr(true);
+                bool confirm = await showConfirmSellDialog(context);
+                if(confirm){
+                  bool canPrint = false;
+                  try{
+                    await widget.printService.ensureCharacteristicAvailable();
+                    if(widget.printService.characteristic != null){
+                      canPrint = true;
+                    }
+                  }catch(e){
+                    print("Error: No hay impresora conectada  - $e");
+                    showOverlay(context, const CustomToast(message: 'Impresion no disponible, continuando con la venta'));
+                  }
+                  if(canPrint){
+                    PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                    try{
+                       Platform.isAndroid ? await printService2.connectAndPrintAndroide(cartProvider.cart, 'assets/imgLog/test2.jpeg') :
+                        await printService2.connectAndPrintIOS(cartProvider.cart, 'assets/imgLog/test2.jpeg');
+                    } catch(e){
+                      print("Error al intentar imprimir: $e");
+                      showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));
+                    }
+                  }
                   bool result = await cartProvider.sendCart();
                   widget.onShowBlurr(false);
-                  if(result) {
+                  if(result){
                     showOverlay(context, const CustomToast(message: 'Venta efectuada correctamente'));
                     cartProvider.refreshCart();
-                    widget.onShowBlurr(false);
+                  }else{
+                    showOverlay(context, const CustomToast(message: 'Error al efectuar la venta'));
                   }
                 }else{
                   widget.onShowBlurr(false);

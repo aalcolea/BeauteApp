@@ -5,6 +5,7 @@ import 'package:beaute_app/inventory/listenerPrintService.dart';
 import 'package:beaute_app/inventory/testPrinter/printConnections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'agenda/forms/alertForm.dart';
@@ -17,11 +18,12 @@ class navBar extends StatefulWidget {
   final void Function(bool) onShowBlur;
   final Function(PrintService)? onPrintServiceComunication;
   final PrintService? printServiceAfterInitConn;
+  final BluetoothCharacteristic? btChar;
   final Function(int) onItemSelected;
   final String currentScreen;
 
   const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog, required this.currentScreen,
-    this.onPrintServiceComunication, this.printServiceAfterInitConn});
+    this.onPrintServiceComunication, this.printServiceAfterInitConn, this.btChar});
 
   @override
   State<navBar> createState() => _navBarState();
@@ -31,7 +33,7 @@ class _navBarState extends State<navBar> {
 
   PrintService printService = PrintService();
   ListenerPrintService listenerPrintService = ListenerPrintService();
-  bool isConecct = false;
+  bool? isConecct = false;
 
 
   void closeMenu(BuildContext context){
@@ -44,30 +46,45 @@ class _navBarState extends State<navBar> {
         context: context,
         barrierColor: Colors.transparent,
         builder: (BuildContext context) {
-          return AlertForm(isDoctorLog: widget.isDoctorLog);}).then((_){widget.onShowBlur(false);});
+          return AlertForm(isDoctorLog: widget.isDoctorLog);
+        }).then((_){widget.onShowBlur(false);});
   }
 
   @override
   void initState() {
-    printService.initDeviceStatus();
-    printService.listenerPrintService.registrarObservador((newValue){
+    if(widget.btChar != null){
+      setState(() {
+        isConecct = true;
+      });
+    }else {
+      setState(() {
+        isConecct = false;
+      });
+    }
+    printService.listenerPrintService.registrarObservador((newValue, newIsConnect){
       setState(() {
         switch (newValue) {
+          case 0:
+            setState(() {
+              isConecct = newIsConnect;
+              print('null isCon = $isConecct');
+            });
           case 1:
-            isConecct = true;
-            widget.onPrintServiceComunication!(printService);
+            setState(() {
+              print('############case 1');
+              isConecct = newIsConnect;
+              widget.onPrintServiceComunication!(printService);
+            });
             break;
           case 2 :
-            isConecct = false;
-            print('desconectado');
+            setState(() {
+              isConecct = newIsConnect;
+              print('isCon false $newIsConnect');
+            });
           case 3:
             isConecct = true;
             print('aun coneectado');
 
-        }
-        if(newValue == 1){
-          print(' listenerINT $newValue');
-          widget.onPrintServiceComunication!(printService);
         }
       });
     });
@@ -213,19 +230,15 @@ class _navBarState extends State<navBar> {
                     visible: widget.currentScreen == 'inventario' ? true : false,
                     child: InkWell(
                         splashColor: AppColors3.primaryColor.withOpacity(0.1),
-                        onTap: (){
+                        onTap: isConecct == false ? (){
                           setState(() {
                             printService.scanForDevices(context);
                           });
+                        } : (){
+                          setState(() {
+                            printService.disconnect(context);
+                          });
                         },
-                        /*onTap: printService.selectedDevice?.state.isEmpty == null ? () async {
-                setState(() {
-                  printService.scanForDevices(context);
-                });
-              } : () async {
-                print('discc');
-                printService.disconnect(context);
-              },*/
                         child: Material(
                           color: Colors.transparent,
                           child: Container(
@@ -246,7 +259,8 @@ class _navBarState extends State<navBar> {
                                           right: MediaQuery.of(context).size.width * 0.04,
                                         ),
                                         child: Icon(
-                                          isConecct ? Icons.print_outlined : Icons.print_disabled_outlined, size: MediaQuery.of(context).size.width * 0.08,
+                                          isConecct == null ? Icons.print_disabled_outlined : !isConecct! ?  Icons.print_disabled_outlined : Icons.print_outlined,
+                                          size: MediaQuery.of(context).size.width * 0.08,
                                           color: AppColors3.primaryColor,),),
                                       Expanded(
                                         child: Column(
@@ -261,14 +275,20 @@ class _navBarState extends State<navBar> {
                                                   color: AppColors3.primaryColor
                                               ),
                                             ),Text(
-                                              printService.selectedDevice != null ? 'Conectado' : 'Desconectada',
+                                              isConecct == null ? 'Conectando...' : isConecct! ? 'Conectada' : 'Desconectada',
                                               style: TextStyle(
                                                   fontSize: MediaQuery.of(context).size.width*0.04,
                                                   color: AppColors3.primaryColor.withOpacity(0.4)
                                               ),
                                             ),
                                           ],
-                                        ),)
+                                        ),),
+                                      Visibility(
+                                        visible: isConecct == null ? true : false,
+                                        child: Padding(padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.12),
+                                        child: CircularProgressIndicator(
+                                          color: AppColors3.primaryColor.withOpacity(0.8),
+                                        )),),
                                     ],
                                   ),
                                   SizedBox(height: MediaQuery.of(context).size.width * 0.02,),
@@ -284,46 +304,6 @@ class _navBarState extends State<navBar> {
                           ),
                         )
                     ),),
-                  /*///TEST PRINTER
-            InkWell(
-              onTap: widget.currentScreen == 'inventario' ? Navigator.of(context).pop : (){
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => testPrint(),
-                  ),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.only(left: 20),
-                width: MediaQuery.of(context).size.width,
-                height: widget.currentScreen == 'agenda' ? MediaQuery.of(context).size.height*0.06 : MediaQuery.of(context).size.height*0.07,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  border: widget.currentScreen == 'agenda' ? const Border(left: BorderSide.none, bottom: BorderSide(color: AppColors2.primaryColor)) : Border.all(color: AppColors2.primaryColor),
-                  color: Colors.grey,
-                  boxShadow: widget.currentScreen == 'agenda' ? null : [
-                    BoxShadow(
-                      color: Colors.black54,
-                      offset: Offset(0, MediaQuery.of(context).size.width * 0.001),
-                      blurRadius: 10,
-                    )
-                  ],
-                ),
-                child: Text(
-                  'Test Print',
-                  style: widget.currentScreen == 'agenda' ? TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width*0.05,
-                      color: AppColors2.primaryColor
-                  ) : TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width*0.05,
-                      color: Colors.white
-                  ),
-                ),
-              ),
-            ),
-            ///final test printer*/
                   Visibility(
                     visible: !widget.isDoctorLog,
                     child: Container(
@@ -354,6 +334,14 @@ class _navBarState extends State<navBar> {
                           )
                       ),
                     ),),
+                  IconButton(onPressed: (){
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => testPrint(),
+                      ),
+                    );
+
+                  }, icon: Icon(Icons.ac_unit)),
                   Expanded(
                       child: Container(
                         padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.03),

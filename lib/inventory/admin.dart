@@ -2,7 +2,10 @@ import 'dart:ui';
 
 import 'package:beaute_app/agenda/utils/showToast.dart';
 import 'package:beaute_app/agenda/utils/toastWidget.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
+import 'package:beaute_app/inventory/sellpoint/cart/services/searchService.dart';
 import 'package:beaute_app/inventory/sellpoint/processStuff/salesHistory.dart';
+import 'package:beaute_app/inventory/stock/products/services/productsService.dart';
 import 'package:beaute_app/inventory/stock/searchBar.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:beaute_app/inventory/stock/products/forms/productForm.dart';
@@ -20,6 +23,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
 
+import '../agenda/utils/PopUpTabs/closeConfirm.dart';
 import 'kboardVisibilityManager.dart';
 import 'themes/colors.dart';
 
@@ -31,6 +35,8 @@ class adminInv extends StatefulWidget {
   State<adminInv> createState() => _adminInvState();
 }
 
+List<Map<String, dynamic>> productsGlobalTemp = [];
+//agregar el tmepo a servicio igual
 class _adminInvState extends State<adminInv> {
   GlobalKey<ProductsState> productsKey = GlobalKey<ProductsState>();
   PrintService printService = PrintService();
@@ -47,6 +53,12 @@ class _adminInvState extends State<adminInv> {
   Soundpool? pool;
   final Listenerblurr _listenerblurr = Listenerblurr();
   late KeyboardVisibilityManager keyboardVisibilityManager;
+  bool _cancelConfirm = false;
+  ///variables search
+  final SearchService searchService = SearchService();
+  bool isSearching = false;
+  List<String> searchedBarcodes = [];
+  List<dynamic> producto = []; ///despues le quito la lista (alan)
 
   void changeBlurr(){
     if (productsKey.currentState != null) {
@@ -82,15 +94,49 @@ class _adminInvState extends State<adminInv> {
       showScaner = closeScan;
     });
   }
-
-  void onScanProd(String? resultScanedProd){
-    setState(() {
-      scanedProd = resultScanedProd;
-      showScaner = false;
+  void onScanProd(String? resultScanedProd) async {
+    if (resultScanedProd == null || resultScanedProd.isEmpty) {
+      print("codigo invalido");
+      return;
+    }
+    if(isSearching){
+      return;
+    }
+    scanedProd = resultScanedProd;
+    showScaner = false;
+    isSearching = true;
+    try{
+      await searchProductByBCode(scanedProd);
+    }catch(e){
+      print('error en la busqueda: $e');
+    }finally{
       soundScaner();
-    });
+      await Future.delayed(Duration(seconds: 3));
+      isSearching = false;
+    }
+    print('busqueda completada para: $resultScanedProd');
   }
-
+  ///madnar al servivcio
+  Future<void> searchProductByBCode(String? barcode) async {
+    if (barcode == null || barcode.isEmpty) {
+      setState(() {
+        producto = [];
+      });
+      return;
+    }
+    try{
+      final data = await searchService.searchByBCode(barcode);
+      productsGlobalTemp = (data['productos'] as List).map((item) => item as Map<String, dynamic>).toList();
+      if(productsGlobalTemp.isNotEmpty){
+        final product_id = productsGlobalTemp[0]['id'];
+        Provider.of<CartProvider>(context, listen: false).addProductToCart(product_id, isFromBarCode: true);
+      }else{
+        print('prodcut no encontrado:: $barcode');
+      }
+    }catch(e){
+      print('erro en la busqueda :": $e');
+    }
+  }
   void _onItemSelected(int option){
     setState(() {
       print(option);
@@ -118,6 +164,40 @@ class _adminInvState extends State<adminInv> {
     super.initState();
   }
 
+  void _onCancelConfirm(bool cancelConfirm) {
+    setState(() {
+      _cancelConfirm = cancelConfirm;
+    });
+  }
+
+
+  onBackPressed(didPop) {
+    if (!didPop) {
+      setState(() {
+        _selectedScreen == 3
+            ? _selectedScreen = 1
+            : showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (builder) {
+            return AlertCloseDialog(
+              onCancelConfirm: _onCancelConfirm,
+            );
+          },
+        ).then((_) {
+          if (_cancelConfirm == true) {
+            if (_cancelConfirm) {
+              Future.delayed(const Duration(milliseconds: 100), () {
+                SystemNavigator.pop();
+              });
+            }
+          }
+        });
+      });
+      return;
+    }
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -127,8 +207,8 @@ class _adminInvState extends State<adminInv> {
 
   void onPrintServiceComunication(PrintService printService){
     setState(() {
-      print('printAdmin');
       this.printService = printService;
+      print('printAdmin : ${this.printService}');
     });
 
   }
@@ -146,9 +226,17 @@ class _adminInvState extends State<adminInv> {
         }
       }
 
-    return Scaffold(
-      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: widget.docLog, currentScreen: currentScreen,
-        onPrintServiceComunication: onPrintServiceComunication),
+    return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          onBackPressed(didPop);
+        },
+        child: Scaffold(
+      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur,
+          isDoctorLog: widget.docLog, currentScreen: currentScreen,
+          onPrintServiceComunication: onPrintServiceComunication,
+          printServiceAfterInitConn: printService,
+          btChar: printService.characteristic),
       body: Stack(
         children: [
           Container(
@@ -160,8 +248,8 @@ class _adminInvState extends State<adminInv> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.045,
-                      right: MediaQuery.of(context).size.width * 0.025,
+                    left: MediaQuery.of(context).size.width * 0.045,
+                    right: MediaQuery.of(context).size.width * 0.025,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -189,42 +277,42 @@ class _adminInvState extends State<adminInv> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Visibility(
-                            visible: _selectedScreen == 1 ? true : false,
-                            child: IconButton(
-                            onPressed: () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ProductForm(),
+                              visible: _selectedScreen == 1 ? true : false,
+                              child: IconButton(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ProductForm(),
+                                    ),
+                                  );
+                                  if (result == true) {
+                                    productsKey.currentState?.refreshProducts();
+                                  }
+                                },
+                                icon: Icon(
+                                  CupertinoIcons.add_circled_solid,
+                                  color: AppColors.primaryColor,
+                                  size: MediaQuery.of(context).size.width * 0.1,
                                 ),
-                              );
-                              if (result == true) {
-                                productsKey.currentState?.refreshProducts();
-                              }
-                            },
-                            icon: Icon(
-                              CupertinoIcons.add_circled_solid,
-                              color: AppColors.primaryColor,
-                              size: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          )),
+                              )),
                           Visibility(
                             visible: _selectedScreen == 2 ? true : false,
                             child: IconButton(
-                            onPressed: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SalesHistory(),
-                                ),
-                              );
-                            },
-                            icon: Icon(
-                              CupertinoIcons.tickets,
-                              color: AppColors.primaryColor,
-                              size: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          ),),
+                              onPressed: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SalesHistory(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                CupertinoIcons.tickets,
+                                color: AppColors.primaryColor,
+                                size: MediaQuery.of(context).size.width * 0.1,
+                              ),
+                            ),),
                           Builder(builder: (BuildContext context) {
                             return IconButton(
                               onPressed: () {
@@ -307,15 +395,15 @@ class _adminInvState extends State<adminInv> {
                     padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
                     decoration: const BoxDecoration(
                       color: AppColors.bgColor,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15)
-                        ),
-                        border: Border(
-                            bottom: BorderSide(
-                              color: AppColors.primaryColor,
-                              width: 2.5,
-                            )),
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15)
+                      ),
+                      border: Border(
+                          bottom: BorderSide(
+                            color: AppColors.primaryColor,
+                            width: 2.5,
+                          )),
                     ),
                     child: Container(
                       margin: EdgeInsets.only(
@@ -334,11 +422,11 @@ class _adminInvState extends State<adminInv> {
                   visible: !_hideBtnsBottom,
                   child: Container(
                     margin: EdgeInsets.only(bottom: screenWidth! < 391
-                            ? MediaQuery.of(context).size.width * 0.055
-                            : MediaQuery.of(context).size.width * 0.02),
+                        ? MediaQuery.of(context).size.width * 0.055
+                        : MediaQuery.of(context).size.width * 0.02),
                     padding: EdgeInsets.only(top: screenWidth! < 391
-                            ? MediaQuery.of(context).size.width * 0.035
-                            : MediaQuery.of(context).size.width * 0.02),
+                        ? MediaQuery.of(context).size.width * 0.035
+                        : MediaQuery.of(context).size.width * 0.02),
                     child: Row(
                       children: [
                         Expanded(
@@ -427,12 +515,6 @@ class _adminInvState extends State<adminInv> {
                     width: double.infinity,
                     height: double.infinity,
                     color: AppColors.blackColor.withOpacity(0.3),
-                  ),
-                )
-            ),
-          ),
-        ],
-      ),);
-    //}));
+                  ))))])));
   }
 }
