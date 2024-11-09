@@ -4,22 +4,25 @@ import 'package:beaute_app/inventory/testPrinter/printConnections.dart';
 
 class ListenerPrintService {
   int _printServiceActivated = 0;
-  final List<Function(int)> _observadores = [];
+  bool? _isConnect;
+  final List<Function(int, bool?)> _observadores = [];
 
-  void setChange(int value) {
+  void setChange(int value, bool? val) {
     _printServiceActivated = value;
+    _isConnect = val;
     notificarObservadores();
   }
 
-  void registrarObservador(Function(int) callback) {
+  void registrarObservador(Function(int, bool?) callback) {
     _observadores.add(callback);
   }
 
   void notificarObservadores() {
     for (var callback in _observadores) {
-      callback(_printServiceActivated);
+      callback(_printServiceActivated, _isConnect);
     }
   }
 
   int get printServiceActivated => _printServiceActivated;
+  bool? get isConnect => _isConnect;
 }

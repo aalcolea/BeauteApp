@@ -25,21 +25,22 @@ class PrintService extends ChangeNotifier {
   List<BluetoothDevice> devicesList = [];
   BluetoothDevice? selectedDevice;
   BluetoothCharacteristic? characteristic;
-  String targetDevice = '0ED2DB67-8733-2C1D-0ACB-557F656FFCF3';
   StreamSubscription<BluetoothDeviceState>? _connectionSubscription;
-  bool isConnected = false;
+  bool? isConnect;
   ListenerPrintService listenerPrintService = ListenerPrintService();
   String nameTargetDevice = 'MP210';
+
   Future<void> ensureCharacteristicAvailable() async {
     if (characteristic == null && selectedDevice != null) {
       await discoverServices(selectedDevice!);
     }
     int retryCount = 0;
     while (characteristic == null && retryCount < 10) {
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       retryCount++;
     }
     if (characteristic == null) {
+      print('error $characteristic');
       throw Exception("Error: Característica de impresión no disponible");
     }
   }
@@ -49,6 +50,7 @@ class PrintService extends ChangeNotifier {
       for (BluetoothCharacteristic charac in service.characteristics) {
         if (charac.properties.write) {
           characteristic = charac;
+          listenerPrintService.setChange(1, true);
           notifyListeners();
           return;
         }
@@ -56,56 +58,99 @@ class PrintService extends ChangeNotifier {
     }
   }
 
-  void initDeviceStatus() {
-    isConnected = selectedDevice != null;
-    selectedDevice !=null ? listenerPrintService.setChange(3) : null;
+
+/*
+  void sendMessage(String message) async {
+    if (characteristic != null) {
+      print('char android $characteristic');
+      List<int> bytes = utf8.encode(message + "\n");
+      await characteristic!.write(bytes, withoutResponse: true);
+    }
   }
+*/
+  void sendMessage(String message) async {
+    if (characteristic != null) {
+      List<int> bytes = utf8.encode(message + "\n");
+      int retryCount = 0;
+      bool success = false;
+      while (!success && retryCount < 3) {
+        try {
+          await characteristic!.write(bytes, withoutResponse: true);
+          success = true;
+        } catch (e) {
+          retryCount++;
+          print("Retry $retryCount: $e");
+          await Future.delayed(Duration(milliseconds: 50)); // Pausa antes del próximo intento
+        }
+      }
+      if (!success) {
+        print("Error: No se pudo enviar el mensaje después de varios intentos.");
+      }
+    }
+  }
+
+/*
+  void initDeviceStatus() {
+    isConnect = selectedDevice != null;
+    selectedDevice !=null ? listenerPrintService.setChange(3, isConnect) : null;
+  }
+*/
 
 
   void scanForDevices(context) async {
-    try {
-      List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
-      for (BluetoothDevice device in connectedDevices) {
-        if (device.id.toString() == targetDevice) {
-          selectedDevice = device;
-          disconnect(context);
-          /*discoverServices(selectedDevice!);
-          listenToDeviceState(context);
-          notifyListeners();*/
-          return;
-        }
+    bool isBluetoothOn = await flutterBlue.isOn;
+    if (!isBluetoothOn) {
+      showOverlay(context, const CustomToast(message: 'Encienda Bluethooth'));
+    } else {
+      try {
+       /* List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
+        for (BluetoothDevice device in connectedDevices) {
+          if (device.name == nameTargetDevice) {
+            selectedDevice = device;
+            disconnect(context);
+            discoverServices(selectedDevice!);
+            listenToDeviceState(context);
+            notifyListeners();
+            return;
+          }
+        }*/
+        listenerPrintService.setChange(0, null);
+        flutterBlue.startScan(timeout: const Duration(seconds: 5));
+        flutterBlue.scanResults.listen((results) async {
+          for (ScanResult r in results) {
+            if (r.device.name == nameTargetDevice) {
+              print("name ${r.device.name}");
+              flutterBlue.stopScan();
+              selectedDevice = r.device;
+              isConnect = true;
+              print("Dispositivo encontrado: ${selectedDevice?.name}");
+              try {
+                await Future.delayed(const Duration(milliseconds: 50));
+                await selectedDevice!.connect();
+                discoverServices(selectedDevice!);
+                isConnect = true;
+                listenerPrintService.setChange(1, true);
+                print("Dispositivo conectado: ${selectedDevice?.name}");
+                showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
+                listenToDeviceState(context);
+                notifyListeners();
+              } catch (e) {
+                print("Error al conectar con el dispositivo: $e");
+                selectedDevice = null;
+                listenerPrintService.setChange(0, null);
+                showOverlay(context, const CustomToast(message: "Espere mientras se reconecta automáticamente"));
+                await Future.delayed(const Duration(seconds: 8));
+                scanForDevices(context);
+                notifyListeners();
+              }
+              break;
+            }}});
+      } catch (e) {
+        print("Error durante el escaneo: $e");
       }
-      flutterBlue.startScan(timeout: const Duration(seconds: 5));
-      flutterBlue.scanResults.listen((results) async {
-        for (ScanResult r in results) {
-          if (r.device.name == nameTargetDevice) {
-            print("name ${r.device.name}");
-            flutterBlue.stopScan();
-            selectedDevice = r.device;
-            print("Dispositivo encontrado: ${selectedDevice?.name}");
-            try {
-              await Future.delayed(const Duration(seconds: 2));
-              await selectedDevice?.connect();
-              isConnected = true;
-              listenerPrintService.setChange(1);
-              print("Dispositivo conectado: ${selectedDevice?.name}");
-              discoverServices(selectedDevice!);
-              showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
-              listenToDeviceState(context);
-              notifyListeners();
-            } catch (e) {
-              print("Error al conectar con el dispositivo: $e");
-              selectedDevice = null;
-              showOverlay(context, const CustomToast(message: "Espere mientras se reconecta automáticamente"));
-              await Future.delayed(const Duration(seconds: 8));
-              scanForDevices(context);
-              notifyListeners();
-            }
-            break;
-          }}});
-    } catch (e) {
-      print("Error durante el escaneo: $e");
-    }}
+    }
+
+   }
 
   void listenToDeviceState(context) {
     _connectionSubscription?.cancel();
@@ -117,92 +162,14 @@ class PrintService extends ChangeNotifier {
           notifyListeners();
         }});}}
 
-  void generateEscPosTicket(List<Map<String, dynamic>> carrito, BluetoothCharacteristic? characteristic) async {
-    String lugar = 'Lugar exp: Merida, Yucatan\n';
-
-    if(characteristic!=null){
-      List<int> bytes = [];
-
-      // Comando ESC/POS para centrar y poner en negrita el texto "BEUATE CLINIQUE"
-      bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
-      bytes += utf8.encode('\x1B\x45\x01'); // Negrita ON
-      bytes += utf8.encode('CLINICA FLY\n\n');
-      bytes += utf8.encode('\x1B\x45\x00'); // Negrita OFF
-      bytes += utf8.encode('\x1B\x61\x00'); // Alinear izquierda
-      //bytes += utf8.encode('\x1B\x61\x02'); // Alinear der
-      bytes += utf8.encode('$lugar');
-      bytes += utf8.encode('Fecha exp: ${DateFormat.yMd().format(DateTime.now())} ${DateFormat.jm().format(DateTime.now())}\n');
-
-      // Espacio adicional
-      bytes += utf8.encode('\n');
-
-      // Texto "Cliente #"
-      bytes += utf8.encode('Cliente #\n');
-
-      // Encabezados de la tabla
-      bytes += utf8.encode('CANT |   PROD   |PRECIO |IMPORTE\n');
-      bytes += utf8.encode('--------------------------------\n');
-
-      for (var venta in carrito) {
-        int cantidad = venta['cantidad'];
-        String producto = venta['prod'];
-        double precio = venta['precio'];
-        double importe = venta['importe'];
-
-        List<String> partesProducto = [];
-
-
-
-        int maxCaracteres = 9;
-        for (int i = 0; i < producto.length; i += maxCaracteres) {
-          int fin = (i + maxCaracteres < producto.length) ? i + maxCaracteres : producto.length;
-          partesProducto.add(producto.substring(i, fin));
-        }
-
-        for (int j = 0; j < partesProducto.length; j++) {
-          if (j == 0) {
-            bytes += utf8.encode(' $cantidad    ${partesProducto[j]}  \$$precio \$$importe\n');
-          } else if (j < 3){
-            bytes += utf8.encode('      ${partesProducto[j]}\n');
-          } else{
-            break;
-          }
-        }
-      }
-
-      double total = carrito.fold(0.0, (suma, venta) => suma + (venta['importe'] as double));
-      int amountLength = total.toStringAsFixed(0).length;
-      int lineWidth = 16 - (amountLength - 10).clamp(0, 19);
-
-      String totalText = 'TOTAL';
-      String amountText = '\$${total.toStringAsFixed(2)}';
-
-
-      bytes += utf8.encode('--------------------------------\n');
-      int totalLength = totalText.length + amountText.length;
-      int spacesToAdd = lineWidth - totalLength;
-      String padding = ' ' * spacesToAdd.clamp(0, lineWidth);
-      bytes += utf8.encode('\x1D\x21\x11');
-      bytes += utf8.encode('$totalText$padding$amountText\n');
-      bytes += utf8.encode('\x1D\x21\x00');
-      bytes += utf8.encode('--------------------------------\n');
-      bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
-      bytes += utf8.encode('\x1B\x45\x01'); // Negrita ON
-      bytes += utf8.encode('Gracias por su visita!\n');
-      bytes += utf8.encode('\x1B\x45\x00'); // Negrita OFF
-      bytes += utf8.encode('\n\n\n');
-      await characteristic.write(bytes, withoutResponse: true);
-    }
-  }
-
   void disconnect(context) async {
     if (selectedDevice != null) {
       try {
         _connectionSubscription?.cancel();
         await selectedDevice?.disconnect();
         selectedDevice = null;
-        isConnected = false;
-        listenerPrintService.setChange(0);
+        isConnect = false;
+        listenerPrintService.setChange(2, false);
         notifyListeners();
         print("Dispositivo desconectado correctamente");
         showOverlay(context, const CustomToast(message: 'Dispositivo desconectado correctamente'));
@@ -211,12 +178,4 @@ class PrintService extends ChangeNotifier {
       }
     }
   }
-  Future<Uint8List> loadImageFromFile(String path) async {
-    try {
-      return await rootBundle.load(path).then((byteData) => byteData.buffer.asUint8List());
-    } catch (e) {
-      throw Exception("Error al cargar la imagen: $e");
-    }
-  }
-
 }

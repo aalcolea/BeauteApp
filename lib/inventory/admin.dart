@@ -23,6 +23,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
 
+import '../agenda/utils/PopUpTabs/closeConfirm.dart';
 import 'kboardVisibilityManager.dart';
 import 'themes/colors.dart';
 
@@ -52,6 +53,7 @@ class _adminInvState extends State<adminInv> {
   Soundpool? pool;
   final Listenerblurr _listenerblurr = Listenerblurr();
   late KeyboardVisibilityManager keyboardVisibilityManager;
+  bool _cancelConfirm = false;
   ///variables search
   final SearchService searchService = SearchService();
   bool isSearching = false;
@@ -162,6 +164,40 @@ class _adminInvState extends State<adminInv> {
     super.initState();
   }
 
+  void _onCancelConfirm(bool cancelConfirm) {
+    setState(() {
+      _cancelConfirm = cancelConfirm;
+    });
+  }
+
+
+  onBackPressed(didPop) {
+    if (!didPop) {
+      setState(() {
+        _selectedScreen == 3
+            ? _selectedScreen = 1
+            : showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (builder) {
+            return AlertCloseDialog(
+              onCancelConfirm: _onCancelConfirm,
+            );
+          },
+        ).then((_) {
+          if (_cancelConfirm == true) {
+            if (_cancelConfirm) {
+              Future.delayed(const Duration(milliseconds: 100), () {
+                SystemNavigator.pop();
+              });
+            }
+          }
+        });
+      });
+      return;
+    }
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -171,8 +207,8 @@ class _adminInvState extends State<adminInv> {
 
   void onPrintServiceComunication(PrintService printService){
     setState(() {
-      print('printAdmin');
       this.printService = printService;
+      print('printAdmin : ${this.printService}');
     });
 
   }
@@ -189,9 +225,18 @@ class _adminInvState extends State<adminInv> {
             return Container();
         }
       }
-    return Scaffold(
-      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur, isDoctorLog: widget.docLog, currentScreen: currentScreen,
-        onPrintServiceComunication: onPrintServiceComunication),
+
+    return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          onBackPressed(didPop);
+        },
+        child: Scaffold(
+      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur,
+          isDoctorLog: widget.docLog, currentScreen: currentScreen,
+          onPrintServiceComunication: onPrintServiceComunication,
+          printServiceAfterInitConn: printService,
+          btChar: printService.characteristic),
       body: Stack(
         children: [
           Container(
@@ -203,8 +248,8 @@ class _adminInvState extends State<adminInv> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.045,
-                      right: MediaQuery.of(context).size.width * 0.025,
+                    left: MediaQuery.of(context).size.width * 0.045,
+                    right: MediaQuery.of(context).size.width * 0.025,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -232,42 +277,42 @@ class _adminInvState extends State<adminInv> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Visibility(
-                            visible: _selectedScreen == 1 ? true : false,
-                            child: IconButton(
-                            onPressed: () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ProductForm(),
+                              visible: _selectedScreen == 1 ? true : false,
+                              child: IconButton(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ProductForm(),
+                                    ),
+                                  );
+                                  if (result == true) {
+                                    productsKey.currentState?.refreshProducts();
+                                  }
+                                },
+                                icon: Icon(
+                                  CupertinoIcons.add_circled_solid,
+                                  color: AppColors.primaryColor,
+                                  size: MediaQuery.of(context).size.width * 0.1,
                                 ),
-                              );
-                              if (result == true) {
-                                productsKey.currentState?.refreshProducts();
-                              }
-                            },
-                            icon: Icon(
-                              CupertinoIcons.add_circled_solid,
-                              color: AppColors.primaryColor,
-                              size: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          )),
+                              )),
                           Visibility(
                             visible: _selectedScreen == 2 ? true : false,
                             child: IconButton(
-                            onPressed: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SalesHistory(),
-                                ),
-                              );
-                            },
-                            icon: Icon(
-                              CupertinoIcons.tickets,
-                              color: AppColors.primaryColor,
-                              size: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          ),),
+                              onPressed: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SalesHistory(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                CupertinoIcons.tickets,
+                                color: AppColors.primaryColor,
+                                size: MediaQuery.of(context).size.width * 0.1,
+                              ),
+                            ),),
                           Builder(builder: (BuildContext context) {
                             return IconButton(
                               onPressed: () {
@@ -350,15 +395,15 @@ class _adminInvState extends State<adminInv> {
                     padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
                     decoration: const BoxDecoration(
                       color: AppColors.bgColor,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15)
-                        ),
-                        border: Border(
-                            bottom: BorderSide(
-                              color: AppColors.primaryColor,
-                              width: 2.5,
-                            )),
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15)
+                      ),
+                      border: Border(
+                          bottom: BorderSide(
+                            color: AppColors.primaryColor,
+                            width: 2.5,
+                          )),
                     ),
                     child: Container(
                       margin: EdgeInsets.only(
@@ -377,11 +422,11 @@ class _adminInvState extends State<adminInv> {
                   visible: !_hideBtnsBottom,
                   child: Container(
                     margin: EdgeInsets.only(bottom: screenWidth! < 391
-                            ? MediaQuery.of(context).size.width * 0.055
-                            : MediaQuery.of(context).size.width * 0.02),
+                        ? MediaQuery.of(context).size.width * 0.055
+                        : MediaQuery.of(context).size.width * 0.02),
                     padding: EdgeInsets.only(top: screenWidth! < 391
-                            ? MediaQuery.of(context).size.width * 0.035
-                            : MediaQuery.of(context).size.width * 0.02),
+                        ? MediaQuery.of(context).size.width * 0.035
+                        : MediaQuery.of(context).size.width * 0.02),
                     child: Row(
                       children: [
                         Expanded(
@@ -470,12 +515,6 @@ class _adminInvState extends State<adminInv> {
                     width: double.infinity,
                     height: double.infinity,
                     color: AppColors.blackColor.withOpacity(0.3),
-                  ),
-                )
-            ),
-          ),
-        ],
-      ),);
-    //}));
+                  ))))])));
   }
 }
