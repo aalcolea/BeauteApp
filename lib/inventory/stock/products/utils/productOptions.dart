@@ -76,6 +76,7 @@ class _ProductOptionsState extends State<ProductOptions> {
         },
         child: Container(
             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
+            color: Colors.transparent,
             child: Column(
               key: _columnKey,
               crossAxisAlignment: CrossAxisAlignment.start,
