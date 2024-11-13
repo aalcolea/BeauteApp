@@ -98,7 +98,6 @@ class _TicketslistState extends State<Ticketslist> {
         }
         cantHelper = List.generate(tickets.length, (index) => 0);
         isLoading = false;
-        print(tickets2);
       });
     }catch (e) {
       print('Error fetching sales: $e');
