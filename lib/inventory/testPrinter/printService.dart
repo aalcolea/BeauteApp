@@ -23,6 +23,17 @@ class PrintService2 {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
+  Future<void> connectAndPrintAndroideTicket(List<dynamic> carrito, String imagePath) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+
+    await printImageBW(imagePath, ajusteManual: -36);
+    await printTicketText(carrito);
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
   Future<void> connectAndPrintIOS(List<Map<String, dynamic>> carrito, String imagePath) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
@@ -32,6 +43,104 @@ class PrintService2 {
     await printImageWithAtkinsonDithering(imagePath, maxWidth: 200, maxHeight: 200);
     await printText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  Future<void> connectAndPrintIOSTicket(List<dynamic> carrito, String imagePath) async {
+    if (characteristic == null) {
+      print("Error: No se encontró la característica para imprimir.");
+      return;
+    }
+
+    await printImageWithAtkinsonDithering(imagePath, maxWidth: 200, maxHeight: 200);
+    await printTicketText(carrito);
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  Future<void> printTicketText(List<dynamic> carrito) async {
+    String lugar = 'Lugar exp: Merida, Yucatan\n';
+    double cuentaTotal = 0;
+
+    if (characteristic == null) return;
+
+    List<int> bytes = [];
+
+    bytes += utf8.encode('\x1B\x61\x01');
+    bytes += utf8.encode('\x1B\x45\x01');
+    bytes += utf8.encode('CLINICA FLY\n\n');
+    bytes += utf8.encode('\x1B\x45\x00');
+    bytes += utf8.encode('\x1B\x61\x00');
+    bytes += utf8.encode(lugar);
+    Future.delayed(Duration(milliseconds: 25));
+    bytes += utf8.encode('Fecha exp: ${DateFormat.yMd().format(DateTime.now())} ${DateFormat.jm().format(DateTime.now())}\n');
+    Future.delayed(Duration(milliseconds: 25));
+    bytes += utf8.encode('\n');
+    bytes += utf8.encode('Cliente #\n');
+    bytes += utf8.encode('\n');
+
+    bytes += utf8.encode('CANT |     PROD     |  IMPORTE\n');
+    Future.delayed(Duration(milliseconds: 25));
+    bytes += utf8.encode('--------------------------------\n');
+
+    for (var item in carrito) {
+      String productName = item['producto']['nombre'];
+      double productPrice = double.parse(item['producto']['precio']);
+      int productQuantity = item['cantidad'].toInt();
+      double total = productPrice * productQuantity;
+      cuentaTotal += total;
+      List<String> partesProducto = [];
+
+      int maxCaracteres = 14;
+      for (int i = 0; i < productName.length; i += maxCaracteres) {
+        int fin = (i + maxCaracteres < productName.length) ? i + maxCaracteres : productName.length;
+        String parte = productName.substring(i, fin);
+        partesProducto.add(parte.padRight(maxCaracteres));
+        Future.delayed(const Duration(milliseconds: 25));
+      }
+
+      String formattedTotal = ('\$${total.toStringAsFixed(2)}').padLeft(10);
+      String formattedCant = (productQuantity.toStringAsFixed(0)).padLeft(3);
+
+      for (int j = 0; j < partesProducto.length; j++) {
+        if (j == 0) {
+          bytes += utf8.encode('  $formattedCant ${partesProducto[j]}  $formattedTotal');
+        } else if (j < 3) {
+          bytes += utf8.encode('      ${partesProducto[j]}\n');
+        } else {
+          break;
+        }
+      }
+    }
+
+    int amountLength = cuentaTotal.toStringAsFixed(0).length;
+    int lineWidth = 16 - (amountLength - 10).clamp(0, 19);
+
+    String totalText = 'TOTAL';
+    String amountText = '\$${cuentaTotal.toStringAsFixed(2)}';
+
+
+    bytes += utf8.encode('--------------------------------\n');
+    Future.delayed(Duration(milliseconds: 25));
+    int totalLength = totalText.length + amountText.length;
+    int spacesToAdd = lineWidth - totalLength;
+    String padding = ' ' * spacesToAdd.clamp(0, lineWidth);
+    bytes += utf8.encode('\x1D\x21\x11');
+    bytes += utf8.encode('$totalText$padding$amountText\n');
+    bytes += utf8.encode('\x1D\x21\x00');
+    bytes += utf8.encode('--------------------------------\n');
+    bytes += utf8.encode('\x1B\x61\x01');
+    bytes += utf8.encode('\x1B\x45\x01');
+
+    bytes += utf8.encode('\x1D\x21\x00');
+    bytes += utf8.encode('--------------------------------\n');
+    bytes += utf8.encode('\x1B\x61\x01');
+    bytes += utf8.encode('\x1B\x45\x01');
+    bytes += utf8.encode('Gracias por su visita!\n');
+    bytes += utf8.encode('\x1B\x45\x00');
+    bytes += utf8.encode('\n\n\n');
+
+
+    await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
+    await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
   }
 
   Future<void> printText(List<Map<String, dynamic>> carrito) async {

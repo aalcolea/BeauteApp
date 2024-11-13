@@ -305,7 +305,7 @@ class _adminInvState extends State<adminInv> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SalesHistory(),
+                                    builder: (context) => SalesHistory(printService: printService,),
                                   ),
                                 );
                               },

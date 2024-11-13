@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:beaute_app/inventory/testPrinter/printService.dart';
 import 'package:flutter/material.dart';
 import '../../../../agenda/themes/colors.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
+import '../../../testPrinter/printConnections.dart';
 import '../../../themes/colors.dart';
 
 class TicketOptions extends StatefulWidget {
@@ -9,8 +15,9 @@ class TicketOptions extends StatefulWidget {
   final Function(double) columnHeight;
   final void Function(int) onShowBlur;
   final dynamic columnH;
+  final PrintService printService;
 
-  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo,
+  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo, required this.printService,
   });
 
   @override
@@ -21,6 +28,9 @@ class _TicketOptionsState extends State<TicketOptions> {
 
   final GlobalKey _columnKey = GlobalKey();
   double _columnHeight = 0.0;
+  PrintService printService = PrintService();
+  late PrintService2 printService2;
+  List<dynamic> ticketDetails = [];
 
   @override
   void initState() {
@@ -28,6 +38,8 @@ class _TicketOptionsState extends State<TicketOptions> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _calculateHeight();
     });
+    ticketDetails = widget.ticketInfo[4];
+    print(ticketDetails);
   }
 
   void _calculateHeight() {
@@ -50,6 +62,7 @@ class _TicketOptionsState extends State<TicketOptions> {
           widget.onClose();
         },
         child: Container(
+            color: Colors.transparent,
             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
             child: Column(
               key: _columnKey,
@@ -170,7 +183,27 @@ class _TicketOptionsState extends State<TicketOptions> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              bool canPrint = false;
+                              try{
+                                await widget.printService.ensureCharacteristicAvailable();
+                                if(widget.printService.characteristic != null){
+                                  canPrint = true;
+                                }
+                              }catch(e){
+                                print("Error: No hay impresora conectada  - $e");
+                                showOverlay(context, const CustomToast(message: 'Impresion no disponible, continuando con la venta'));
+                              }
+                              if (canPrint) {
+                                PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                                try{
+                                  Platform.isAndroid ? await printService2.connectAndPrintAndroideTicket(ticketDetails, 'assets/imgLog/test2.jpeg') :
+                                  await printService2.connectAndPrintIOSTicket(ticketDetails, 'assets/imgLog/test2.jpeg');
+                                } catch(e){
+                                  print("Error al intentar imprimir: $e");
+                                  showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));
+                                }
+                              }
                               widget.onClose();
                               //widget.onShowBlur(1);
                             },
