@@ -1,18 +1,11 @@
-
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'dart:typed_data';
-import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../agenda/utils/showToast.dart';
 import '../../agenda/utils/toastWidget.dart';
 import '../listenerPrintService.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:image/image.dart' as img;
 
 class PrintService extends ChangeNotifier {
   @override
@@ -30,6 +23,26 @@ class PrintService extends ChangeNotifier {
   ListenerPrintService listenerPrintService = ListenerPrintService();
   String nameTargetDevice = 'MP210';
 
+  Future<void> connectToBluetoothDevice(context) async {
+    PermissionStatus bluetoothScanStatus;
+    PermissionStatus bluetoothConnectStatus;
+    PermissionStatus locationStatus;
+
+    bluetoothScanStatus = await Permission.bluetoothScan.request();
+    bluetoothConnectStatus = await Permission.bluetoothConnect.request();
+    locationStatus = await Permission.location.request();
+
+    if (bluetoothScanStatus.isGranted && bluetoothConnectStatus.isGranted && locationStatus.isGranted) {
+      try {
+        scanForDevices(context);
+      } catch (e) {
+        print("Error al conectar: $e");
+      }
+    } else {
+      listenerPrintService.setChange(2, false);
+      print("Permisos de Bluetooth no concedidos.");
+    }
+  }
   Future<void> ensureCharacteristicAvailable() async {
     if (characteristic == null && selectedDevice != null) {
       await discoverServices(selectedDevice!);
@@ -115,13 +128,14 @@ class PrintService extends ChangeNotifier {
           }
         }*/
         listenerPrintService.setChange(0, null);
-        flutterBlue.startScan(timeout: const Duration(seconds: 5));
+        await flutterBlue.startScan(timeout: const Duration(seconds: 5));
         flutterBlue.scanResults.listen((results) async {
           for (ScanResult r in results) {
             if (r.device.name == nameTargetDevice) {
               print("name ${r.device.name}");
               flutterBlue.stopScan();
               selectedDevice = r.device;
+              print('seldevvv $selectedDevice');
               isConnect = true;
               print("Dispositivo encontrado: ${selectedDevice?.name}");
               try {
@@ -131,6 +145,7 @@ class PrintService extends ChangeNotifier {
                 isConnect = true;
                 listenerPrintService.setChange(1, true);
                 print("Dispositivo conectado: ${selectedDevice?.name}");
+                print('seldevvv $selectedDevice');
                 showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
                 listenToDeviceState(context);
                 notifyListeners();
@@ -163,8 +178,12 @@ class PrintService extends ChangeNotifier {
         }});}}
 
   void disconnect(context) async {
+    print('disconect1');
+    print('selDev $selectedDevice');
+    print('iscon $isConnect');
     if (selectedDevice != null) {
       try {
+        print('disconect2');
         _connectionSubscription?.cancel();
         await selectedDevice?.disconnect();
         selectedDevice = null;

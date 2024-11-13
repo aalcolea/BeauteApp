@@ -72,13 +72,11 @@ class PrintService2 {
       List<String> partesProducto = [];
 
       int maxCaracteres = 14;
-      // Dividir el nombre del producto en partes de maxCaracteres
       for (int i = 0; i < productName.length; i += maxCaracteres) {
         int fin = (i + maxCaracteres < productName.length) ? i + maxCaracteres : productName.length;
         String parte = productName.substring(i, fin);
-        // Completar con espacios en blanco si la longitud es menor a maxCaracteres
         partesProducto.add(parte.padRight(maxCaracteres));
-        Future.delayed(Duration(milliseconds: 25));
+        Future.delayed(const Duration(milliseconds: 25));
       }
 
       String formattedTotal = ('\$${total.toStringAsFixed(2)}').padLeft(10);
@@ -134,7 +132,7 @@ class PrintService2 {
   }
 
   //funcion para imprimir imagen android
-  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 95, int ajusteManual = 0}) async {
+  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75, int ajusteManual = 0}) async {
     if (characteristic == null) return;
 
     print('Inicio de conversión de imagen para impresión en blanco y negro');
@@ -153,7 +151,7 @@ class PrintService2 {
       int marginWidth = ((maxWidth - resizedImage.width) ~/ 2) + ajusteManual;
       img.Image centeredImage = img.Image(maxWidth, resizedImage.height);
 
-      centeredImage.fill(img.getColor(255, 255, 255));
+      centeredImage.fill(img.getColor(255, 255, 255)); // Color blanco
       img.drawImage(centeredImage, resizedImage, dstX: marginWidth, dstY: 0);
 
       img.Image bwImage = _convertToBW(centeredImage);
@@ -173,13 +171,13 @@ class PrintService2 {
     }
   }
 
-  img.Image _convertToBW(img.Image image) {
+  img.Image _convertToBW(img.Image image,  {int luminanceThreshold = 200}) {
     img.Image bwImage = img.Image(image.width, image.height);
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         int pixel = image.getPixel(x, y);
         int luminance = img.getLuminance(pixel);
-        bwImage.setPixel(x, y, luminance < 128 ? img.getColor(0, 0, 0) : img.getColor(255, 255, 255));
+        bwImage.setPixel(x, y, luminance < luminanceThreshold  ? img.getColor(0, 0, 0) : img.getColor(255, 255, 255));
       }
     }
     return bwImage;
