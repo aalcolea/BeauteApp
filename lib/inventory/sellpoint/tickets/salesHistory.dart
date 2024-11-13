@@ -1,17 +1,17 @@
 import 'dart:ui';
-import 'package:beaute_app/inventory/sellpoint/processStuff/services/salesServices.dart';
-import 'package:beaute_app/inventory/sellpoint/processStuff/utils/listenerRemoverOL.dart';
-import 'package:beaute_app/inventory/sellpoint/processStuff/utils/sales/calendarSales.dart';
-import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketsList.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/services/salesServices.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerRemoverOL.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/calendarSales.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../agenda/calendar/calendarioScreenCita.dart';
-import '../../testPrinter/printConnections.dart';
+import '../../print/printConnections.dart';
 import '../../themes/colors.dart';
 import '../../../regEx.dart';
 import '../../kboardVisibilityManager.dart';
-import '../processStuff/utils/salesList.dart';
+import '../tickets/utils/salesList.dart';
 
 class SalesHistory extends StatefulWidget {
 
