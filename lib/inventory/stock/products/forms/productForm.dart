@@ -68,13 +68,16 @@ class _ProductFormState extends State<ProductForm> {
   }
 
   void onScanProd(String? resultScanedProd) async {
-
-    if (resultScanedProd != null) {
-      barCodeController.text = resultScanedProd;
-        await soundScaner().then((_){
-          helperCloseScan = true;
-        });
+    if(!helperCloseScan && resultScanedProd != null){
+      setState(() {
+        helperCloseScan = true;
+        barCodeController.text = resultScanedProd;
+      });
+      await soundScaner().then((_) async {
         if(mounted) Navigator.of(context).pop();
+        await Future.delayed(const Duration(milliseconds: 400));
+        helperCloseScan = false;
+      });
     }
   }
 
@@ -182,7 +185,7 @@ class _ProductFormState extends State<ProductForm> {
                            focusNode: nameFocus,
                            controller: nameController,
                            inputFormatters: [
-                             EmailInputFormatter()
+                             RegEx(type: InputFormatterType.alphanumeric),
                            ],
                            text: 'Nombre del producto',
                            textStyle: const TextStyle(
@@ -267,7 +270,10 @@ class _ProductFormState extends State<ProductForm> {
                                       onScanProd: onScanProd
                                     );
                                 },
-                              );
+                              ).then((_) async {
+                                  await Future.delayed(Duration(milliseconds: 150));
+                                  //helperCloseScan = false;
+                              });
                             },
                           ),
                           enabledBorder: OutlineInputBorder(

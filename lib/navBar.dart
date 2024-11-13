@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
@@ -22,10 +21,11 @@ class navBar extends StatefulWidget {
   final PrintService? printServiceAfterInitConn;
   final BluetoothCharacteristic? btChar;
   final Function(int) onItemSelected;
+  final void Function(bool) onLockScreen;
   final String currentScreen;
 
   const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog, required this.currentScreen,
-    this.onPrintServiceComunication, this.printServiceAfterInitConn, this.btChar});
+    this.onPrintServiceComunication, this.printServiceAfterInitConn, this.btChar, required this.onLockScreen});
 
   @override
   State<navBar> createState() => _navBarState();
@@ -65,46 +65,36 @@ class _navBarState extends State<navBar> {
         isConecct = false;
       });
     }
-    printService.listenerPrintService.registrarObservador((newValue, newIsConnect){
+    printService.listenerPrintService.registrarObservador((newValue, newIsConnect) {
       setState(() {
         switch (newValue) {
           case 0:
-            setState(() {
+            setState(() {//null
               isConecct = newIsConnect;
+              widget.onLockScreen(true);
             });
           case 1:
+            setState(() {//conectado
+              isConecct = newIsConnect;
+              widget.onPrintServiceComunication!(printService);
+              widget.onLockScreen(false);
+
+            });
+            break;
+          case 2://conect == false
             setState(() {
               isConecct = newIsConnect;
               widget.onPrintServiceComunication!(printService);
             });
             break;
-          case 2 :
-            setState(() {
-              isConecct = newIsConnect;
-              widget.onPrintServiceComunication!(printService);
-            });
           case 3:
             isConecct = true;
-
+            break;
         }
       });
     });
     super.initState();
   }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    print('change');
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<PrintService>(
@@ -366,15 +356,7 @@ class _navBarState extends State<navBar> {
                                                   SizedBox(width: 10),
                                                   Text('Cerrar sesion', style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.05, color: AppColors3.primaryColor))
                                                 ]))])))])),
-                Visibility(
-                  visible: isConecct == null ? true : false,
-                  child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                      color: Colors.black54.withOpacity(0.1),
-                  ),
-                ),)
+
               ],
             )
           );
