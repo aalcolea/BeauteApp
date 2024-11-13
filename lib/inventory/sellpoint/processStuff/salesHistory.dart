@@ -7,13 +7,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../agenda/calendar/calendarioScreenCita.dart';
+import '../../testPrinter/printConnections.dart';
 import '../../themes/colors.dart';
 import '../../../regEx.dart';
 import '../../kboardVisibilityManager.dart';
 import '../processStuff/utils/salesList.dart';
 
 class SalesHistory extends StatefulWidget {
-  const SalesHistory({super.key});
+
+  final PrintService printService;
+
+  const SalesHistory({super.key, required this.printService});
 
   @override
   State<SalesHistory> createState() => _SalesHistoryState();
@@ -286,7 +290,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                     });
                   },
                   children: [
-                    Ticketslist(onShowBlur: _onShowBlurr, onOptnSize: onOptnSize, listenerremoverOL: listenerremoverOL,),
+                    Ticketslist(onShowBlur: _onShowBlurr, onOptnSize: onOptnSize, listenerremoverOL: listenerremoverOL, printService: widget.printService,),
                     SalesList(onShowBlur: _onShowBlurr,),
                   ],
                 ),
