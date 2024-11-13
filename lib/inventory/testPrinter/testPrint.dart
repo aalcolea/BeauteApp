@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:image/image.dart' as img;
-
 
 class testPrint extends StatefulWidget {
   @override
@@ -27,29 +25,23 @@ class _testPrintState extends State<testPrint> {
   Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 95, int ajusteManual = 0}) async {
     if (characteristic == null) return;
 
-    print('Inicio de conversión de imagen para impresión en blanco y negro');
-
     ByteData data = await rootBundle.load(imagePath);
     Uint8List bytes = data.buffer.asUint8List();
     img.Image? originalImage = img.decodeImage(bytes);
 
     if (originalImage != null) {
-      // Redimensionar la imagen original
       img.Image resizedImage = img.copyResize(originalImage, width: maxWidth);
 
       if (resizedImage.height > maxHeight) {
         resizedImage = img.copyResize(resizedImage, height: maxHeight);
       }
 
-      // Calcular el margen izquierdo y derecho para centrar la imagen
       int marginWidth = ((maxWidth - resizedImage.width) ~/ 2) + ajusteManual;
       img.Image centeredImage = img.Image(maxWidth, resizedImage.height);
 
-      // Llenar la imagen centrada con blanco y luego dibujar la imagen redimensionada en el centro
       centeredImage.fill(img.getColor(255, 255, 255)); // Color blanco
       img.drawImage(centeredImage, resizedImage, dstX: marginWidth, dstY: 0);
 
-      // Convertir a blanco y negro y enviar a impresión
       img.Image bwImage = _convertToBW(centeredImage);
       List<int> imageBytes = _convertImageToPrinterData(bwImage);
 
@@ -67,13 +59,13 @@ class _testPrintState extends State<testPrint> {
     }
   }
 
-  img.Image _convertToBW(img.Image image) {
+  img.Image _convertToBW(img.Image image,  {int luminanceThreshold = 200}) {
     img.Image bwImage = img.Image(image.width, image.height);
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         int pixel = image.getPixel(x, y);
         int luminance = img.getLuminance(pixel);
-        bwImage.setPixel(x, y, luminance < 128 ? img.getColor(0, 0, 0) : img.getColor(255, 255, 255));
+        bwImage.setPixel(x, y, luminance < luminanceThreshold  ? img.getColor(0, 0, 0) : img.getColor(255, 255, 255));
       }
     }
     return bwImage;
@@ -109,7 +101,6 @@ class _testPrintState extends State<testPrint> {
   Future<void> printImageWithAtkinsonDithering(String imagePath, {int maxWidth = 384, int maxHeight = 200}) async {
     if (characteristic == null) return;
 
-    print('start atkinson');
     ByteData data = await rootBundle.load(imagePath);
     Uint8List bytes = data.buffer.asUint8List();
     img.Image? image = img.decodeImage(bytes);

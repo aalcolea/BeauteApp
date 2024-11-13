@@ -208,7 +208,6 @@ class _adminInvState extends State<adminInv> {
   void onPrintServiceComunication(PrintService printService){
     setState(() {
       this.printService = printService;
-      print('printAdmin : ${this.printService}');
     });
 
   }
@@ -226,36 +225,39 @@ class _adminInvState extends State<adminInv> {
         }
       }
 
-    return PopScope(
+      return PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
           onBackPressed(didPop);
         },
         child: Scaffold(
-      endDrawer: navBar(onItemSelected: _onItemSelected, onShowBlur: _onShowBlur,
-          isDoctorLog: widget.docLog, currentScreen: currentScreen,
-          onPrintServiceComunication: onPrintServiceComunication,
-          printServiceAfterInitConn: printService,
-          btChar: printService.characteristic),
-      body: Stack(
-        children: [
-          Container(
-            color: AppColors.whiteColor,
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.04),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.045,
-                    right: MediaQuery.of(context).size.width * 0.025,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+            endDrawer: navBar(
+                onItemSelected: _onItemSelected,
+                onShowBlur: _onShowBlur,
+                isDoctorLog: widget.docLog,
+                currentScreen: currentScreen,
+                onPrintServiceComunication: onPrintServiceComunication,
+                printServiceAfterInitConn: printService,
+                btChar: printService.characteristic),
+            body: Stack(
+                children: [
+              Container(
+                color: AppColors.whiteColor,
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.04),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.045,
+                        right: MediaQuery.of(context).size.width * 0.025,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             _selectedScreen == 1
