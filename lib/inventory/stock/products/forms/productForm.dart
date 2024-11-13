@@ -185,7 +185,7 @@ class _ProductFormState extends State<ProductForm> {
                            focusNode: nameFocus,
                            controller: nameController,
                            inputFormatters: [
-                             EmailInputFormatter()
+                             RegEx(type: InputFormatterType.alphanumeric),
                            ],
                            text: 'Nombre del producto',
                            textStyle: const TextStyle(
