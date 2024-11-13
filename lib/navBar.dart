@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
@@ -233,6 +235,7 @@ class _navBarState extends State<navBar> {
                                 splashColor: AppColors3.primaryColor.withOpacity(0.1),
                                 onTap: isConecct == false ? (){
                                   setState(() {
+                                    Platform.isIOS ? printService.scanForDevices(context) :
                                     printService.connectToBluetoothDevice(context);
                                   });
                                 } : (){
