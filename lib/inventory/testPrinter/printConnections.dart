@@ -23,6 +23,25 @@ class PrintService extends ChangeNotifier {
   ListenerPrintService listenerPrintService = ListenerPrintService();
   String nameTargetDevice = 'MP210';
 
+  Future<void> connectToBluetoothIOSDevice(context) async {
+    PermissionStatus bluetoothScanStatus;
+    PermissionStatus bluetoothConnectStatus;
+
+    bluetoothScanStatus = await Permission.bluetoothScan.request();
+    bluetoothConnectStatus = await Permission.bluetoothConnect.request();
+
+    if (bluetoothScanStatus.isGranted && bluetoothConnectStatus.isGranted) {
+      try {
+        scanForDevices(context);
+      } catch (e) {
+        print("Error al conectar: $e");
+      }
+    } else {
+      listenerPrintService.setChange(2, false);
+      print("Permisos de Bluetooth no concedidos.");
+    }
+  }
+
   Future<void> connectToBluetoothDevice(context) async {
     PermissionStatus bluetoothScanStatus;
     PermissionStatus bluetoothConnectStatus;
