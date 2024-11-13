@@ -7,7 +7,12 @@ import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../agenda/utils/showToast.dart';
+import '../../agenda/utils/toastWidget.dart';
+import '../admin.dart';
 import '../kboardVisibilityManager.dart';
+import '../sellpoint/cart/services/cartService.dart';
 import '../sellpoint/cart/services/searchService.dart';
 import '../themes/colors.dart';
 import 'package:http/http.dart' as http;
@@ -36,6 +41,7 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   List<AnimationController> aniControllers = [];
   List<int> cantHelper = [];
   List<GlobalKey> productKeys = [];
+  int ? tapedIndex;
 
   void changeBlurr(){
     if (productsKey.currentState != null) {
@@ -62,8 +68,10 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
         });
       }
       productKeys = List.generate(productos.length, (index) => GlobalKey());
-      print(categories);
-      print(productos);
+      for (int i = 0; i < productos.length; i++) {
+        aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
+        cantHelper.add(0);
+      }
     } catch (e) {
       print('error: $e');
     } finally {
@@ -85,18 +93,30 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
   OverlayEntry? overlayEntry;
   double widgetHeight = 0.0;
   bool showBlurr = false;
+  List<int> tapedIndices = [];
+  late Animation<double> movLeft;
+  late Animation<double> movLeftCount;
+
+  void itemCount (index, action){
+    if(action == false){
+      cantHelper[index] > 0 ? cantHelper[index]-- : cantHelper[index] = 0;
+      if(cantHelper[index] == 0){
+        tapedIndices.remove(index);
+        aniControllers[index].reverse().then((_){
+          aniControllers[index].reset();
+        });
+      }
+    }else{
+      cantHelper[index]++;
+    }
+  }
 
   @override
   void initState() {
     keyboardVisibilityManager = KeyboardVisibilityManager();
-    loadFirstItems();
-    for (int i = 0; i < productos.length; i++) {
-      aniControllers.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 450)));
-      cantHelper.add(0);
-    }
-    fetchProducts();
+    //loadFirstItems();
+    //fetchProducts();
     widget.listenerblurr.registrarObservador((newValue){
-
     });
     // TODO: implement initState
     super.initState();
@@ -200,6 +220,8 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
       final productService = ProductService();
       await productService.fetchProducts(selectedCategoryId);
       setState(() {
+        cantHelper = List.generate(productos.length, (index) => 0);
+        productKeys = List.generate(productos.length, (index) => GlobalKey());
         aniControllers = List.generate(
           productos.length,
               (index) => AnimationController(
@@ -207,11 +229,7 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
             duration: const Duration(milliseconds: 450),
           ),
         );
-        cantHelper = List.generate(productos.length, (index) => 0);
-        productKeys = List.generate(productos.length, (index) => GlobalKey());
-        setState(() {
-          isLoading = false;
-        });
+        isLoading = false;
       });
     } catch (e) {
       print('Error fetching productos: $e');
@@ -321,6 +339,7 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     int itemsPerPage = 6;
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -395,6 +414,17 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
                                   borderSide: BorderSide(),
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
+                                suffixIcon: searchController.text.isNotEmpty ? IconButton(
+                                  onPressed: () {
+                                    searchController.clear();
+                                    searchProductsAndCategories('');
+                                  },
+                                  icon: Icon(
+                                    CupertinoIcons.clear,
+                                    size: MediaQuery.of(context).size.width * 0.05,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ) : null
                               ),
                               ///test alan
                               onChanged: (value) {
@@ -556,11 +586,11 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
                                 left: MediaQuery.of(context).size.width * 0.02,
                                 right: MediaQuery.of(context).size.width * 0.02
                             ),
-                            physics: const NeverScrollableScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             itemCount: productos.length,
                             itemBuilder: (context, index) {
                               return InkWell(
-                                key: productKeys[index],
+                                key: productKeys.isNotEmpty && productKeys.length > index ? productKeys[index] : null,
                                 onTap: () {
                                   Navigator.push(context,
                                     CupertinoPageRoute(
@@ -642,6 +672,114 @@ class _SeekerState extends State<Seeker> with TickerProviderStateMixin {
                                                 ],
                                               ),
                                             ],
+                                          ),
+                                          const Spacer(),
+                                          AnimatedContainer(
+                                              alignment: Alignment.bottomRight,
+                                              duration: const Duration(milliseconds: 225),
+                                              width: tapedIndices.contains(index) ? MediaQuery.of(context).size.width * 0.3 : MediaQuery.of(context).size.width * 0.13,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(10),
+                                                color: AppColors.primaryColor,
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  AnimatedBuilder(animation: aniControllers[index],
+                                                      child: Visibility(
+                                                        visible:  tapedIndices.contains(index),
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                              minimumSize: const Size(0, 0),
+                                                              backgroundColor: Colors.transparent,
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal: MediaQuery.of(context).size.width * 0.015,
+                                                                vertical: MediaQuery.of(context).size.width * 0.015,
+                                                              ),
+                                                              shadowColor: Colors.transparent
+                                                          ),
+                                                          onPressed: () {
+                                                            cartProvider.decrementProductInCart(productos[index]['id']);
+                                                            setState(() {
+                                                              bool action = false;
+                                                              itemCount(index, action);
+                                                            });
+                                                          },
+                                                          child: Icon(
+                                                            CupertinoIcons.minus,
+                                                            color: AppColors.whiteColor,
+                                                            size: MediaQuery.of(context).size.width * 0.07,
+                                                          ),
+                                                        ),),
+                                                      builder: (context, minusMove){
+                                                        movLeft = Tween(begin: 0.0, end: MediaQuery.of(context).size.width * 0.023).animate(aniControllers[index]);
+                                                        return Transform.translate(offset: Offset(-movLeft.value, 0), child: minusMove);
+                                                      }),
+                                                  AnimatedBuilder(
+                                                      animation: aniControllers[index],
+                                                      child: Visibility(
+                                                          visible: tapedIndices.contains(index),
+                                                          child: Container(
+                                                            decoration: const BoxDecoration(
+                                                              color: AppColors.primaryColor,
+                                                            ),
+                                                            padding: EdgeInsets.symmetric(
+                                                              horizontal: MediaQuery.of(context).size.width * 0.0,
+                                                              vertical: MediaQuery.of(context).size.width * 0.015,
+                                                            ),
+                                                            child: Text(
+                                                              textAlign: TextAlign.center,
+                                                              '${cantHelper[index]}',
+                                                              style: TextStyle(
+                                                                  color: AppColors.whiteColor,
+                                                                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                                                                  fontWeight: FontWeight.bold),
+                                                            ),
+                                                          )),
+                                                      builder: (context, countMov){
+                                                        movLeftCount = Tween(begin: 0.0, end: MediaQuery.of(context).size.width * 0.012).animate(aniControllers[index]);
+                                                        return Transform.translate(offset: Offset(-movLeftCount.value, 0), child: countMov);
+                                                      }),
+                                                  ///btn mas
+                                                  ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                        minimumSize: const Size(0, 0),
+                                                        backgroundColor: Colors.transparent,
+                                                        padding: EdgeInsets.symmetric(
+                                                          horizontal: MediaQuery.of(context).size.width * 0.015,
+                                                          vertical: MediaQuery.of(context).size.width * 0.015,
+                                                        ),
+                                                        shadowColor: Colors.transparent
+                                                    ),
+                                                    onPressed: (productos[index]['stock']?['cantidad'] ?? 0) > cartProvider.getProductCount(productos[index]['id'])
+                                                        ? () {
+                                                      productsGlobalTemp = (productos as List).map((item) => item as Map<String, dynamic>).toList();
+                                                      final product_id = productsGlobalTemp[index]['id'];
+                                                      Provider.of<CartProvider>(context, listen: false).addProductToCart(product_id, isFromBarCode: true);
+                                                      setState(() {
+                                                        bool action = true;
+                                                        tapedIndex = index;
+                                                        if (!tapedIndices.contains(index)) {
+                                                          tapedIndices.add(index);
+                                                        }
+                                                        itemCount(index, action);
+                                                        aniControllers[index].forward();
+                                                      });
+                                                    } : () {
+                                                      showOverlay(
+                                                          context,
+                                                          const CustomToast(
+                                                            message: 'No puedes agregar más de lo disponible en stock',
+                                                          ));
+                                                    },
+                                                    child: Icon(
+                                                      CupertinoIcons.add,
+                                                      color: AppColors.whiteColor,
+                                                      size: MediaQuery.of(context).size.width * 0.07,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                           )
                                         ],
                                       ),
