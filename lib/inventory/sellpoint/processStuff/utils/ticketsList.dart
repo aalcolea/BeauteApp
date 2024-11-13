@@ -2,6 +2,7 @@ import 'package:beaute_app/inventory/sellpoint/processStuff/utils/listenerRemove
 import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketOptions.dart';
 import 'package:flutter/material.dart';
 import '../../../kboardVisibilityManager.dart';
+import '../../../testPrinter/printConnections.dart';
 import '../../../themes/colors.dart';
 import '../../../stock/products/services/productsService.dart';
 import '../services/salesServices.dart';
@@ -10,7 +11,9 @@ class Ticketslist extends StatefulWidget {
   final ListenerremoverOL listenerremoverOL;
   final void Function(int) onShowBlur;
   final Function(double) onOptnSize;
-  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL});
+  final PrintService printService;
+
+  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL, required this.printService});
 
   @override
   State<Ticketslist> createState() => _TicketslistState();
@@ -28,10 +31,10 @@ class _TicketslistState extends State<Ticketslist> {
   List<int> cantHelper = [];
   List<int> tapedIndices = [];
   List<dynamic> ticketInfo = [];
+  PrintService printService = PrintService();
 
   late KeyboardVisibilityManager keyboardVisibilityManager;
   List<ExpansionTileController> tileController = [];
-
 
   void itemCount (index, action){
     if(action == false){
@@ -115,7 +118,8 @@ class _TicketslistState extends State<Ticketslist> {
       tickets[index]['id'],
       tickets[index]['fecha'],
       tickets[index]['cantidad'],
-      tickets[index]['total']
+      tickets[index]['total'],
+      tickets[index]['detalles'],
     ]);
     if (index >= 0 && index < tickets.length) {
       removeOverlay();
@@ -149,6 +153,7 @@ class _TicketslistState extends State<Ticketslist> {
                   onShowBlur: widget.onShowBlur,
                   columnH: null, 
                   ticketInfo: ticketInfo,
+                  printService: widget.printService,
                 ),
               ),
             );
