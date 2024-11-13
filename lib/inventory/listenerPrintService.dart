@@ -1,7 +1,3 @@
-
-
-import 'package:beaute_app/inventory/print/printConnections.dart';
-
 class ListenerPrintService {
   int _printServiceActivated = 0;
   bool? _isConnect;
