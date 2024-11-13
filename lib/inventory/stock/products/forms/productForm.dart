@@ -4,6 +4,9 @@ import 'package:beaute_app/inventory/stock/categories/forms/categoryBox.dart';
 import 'package:beaute_app/inventory/stock/products/styles/productFormStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:soundpool/soundpool.dart';
+import '../../../scanBarCode.dart';
 import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
@@ -35,6 +38,7 @@ class _ProductFormState extends State<ProductForm> {
   double ? screenHeight;
   int _catID = 0;
   bool isLoading = false;
+  bool helperCloseScan = false;
 
   @override
   void didChangeDependencies() {
@@ -61,6 +65,17 @@ class _ProductFormState extends State<ProductForm> {
     // TODO: implement dispose
     keyboardVisibilityManager.dispose();
     super.dispose();
+  }
+
+  void onScanProd(String? resultScanedProd) async {
+
+    if (resultScanedProd != null) {
+      barCodeController.text = resultScanedProd;
+        await soundScaner().then((_){
+          helperCloseScan = true;
+        });
+        if(mounted) Navigator.of(context).pop();
+    }
   }
 
   final productService = ProductService();
@@ -97,6 +112,15 @@ class _ProductFormState extends State<ProductForm> {
   }
   void onSelectedCat (int catID) {
     _catID = catID;
+  }
+
+
+  Future<void> soundScaner() async {
+    Soundpool pool = Soundpool.fromOptions(options: SoundpoolOptions.kDefault);
+    int soundId = await rootBundle.load('assets/sounds/store_scan.mp3').then((ByteData soundData){
+      return pool.load(soundData);
+    });
+    int streamId = await pool.play(soundId);
   }
   @override
   Widget build(BuildContext context) {
@@ -213,29 +237,55 @@ class _ProductFormState extends State<ProductForm> {
                          )),
                    ],
                  ),
-
-                 Column(
-                   children: [
-                     TitleModContainer(text: 'Código de barras', ),
-                     Padding(
-                         padding: EdgeInsets.only(
-                             left: MediaQuery.of(context).size.width * 0.03,
-                             right: MediaQuery.of(context).size.width * 0.03),
-                         child: TextProdField(
-                           focusNode: barCodeFocus,
-                           controller: barCodeController,
-                           keyboardType: TextInputType.number,
-                           inputFormatters: [
-                             RegEx(type: InputFormatterType.numeric),
-                           ],
-                           text: 'Código de barras del producto',
-                           textStyle: const TextStyle(
-                             color: AppColors.primaryColor,
-                           ),
-                         )),
-                   ],
-                 ),
-                 Column(
+              Column(
+                children: [
+                  TitleModContainer(text: 'Código de barras'),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
+                    child: Builder(builder: (context){
+                      return TextField(
+                        focusNode: barCodeFocus,
+                        controller: barCodeController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          RegEx(type: InputFormatterType.numeric),
+                        ],
+                        decoration: InputDecoration(
+                          hintText: 'Código de barras del producto',
+                          hintStyle: const TextStyle(color: AppColors.primaryColor),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.qr_code_scanner, color: AppColors.primaryColor),
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context ,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                    return ScanBarCode(
+                                      onShowScan: (show) {
+                                        Navigator.of(context).pop();
+                                      },
+                                      onScanProd: onScanProd
+                                    );
+                                },
+                              );
+                            },
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        style: const TextStyle(color: AppColors.primaryColor),
+                      );
+                      }),
+                  ),
+                ],
+              ),
+            Column(
                      children: [
                        TitleModContainer(text: 'Categoria'),
                        Padding(padding: EdgeInsets.only(
