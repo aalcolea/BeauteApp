@@ -8,6 +8,7 @@ import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../themes/colors.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TestPDF extends StatefulWidget {
 
@@ -39,7 +40,7 @@ class _TestPDFState extends State<TestPDF> {
 
   Future<String> savePdfTemporarily() async {
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/test_pdf.pdf');
+    final file = File('${dir.path}/Recibo de Compra_${widget.ticket['id']}.pdf');
     await file.writeAsBytes(archivoPdf);
     return file.path;
   }
@@ -187,38 +188,6 @@ class _TestPDFState extends State<TestPDF> {
                                       width: 120,
                                       child: pw.Text(
                                         'Efectivo/Tarjeta',
-                                        style: const pw.TextStyle(
-                                          fontSize: 11,
-                                          color: PdfColors.black,
-                                        ),
-                                        textAlign: pw.TextAlign.center,
-                                      ),
-                                    ),
-                                  ]
-                              ),
-                              pw.Column(
-                                  children: [
-                                    pw.Container(
-                                      padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                                      margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
-                                      color: PdfColors.blue900,
-                                      width: 120,
-                                      child: pw.Text(
-                                        'No de cheque',
-                                        style: const pw.TextStyle(
-                                          fontSize: 11,
-                                          color: PdfColors.white,
-                                        ),
-                                        textAlign: pw.TextAlign.center,
-                                      ),
-                                    ),
-                                    pw.Container(
-                                      padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                                      margin: const pw.EdgeInsets.only(right: 2),
-                                      color: PdfColors.blue100,
-                                      width: 120,
-                                      child: pw.Text(
-                                        'No de cheque',
                                         style: const pw.TextStyle(
                                           fontSize: 11,
                                           color: PdfColors.black,
@@ -483,8 +452,17 @@ class _TestPDFState extends State<TestPDF> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-
+            onPressed: () async {
+              if (pdfPath != null) {
+                await Share.shareXFiles(
+                  [XFile(pdfPath!)],
+                  text: '¡Gracias por su confianza en Beaute clinique!',
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Error: PDF no disponible para compartir")),
+                );
+              }
             },
             icon: const Icon(
               CupertinoIcons.share,
