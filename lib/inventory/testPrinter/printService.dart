@@ -59,6 +59,10 @@ class PrintService2 {
   Future<void> printTicketText(List<dynamic> carrito) async {
     String lugar = 'Lugar exp: Merida, Yucatan\n';
     double cuentaTotal = 0;
+    ///
+/*    String? createdAtString = carrito[0]['producto']['created_at'];
+    createdAtString = createdAtString?.substring(0, 10);
+
 
     if (characteristic == null) return;
 
@@ -71,8 +75,31 @@ class PrintService2 {
     bytes += utf8.encode('\x1B\x61\x00');
     bytes += utf8.encode(lugar);
     Future.delayed(Duration(milliseconds: 25));
-    bytes += utf8.encode('Fecha exp: ${DateFormat.yMd().format(DateTime.now())} ${DateFormat.jm().format(DateTime.now())}\n');
+    //bytes += utf8.encode('Fecha exp: $formattedDate ${DateFormat.jm().format(DateTime.now())}\n');    Future.delayed(Duration(milliseconds: 25));
+    bytes += utf8.encode('Fecha exp: ${createdAtString}\n');*/
+    ///
+    String? createdAtString = carrito[0]['producto']['created_at'];
+    DateTime? createdAtDate;
+    if (createdAtString != null && createdAtString.isNotEmpty) {
+      createdAtDate = DateTime.tryParse(createdAtString);
+    }
+
+    String formattedDate = createdAtDate != null
+        ? DateFormat.yMd().format(createdAtDate)
+        : DateFormat.yMd().format(DateTime.now());
+    if (characteristic == null) return;
+
+    List<int> bytes = [];
+
+    bytes += utf8.encode('\x1B\x61\x01');
+    bytes += utf8.encode('\x1B\x45\x01');
+    bytes += utf8.encode('CLINICA FLY\n\n');
+    bytes += utf8.encode('\x1B\x45\x00');
+    bytes += utf8.encode('\x1B\x61\x00');
+    bytes += utf8.encode(lugar);
     Future.delayed(Duration(milliseconds: 25));
+    //bytes += utf8.encode('Fecha exp: $formattedDate ${DateFormat.jm().format(DateTime.now())}\n');    Future.delayed(Duration(milliseconds: 25));
+    bytes += utf8.encode('Fecha exp: $formattedDate ${DateFormat.jm().format(DateTime.now())}\n');
     bytes += utf8.encode('\n');
     bytes += utf8.encode('Cliente #\n');
     bytes += utf8.encode('\n');
