@@ -154,6 +154,7 @@ class _TicketslistState extends State<Ticketslist> {
                   columnH: null, 
                   ticketInfo: ticketInfo,
                   printService: widget.printService,
+                  tickets: tickets[index],
                 ),
               ),
             );

@@ -337,14 +337,6 @@ class _navBarState extends State<navBar> {
                             );
 
                           }, icon: Icon(Icons.ac_unit)),
-                          IconButton(onPressed: (){
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => testPDF(),
-                              ),
-                            );
-
-                          }, icon: Icon(Icons.ac_unit)),
                           Expanded(
                               child: Container(
                                   padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.03),

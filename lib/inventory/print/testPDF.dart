@@ -1,21 +1,29 @@
 import 'dart:typed_data';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import '../themes/colors.dart';
 
-class testPDF extends StatefulWidget {
+class TestPDF extends StatefulWidget {
+
+  final Map<String, dynamic> ticket;
+
+  const TestPDF({super.key, required this.ticket});
+
   @override
-  _testPDFState createState() => _testPDFState();
+  _TestPDFState createState() => _TestPDFState();
 }
 
-class _testPDFState extends State<testPDF> {
+class _TestPDFState extends State<TestPDF> {
   late pw.Document pdf;
   late Uint8List archivoPdf;
   String? pdfPath;
+  List<dynamic> detallesTicket = [];
 
   @override
   void initState() {
@@ -37,6 +45,7 @@ class _testPDFState extends State<testPDF> {
   }
 
   Future<Uint8List> generarPdf1() async {
+    detallesTicket = widget.ticket['detalles'];
     pdf = pw.Document();
     final imageBytes = await rootBundle.load('assets/imgLog/test2.jpeg');
     final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
@@ -46,7 +55,7 @@ class _testPDFState extends State<testPDF> {
         margin: pw.EdgeInsets.zero,
         build: (context) => [
           pw.Padding(
-            padding: pw.EdgeInsets.all(20),
+            padding: const pw.EdgeInsets.all(20),
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -113,7 +122,7 @@ class _testPDFState extends State<testPDF> {
                                     textAlign: pw.TextAlign.center,
                                   ),
                                   pw.Text(
-                                    'Fecha',
+                                    '${widget.ticket['fecha']}',
                                     style: const pw.TextStyle(
                                       fontSize: 12,
                                       color: PdfColors.black,
@@ -125,7 +134,7 @@ class _testPDFState extends State<testPDF> {
                             pw.Row(
                                 children: [
                                   pw.Text(
-                                    'Recibo # ',
+                                    'Recibo #',
                                     style: pw.TextStyle(
                                         fontSize: 12,
                                         color: PdfColors.blue900,
@@ -134,7 +143,7 @@ class _testPDFState extends State<testPDF> {
                                     textAlign: pw.TextAlign.center,
                                   ),
                                   pw.Text(
-                                    'no',
+                                    '${widget.ticket['id']}',
                                     style: const pw.TextStyle(
                                       fontSize: 12,
                                       color: PdfColors.black,
@@ -147,78 +156,8 @@ class _testPDFState extends State<testPDF> {
                       )
                     ]
                 ),
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Vendido a ',
-                      style: pw.TextStyle(
-                          fontSize: 12,
-                          color: PdfColors.blue900,
-                          fontWeight: pw.FontWeight.bold
-                      ),
-                      textAlign: pw.TextAlign.center,
-                    ),
-                    pw.Container(
-                      width: 10
-                    ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          '[Nombre del cliente',
-                          style: const pw.TextStyle(
-                              fontSize: 11,
-                              color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                        pw.Text(
-                          'Nombre de la compania',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                        pw.Text(
-                          'Direccion',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                        pw.Text(
-                          'Ciudad, Provincia, Codigo postal',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                        pw.Text(
-                          'Telefono',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                        pw.Text(
-                          'id del Cliente]',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                      ]
-                    )
-                  ]
-                ),
                 pw.Container(
-                  height: 12
+                  height: 15
                 ),
                 pw.Row(
                   children: [
@@ -244,7 +183,7 @@ class _testPDFState extends State<testPDF> {
                           color: PdfColors.blue100,
                           width: 120,
                           child: pw.Text(
-                            'Metodo de pago',
+                            'Efectivo/Tarjeta',
                             style: const pw.TextStyle(
                               fontSize: 11,
                               color: PdfColors.black,
@@ -294,7 +233,7 @@ class _testPDFState extends State<testPDF> {
                         padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                         margin: const pw.EdgeInsets.only(right: 2, top: 10),
                         color: PdfColors.blue900,
-                        width: 50,
+                        width: 43,
                         child: pw.Text(
                           'Cant.',
                           style: const pw.TextStyle(
@@ -337,9 +276,9 @@ class _testPDFState extends State<testPDF> {
                         padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                         margin: const pw.EdgeInsets.only(right: 2, top: 10),
                         color: PdfColors.blue900,
-                        width: 70,
+                        width: 90,
                         child: pw.Text(
-                          'Total',
+                          'Total prod',
                           style: const pw.TextStyle(
                             fontSize: 11,
                             color: PdfColors.white,
@@ -349,67 +288,144 @@ class _testPDFState extends State<testPDF> {
                       ),
                     ]
                 ),
-                pw.Row(
-                    children: [
-                      pw.Container(
-                        padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                        margin: const pw.EdgeInsets.only(right: 2, bottom: 2, top: 2),
-                        color: PdfColors.blue100,
-                        width: 50,
-                        child: pw.Text(
-                          '1',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                      ),
-                      pw.Expanded(
-                        child: pw.Container(
-                          padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                          margin: const pw.EdgeInsets.only(right: 2, bottom: 2, top: 2),
-                          color: PdfColors.blue100,
-                          child: pw.Text(
-                            'test',
-                            style: const pw.TextStyle(
-                              fontSize: 11,
-                              color: PdfColors.black,
+                pw.ListView.builder(
+                  itemCount: detallesTicket.length,
+                  itemBuilder: (context, index) {
+                    return pw.Row(
+                        children: [
+                          pw.Container(
+                            padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                            margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
+                            color: PdfColors.blue100,
+                            width: 43,
+                            child: pw.Text(
+                              '${widget.ticket['detalles'][index]['cantidad']}',
+                              style: const pw.TextStyle(
+                                fontSize: 11,
+                                color: PdfColors.black,
+                              ),
+                              textAlign: pw.TextAlign.center,
                             ),
-                            textAlign: pw.TextAlign.center,
                           ),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                              margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
+                              color: PdfColors.blue100,
+                              child: pw.Text(
+                                '${widget.ticket['detalles'][index]['producto']['nombre']}',
+                                style: const pw.TextStyle(
+                                  fontSize: 11,
+                                  color: PdfColors.black,
+                                ),
+                                textAlign: pw.TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          pw.Container(
+                            padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                            margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
+                            color: PdfColors.blue100,
+                            width: 90,
+                            child: pw.Row(
+                              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text(
+                                  '\$',
+                                  style: const pw.TextStyle(
+                                    fontSize: 11,
+                                    color: PdfColors.black,
+                                  ),
+                                  textAlign: pw.TextAlign.center,
+                                ),
+                                pw.Text(
+                                  '${widget.ticket['detalles'][index]['precio']}',
+                                  style: const pw.TextStyle(
+                                    fontSize: 11,
+                                    color: PdfColors.black,
+                                  ),
+                                  textAlign: pw.TextAlign.center,
+                                )
+                              ]
+                            )
+                          ),
+                          pw.Container(
+                            padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                            margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
+                            color: PdfColors.blue100,
+                            width: 90,
+                            child: pw.Row(
+                              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text(
+                                  '\$',
+                                  style: const pw.TextStyle(
+                                    fontSize: 11,
+                                    color: PdfColors.black,
+                                  ),
+                                  textAlign: pw.TextAlign.right,
+                                ),
+                                pw.Text(
+                                  (double.parse(widget.ticket['detalles'][index]['precio'])*(widget.ticket['detalles'][index]['cantidad'])).toStringAsFixed(2),
+                                  style: const pw.TextStyle(
+                                    fontSize: 11,
+                                    color: PdfColors.black,
+                                  ),
+                                  textAlign: pw.TextAlign.right,
+                                )
+                              ]
+                            )
+                          ),
+                        ]
+                    );
+                  }
+                ),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Container(
+                      padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                      margin: const pw.EdgeInsets.only(right: 2, top: 5),
+                      color: PdfColors.blue900,
+                      width: 90,
+                      child: pw.Text(
+                        'Total',
+                        style: const pw.TextStyle(
+                          fontSize: 11,
+                          color: PdfColors.white,
                         ),
-                      ),
-                      pw.Container(
+                        textAlign: pw.TextAlign.center,
+                      )
+                    ),
+                    pw.Container(
                         padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                        margin: const pw.EdgeInsets.only(right: 2, bottom: 2, top: 2),
+                        margin: const pw.EdgeInsets.only(right: 2, top: 5),
                         color: PdfColors.blue100,
                         width: 90,
-                        child: pw.Text(
-                          '10',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                      ),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                        margin: const pw.EdgeInsets.only(right: 2, bottom: 2, top: 2),
-                        color: PdfColors.blue100,
-                        width: 70,
-                        child: pw.Text(
-                          '10',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.black,
-                          ),
-                          textAlign: pw.TextAlign.center,
-                        ),
-                      ),
-                    ]
-                ),
+                        child: pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.Text(
+                              '\$',
+                              style: const pw.TextStyle(
+                                fontSize: 11,
+                                color: PdfColors.black,
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),
+                            pw.Text(
+                              '${widget.ticket['total']}',
+                              style: const pw.TextStyle(
+                                fontSize: 11,
+                                color: PdfColors.black,
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            )
+                          ]
+                        )
+                    )
+                  ]
+                )
               ],
             )
           ),
@@ -424,11 +440,30 @@ class _testPDFState extends State<testPDF> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('testPDF'),
+        title: const Text(
+          'testPDF',
+          style: TextStyle(
+            color: AppColors.primaryColor
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+
+            },
+            icon: const Icon(
+              CupertinoIcons.share,
+              color: AppColors.primaryColor,
+            )
+          )
+        ],
+        iconTheme: const IconThemeData(
+          color: AppColors.primaryColor
+        ),
       ),
       body: SafeArea(
         child: pdfPath == null
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : PdfView(
           path: pdfPath!,
         ),
