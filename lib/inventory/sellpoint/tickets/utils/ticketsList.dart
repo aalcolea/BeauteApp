@@ -1,8 +1,8 @@
-import 'package:beaute_app/inventory/sellpoint/processStuff/utils/listenerRemoverOL.dart';
-import 'package:beaute_app/inventory/sellpoint/processStuff/utils/ticketOptions.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerRemoverOL.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketOptions.dart';
 import 'package:flutter/material.dart';
 import '../../../kboardVisibilityManager.dart';
-import '../../../testPrinter/printConnections.dart';
+import '../../../print/printConnections.dart';
 import '../../../themes/colors.dart';
 import '../../../stock/products/services/productsService.dart';
 import '../services/salesServices.dart';

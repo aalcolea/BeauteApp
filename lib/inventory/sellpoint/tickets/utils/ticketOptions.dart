@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:beaute_app/inventory/testPrinter/printService.dart';
+import 'package:beaute_app/inventory/print/printService.dart';
 import 'package:flutter/material.dart';
 import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
-import '../../../testPrinter/printConnections.dart';
+import '../../../print/printConnections.dart';
 import '../../../themes/colors.dart';
 
 class TicketOptions extends StatefulWidget {
