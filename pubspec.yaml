@@ -62,7 +62,9 @@ dependencies:
   pdf: ^3.8.4
   pdf_viewer_plugin: ^2.0.1
   path_provider: ^2.1.5
-
+  connectivity_plus: ^4.0.2
+  sqflite: ^2.0.0+3
+  path: ^1.8.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

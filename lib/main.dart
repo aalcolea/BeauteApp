@@ -11,7 +11,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'agenda/services/angedaDatabase/databaseService.dart';
 import 'globalVar.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 void main() async {
@@ -86,13 +88,26 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  bool isConnected = false;
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
+   // checkLoginStatus();
+    checkConnectionAndLoginStatus();
+  }
+  Future<void> checkConnectionAndLoginStatus() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    isConnected = connectivityResult != ConnectivityResult.none;
+
+    if (isConnected) {
+      checkLoginStatus();
+    } else {
+      await loadLocalData();
+    }
   }
 
   void checkLoginStatus() async {
+    final dbService = DatabaseService();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('jwt_token');
     await Future.delayed(const Duration(seconds: 2));
@@ -103,6 +118,24 @@ class SplashScreenState extends State<SplashScreen> {
           'Authorization': 'Bearer $token',
         },
       );
+      if (!isConnected) {
+        final session = await dbService.getSession();
+        if (session != null) {
+          final user = await dbService.getUser(session['user_id']);
+          if (user != null) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => AssistantAdmin(docLog: session['is_doctor'] == 1),
+              ),
+            );
+          } else {
+            goToLogin();
+          }
+        } else {
+          goToLogin();
+        }
+        return;
+      }
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         print(data);
@@ -122,7 +155,12 @@ class SplashScreenState extends State<SplashScreen> {
       goToLogin();
     }
   }
-
+  Future<void> loadLocalData() async {
+    print("Sin conexión a Internet. Cargando datos locales...");
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => AssistantAdmin(docLog: SessionManager.instance.isDoctor)),
+    );
+  }
   void goToLogin() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Login()));
   }
