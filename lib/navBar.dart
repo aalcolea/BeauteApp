@@ -83,12 +83,17 @@ class _navBarState extends State<navBar> {
             break;
           case 2://conect == false
             setState(() {
+              print('disconect');
               isConecct = newIsConnect;
               widget.onPrintServiceComunication!(printService);
             });
             break;
-          case 3:
-            isConecct = true;
+          case 3://no encontro disp
+            setState(() {
+              print('not found navBar');
+              isConecct = false;
+              widget.onLockScreen(false);
+            });
             break;
         }
       });
@@ -143,6 +148,7 @@ class _navBarState extends State<navBar> {
                           ),
                           InkWell(
                             onTap: widget.currentScreen == 'agenda' ? Navigator.of(context).pop : (){
+                              isConecct ==  true ? printService.disconnect(context) : null;
                               Navigator.of(context).pushAndRemoveUntil(
                                 CupertinoPageRoute(
                                   builder: (context) => AssistantAdmin(docLog: widget.isDoctorLog),

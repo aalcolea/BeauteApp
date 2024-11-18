@@ -25,6 +25,7 @@ import 'package:soundpool/soundpool.dart';
 
 import '../agenda/utils/PopUpTabs/closeConfirm.dart';
 import 'kboardVisibilityManager.dart';
+import 'listenerPrintService.dart';
 import 'themes/colors.dart';
 
 class adminInv extends StatefulWidget {
@@ -60,6 +61,8 @@ class _adminInvState extends State<adminInv> {
   List<String> searchedBarcodes = [];
   List<dynamic> producto = []; ///despues le quito la lista (alan)
   bool lockScreen = false;
+  ListenerPrintService listenerPrintService = ListenerPrintService();
+
 
   void changeBlurr(){
     if (productsKey.currentState != null) {
