@@ -11,7 +11,7 @@ class PrintService2 {
   BluetoothCharacteristic? characteristic;
   PrintService2(this.characteristic);
 
-  //>>>>>>>>>>>imprimir ticket del carrito
+  //imprimir ticket del carrito
   Future<void> connectAndPrintAndroide(List<Map<String, dynamic>> carrito, String imagePath) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
@@ -22,9 +22,9 @@ class PrintService2 {
     await printText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
   }
-  //<<<<<<<<<<<<<<<imprimir ticket del carrito
+  //imprimir ticket del carrito
 
-  //>>>>>>>>>>>>>>>imprimir ticket existente
+  //imprimir ticket existente
   Future<void> connectAndPrintAndroideTicket(List<dynamic> carrito, String imagePath) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
@@ -34,7 +34,7 @@ class PrintService2 {
     await printTicketText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
   }
-  //<<<<<<<<<<<<<<<imprimir ticket existente
+  //imprimir ticket existente
 
   Future<void> connectAndPrintIOS(List<Map<String, dynamic>> carrito, String imagePath) async {
     if (characteristic == null) {
@@ -58,7 +58,7 @@ class PrintService2 {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
-  //>>>>>>>>>printTicketText es para imprimir un ticker existente
+  //printTicketText es para imprimir un ticker existente
   Future<void> printTicketText(List<dynamic> carrito) async {
     String lugar = 'Lugar exp: Merida, Yucatan\n';
     double cuentaTotal = 0;
@@ -145,9 +145,9 @@ class PrintService2 {
     await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
     await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
   }
-  //<<<<<<<<<<<<<<<
+  //
 
-  Future<void> centrar () async{//>>>>> esta porque la impresion de androiod no centrar la imagen
+  Future<void> centrar () async{// esta porque la impresion de androiod no centrar la imagen
     List<int> bytes = [];
     bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
     await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
@@ -199,10 +199,10 @@ class PrintService2 {
       String formattedTotal = ('\$${total.toStringAsFixed(2)}').padLeft(10);
       String formattedCant = (productQuantity.toStringAsFixed(0)).padLeft(3);
 
-      //>>>>>>esto es del precio individual de cada prod
+      //esto es del precio individual de cada prod
       //String price = productPrice.toStringAsFixed(1);
       //String paddedPrice = price.padRight(6);
-      //<<<<<<
+      //
 
       for (int j = 0; j < partesProducto.length; j++) {
         if (j == 0) {
@@ -315,7 +315,7 @@ class PrintService2 {
 
     return bytes;
   }
-  //<<<<<< termina funcion para android
+  // termina funcion para android
 
   Future<void> printImageWithAtkinsonDithering(String imagePath, {int maxWidth = 384, int maxHeight = 200}) async {
     if (characteristic == null) return;
