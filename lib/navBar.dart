@@ -3,7 +3,7 @@ import 'package:beaute_app/agenda/themes/colors.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:beaute_app/inventory/listenerPrintService.dart';
-import 'package:beaute_app/inventory/testPrinter/printConnections.dart';
+import 'package:beaute_app/inventory/print/printConnections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 import 'agenda/forms/alertForm.dart';
 import 'globalVar.dart';
 import 'agenda/services/auth_service.dart';
-import 'inventory/testPrinter/testPrint.dart';
+import 'inventory/print/testPDF.dart';
+import 'inventory/print/testPrint.dart';
 
 class navBar extends StatefulWidget {
   final bool isDoctorLog;

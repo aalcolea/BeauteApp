@@ -1,4 +1,3 @@
-
 class ListenerPrintService {
 
   int _printServiceActivated = 0;

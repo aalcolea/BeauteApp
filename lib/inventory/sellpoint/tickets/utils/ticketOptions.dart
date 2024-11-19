@@ -1,11 +1,13 @@
 import 'dart:io';
 
-import 'package:beaute_app/inventory/testPrinter/printService.dart';
+import 'package:beaute_app/inventory/print/printService.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
-import '../../../testPrinter/printConnections.dart';
+import '../../../print/printConnections.dart';
+import '../../../print/testPDF.dart';
 import '../../../themes/colors.dart';
 
 class TicketOptions extends StatefulWidget {
@@ -16,8 +18,9 @@ class TicketOptions extends StatefulWidget {
   final void Function(int) onShowBlur;
   final dynamic columnH;
   final PrintService printService;
+  final Map<String, dynamic> tickets;
 
-  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo, required this.printService,
+  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo, required this.printService, required this.tickets,
   });
 
   @override
@@ -160,6 +163,12 @@ class _TicketOptionsState extends State<TicketOptions> {
                             ),
                             child: TextButton(
                                 onPressed: () {
+                                  Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (context) => TestPDF(ticket: widget.tickets,),
+                                    ),
+                                  );
+                                  widget.onClose();
                                 },
                                 style: const ButtonStyle(
                                   alignment: Alignment.centerLeft,
