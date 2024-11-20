@@ -1,3 +1,4 @@
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerOnDateChanged.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerRemoverOL.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketOptions.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,9 @@ class Ticketslist extends StatefulWidget {
   final void Function(int) onShowBlur;
   final Function(double) onOptnSize;
   final PrintService printService;
+  final ListenerOnDateChanged listenerOnDateChanged;
 
-  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL, required this.printService});
+  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL, required this.printService, required this.listenerOnDateChanged});
 
   @override
   State<Ticketslist> createState() => _TicketslistState();
@@ -34,7 +36,7 @@ class _TicketslistState extends State<Ticketslist> {
   PrintService printService = PrintService();
 
   late KeyboardVisibilityManager keyboardVisibilityManager;
-  List<ExpansionTileController> tileController = [];
+  List<ExpansionTileController>? tileController = [];
 
   void itemCount (index, action){
     if(action == false){
@@ -73,7 +75,7 @@ class _TicketslistState extends State<Ticketslist> {
     super.initState();
     keyboardVisibilityManager = KeyboardVisibilityManager();
     ticketKeys = List.generate(products_global.length, (index) => GlobalKey());
-    fetchSales().then((_){
+    fetchSales(null, null).then((_){
       WidgetsBinding.instance.addPostFrameCallback((_){
         optnSize = ticketKeys[0].currentContext!.size!.height;
       });
@@ -83,21 +85,31 @@ class _TicketslistState extends State<Ticketslist> {
         removeOverlay();
       }
     });
+    widget.listenerOnDateChanged.registrarObservador((callback, initData, finalData){
+      if(callback){
+        fetchSales(initData, finalData).then((_){
+          WidgetsBinding.instance.addPostFrameCallback((_){
+            optnSize = ticketKeys[0].currentContext!.size!.height;
+          });
+        });
+      }
+    });
   }
 
-  Future<void> fetchSales() async{
+  Future<void> fetchSales(String? initData, String? finalData) async{
     setState(() {
       isLoading = true;
     });
     try{
       final salesService = SalesServices();
-      final tickets2 = await salesService.fetchSales();
+      final tickets2 = await salesService.fetchSales(initData, finalData);
       setState(() {
+        tileController = [];
         tickets = tickets2;
         tickets2.sort((a, b) => b['id'].compareTo(a['id']));
         ticketKeys = List.generate(tickets.length, (index) => GlobalKey()); // Actualiza ticketKeys
         for (int i = 0; i <= tickets.length; i++) {
-          tileController.add(ExpansionTileController());
+          tileController?.add(ExpansionTileController());
         }
         cantHelper = List.generate(tickets.length, (index) => 0);
         isLoading = false;
@@ -113,7 +125,7 @@ class _TicketslistState extends State<Ticketslist> {
   }
 
   void showTicketOptions(int index) {
-    tileController[index].isExpanded ? tileController[index].collapse() : null;
+    tileController![index].isExpanded ? tileController![index].collapse() : null;
     ticketInfo.addAll([
       tickets[index]['id'],
       tickets[index]['fecha'],
@@ -194,7 +206,7 @@ class _TicketslistState extends State<Ticketslist> {
     // final groupedTickets = groupByTicket(ticketProducts);
     return Container(
       color: AppColors.bgColor,
-      child: ListView.builder(
+      child: tickets.isNotEmpty ? ListView.builder(
         padding: EdgeInsets.zero,
         itemCount: tickets.length,
         itemBuilder: (context, index) {
@@ -220,7 +232,7 @@ class _TicketslistState extends State<Ticketslist> {
                   widget.onShowBlur(2);
                 },
                 child: ExpansionTile(
-                  controller: tileController[index],
+                  controller: tileController![index],
                   iconColor: AppColors.bgColor,
                   collapsedIconColor: AppColors.primaryColor,
                   backgroundColor: AppColors.primaryColor,
@@ -391,7 +403,14 @@ class _TicketslistState extends State<Ticketslist> {
               )
           );
         },
-      ),
+      ) : const Center(
+        child: Text(
+          'No hay tickets correspondientes a la fecha seleccionada',
+          style: TextStyle(
+              color: AppColors.primaryColor
+          ),
+        ),
+      )
     );
   }
 }
