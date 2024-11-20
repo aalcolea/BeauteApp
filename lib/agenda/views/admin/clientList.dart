@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alphabet_list_view/alphabet_list_view.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../forms/clientForm.dart';
 import '../../../main.dart';
 import '../../models/clientModel.dart';
+import '../../services/angedaDatabase/databaseService.dart';
 import '../../services/clienteService.dart';
 import '../../themes/colors.dart';
 import '../../utils/PopUpTabs/deleteClientDialog.dart';
@@ -26,28 +28,40 @@ class DropdownDataManager {
   List<Client> clients = [];
   Future<List<Client>> fetchUser() async {
     List<Client> nombresClientes = [];
+    final dbService = DatabaseService();
     try {
-      var response = await http.get(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/clientsAll'),
-      );
-      if (response.statusCode == 200) {
-        var jsonResponse = jsonDecode(response.body);
-        if (jsonResponse is Map<String, dynamic> && jsonResponse['clients'] is List) {
-          nombresClientes = List<Client>.from(
-            jsonResponse['clients'].map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>)),
-          );
-          clients = List.from(jsonResponse['clients'])
-              .map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>))
-              .toList();
+      var connectivityResult = await Connectivity().checkConnectivity();
+      bool isConnected = connectivityResult != ConnectivityResult.none;
+      if (isConnected) {
+        var response = await http.get(
+          Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/clientsAll'),
+        );
+        if (response.statusCode == 200) {
+          var jsonResponse = jsonDecode(response.body);
+          if (jsonResponse is Map<String, dynamic> && jsonResponse['clients'] is List) {
+            nombresClientes = List<Client>.from(
+              jsonResponse['clients'].map((clientJson) => Client.fromJson(clientJson as Map<String, dynamic>)),
+            );
+            List<Map<String, dynamic>> clientsToSave = jsonResponse['clients']
+                .map<Map<String, dynamic>>((clientJson) => clientJson as Map<String, dynamic>)
+                .toList();
+            await dbService.insertClient(clientsToSave);
+            print('Datos de clientes sincronizados correctamente');
+          } else {
+            print('La respuesta no contiene una lista de clientes');
+          }
         } else {
-          print('La respuesta no contiene una lista de clientes.');
+          print('Error al cargar los clientes desde la API: ${response.statusCode}');
         }
       } else {
-        print('Error al cargar los clientes: ${response.statusCode}');
+        print('Sin conexión a internet, cargando datos locales');
+        List<Map<String, dynamic>> localClients = await dbService.getClients();
+        nombresClientes = localClients.map((clientMap) => Client.fromJson(clientMap)).toList();
       }
     } catch (e) {
-      print('Error al realizar la solicitud: $e');
+      print('Error al realizar la solicitud o cargar datos locales: $e');
     }
+    clients = nombresClientes;
     return nombresClientes;
   }
 }

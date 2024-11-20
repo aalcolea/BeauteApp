@@ -11,7 +11,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'agenda/services/angedaDatabase/databaseHelpers.dart';
+import 'agenda/services/angedaDatabase/databaseService.dart';
 import 'globalVar.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 void main() async {
@@ -86,43 +89,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  bool isConnected = false;
+  late DatabaseHelpers dbHelpers;
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
+    dbHelpers = DatabaseHelpers(context);
+    dbHelpers.verifyDatabase();
+    dbHelpers.checkConnectionAndLoginStatus(isConnected);
   }
-
-  void checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt_token');
-    await Future.delayed(const Duration(seconds: 2));
-    if (token != null) {
-      var response = await http.get(
-        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/user'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        print(data);
-        if (data['user']['id'] == 1 || data['user']['id'] == 2) {
-          SessionManager.instance.isDoctor = true;
-        } else {
-          SessionManager.instance.isDoctor = false;
-        }
-        SessionManager.instance.Nombre = data['user']['name'];
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => AssistantAdmin(docLog: SessionManager.instance.isDoctor)));
-      } else {
-        prefs.remove('jwt_token');
-        goToLogin();
-      }
-    } else {
-      goToLogin();
-    }
-  }
-
   void goToLogin() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Login()));
   }

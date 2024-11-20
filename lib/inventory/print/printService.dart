@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:intl/intl.dart';
@@ -11,30 +12,27 @@ class PrintService2 {
   BluetoothCharacteristic? characteristic;
   PrintService2(this.characteristic);
 
-  //imprimir ticket del carrito
   Future<void> connectAndPrintAndroide(List<Map<String, dynamic>> carrito, String imagePath) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
       return;
     }
-    await centrar();
-    await printImageBW(imagePath);
+
+    await printImageBW(imagePath, ajusteManual: -36);
     await printText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
   }
-  //imprimir ticket del carrito
 
-  //imprimir ticket existente
   Future<void> connectAndPrintAndroideTicket(List<dynamic> carrito, String imagePath) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
       return;
     }
-    await printImageBW(imagePath);
+
+    await printImageBW(imagePath, ajusteManual: -36);
     await printTicketText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
   }
-  //imprimir ticket existente
 
   Future<void> connectAndPrintIOS(List<Map<String, dynamic>> carrito, String imagePath) async {
     if (characteristic == null) {
@@ -58,7 +56,6 @@ class PrintService2 {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
-  //printTicketText es para imprimir un ticker existente
   Future<void> printTicketText(List<dynamic> carrito) async {
     String lugar = 'Lugar exp: Merida, Yucatan\n';
     double cuentaTotal = 0;
@@ -73,15 +70,15 @@ class PrintService2 {
     bytes += utf8.encode('\x1B\x45\x00');
     bytes += utf8.encode('\x1B\x61\x00');
     bytes += utf8.encode(lugar);
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     bytes += utf8.encode('Fecha exp: ${DateFormat.yMd().format(DateTime.now())} ${DateFormat.jm().format(DateTime.now())}\n');
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     bytes += utf8.encode('\n');
     bytes += utf8.encode('Cliente #\n');
     bytes += utf8.encode('\n');
 
     bytes += utf8.encode('CANT |     PROD     |  IMPORTE\n');
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     bytes += utf8.encode('--------------------------------\n');
 
     for (var item in carrito) {
@@ -122,7 +119,7 @@ class PrintService2 {
 
 
     bytes += utf8.encode('--------------------------------\n');
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     int totalLength = totalText.length + amountText.length;
     int spacesToAdd = lineWidth - totalLength;
     String padding = ' ' * spacesToAdd.clamp(0, lineWidth);
@@ -145,14 +142,6 @@ class PrintService2 {
     await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
     await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
   }
-  //
-
-  Future<void> centrar () async{// esta porque la impresion de androiod no centrar la imagen
-    List<int> bytes = [];
-    bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
-    await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
-  }
-
 
   Future<void> printText(List<Map<String, dynamic>> carrito) async {
     String lugar = 'Lugar exp: Merida, Yucatan\n';
@@ -161,6 +150,7 @@ class PrintService2 {
     if (characteristic == null) return;
 
     List<int> bytes = [];
+
     // Comando ESC/POS para centrar y poner en negrita el texto "BEUATE CLINIQUE"
     bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
     bytes += utf8.encode('\x1B\x45\x01'); // Negrita ON
@@ -169,15 +159,17 @@ class PrintService2 {
     bytes += utf8.encode('\x1B\x61\x00'); // Alinear izquierda
     //bytes += utf8.encode('\x1B\x61\x02'); // Alinear der
     bytes += utf8.encode(lugar);
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     bytes += utf8.encode('Fecha exp: ${DateFormat.yMd().format(DateTime.now())} ${DateFormat.jm().format(DateTime.now())}\n');
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
+    // Espacio adicional
     bytes += utf8.encode('\n');
     bytes += utf8.encode('Cliente #\n');
     bytes += utf8.encode('\n');
 
+    // Encabezados de la tabla//5
     bytes += utf8.encode('CANT |     PROD     |  IMPORTE\n');
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     bytes += utf8.encode('--------------------------------\n');
 
        for (var item in carrito) {
@@ -199,10 +191,10 @@ class PrintService2 {
       String formattedTotal = ('\$${total.toStringAsFixed(2)}').padLeft(10);
       String formattedCant = (productQuantity.toStringAsFixed(0)).padLeft(3);
 
-      //esto es del precio individual de cada prod
+      //>>>>>>esto es del precio individual de cada prod
       //String price = productPrice.toStringAsFixed(1);
       //String paddedPrice = price.padRight(6);
-      //
+      //<<<<<<
 
       for (int j = 0; j < partesProducto.length; j++) {
         if (j == 0) {
@@ -224,7 +216,7 @@ class PrintService2 {
 
 
     bytes += utf8.encode('--------------------------------\n');
-    Future.delayed(const Duration(milliseconds: 25));
+    Future.delayed(Duration(milliseconds: 25));
     int totalLength = totalText.length + amountText.length;
     int spacesToAdd = lineWidth - totalLength;
     String padding = ' ' * spacesToAdd.clamp(0, lineWidth);
@@ -243,13 +235,16 @@ class PrintService2 {
     bytes += utf8.encode('\x1B\x45\x00'); // Negrita OFF
     bytes += utf8.encode('\n\n\n');
 
+
     await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
     await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
   }
 
   //funcion para imprimir imagen android
-  Future<void> printImageBW(String imagePath, {int maxWidth = 600, int maxHeight = 80}) async {
+  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75, int ajusteManual = 0}) async {
     if (characteristic == null) return;
+
+    print('Inicio de conversión de imagen para impresión en blanco y negro');
 
     ByteData data = await rootBundle.load(imagePath);
     Uint8List bytes = data.buffer.asUint8List();
@@ -262,16 +257,24 @@ class PrintService2 {
         resizedImage = img.copyResize(resizedImage, height: maxHeight);
       }
 
-      img.Image bwImage = _convertToBW(resizedImage);
+      int marginWidth = ((maxWidth - resizedImage.width) ~/ 2) + ajusteManual;
+      img.Image centeredImage = img.Image(maxWidth, resizedImage.height);
+
+      centeredImage.fill(img.getColor(255, 255, 255)); // Color blanco
+      img.drawImage(centeredImage, resizedImage, dstX: marginWidth, dstY: 0);
+
+      img.Image bwImage = _convertToBW(centeredImage);
       List<int> imageBytes = _convertImageToPrinterData(bwImage);
 
-      const chunkSize = 500;
+      const chunkSize = 600;
       for (int i = 0; i < imageBytes.length; i += chunkSize) {
         int end = (i + chunkSize < imageBytes.length) ? i + chunkSize : imageBytes.length;
         await characteristic!.write(Uint8List.fromList(imageBytes.sublist(i, end)), withoutResponse: false);
-        Future.delayed(const Duration(milliseconds: 20));
+        Future.delayed(const Duration(milliseconds: 10));
       }
-      await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false); // Añadir dos saltos de línea
+
+      await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
+      print('Imagen impresa en blanco y negro.');
     } else {
       print("Error al cargar la imagen.");
     }
@@ -315,7 +318,7 @@ class PrintService2 {
 
     return bytes;
   }
-  // termina funcion para android
+  //<<<<<< termina funcion para android
 
   Future<void> printImageWithAtkinsonDithering(String imagePath, {int maxWidth = 384, int maxHeight = 200}) async {
     if (characteristic == null) return;

@@ -258,7 +258,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                   color: AppColors3.primaryColor
                 ));
               } else if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
+                return Text("Error: No tienes conexion a interner para realizar esta consulta"); //${snapshot.error}
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Text('No se han encontrado appoinments');
               } else {
