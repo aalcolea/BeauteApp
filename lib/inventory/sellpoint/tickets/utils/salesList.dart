@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../themes/colors.dart';
 import '../services/salesServices.dart';
 
 class SalesList extends StatefulWidget {
   final void Function(int) onShowBlur;
-  const SalesList({super.key, required this.onShowBlur});
+  final String? formattedDate;
+  const SalesList({super.key, required this.onShowBlur, this.formattedDate});
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -19,6 +21,7 @@ class _SalesListState extends State<SalesList> {
   @override
   void initState() {
     super.initState();
+    print(widget.formattedDate);
     fetchSales();
   }
 
@@ -29,7 +32,7 @@ class _SalesListState extends State<SalesList> {
     try{
       final salesService = SalesServices();
       //await salesService.fetchSales();
-      final products2 = await salesService.getSalesByProduct();
+      final products2 = await salesService.getSalesByProduct(widget.formattedDate, widget.formattedDate);
       setState(() {
         products = products2;
         isLoading = false;
@@ -117,7 +120,7 @@ class _SalesListState extends State<SalesList> {
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
-                                      '${products[index]['total'].toStringAsFixed(2)}',
+                                      '\$${products[index]['total'].toStringAsFixed(2)}',
                                       style: TextStyle(
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -135,7 +138,7 @@ class _SalesListState extends State<SalesList> {
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
-                                      '${products[index]['fecha']}',
+                                      '${products[index]['fecha_venta']}',
                                       style: TextStyle(
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -201,7 +204,7 @@ class _SalesListState extends State<SalesList> {
                 Expanded(
                   child: IconButton(
                     onPressed: () {
-
+                      print(products[1]);
                     },
                     icon: Icon(
                       CupertinoIcons.arrow_down_doc_fill,
