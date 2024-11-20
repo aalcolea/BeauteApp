@@ -1,41 +1,67 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../calendar/calendarSchedule.dart';
 import 'package:http/http.dart' as http;
+import '../../services/angedaDatabase/databaseService.dart';
 import '../../themes/colors.dart';
 
-Future<List<Appointment2>> fetchAppointmentsByDate(int id, String date) async {
-  const baseUrl =
-      'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppointmentsByDate/';
+Future<List<Appointment2>> fetchAppointmentsByDate(int userId, String date) async {
+  List<Appointment2> appointments = [];
+  final dbService = DatabaseService();
+
   try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt_token');
-    if (token == null) {
-      throw Exception('No token found');
-    } else {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    bool isConnected = connectivityResult != ConnectivityResult.none;
+
+    if(isConnected){
+      print('Cargando appointments para ID: $userId en la fecha: $date desde la API');
       final response = await http.get(
-        Uri.parse(baseUrl + '$id' + '/' + '$date'),
+        Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppointmentsByDate/$userId/$date'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${await getToken()}',
         },
       );
-      print(baseUrl + '$id');
-      print(baseUrl + '$id' + '/' + '$date');
-      if (response.statusCode == 200) {
-        print(jsonDecode(response.body)['appointments']);
-        List<dynamic> data = jsonDecode(response.body)['appointments'];
-        return data.map((json) => Appointment2.fromJson(json)).toList();
-      } else {
-        throw Exception('Fallo al cargar appointments');
+      if(response.statusCode == 200){
+        var jsonResponse = jsonDecode(response.body);
+        if (jsonResponse is Map<String, dynamic> && jsonResponse['appointments'] is List) {
+          appointments = List<Appointment2>.from(
+            jsonResponse['appointments']
+                .map((appointmentJson) => Appointment2.fromJson(appointmentJson as Map<String, dynamic>)),
+          );
+          List<Map<String, dynamic>> appointmentsToSave = jsonResponse['appointments']
+              .map<Map<String, dynamic>>((appointmentJson) => appointmentJson as Map<String, dynamic>)
+              .toList();
+          await dbService.insertAppointments(appointmentsToSave);
+          print('Datos de appointments sincronizados correctamente');
+        }else{
+          print('La respuesta no contiene una lista de citas');
+        }
+      }else{
+        print('Error al cargar citas desde la API: ${response.statusCode}');
       }
+    }else{
+      String formattedDate = formatDate(DateTime.parse(date));
+      print('Sin conexión a internet, cargando datos locales de appointments para la fecha: $formattedDate...');
+      List<Map<String, dynamic>> localAppointments = await dbService.getAppointmentsByDate(formattedDate);
+      appointments = localAppointments.map((appointmentMap) => Appointment2.fromJson(appointmentMap)).toList();
+      print('test $appointments');
     }
-  } catch (e) {
-    print('Error: $e');
-    rethrow;
+  }catch(e) {
+    print('Error al realizar la solicitud o cargar datos locales: $e');
   }
+
+  return appointments;
+}
+Future<String?> getToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('jwt_token');
+}
+String formatDate(DateTime date) {
+  return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 }
 
 class NotiCards extends StatefulWidget {

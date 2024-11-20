@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:beaute_app/inventory/sellpoint/tickets/services/salesServices.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerOnDateChanged.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerRemoverOL.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/calendarSales.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketsList.dart';
@@ -26,6 +27,7 @@ class SalesHistory extends StatefulWidget {
 class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderStateMixin {
 
   ListenerremoverOL listenerremoverOL = ListenerremoverOL();
+  ListenerOnDateChanged listenerOnDateChanged = ListenerOnDateChanged();
   late AnimationController animationController;
   late Animation<double> opacidad;
   late String formattedDate;
@@ -43,6 +45,8 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
   FocusNode seekNode = FocusNode();
   FocusNode dateNode = FocusNode();
   PageController pageController = PageController();
+  final salesService = SalesServices();
+  String longDate = '';
 
   List<Map<String, dynamic>> tickets = [];
 
@@ -50,6 +54,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
     setState(() {
       this.optSize = optSize;
     });
+  }
+
+  void onDateChanged(){
+    listenerOnDateChanged.setChange(true, dateController.text, dateController.text);
   }
 
   void _onDateToAppointmentForm(
@@ -60,8 +68,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
         animationController.reset();
       });
       DateTime parsedDate = DateTime.parse(dateToAppointmentForm);
-      String formattedDate = DateFormat('dd-MM-yyyy').format(parsedDate);
+      String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+      longDate = DateFormat("d 'de' MMMM 'de' y", 'es_ES').format(parsedDate);
       dateController.text = formattedDate;
+      onDateChanged();
     });
   }
 
@@ -91,13 +101,12 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
     opacidad = Tween(begin: 0.0, end:  1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
     animationController.addListener((){
       setState(() {
-        print('stat ${animationController.status}');
       });
     });
     keyboardVisibilityManager = KeyboardVisibilityManager();
     DateTime now = DateTime.now();
-    var formatter = DateFormat('dd-MM-yyyy');
-    formattedDate = formatter.format(now);
+    var formatter = DateFormat('yyyy-MM-dd');
+    dateController.text = formatter.format(now);
     super.initState();
   }
 
@@ -186,7 +195,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                 decoration: InputDecoration(
                                   isDense: true,
                                     floatingLabelBehavior: dateController.text.isEmpty ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
-                                    hintText: formattedDate,
+                                    hintText: dateController.text,
                                   hintStyle: TextStyle(
                                     color: AppColors.primaryColor.withOpacity(0.3),
                                     fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -226,6 +235,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                 child: TextFormField(
                                   controller: seekController,
                                   focusNode: seekNode,
+                                  enabled: selectedPage == 0 ? false : true,
                                   inputFormatters: [
                                     RegEx(type: InputFormatterType.alphanumeric),
                                   ],
@@ -269,9 +279,9 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                           alignment: Alignment.centerLeft,
                           child: Text(
                             textAlign: TextAlign.left,
-                            '*Productos vendidos el ${dateController.text}',
+                            '*Productos vendidos el ${longDate}',
                             style: TextStyle(
-                              color: AppColors.bgColor,
+                              color: AppColors.primaryColor,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
                             ),
                           ),
@@ -290,8 +300,22 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                     });
                   },
                   children: [
-                    Ticketslist(onShowBlur: _onShowBlurr, onOptnSize: onOptnSize, listenerremoverOL: listenerremoverOL, printService: widget.printService,),
-                    SalesList(onShowBlur: _onShowBlurr,),
+                    Ticketslist(
+                      onShowBlur: _onShowBlurr,
+                      onOptnSize: onOptnSize,
+                      listenerremoverOL: listenerremoverOL,
+                      printService: widget.printService,
+                      listenerOnDateChanged: listenerOnDateChanged,
+                      dateController: dateController.text,
+                      onDateChanged: (fechaRecibida) => dateController.text = fechaRecibida,
+                    ),
+                    SalesList(
+                      onShowBlur: _onShowBlurr,
+                      listenerOnDateChanged: listenerOnDateChanged,
+                      dateController: dateController.text,
+                      onDateChanged: (fechaRecibida) => dateController.text = fechaRecibida,
+                      printService: widget.printService,
+                    ),
                   ],
                 ),
               ),
