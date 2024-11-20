@@ -109,14 +109,7 @@ class PrintService extends ChangeNotifier {
   }
 */
 
-
-  void scanForDevices(context) async {
-    bool isBluetoothOn = await flutterBlue.isOn;
-    if (!isBluetoothOn) {
-      showOverlay(context, const CustomToast(message: 'Encienda Bluethooth'));
-    } else {
-      try {
-       /* List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
+  /* List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
         for (BluetoothDevice device in connectedDevices) {
           if (device.name == nameTargetDevice) {
             selectedDevice = device;
@@ -127,15 +120,25 @@ class PrintService extends ChangeNotifier {
             return;
           }
         }*/
+
+
+  void scanForDevices(context) async {
+    bool isBluetoothOn = await flutterBlue.isOn;
+    if (!isBluetoothOn) {
+      showOverlay(context, const CustomToast(message: 'Encienda Bluethooth'));
+      return;
+    }
+    bool deviceFound = false;
+
+    try {
         listenerPrintService.setChange(0, null);
         await flutterBlue.startScan(timeout: const Duration(seconds: 5));
         flutterBlue.scanResults.listen((results) async {
           for (ScanResult r in results) {
             if (r.device.name == nameTargetDevice) {
-              print("name ${r.device.name}");
+              deviceFound = true;
               flutterBlue.stopScan();
               selectedDevice = r.device;
-              print('seldevvv $selectedDevice');
               isConnect = true;
               print("Dispositivo encontrado: ${selectedDevice?.name}");
               try {
@@ -143,11 +146,10 @@ class PrintService extends ChangeNotifier {
                 await selectedDevice!.connect();
                 discoverServices(selectedDevice!);
                 isConnect = true;
+                listenToDeviceState(context);  // Inicia la escucha después de la conexión
                 listenerPrintService.setChange(1, true);
                 print("Dispositivo conectado: ${selectedDevice?.name}");
-                print('seldevvv $selectedDevice');
                 showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
-                listenToDeviceState(context);
                 notifyListeners();
               } catch (e) {
                 print("Error al conectar con el dispositivo: $e");
@@ -159,11 +161,16 @@ class PrintService extends ChangeNotifier {
                 notifyListeners();
               }
               break;
-            }}});
+            }}
+        });
+        await Future.delayed(const Duration(seconds: 5));
+        if (!deviceFound) {
+          listenerPrintService.setChange(3, null);
+          showOverlay(context, const CustomToast(message: "Dispositivo no encontrado"));
+        }
       } catch (e) {
         print("Error durante el escaneo: $e");
       }
-    }
 
    }
 
@@ -172,25 +179,18 @@ class PrintService extends ChangeNotifier {
     if (selectedDevice != null) {
       _connectionSubscription = selectedDevice!.state.listen((state) {
         if (state == BluetoothDeviceState.disconnected) {
-          selectedDevice = null;
-          showOverlay(context, const CustomToast(message: 'Impresora desconectada'));
-          notifyListeners();
+          disconnect(context);
         }});}}
 
   void disconnect(context) async {
-    print('disconect1');
-    print('selDev $selectedDevice');
-    print('iscon $isConnect');
     if (selectedDevice != null) {
       try {
-        print('disconect2');
         _connectionSubscription?.cancel();
         await selectedDevice?.disconnect();
         selectedDevice = null;
         isConnect = false;
         listenerPrintService.setChange(2, false);
         notifyListeners();
-        print("Dispositivo desconectado correctamente");
         showOverlay(context, const CustomToast(message: 'Dispositivo desconectado correctamente'));
       } catch (e) {
         print("Error al desconectar el dispositivo: $e");
