@@ -29,6 +29,7 @@ class _TestPDFState extends State<TestPDF> {
   @override
   void initState() {
     super.initState();
+    print('hola');
     initPDF();
   }
 

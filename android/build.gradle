@@ -2,8 +2,10 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+
         maven {
-            url 'https://repo.maven.apache.org/maven2'
+            //url 'https://repo.maven.apache.org/maven2'
+            url 'https://jitpack.io'
             content {
                 excludeGroup "com.google.protobuf"
             }
