@@ -1,13 +1,25 @@
+import 'dart:io';
+
+import 'package:beaute_app/inventory/print/printSalesService.dart';
+import 'package:beaute_app/inventory/print/printService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../agenda/utils/showToast.dart';
+import '../../../../agenda/utils/toastWidget.dart';
+import '../../../print/printConnections.dart';
 import '../../../themes/colors.dart';
 import '../services/salesServices.dart';
+import 'listenerOnDateChanged.dart';
 
 class SalesList extends StatefulWidget {
   final void Function(int) onShowBlur;
-  final String? formattedDate;
-  const SalesList({super.key, required this.onShowBlur, this.formattedDate});
+  final ListenerOnDateChanged listenerOnDateChanged;
+  final String dateController;
+  final void Function(String) onDateChanged;
+  final PrintService printService;
+
+  const SalesList({super.key, required this.onShowBlur, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged, required this.printService});
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -17,24 +29,32 @@ class _SalesListState extends State<SalesList> {
 
   bool isLoading = false;
   List<Map<String, dynamic>> products = [];
+  late String formattedDate;
+  late SalesPrintService salesPrintService;
 
   @override
   void initState() {
     super.initState();
-    print(widget.formattedDate);
-    fetchSales();
+    fetchSales(widget.dateController, widget.dateController);
+    widget.listenerOnDateChanged.registrarObservador((callback, initData, finalData) async {
+      if (callback) {
+        await fetchSales(initData, finalData);
+      }
+    });
   }
 
-  Future<void> fetchSales() async{
+  Future<void> fetchSales(String? initData, String? finalData) async{
     setState(() {
       isLoading = true;
+      widget.onDateChanged(initData!);
     });
     try{
       final salesService = SalesServices();
       //await salesService.fetchSales();
-      final products2 = await salesService.getSalesByProduct(widget.formattedDate, widget.formattedDate);
+      final products2 = await salesService.getSalesByProduct(initData, finalData);
       setState(() {
         products = products2;
+        Future.delayed(Duration(milliseconds: 250));
         isLoading = false;
       });
     }catch (e) {
@@ -50,7 +70,8 @@ class _SalesListState extends State<SalesList> {
       child: Column(
         children: [
           Expanded(
-            child: ListView.builder(
+            child: !isLoading
+                ? ( products.isNotEmpty ? ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02),
               itemCount: products.length,
               itemBuilder: (context, index) {
@@ -160,6 +181,15 @@ class _SalesListState extends State<SalesList> {
                   ),
                 );
               },
+            ) : const Center(
+              child: Text(
+                'No hay tickets correspondientes a la fecha seleccionada',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            )) : const Center(
+              child: CircularProgressIndicator(),
             ),
           ),
           Container(
@@ -183,8 +213,27 @@ class _SalesListState extends State<SalesList> {
               children: [
                 Expanded(
                   child: IconButton(
-                    onPressed: () {
-
+                    onPressed: () async {
+                      bool canPrint = false;
+                      try{
+                        await widget.printService.ensureCharacteristicAvailable();
+                        if(widget.printService.characteristic != null){
+                          canPrint = true;
+                        }
+                      }catch(e){
+                        print("Error: No hay impresora conectada  - $e");
+                        showOverlay(context, const CustomToast(message: 'Impresion no disponible, continuando con la venta'));
+                      }
+                      if (canPrint) {
+                        salesPrintService = SalesPrintService(widget.printService.characteristic!);
+                        try{
+                          Platform.isAndroid ? await salesPrintService.connectAndPrintAndroide(products, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']) :
+                      await salesPrintService.connectAndPrintIOS(products, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']);
+                      } catch(e){
+                      print("Error al intentar imprimir: $e");
+                      showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));
+                      }
+                    }
                     },
                     icon: Icon(
                       CupertinoIcons.printer_fill,
@@ -204,7 +253,7 @@ class _SalesListState extends State<SalesList> {
                 Expanded(
                   child: IconButton(
                     onPressed: () {
-                      print(products[1]);
+
                     },
                     icon: Icon(
                       CupertinoIcons.arrow_down_doc_fill,
