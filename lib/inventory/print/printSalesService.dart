@@ -18,7 +18,7 @@ class SalesPrintService {
       return;
     }
 
-    await printImageBW(imagePath, ajusteManual: -36);
+    await printImageBW(imagePath);
     await printText(products, saleDate);
     await Future.delayed(const Duration(milliseconds: 500));
   }
@@ -128,7 +128,7 @@ class SalesPrintService {
   }
 
   //funcion para imprimir imagen android
-  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75, int ajusteManual = 0}) async {
+  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75}) async {
     if (characteristic == null) return;
 
     print('Inicio de conversión de imagen para impresión en blanco y negro');
@@ -143,14 +143,7 @@ class SalesPrintService {
       if (resizedImage.height > maxHeight) {
         resizedImage = img.copyResize(resizedImage, height: maxHeight);
       }
-
-      int marginWidth = ((maxWidth - resizedImage.width) ~/ 2) + ajusteManual;
-      img.Image centeredImage = img.Image(maxWidth, resizedImage.height);
-
-      centeredImage.fill(img.getColor(255, 255, 255)); // Color blanco
-      img.drawImage(centeredImage, resizedImage, dstX: marginWidth, dstY: 0);
-
-      img.Image bwImage = _convertToBW(centeredImage);
+      img.Image bwImage = _convertToBW(resizedImage);
       List<int> imageBytes = _convertImageToPrinterData(bwImage);
 
       const chunkSize = 600;

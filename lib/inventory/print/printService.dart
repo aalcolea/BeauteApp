@@ -18,9 +18,15 @@ class PrintService2 {
       return;
     }
 
-    await printImageBW(imagePath, ajusteManual: -36);
+    await printImageBW(imagePath);
     await printText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  Future<void> centrar () async{// esta porque la impresion de androiod no centrar la imagen
+    List<int> bytes = [];
+    bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
+    await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
   }
 
   Future<void> connectAndPrintAndroideTicket(List<dynamic> carrito, String imagePath) async {
@@ -29,7 +35,8 @@ class PrintService2 {
       return;
     }
 
-    await printImageBW(imagePath, ajusteManual: -36);
+    await centrar();
+    await printImageBW(imagePath);
     await printTicketText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));
   }
@@ -241,7 +248,7 @@ class PrintService2 {
   }
 
   //funcion para imprimir imagen android
-  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75, int ajusteManual = 0}) async {
+  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75}) async {
     if (characteristic == null) return;
 
     print('Inicio de conversión de imagen para impresión en blanco y negro');
@@ -257,13 +264,7 @@ class PrintService2 {
         resizedImage = img.copyResize(resizedImage, height: maxHeight);
       }
 
-      int marginWidth = ((maxWidth - resizedImage.width) ~/ 2) + ajusteManual;
-      img.Image centeredImage = img.Image(maxWidth, resizedImage.height);
-
-      centeredImage.fill(img.getColor(255, 255, 255)); // Color blanco
-      img.drawImage(centeredImage, resizedImage, dstX: marginWidth, dstY: 0);
-
-      img.Image bwImage = _convertToBW(centeredImage);
+      img.Image bwImage = _convertToBW(resizedImage);
       List<int> imageBytes = _convertImageToPrinterData(bwImage);
 
       const chunkSize = 600;
