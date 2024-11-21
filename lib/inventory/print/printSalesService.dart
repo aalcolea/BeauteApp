@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:intl/intl.dart';
@@ -154,7 +153,6 @@ class SalesPrintService {
       }
 
       await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
-      print('Imagen impresa en blanco y negro.');
     } else {
       print("Error al cargar la imagen.");
     }
