@@ -11,12 +11,18 @@ class SalesPrintService {
   BluetoothCharacteristic? characteristic;
   SalesPrintService(this.characteristic);
 
+  Future<void> centrar () async{// esta porque la impresion de androiod no centrar la imagen
+    List<int> bytes = [];
+    bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
+    await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
+  }
+
   Future<void> connectAndPrintAndroide(List<Map<String, dynamic>> products, String imagePath, String saleDate) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
       return;
     }
-
+    await centrar();
     await printImageBW(imagePath);
     await printText(products, saleDate);
     await Future.delayed(const Duration(milliseconds: 500));

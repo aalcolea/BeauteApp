@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:beaute_app/inventory/print/printSalesService.dart';
 import 'package:beaute_app/inventory/print/printService.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/listenerQuery.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,8 +19,9 @@ class SalesList extends StatefulWidget {
   final String dateController;
   final void Function(String) onDateChanged;
   final PrintService printService;
+  final ListenerQuery listenerQuery;
 
-  const SalesList({super.key, required this.onShowBlur, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged, required this.printService});
+  const SalesList({super.key, required this.onShowBlur, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged, required this.printService, required this.listenerQuery});
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -29,8 +31,27 @@ class _SalesListState extends State<SalesList> {
 
   bool isLoading = false;
   List<Map<String, dynamic>> products = [];
+  List<Map<String, dynamic>> productsFilterd = [];
   late String formattedDate;
   late SalesPrintService salesPrintService;
+  String? _initDate;
+  String? _finalDate;
+  String? query;
+
+  void filterSales(String? query){
+    if(mounted){
+      setState(() {
+        query?.toLowerCase();
+        if(query!.isEmpty){
+          productsFilterd = products;
+        } else {
+          productsFilterd = products.where((prod){
+            final matchesProducts = prod['nombre'].toString().toLowerCase().contains(query);
+            return matchesProducts;
+          }).toList();}});}
+  }
+
+
 
   @override
   void initState() {
@@ -38,8 +59,15 @@ class _SalesListState extends State<SalesList> {
     fetchSales(widget.dateController, widget.dateController);
     widget.listenerOnDateChanged.registrarObservador((callback, initData, finalData) async {
       if (callback) {
+        _finalDate = initData;
+        _initDate = initData;
         await fetchSales(initData, finalData);
       }
+    });
+    widget.listenerQuery.registrarObservador((query)  {
+          this.query = query;
+          filterSales(this.query);
+          print(this.query);
     });
   }
 
@@ -54,7 +82,7 @@ class _SalesListState extends State<SalesList> {
       final products2 = await salesService.getSalesByProduct(initData, finalData);
       setState(() {
         products = products2;
-        Future.delayed(Duration(milliseconds: 250));
+        productsFilterd = products;
         isLoading = false;
       });
     }catch (e) {
@@ -73,7 +101,7 @@ class _SalesListState extends State<SalesList> {
             child: !isLoading
                 ? ( products.isNotEmpty ? ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02),
-              itemCount: products.length,
+              itemCount: productsFilterd.length,
               itemBuilder: (context, index) {
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
@@ -89,14 +117,7 @@ class _SalesListState extends State<SalesList> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "${products[index]['nombre']}",
-                                  style: TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width * 0.04,
-                                  ),
-                                ),
+                                highlightTextTitle(productsFilterd[index]['nombre'], query ?? ''),
                                 Row(
                                   children: [
                                     Text(
@@ -106,7 +127,7 @@ class _SalesListState extends State<SalesList> {
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
-                                      '${products[index]['cantidad']} pzs',
+                                      '${productsFilterd[index]['cantidad']} pzs',
                                       style: TextStyle(
                                           color: AppColors.primaryColor,
                                           fontWeight: FontWeight.bold,
@@ -123,7 +144,7 @@ class _SalesListState extends State<SalesList> {
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
-                                      '\$${products[index]['precio']}',
+                                      '\$${productsFilterd [index]['precio']}',
                                       style: TextStyle(
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -213,7 +234,7 @@ class _SalesListState extends State<SalesList> {
               children: [
                 Expanded(
                   child: IconButton(
-                    onPressed: () async {
+                    onPressed: productsFilterd.isNotEmpty ? () async {
                       bool canPrint = false;
                       try{
                         await widget.printService.ensureCharacteristicAvailable();
@@ -227,17 +248,15 @@ class _SalesListState extends State<SalesList> {
                       if (canPrint) {
                         salesPrintService = SalesPrintService(widget.printService.characteristic!);
                         try{
-                          Platform.isAndroid ? await salesPrintService.connectAndPrintAndroide(products, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']) :
-                      await salesPrintService.connectAndPrintIOS(products, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']);
+                          Platform.isAndroid ? await salesPrintService.connectAndPrintAndroide(productsFilterd, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']) :
+                      await salesPrintService.connectAndPrintIOS(productsFilterd, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']);
                       } catch(e){
                       print("Error al intentar imprimir: $e");
                       showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));
-                      }
-                    }
-                    },
+                      }}} : null,
                     icon: Icon(
                       CupertinoIcons.printer_fill,
-                      color: AppColors.primaryColor,
+                      color: productsFilterd.isNotEmpty ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                       size: MediaQuery.of(context).size.height * 0.05,
                     ),
                   ),
@@ -257,7 +276,7 @@ class _SalesListState extends State<SalesList> {
                     },
                     icon: Icon(
                       CupertinoIcons.arrow_down_doc_fill,
-                      color: AppColors.primaryColor,
+                      color:  productsFilterd.isNotEmpty ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
                       size: MediaQuery.of(context).size.height * 0.05,
                     ),
                   ),
@@ -268,5 +287,75 @@ class _SalesListState extends State<SalesList> {
         ],
       )
     );
+  }
+
+  Widget highlightTextTitle(String text, String? query) {
+    if (query!.isEmpty) {
+      return Text(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          text,
+          style: TextStyle(
+            color: AppColors.primaryColor,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+              height: 2,
+              fontSize: MediaQuery.of(context).size.width * 0.05));
+    }
+
+    final lowerCaseText = text.toLowerCase();
+    final lowerCaseQuery = query.toLowerCase();
+
+    final startIndex = lowerCaseText.indexOf(lowerCaseQuery);
+    if (startIndex == -1) {
+      return Text(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          text,
+          style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+              height: 2,
+              fontSize: MediaQuery.of(context).size.width * 0.05));
+    }
+
+    final beforeMatch = text.substring(0, startIndex);
+    final matchText = text.substring(startIndex, startIndex + query.length);
+    final afterMatch = text.substring(startIndex + query.length);
+
+    return Text.rich(
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        TextSpan(
+            children: [
+              TextSpan(
+                  text: beforeMatch,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    height: 2,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  )),
+              TextSpan(
+                  text: matchText,
+                  style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                      height: 2,
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                      fontStyle: FontStyle.normal,
+                      decoration: TextDecoration.underline
+                  )),
+              TextSpan(
+                  text: afterMatch,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    height: 2,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  ))]));
   }
 }

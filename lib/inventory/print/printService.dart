@@ -319,7 +319,7 @@ class PrintService2 {
 
     return bytes;
   }
-  //<<<<<< termina funcion para android
+  // termina funcion para android
 
   Future<void> printImageWithAtkinsonDithering(String imagePath, {int maxWidth = 384, int maxHeight = 200}) async {
     if (characteristic == null) return;
