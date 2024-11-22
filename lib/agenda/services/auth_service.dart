@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 import '/globalVar.dart';
 import '../views/admin/admin.dart';
+import 'angedaDatabase/databaseService.dart';
 
 class PinEntryScreen extends StatefulWidget {
   final int userId;
@@ -96,11 +97,20 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);;
+        final dbService = DatabaseService();
+        await dbService.saveSession(data['token'], data['user']['id'], data['user']['id'] == 1 || data['user']['id'] == 2);
+        await dbService.saveUser({
+          'id': data['user']['id'],
+          'name': data['user']['name'],
+          'email': data['user']['email'],
+          'email_verified_at': data['user']['email_verified_at'],
+          'fcm_token': data['user']['fcm_token'],
+          'created_at': data['user']['created_at'],
+          'updated_at': data['user']['updated_at'],
+        });
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
         await prefs.setInt('user_id', data['user']['id']);
-
-        print('testAlan ${data['user']}');
         if(data['user']['id'] == 1 || data['user']['id'] == 2){
           SessionManager.instance.isDoctor = true;
 
@@ -162,6 +172,7 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
         print('Error al cerrar sesión: ${response.body}');
       }
     }
+
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
   }
 

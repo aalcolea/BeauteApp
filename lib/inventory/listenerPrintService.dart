@@ -1,4 +1,5 @@
 class ListenerPrintService {
+
   int _printServiceActivated = 0;
   bool? _isConnect;
   final List<Function(int, bool?)> _observadores = [];

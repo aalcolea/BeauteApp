@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:beaute_app/agenda/calendar/customCell.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../calendar/toDate/toDateModal.dart';
+import '../services/angedaDatabase/databaseService.dart';
 import '../themes/colors.dart';
 
 class AgendaSchedule extends StatefulWidget {
@@ -105,37 +107,60 @@ class _AgendaScheduleState extends State<AgendaSchedule> {
     }
   }
 
-  Future<List<Appointment2>> fetchAppointments(int id) async {
-    const baseUrl =
-        'https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/';
+  Future<List<Appointment2>> fetchAppointments(int userId) async {
+    List<Appointment2> appointments = [];
+    final dbService = DatabaseService();
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('jwt_token');
-      if (token == null) {
-        throw Exception('No token found');
-      } else {
-        print('Cargando appointments para ID: $id');
+      var connectivityResult = await Connectivity().checkConnectivity();
+      bool isConnected = connectivityResult != ConnectivityResult.none;
+      if (isConnected) {
+        print('Cargando appointments para ID: $userId desde la API');
         final response = await http.get(
-          Uri.parse(baseUrl + '$id'),
+          Uri.parse('https://beauteapp-dd0175830cc2.herokuapp.com/api/getAppoinments/$userId'),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
+            'Authorization': 'Bearer ${await getToken()}',
           },
         );
-        print(baseUrl + '$id');
+
         if (response.statusCode == 200) {
-          List<dynamic> data = jsonDecode(response.body)['appointments'];
-          print('appointments cargados: ${data.length}');
-          return data.map((json) => Appointment2.fromJson(json)).toList();
+          var jsonResponse = jsonDecode(response.body);
+          if (jsonResponse is Map<String, dynamic> && jsonResponse['appointments'] is List) {
+            appointments = List<Appointment2>.from(
+              jsonResponse['appointments']
+                  .map((appointmentJson) => Appointment2.fromJson(appointmentJson as Map<String, dynamic>)),
+            );
+
+            List<Map<String, dynamic>> appointmentsToSave = jsonResponse['appointments']
+                .map<Map<String, dynamic>>((appointmentJson) => appointmentJson as Map<String, dynamic>)
+                .toList();
+            await dbService.insertAppointments(appointmentsToSave);
+
+            print('Datos de appointments sincronizados correctamente');
+          } else {
+            print('La respuesta no contiene una lista de citas.');
+          }
         } else {
-          throw Exception('Failed to load appointments');
+          print('Error al cargar citas desde la API: ${response.statusCode}');
         }
+      } else {
+        print('Sin conexión a internet, cargando datos locales de appointments');
+        List<Map<String, dynamic>> localAppointments = await dbService.getAppointments();
+        appointments = localAppointments.map((appointmentMap) => Appointment2.fromJson(appointmentMap)).toList();
       }
     } catch (e) {
-      print('Error: $e');
-      rethrow;
+      print('Error al realizar la solicitud o cargar datos locales: $e');
     }
+
+    return appointments;
   }
+
+    ///en duda si debo o no guardar el token, o si hacer global porque se repite
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('jwt_token');
+  }
+
 
   void _showModaltoDate(
       BuildContext context,
