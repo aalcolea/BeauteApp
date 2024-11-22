@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:intl/intl.dart';
@@ -12,13 +11,19 @@ class SalesPrintService {
   BluetoothCharacteristic? characteristic;
   SalesPrintService(this.characteristic);
 
+  Future<void> centrar () async{// esta porque la impresion de androiod no centrar la imagen
+    List<int> bytes = [];
+    bytes += utf8.encode('\x1B\x61\x01'); // Alinear centro
+    await characteristic!.write(Uint8List.fromList(bytes), withoutResponse: false);
+  }
+
   Future<void> connectAndPrintAndroide(List<Map<String, dynamic>> products, String imagePath, String saleDate) async {
     if (characteristic == null) {
       print("Error: No se encontró la característica para imprimir.");
       return;
     }
-
-    await printImageBW(imagePath, ajusteManual: -36);
+    await centrar();
+    await printImageBW(imagePath);
     await printText(products, saleDate);
     await Future.delayed(const Duration(milliseconds: 500));
   }
@@ -128,7 +133,7 @@ class SalesPrintService {
   }
 
   //funcion para imprimir imagen android
-  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75, int ajusteManual = 0}) async {
+  Future<void> printImageBW(String imagePath, {int maxWidth = 260, int maxHeight = 75}) async {
     if (characteristic == null) return;
 
     print('Inicio de conversión de imagen para impresión en blanco y negro');
@@ -143,14 +148,7 @@ class SalesPrintService {
       if (resizedImage.height > maxHeight) {
         resizedImage = img.copyResize(resizedImage, height: maxHeight);
       }
-
-      int marginWidth = ((maxWidth - resizedImage.width) ~/ 2) + ajusteManual;
-      img.Image centeredImage = img.Image(maxWidth, resizedImage.height);
-
-      centeredImage.fill(img.getColor(255, 255, 255)); // Color blanco
-      img.drawImage(centeredImage, resizedImage, dstX: marginWidth, dstY: 0);
-
-      img.Image bwImage = _convertToBW(centeredImage);
+      img.Image bwImage = _convertToBW(resizedImage);
       List<int> imageBytes = _convertImageToPrinterData(bwImage);
 
       const chunkSize = 600;
@@ -161,7 +159,6 @@ class SalesPrintService {
       }
 
       await characteristic!.write(Uint8List.fromList([0x0A]), withoutResponse: false);
-      print('Imagen impresa en blanco y negro.');
     } else {
       print("Error al cargar la imagen.");
     }

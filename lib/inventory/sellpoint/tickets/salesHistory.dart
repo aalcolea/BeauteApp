@@ -3,11 +3,11 @@ import 'package:beaute_app/inventory/sellpoint/tickets/services/salesServices.da
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerOnDateChanged.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerRemoverOL.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/calendarSales.dart';
+import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/listenerQuery.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../agenda/calendar/calendarioScreenCita.dart';
 import '../../print/printConnections.dart';
 import '../../themes/colors.dart';
 import '../../../regEx.dart';
@@ -27,6 +27,7 @@ class SalesHistory extends StatefulWidget {
 class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderStateMixin {
 
   ListenerremoverOL listenerremoverOL = ListenerremoverOL();
+  ListenerQuery listenerQuery = ListenerQuery();
   ListenerOnDateChanged listenerOnDateChanged = ListenerOnDateChanged();
   late AnimationController animationController;
   late Animation<double> opacidad;
@@ -56,6 +57,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
     });
   }
 
+  void onFilterProducts (){
+    listenerQuery.setChange(seekController.text);
+  }
+
   void onDateChanged(){
     listenerOnDateChanged.setChange(true, dateController.text, dateController.text);
   }
@@ -83,7 +88,6 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
       } else {
         this.showBlurr = true;
       }
-      print(blurShowed);
     });
   }
 
@@ -92,6 +96,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+  }
+
+  void filterSales(String text){
+    listenerQuery.setChange(text);
   }
 
   @override
@@ -246,19 +254,19 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                     ),
                                     hintText: 'Buscar por nombre o categoria...',
                                     hintStyle: TextStyle(
-                                      color: AppColors.primaryColor.withOpacity(0.3),
+                                      color: selectedPage == 0 ?  AppColors.primaryColor.withOpacity(0.3) :  AppColors.primaryColor,
                                       fontSize: MediaQuery.of(context).size.width * 0.035,
                                     ),
                                     disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: selectedPage == 0 ?  AppColors.primaryColor.withOpacity(0.2) :  AppColors.primaryColor, width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: selectedPage == 0 ?  AppColors.primaryColor.withOpacity(0.2) :  AppColors.primaryColor, width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.2), width: 2.0),
+                                      borderSide: BorderSide(color: selectedPage == 0 ?  AppColors.primaryColor.withOpacity(0.2) :  AppColors.primaryColor, width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                   ),
@@ -266,6 +274,9 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                     color: AppColors.primaryColor,
                                     fontSize: MediaQuery.of(context).size.width * 0.0425,
                                   ),
+                                  onChanged: (text){
+                                    filterSales(text);
+                                  },
                                 ),
                               )
                             )
@@ -297,6 +308,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                   onPageChanged: (int page) {
                     setState(() {
                       selectedPage = page;
+                      seekController.text = '';
                     });
                   },
                   children: [
@@ -315,6 +327,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                       dateController: dateController.text,
                       onDateChanged: (fechaRecibida) => dateController.text = fechaRecibida,
                       printService: widget.printService,
+                      listenerQuery: listenerQuery,
                     ),
                   ],
                 ),
