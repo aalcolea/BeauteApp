@@ -77,10 +77,22 @@ class _CategoryFormState extends State<CategoryForm> {
       final responseBody = await http.Response.fromStream(response);
 
       if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Categoria creada exitosamente')),
-        );
-        Navigator.of(context).pop(true);
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.width * 0.08,
+                  bottom: MediaQuery.of(context).size.width * 0.08,
+                  left: MediaQuery.of(context).size.width * 0.02,
+                ),
+                content: Text('Categoria creada exitosamente',
+                  style: TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),)),
+          );
+          Navigator.of(context).pop(true);
+        }
+
       }else{
         String errorMessage = 'Error al crear la categoria';
         try {
@@ -89,11 +101,25 @@ class _CategoryFormState extends State<CategoryForm> {
         } catch (e) {
           errorMessage = 'Error inesperado: ${responseBody.body}';
         }
-
-        print('errro ${errorMessage}');
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.width * 0.08,
+                  bottom: MediaQuery.of(context).size.width * 0.08,
+                  left: MediaQuery.of(context).size.width * 0.02,
+                ),
+                content: Text('Revise conexión a internet e intente de nuevo',
+                  style: TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: MediaQuery.of(context).size.width * 0.045),)),
+          );
+        }
       }
+      SnackBar(content: Text("asdasd"));
     } catch (e) {
-      print("Error: $e");
+      SnackBar(content: Text("Fallo"));
+      print("Errdasdor: $e");
 
 
       print('errr inesperado ${e}');
@@ -136,7 +162,7 @@ class _CategoryFormState extends State<CategoryForm> {
                     Container(
                       padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
                       child: Text(
-                        'Crear Categoria',
+                        'Crear Categoría',
                         style: TextStyle(
                           color: AppColors.primaryColor,
                           fontSize: MediaQuery.of(context).size.width * 0.075,
@@ -171,7 +197,7 @@ class _CategoryFormState extends State<CategoryForm> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    'Nombre de la categoria:',
+                    'Nombre de la categoría:',
                     style: TextStyle(
                       color: AppColors.whiteColor,
                       fontSize: MediaQuery.of(context).size.width * 0.05,
@@ -188,7 +214,7 @@ class _CategoryFormState extends State<CategoryForm> {
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.03),
-                      hintText: 'Nombre de la categoria...',
+                      hintText: 'Nombre de la categoría...',
                       hintStyle: TextStyle(
                         color: AppColors.primaryColor.withOpacity(0.5),
                       ),
@@ -320,7 +346,7 @@ class _CategoryFormState extends State<CategoryForm> {
                       backgroundColor: AppColors.whiteColor,
                     ),
                     child: Text(
-                        'Crear categoria',
+                        'Crear categoría',
                         style: TextStyle(
                           fontSize:
                           MediaQuery.of(context).size.width * 0.055,

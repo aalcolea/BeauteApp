@@ -142,7 +142,7 @@ class _navBarState extends State<navBar> {
                                         children: [
                                           Text(SessionManager.instance.Nombre == 'Dulce' ? 'Nombre Asistente' : SessionManager.instance.Nombre,
                                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width*0.05, color: AppColors3.primaryColor)),
-                                          Text('Slogan here', style: TextStyle(color: AppColors3.primaryColor.withOpacity(0.8)),)
+                                          Text('Nombre de tu empresa', style: TextStyle(color: AppColors3.primaryColor.withOpacity(0.8)),)
                                         ],
                                       )
                                   )
@@ -339,14 +339,15 @@ class _navBarState extends State<navBar> {
                                   )
                               ),
                             ),),
-                          IconButton(onPressed: (){
+                          ///Icono escoger impresora
+                          /*IconButton(onPressed: (){
                             Navigator.of(context).push(
                               CupertinoPageRoute(
                                 builder: (context) => testPrint(),
                               ),
                             );
 
-                          }, icon: Icon(Icons.ac_unit)),
+                          }, icon: Icon(Icons.ac_unit)),*/
                           Expanded(
                               child: Container(
                                   padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.03),

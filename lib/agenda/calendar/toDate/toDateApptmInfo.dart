@@ -14,6 +14,7 @@ import '../../utils/listenerApptm.dart';
 import '../../utils/timer.dart';
 
 class ApptmInfo extends StatefulWidget {
+  final bool isDocLog;
   final Function(bool) onShowBlurrModal;
   final Listenerapptm? listenerapptm;
   final Listenerslidable? listenerslidable;
@@ -33,7 +34,7 @@ class ApptmInfo extends StatefulWidget {
   const ApptmInfo({super.key, required this.clientName, required this.treatmentType, required this.index, required this.dateLookandFill, required this.reachTop,
     required this.appointment, required this.timeParts, this.firtsIndexTouchHour, this.firtsIndexTouchDate, this.expandedIndexToCharge,
     required this.selectedDate, this.listenerapptm, required this.filteredAppointments, required this.initializateApptm, this.listenerslidable,
-    required this.onShowBlurrModal});
+    required this.onShowBlurrModal, required this.isDocLog});
 
   @override
   State<ApptmInfo> createState() => _ApptmInfoState();
@@ -62,7 +63,6 @@ class _ApptmInfoState extends State<ApptmInfo> {
   bool positionBtnIcon = false;
   bool _isTimerShow = false;
   bool isCalendarShow = false;
-  bool isDocLog = false;
   //
   TextEditingController _timerController = TextEditingController();
   TextEditingController timerControllertoShow = TextEditingController();
@@ -194,6 +194,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
           });
         }
     });
+    print('widgetIsDocLog3${widget.isDocLog}');
     super.initState();
   }
 
@@ -444,8 +445,8 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                             widget.onShowBlurrModal(true);
                                             showDeleteAppointmentDialog(
                                                 context, widget, widget.appointment.id,
-                                                refreshAppointments,
-                                                isDocLog).then((_){
+                                                widget.isDocLog,
+                                                refreshAppointments).then((_){
                                               widget.onShowBlurrModal(false);
                                             });
                                           },
@@ -519,12 +520,12 @@ class _ApptmInfoState extends State<ApptmInfo> {
                                   ])))
                         ],
                       ))
-                      ///<<<<componentes de la segunda card
+                      ///componentes de la segunda card
                       //
                     ],
                   ),
                 ),
-                ///>>>>>>>>>> componente de la primera card, cuadro de hora
+                /// componente de la primera card, cuadro de hora
                 Visibility(
                   visible: expandedIndex != index ? true : false,
                   child: Container(
@@ -558,7 +559,7 @@ class _ApptmInfoState extends State<ApptmInfo> {
                     ),
                   ),
                 ),
-                ///<<<<<<<<<<<<<<< componente de la primera card, cuadro de hora
+                /// componente de la primera card, cuadro de hora
               ],
             ),
           ),

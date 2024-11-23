@@ -12,6 +12,7 @@ import '../../models/appointmentModel.dart';
 import '../../utils/PopUpTabs/deleteAppointment.dart';
 
 class ToDateContainer extends StatefulWidget {
+  final bool isDocLog;
   final Function(bool) onShowBlurr;
   final Listenerapptm? listenerapptm;
   final void Function(bool, int?, String, String, bool, String) reachTop;
@@ -20,7 +21,7 @@ class ToDateContainer extends StatefulWidget {
   final String dateLookandFill;
   final DateTime selectedDate;
   final int? expandedIndexToCharge;
-  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm, required this.onShowBlurr});
+  const ToDateContainer({super.key, required this.reachTop, this.firtsIndexTouchHour, this.firtsIndexTouchDate, required this.dateLookandFill, required this.selectedDate, this.expandedIndexToCharge, this.listenerapptm, required this.onShowBlurr, required this.isDocLog});
 
   @override
   State<ToDateContainer> createState() => _ToDateContainerState();
@@ -234,6 +235,7 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
      });
      slidableControllers.add(controller);
    }
+   print('widgetIsDocLog1${widget.isDocLog}');
     super.initState();
   }
 
@@ -258,9 +260,19 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                   color: AppColors3.primaryColor
                 ));
               } else if (snapshot.hasError) {
-                return Text("Error: No tienes conexion a interner para realizar esta consulta"); //${snapshot.error}
+                return Text(
+                  textAlign: TextAlign.center,
+                  "Verifica tu conexión a internet para consultar tus citas",
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.06
+                ),); //${snapshot.error}
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Text('No se han encontrado appoinments');
+                return Text(
+                  textAlign: TextAlign.center,
+                  "No tienes citas para este día",
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.06
+                  ),);
               } else {
                 List<Appointment> filteredAppointments = snapshot.data!;
                 return ListView.builder(
@@ -298,8 +310,8 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                         context,
                                         widget,
                                         appointment.id,
+                                        widget.isDocLog,
                                         refreshAppointments,
-                                        isDocLog,
                                       );
                                       if (result) {
                                         refreshAppointments;
@@ -324,8 +336,8 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                           context,
                                           widget,
                                           appointment.id,
+                                          widget.isDocLog,
                                           refreshAppointments,
-                                          isDocLog,
                                         );
                                         if (result) {
                                           widget.onShowBlurr(false);
@@ -341,12 +353,13 @@ class _ToDateContainerState extends State<ToDateContainer> with TickerProviderSt
                                   ),
                                 ],
                               ),
-                              child: ApptmInfo(clientName: clientName, treatmentType: treatmentType, index: index, dateLookandFill: _dateLookandFill,
+                              child: ApptmInfo(
+                                clientName: clientName, treatmentType: treatmentType, index: index, dateLookandFill: _dateLookandFill,
                                 reachTop: reachTop, appointment: appointment, timeParts: timeParts, selectedDate: widget.selectedDate,
-                                firtsIndexTouchHour: widget.firtsIndexTouchHour, firtsIndexTouchDate: widget.firtsIndexTouchDate,
-                              listenerapptm: widget.listenerapptm, filteredAppointments: filteredAppointments,
-                              expandedIndexToCharge: expandedIndex, initializateApptm: _initializateApptm, listenerslidable: listenerslidable,
-                                onShowBlurrModal: onShowBlurrModal,
+                                firtsIndexTouchHour: widget.firtsIndexTouchHour, firtsIndexTouchDate: widget.firtsIndexTouchDate, 
+                                listenerapptm: widget.listenerapptm, filteredAppointments: filteredAppointments, 
+                                expandedIndexToCharge: expandedIndex, initializateApptm: _initializateApptm, listenerslidable: listenerslidable, 
+                                onShowBlurrModal: onShowBlurrModal, isDocLog: widget.isDocLog,
                               )));
                     });
               }
