@@ -183,7 +183,7 @@ class PrintService extends ChangeNotifier {
         }});}}
 
   void disconnect(context) async {
-    if (selectedDevice != null) {
+    if (selectedDevice != null ) {
       try {
         _connectionSubscription?.cancel();
         await selectedDevice?.disconnect();

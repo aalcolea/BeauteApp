@@ -37,6 +37,8 @@ class _navBarState extends State<navBar> {
   PrintService printService = PrintService();
   ListenerPrintService listenerPrintService = ListenerPrintService();
   bool? isConecct = false;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+
 
 
   void closeMenu(BuildContext context){
@@ -226,11 +228,12 @@ class _navBarState extends State<navBar> {
                               ),
                             ),
                           ),
+                          //    bool isBluetoothOn = await flutterBlue.isOn;
                           Visibility(
                             visible: widget.currentScreen == 'inventario' ? true : false,
                             child: InkWell(
                                 splashColor: AppColors3.primaryColor.withOpacity(0.1),
-                                onTap: isConecct == false ? (){
+                                onTap: isConecct == false ? () {
                                   setState(() {
                                     Platform.isIOS ? printService.scanForDevices(context) :
                                     printService.connectToBluetoothDevice(context);
@@ -238,6 +241,7 @@ class _navBarState extends State<navBar> {
                                 } : (){
                                   setState(() {
                                     printService.disconnect(context);
+                                    isConecct = false;
                                   });
                                 },
                                 child: Material(

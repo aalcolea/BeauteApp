@@ -44,6 +44,7 @@ class _SalesListState extends State<SalesList> {
         query?.toLowerCase();
         if(query!.isEmpty){
           productsFilterd = products;
+          print('asd $productsFilterd');
         } else {
           productsFilterd = products.where((prod){
             final matchesProducts = prod['nombre'].toString().toLowerCase().contains(query);

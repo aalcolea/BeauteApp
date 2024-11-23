@@ -532,11 +532,17 @@ class _adminInvState extends State<adminInv> {
                                   ))))])),
             Visibility(
                 visible: lockScreen,
-                child: Container(
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.3),
-              ),
-            ))
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                      strokeAlign: 15,
+                      strokeWidth: 4.5,
+                    ),
+                  ),
+                ))
           ],
         ));
   }

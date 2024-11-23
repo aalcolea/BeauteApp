@@ -65,7 +65,7 @@ class SalesPrintService {
 
     // Encabezados de la tabla//5
     bytes += utf8.encode('CANT |     PROD     |  IMPORTE\n');
-    Future.delayed(Duration(milliseconds: 25));
+    Future.delayed(const Duration(milliseconds: 25));
     bytes += utf8.encode('--------------------------------\n');
 
     for (var item in products) {
