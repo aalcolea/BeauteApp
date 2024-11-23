@@ -373,7 +373,17 @@ class _CategoriesState extends State<Categories> {
                                                     }
                                                   },
                                                   errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                                    return const Text('Error al cargar la imagen');
+                                                    return Container(
+                                                      color: Colors.transparent,
+                                                      child: Column(
+                                                        children: [
+                                                          Flexible(
+                                                            child: Image.asset('assets/imgLog/test2.jpeg',
+                                                            fit: BoxFit.fill,),),
+                                                          const Text('Imagen no disponible'),
+                                                        ],
+                                                      )
+                                                    );
                                                   },
                                                 ),
                                               ),
@@ -407,6 +417,7 @@ class _CategoriesState extends State<Categories> {
                                             "${item['category']}",
                                             style: TextStyle(
                                               color: AppColors.primaryColor,
+                                              fontWeight: FontWeight.bold,
                                               fontSize: MediaQuery.of(context).size.height * 0.017,
                                             )
                                         ),

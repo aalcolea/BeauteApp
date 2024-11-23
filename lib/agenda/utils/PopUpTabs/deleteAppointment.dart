@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../../themes/colors.dart';
 
-Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, Function refreshAppointments, docLog) async {
+Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, int? id, bool docLog, Function refreshAppointments) async {
 
   Future<void> deleteAppt(int id) async {
     const baseUrl =
@@ -40,6 +40,7 @@ Future<bool> showDeleteAppointmentDialog(BuildContext context, Widget widget, in
     context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) {
+      print('doc delcitaBUILD ${docLog}');
       return Stack(
         children: [
           Center(

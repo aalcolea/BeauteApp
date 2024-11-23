@@ -122,6 +122,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
       dateOnly = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
       dateTimeToinitModal = DateTime.parse(dateOnly!);
     }
+    print('widgetIsDocLog2${widget.isDocLog}');
+
   }
 
   String slideDirection = 'No slide detected';
@@ -400,6 +402,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> with SingleTicker
               ),
               Expanded(
                 child: ToDateContainer(
+                  isDocLog: widget.isDocLog,
                 reachTop: (bool reachTop,
                     int? expandedIndex,
                     String timerOfTheFstIndexTouched,

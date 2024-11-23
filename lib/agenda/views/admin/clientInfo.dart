@@ -560,7 +560,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                         color: AppColors3.primaryColor, width: 1),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  labelText: 'Correo electronico',
+                                  labelText: 'Correo electrónico',
                                   labelStyle: const TextStyle(color: AppColors3.primaryColor),
                                 ),
                                 style: const TextStyle(fontSize: 20, color: AppColors3.primaryColor,),
@@ -601,7 +601,7 @@ class _ClientInfoState extends State<ClientInfo> {
                                       ),
                                     ),
                                     Text(
-                                      appointmentData?['appointment_date'] ?? 'No hay cita proxima',
+                                      appointmentData?['appointment_date'] ?? 'No hay cita próxima',
                                       style: const TextStyle(
                                         color: AppColors3.primaryColor,
                                         fontSize: 20,

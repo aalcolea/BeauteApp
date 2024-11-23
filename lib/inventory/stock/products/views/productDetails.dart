@@ -249,7 +249,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),
                           Column(
                             children: [
-                              TitleModContainer(text: 'Descripcion'),
+                              TitleModContainer(text: 'Descripción'),
                               Padding(padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
@@ -257,11 +257,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     inputFormatters: [RegEx(type: InputFormatterType.alphanumeric)],
                                     controller: descriptionController,
                                     enabled: editProd,
-                                    text: 'Descripcion del producto',
+                                    text: 'Descripción del producto',
                                   ))]),
                           Column(
                             children: [
-                              TitleModContainer(text: 'Codigo de barras'),
+                              TitleModContainer(text: 'Código de barras'),
                               Padding(padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
@@ -271,11 +271,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       RegEx(type: InputFormatterType.numeric)],
                                     controller: barCodeController,
                                     enabled: editProd,
-                                    text: 'Codigo del producto',
+                                    text: 'Código del producto',
                                   ))]),
                           Column(
                             children: [
-                              TitleModContainer(text: 'Categoria'),
+                              TitleModContainer(text: 'Categoría'),
                               Padding(padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width * 0.03,
                                   right: MediaQuery.of(context).size.width * 0.03),
