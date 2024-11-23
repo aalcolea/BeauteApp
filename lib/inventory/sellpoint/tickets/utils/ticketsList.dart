@@ -38,6 +38,7 @@ class _TicketslistState extends State<Ticketslist> {
   List<dynamic> ticketInfo = [];
   PrintService printService = PrintService();
   late String formattedDate;
+  List<Map<String, dynamic>> ticketTemp = [];
 
   late KeyboardVisibilityManager keyboardVisibilityManager;
   List<ExpansionTileController>? tileController = [];
@@ -142,6 +143,8 @@ class _TicketslistState extends State<Ticketslist> {
       tickets[index]['detalles'],
     ]);
     if (index >= 0 && index < tickets.length) {
+      ticketTemp = [tickets[index]];
+      print('holajeje $ticketTemp');
       removeOverlay();
       final key = ticketKeys[index];
       if (key.currentContext != null && key.currentContext!.findRenderObject() is RenderBox) {
@@ -174,7 +177,7 @@ class _TicketslistState extends State<Ticketslist> {
                   columnH: null, 
                   ticketInfo: ticketInfo,
                   printService: widget.printService,
-                  tickets: tickets[index],
+                  tickets: ticketTemp,
                 ),
               ),
             );

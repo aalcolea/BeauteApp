@@ -18,7 +18,7 @@ class TicketOptions extends StatefulWidget {
   final void Function(int) onShowBlur;
   final dynamic columnH;
   final PrintService printService;
-  final Map<String, dynamic> tickets;
+  final List<Map<String, dynamic>> tickets;
 
   const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo, required this.printService, required this.tickets,
   });

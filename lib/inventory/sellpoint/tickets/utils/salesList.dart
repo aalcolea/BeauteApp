@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../print/printConnections.dart';
+import '../../../print/salesPDF.dart';
+import '../../../print/testPDF.dart';
 import '../../../themes/colors.dart';
 import '../services/salesServices.dart';
 import 'listenerOnDateChanged.dart';
@@ -47,11 +49,10 @@ class _SalesListState extends State<SalesList> {
         } else {
           productsFilterd = products.where((prod){
             final matchesProducts = prod['nombre'].toString().toLowerCase().contains(query);
+            print('hola $products');
             return matchesProducts;
           }).toList();}});}
   }
-
-
 
   @override
   void initState() {
@@ -162,7 +163,7 @@ class _SalesListState extends State<SalesList> {
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
-                                      '\$${products[index]['total'].toStringAsFixed(2)}',
+                                      '\$${productsFilterd[index]['total'].toStringAsFixed(2)}',
                                       style: TextStyle(
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -180,7 +181,7 @@ class _SalesListState extends State<SalesList> {
                                           fontSize: MediaQuery.of(context).size.width * 0.035),
                                     ),
                                     Text(
-                                      '${products[index]['fecha_venta']}',
+                                      '${productsFilterd[index]['fecha_venta']}',
                                       style: TextStyle(
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -272,7 +273,12 @@ class _SalesListState extends State<SalesList> {
                 Expanded(
                   child: IconButton(
                     onPressed: () {
-
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => SalesPDF(sales: productsFilterd,),
+                        ),
+                      );
+                      print('filtrados $productsFilterd');
                     },
                     icon: Icon(
                       CupertinoIcons.arrow_down_doc_fill,

@@ -40,9 +40,9 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
   late Animation<double> movLeft;
   late Animation<double> movLeftCount;
   int ? tapedIndex;
-  double widgetHeight = 0.0;
   bool isLoading = true;
   bool showBlurr = false;
+  late double widgetHeight;
   late KeyboardVisibilityManager keyboardVisibilityManager;
 
   void itemCount (index, action){
@@ -102,6 +102,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+    widgetHeight = MediaQuery.of(context).size.height * 0.275;
   }
 
   Future<void> fetchProducts() async {

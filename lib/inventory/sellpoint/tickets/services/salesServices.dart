@@ -37,7 +37,6 @@ class SalesServices{
 
   Future<List<Map<String,dynamic>>> getSalesByProduct(String? fechaInicio, String? fechaFin) async{
     String url = '$baseURL?fecha_inicio=${fechaInicio ?? DateFormat('yyyy-MM-dd').format(DateTime.now())}&fecha_fin=${fechaFin ?? DateFormat('yyyy-MM-dd').format(DateTime.now())}';
-    print(url);
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -45,27 +44,30 @@ class SalesServices{
       var formatter = new DateFormat('dd-MM-yyyy');
       data.expand((venta) => venta['detalles']).forEach((detalle) {
         final producto = detalle['producto'];
+        final idProd = producto['id'];
         final nombreProducto = producto['nombre'];
-        DateTime fecha = DateTime.parse(producto['created_at']);
+        final fecha = DateTime.parse(producto['created_at']).toString();
         DateTime fecha_venta = DateTime.parse(data[0]['created_at']);
         final int cantidad = int.tryParse(detalle['cantidad'].toString()) ?? 0;
         final double precio = double.tryParse(detalle['precio'].toString()) ?? 0.0;
-        if (productosMap.containsKey(nombreProducto)) {
-          productosMap[nombreProducto]!['cantidad'] += cantidad;
-          productosMap[nombreProducto]!['total'] += cantidad * precio;
+        if (productosMap.containsKey(idProd) && productosMap.containsKey(nombreProducto)) {
+          productosMap[idProd]!['cantidad'] += cantidad;
+          productosMap[idProd]!['total'] += cantidad * precio;
         }else{
-          productosMap[nombreProducto] = {
+          productosMap[idProd.toString()] = {
+            'nombre': nombreProducto,
             'cantidad': cantidad,
             'precio': precio,
             'total': cantidad * precio,
-            'fecha': formatter.format(fecha),
+            'fecha': fecha,
             'fecha_venta': formatter.format(fecha_venta)
           };
         }
       });
       return productosMap.entries.map((entry){
         return {
-          'nombre': entry.key,
+          'id': entry.key,
+          'nombre': entry.value['nombre'],
           'cantidad': entry.value['cantidad'],
           'precio': entry.value['precio'],
           'total': entry.value['total'],

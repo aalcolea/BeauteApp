@@ -98,8 +98,10 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
     screenHeight = MediaQuery.of(context).size.height;
   }
 
-  void filterSales(String text){
-    listenerQuery.setChange(text);
+  void filterSales(text){
+    setState(() {
+      listenerQuery.setChange(seekController.text);
+    });
   }
 
   @override
@@ -269,6 +271,19 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                                       borderSide: BorderSide(color: selectedPage == 0 ?  AppColors.primaryColor.withOpacity(0.2) :  AppColors.primaryColor, width: 2.0),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
+                                    suffixIcon: seekController.text.isNotEmpty ? IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          seekController.clear();
+                                          filterSales('');
+                                        });
+                                      },
+                                      icon: Icon(
+                                        CupertinoIcons.clear,
+                                        size: MediaQuery.of(context).size.width * 0.05,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                    ) : null
                                   ),
                                   style: TextStyle(
                                     color: AppColors.primaryColor,

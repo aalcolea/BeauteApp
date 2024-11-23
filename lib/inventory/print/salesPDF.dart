@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:io';
+import 'package:beaute_app/inventory/sellpoint/tickets/services/salesServices.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
@@ -10,21 +11,21 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../themes/colors.dart';
 import 'package:share_plus/share_plus.dart';
 
-class TestPDF extends StatefulWidget {
+class SalesPDF extends StatefulWidget {
 
-  final List<Map<String, dynamic>> ticket;
+  final List<Map<String, dynamic>> sales;
 
-  const TestPDF({super.key, required this.ticket});
+  const SalesPDF({super.key, required this.sales});
 
   @override
-  _TestPDFState createState() => _TestPDFState();
+  _SalesPDFState createState() => _SalesPDFState();
 }
 
-class _TestPDFState extends State<TestPDF> {
+class _SalesPDFState extends State<SalesPDF> {
   late pw.Document pdf;
   late Uint8List archivoPdf;
   String? pdfPath;
-  List<dynamic> detallesTicket = [];
+  double totalVenta = 0.0;
 
   @override
   void initState() {
@@ -40,14 +41,15 @@ class _TestPDFState extends State<TestPDF> {
 
   Future<String> savePdfTemporarily() async {
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/Recibo de Compra_${widget.ticket[0]['id']}.pdf');
+    final file = File('${dir.path}/Recibo de Compra_${widget.sales[0]['id']}.pdf');
     await file.writeAsBytes(archivoPdf);
     return file.path;
   }
 
   Future<Uint8List> generarPdf1() async {
-    detallesTicket = widget.ticket[0]['detalles'];
-    print('jeje hola $detallesTicket');
+    for (var producto in widget.sales) {
+      totalVenta += producto['total'];
+    }
     pdf = pw.Document();
     final imageBytes = await rootBundle.load('assets/imgLog/test2.jpeg');
     final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
@@ -73,7 +75,7 @@ class _TestPDFState extends State<TestPDF> {
                           crossAxisAlignment: pw.CrossAxisAlignment.end,
                           children: [
                             pw.Text(
-                              'Recibo de',
+                              'Historial de',
                               style: pw.TextStyle(
                                   fontSize: 35,
                                   color: PdfColors.blue900,
@@ -82,7 +84,7 @@ class _TestPDFState extends State<TestPDF> {
                               textAlign: pw.TextAlign.center,
                             ),
                             pw.Text(
-                              'compra',
+                              'ventas',
                               style: pw.TextStyle(
                                   fontSize: 35,
                                   color: PdfColors.blue900,
@@ -127,7 +129,7 @@ class _TestPDFState extends State<TestPDF> {
                                             textAlign: pw.TextAlign.center,
                                           ),
                                           pw.Text(
-                                            '${widget.ticket[0]['fecha']}',
+                                            '${widget.sales[0]['fecha_venta']}',
                                             style: const pw.TextStyle(
                                               fontSize: 12,
                                               color: PdfColors.black,
@@ -136,69 +138,12 @@ class _TestPDFState extends State<TestPDF> {
                                           ),
                                         ]
                                     ),
-                                    pw.Row(
-                                        children: [
-                                          pw.Text(
-                                            'Recibo #',
-                                            style: pw.TextStyle(
-                                                fontSize: 12,
-                                                color: PdfColors.blue900,
-                                                fontWeight: pw.FontWeight.bold
-                                            ),
-                                            textAlign: pw.TextAlign.center,
-                                          ),
-                                          pw.Text(
-                                            '${detallesTicket[0]['venta_id']}',
-                                            style: const pw.TextStyle(
-                                              fontSize: 12,
-                                              color: PdfColors.black,
-                                            ),
-                                            textAlign: pw.TextAlign.center,
-                                          ),
-                                        ]
-                                    )
                                   ]
                               )
                             ]
                         ),
                         pw.Container(
                             height: 15
-                        ),
-                        pw.Row(
-                            children: [
-                              pw.Column(
-                                  children: [
-                                    pw.Container(
-                                      padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                                      margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
-                                      color: PdfColors.blue900,
-                                      width: 120,
-                                      child: pw.Text(
-                                        'Metodo de pago',
-                                        style: const pw.TextStyle(
-                                          fontSize: 11,
-                                          color: PdfColors.white,
-                                        ),
-                                        textAlign: pw.TextAlign.center,
-                                      ),
-                                    ),
-                                    pw.Container(
-                                      padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                                      margin: const pw.EdgeInsets.only(right: 2),
-                                      color: PdfColors.blue100,
-                                      width: 120,
-                                      child: pw.Text(
-                                        'Efectivo/Tarjeta',
-                                        style: const pw.TextStyle(
-                                          fontSize: 11,
-                                          color: PdfColors.black,
-                                        ),
-                                        textAlign: pw.TextAlign.center,
-                                      ),
-                                    ),
-                                  ]
-                              ),
-                            ]
                         ),
                         pw.Row(
                             children: [
@@ -262,7 +207,7 @@ class _TestPDFState extends State<TestPDF> {
                             ]
                         ),
                         pw.ListView.builder(
-                            itemCount: detallesTicket.length,
+                            itemCount: widget.sales.length,
                             itemBuilder: (context, index) {
                               return pw.Row(
                                   children: [
@@ -272,7 +217,7 @@ class _TestPDFState extends State<TestPDF> {
                                       color: PdfColors.blue100,
                                       width: 43,
                                       child: pw.Text(
-                                        '${detallesTicket[index]['cantidad']}',
+                                        '${widget.sales[index]['cantidad']}',
                                         style: const pw.TextStyle(
                                           fontSize: 11,
                                           color: PdfColors.black,
@@ -286,7 +231,7 @@ class _TestPDFState extends State<TestPDF> {
                                         margin: const pw.EdgeInsets.only(right: 2, bottom: 2),
                                         color: PdfColors.blue100,
                                         child: pw.Text(
-                                          '${detallesTicket[index]['producto']['nombre']}',
+                                          '${widget.sales[index]['nombre']}',
                                           style: const pw.TextStyle(
                                             fontSize: 11,
                                             color: PdfColors.black,
@@ -312,7 +257,7 @@ class _TestPDFState extends State<TestPDF> {
                                                 textAlign: pw.TextAlign.center,
                                               ),
                                               pw.Text(
-                                                '${detallesTicket[index]['precio']}',
+                                                '${widget.sales[index]['precio']}',
                                                 style: const pw.TextStyle(
                                                   fontSize: 11,
                                                   color: PdfColors.black,
@@ -339,7 +284,7 @@ class _TestPDFState extends State<TestPDF> {
                                                 textAlign: pw.TextAlign.right,
                                               ),
                                               pw.Text(
-                                                (double.parse(detallesTicket[index]['precio'])*(detallesTicket[index]['cantidad'])).toStringAsFixed(2),
+                                                (widget.sales[index]['precio']*(widget.sales[index]['cantidad'])).toStringAsFixed(2),
                                                 style: const pw.TextStyle(
                                                   fontSize: 11,
                                                   color: PdfColors.black,
@@ -387,7 +332,7 @@ class _TestPDFState extends State<TestPDF> {
                                           textAlign: pw.TextAlign.center,
                                         ),
                                         pw.Text(
-                                          '${widget.ticket[0]['total']}',
+                                          '$totalVenta',
                                           style: const pw.TextStyle(
                                             fontSize: 11,
                                             color: PdfColors.black,
@@ -405,34 +350,23 @@ class _TestPDFState extends State<TestPDF> {
               ]
           ),
           pw.Padding(
-            padding: const pw.EdgeInsets.all(20),
-            child: pw.Container(
-              alignment: pw.Alignment.bottomCenter,
-              child: pw.Column(
-                mainAxisAlignment: pw.MainAxisAlignment.end,
-                children: [
-                  pw.Text(
-                    '¡Gracias por su confianza!',
-                    style: const pw.TextStyle(
-                      fontSize: 10,
-                      color: PdfColors.blue900,
-                    ),
-                    textAlign: pw.TextAlign.center,
-                  ),
-                  pw.Container(
-                    height: 5
-                  ),
-                  pw.Text(
-                    '[Nombre de la empresa][Calle,ciudad y código postal][Teléfono][Correo electrónico]',
-                    style: const pw.TextStyle(
-                      fontSize: 8,
-                      color: PdfColors.blue900,
-                    ),
-                    textAlign: pw.TextAlign.center,
-                  ),
-                ]
-              ),
-            )
+              padding: const pw.EdgeInsets.all(20),
+              child: pw.Container(
+                alignment: pw.Alignment.bottomCenter,
+                child: pw.Column(
+                    mainAxisAlignment: pw.MainAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        '[Nombre de la empresa][Calle,ciudad y código postal][Teléfono][Correo electrónico]',
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.blue900,
+                        ),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ]
+                ),
+              )
           )
         ],
       ),
@@ -445,34 +379,34 @@ class _TestPDFState extends State<TestPDF> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          'Ticket #${widget.ticket[0]['id']}',
+        title: const Text(
+          'Historial de ventas',
           style: const TextStyle(
-            color: AppColors.primaryColor
+              color: AppColors.primaryColor
           ),
         ),
         actions: [
           IconButton(
-            onPressed: () async {
-              if (pdfPath != null) {
-                await Share.shareXFiles(
-                  [XFile(pdfPath!)],
-                  text: '¡Gracias por su confianza en Beaute clinique!',
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Error: PDF no disponible para compartir")),
-                );
-              }
-            },
-            icon: const Icon(
-              CupertinoIcons.share,
-              color: AppColors.primaryColor,
-            )
+              onPressed: () async {
+                if (pdfPath != null) {
+                  await Share.shareXFiles(
+                    [XFile(pdfPath!)],
+                    text: '¡Gracias por su confianza en Beaute clinique!',
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Error: PDF no disponible para compartir")),
+                  );
+                }
+              },
+              icon: const Icon(
+                CupertinoIcons.share,
+                color: AppColors.primaryColor,
+              )
           )
         ],
         iconTheme: const IconThemeData(
-          color: AppColors.primaryColor
+            color: AppColors.primaryColor
         ),
       ),
       body: SafeArea(
