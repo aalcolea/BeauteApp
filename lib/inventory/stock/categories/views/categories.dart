@@ -85,6 +85,7 @@ class _CategoriesState extends State<Categories> {
   @override
   void initState() {
     super.initState();
+    isLoading = true;
     keyboardVisibilityController = KeyboardVisibilityController();
     checkKeyboardVisibility();
     loadFirstItems();
@@ -252,7 +253,11 @@ class _CategoriesState extends State<Categories> {
                                   context: context,
                                   barrierColor: Colors.transparent,
                                   builder: (BuildContext context) {
-                                    return const CategoryForm();
+                                    return CategoryForm(
+                                      onLoad: (load) {
+                                        isLoading = load;
+                                      }
+                                    );
                                   },
                                 ).then((_){
                                   loadFirstItems();
@@ -492,13 +497,12 @@ class _CategoriesState extends State<Categories> {
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                       FloatingActionButton(
-                        onPressed: () {
-                          setState(() {
-                            List<String> categoriesToDelete = List.from(selectedCategories);
-                            for (String categoryId in categoriesToDelete) {
-                              deleteItem(categoryId);
-                            }
-                          });
+                        onPressed: () async {
+                          isLoading = true;
+                          List<String> categoriesToDelete = List.from(selectedCategories);
+                          for (String categoryId in categoriesToDelete) {
+                            await deleteItem(categoryId);
+                          }
                         },
                         backgroundColor: AppColors.whiteColor,
                         heroTag: null,

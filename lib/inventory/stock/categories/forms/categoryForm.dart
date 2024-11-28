@@ -11,7 +11,9 @@ import '../../../themes/colors.dart';
 
 class CategoryForm extends StatefulWidget {
 
-  const CategoryForm({Key? key}) : super(key: key);
+  final Function(bool) onLoad;
+
+  const CategoryForm({Key? key, required this.onLoad}) : super(key: key);
 
   @override
   _CategoryFormState createState() => _CategoryFormState();
@@ -92,7 +94,6 @@ class _CategoryFormState extends State<CategoryForm> {
           );
           Navigator.of(context).pop(true);
         }
-
       }else{
         String errorMessage = 'Error al crear la categoria';
         try {
@@ -327,7 +328,10 @@ class _CategoryFormState extends State<CategoryForm> {
                 isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                        onPressed: createCategory,
+                        onPressed: () async {
+                          await createCategory();
+                          widget.onLoad(true);
+                        },
                     style: ElevatedButton.styleFrom(
                       splashFactory: InkRipple.splashFactory,
                       padding: EdgeInsets.symmetric(
