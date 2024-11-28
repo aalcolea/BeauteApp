@@ -5,11 +5,13 @@ import 'package:beaute_app/inventory/print/printService.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/listenerQuery.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../print/printConnections.dart';
 import '../../../print/salesPDF.dart';
+import '../../../print/selBT.dart';
 import '../../../print/testPDF.dart';
 import '../../../themes/colors.dart';
 import '../services/salesServices.dart';
@@ -20,10 +22,12 @@ class SalesList extends StatefulWidget {
   final ListenerOnDateChanged listenerOnDateChanged;
   final String dateController;
   final void Function(String) onDateChanged;
-  final PrintService printService;
+  final PrintService? printService;
+  final SelBt? selBt;
   final ListenerQuery listenerQuery;
+  final BluetoothCharacteristic? bluetoothCharacteristic;
 
-  const SalesList({super.key, required this.onShowBlur, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged, required this.printService, required this.listenerQuery});
+  const SalesList({super.key, required this.onShowBlur, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged, this.printService, required this.listenerQuery, this.selBt, this.bluetoothCharacteristic});
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -239,19 +243,24 @@ class _SalesListState extends State<SalesList> {
                     onPressed: productsFilterd.isNotEmpty ? () async {
                       bool canPrint = false;
                       try{
-                        await widget.printService.ensureCharacteristicAvailable();
-                        if(widget.printService.characteristic != null){
+                        if(widget.bluetoothCharacteristic != null) {
+                          //await widget.printService?.ensureCharacteristicAvailable();
                           canPrint = true;
-                        }
+                        } /*else {
+                          widget.selBt?.ensureCharacteristicAvailable();
+                          canPrint = true;
+                        }*/
                       }catch(e){
                         print("Error: No hay impresora conectada  - $e");
                         showOverlay(context, const CustomToast(message: 'Impresion no disponible, continuando con la venta'));
                       }
                       if (canPrint) {
-                        salesPrintService = SalesPrintService(widget.printService.characteristic!);
+                        if(widget.bluetoothCharacteristic != null){
+                          salesPrintService = SalesPrintService(widget.bluetoothCharacteristic);
+                        }
                         try{
-                          Platform.isAndroid ? await salesPrintService.connectAndPrintAndroide(productsFilterd, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']) :
-                      await salesPrintService.connectAndPrintIOS(productsFilterd, 'assets/imgLog/test2.jpeg', products[0]['fecha_venta']);
+                          Platform.isAndroid ? await salesPrintService.connectAndPrintAndroide(productsFilterd, 'assets/imgLog/demoLogo.png', products[0]['fecha_venta']) :
+                      await salesPrintService.connectAndPrintIOS(productsFilterd, 'assets/imgLog/demoLogo.png', products[0]['fecha_venta']);
                       } catch(e){
                       print("Error al intentar imprimir: $e");
                       showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));

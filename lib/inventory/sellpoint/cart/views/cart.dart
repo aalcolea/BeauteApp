@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:beaute_app/inventory/print/selBT.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/styles/cartStyles.dart';
 import 'package:beaute_app/inventory/print/printService.dart';
 import 'package:beaute_app/inventory/print/printConnections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import '../../../print/printConnections.dart';
 import '../../../themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
@@ -17,11 +18,13 @@ import '../utils/popUpTabs/showConfirmSellDialog.dart';
 
 class Cart extends StatefulWidget {
   final PrintService printService;
+  final SelBt? selBt;
   final void Function(bool) onHideBtnsBottom;
   final Function(bool) onShowBlurr;
-
+  final BluetoothCharacteristic? bluetoothCharacteristic;
   final Future<void> Function()? onCartSent;
-  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService, required this.onShowBlurr});
+  const Cart({super.key, required this.onHideBtnsBottom, this.onCartSent, required this.printService, required this.onShowBlurr, this.selBt,
+    required this.bluetoothCharacteristic});
 
   @override
   State<Cart> createState() => _CartState();
@@ -427,19 +430,27 @@ class _CartState extends State<Cart> {
                 if(confirm){
                   bool canPrint = false;
                   try{
-                    await widget.printService.ensureCharacteristicAvailable();
-                    if(widget.printService.characteristic != null){
+                    if(widget.bluetoothCharacteristic != null){
                       canPrint = true;
                     }
+                    /*await widget.printService.ensureCharacteristicAvailable();
+                    widget.selBt?.ensureCharacteristicAvailable();
+                    if(widget.printService.characteristic != null || widget.selBt?.characteristic != null){
+
+                    }*/
                   }catch(e){
                     print("Error: No hay impresora conectada  - $e");
                     showOverlay(context, const CustomToast(message: 'Impresion no disponible, continuando con la venta'));
                   }
                   if(canPrint){
-                    PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                    if(widget.printService.characteristic != null){
+                      printService2 = PrintService2(widget.printService.characteristic!);
+                    }else{
+                      printService2 = PrintService2(widget.selBt?.characteristic!);
+                    }
                     try{
-                       Platform.isAndroid ? await printService2.connectAndPrintAndroide(cartProvider.cart, 'assets/imgLog/test2.jpeg') :
-                        await printService2.connectAndPrintIOS(cartProvider.cart, 'assets/imgLog/test2.jpeg');
+                       Platform.isAndroid ? await printService2.connectAndPrintAndroide(cartProvider.cart, 'assets/imgLog/demoLogo.png') :
+                        await printService2.connectAndPrintIOS(cartProvider.cart, 'assets/imgLog/demoLogo.png');
                     } catch(e){
                       print("Error al intentar imprimir: $e");
                       showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));

@@ -378,9 +378,8 @@ class _CategoriesState extends State<Categories> {
                                                       child: Column(
                                                         children: [
                                                           Flexible(
-                                                            child: Image.asset('assets/imgLog/test2.jpeg',
+                                                            child: Image.asset('assets/imgLog/notFound.jpg',
                                                             fit: BoxFit.fill,),),
-                                                          const Text('Imagen no disponible'),
                                                         ],
                                                       )
                                                     );

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:beaute_app/inventory/print/printService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import '../../../../agenda/themes/colors.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
@@ -19,8 +20,9 @@ class TicketOptions extends StatefulWidget {
   final dynamic columnH;
   final PrintService printService;
   final List<Map<String, dynamic>> tickets;
+  final BluetoothCharacteristic? bluetoothCharacteristic;
 
-  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo, required this.printService, required this.tickets,
+  const TicketOptions({super.key, required this.onClose, required this.columnH, required this.onShowBlur, required this.columnHeight, required this.heigthCard, required this.ticketInfo, required this.printService, required this.tickets, this.bluetoothCharacteristic,
   });
 
   @override
@@ -195,8 +197,8 @@ class _TicketOptionsState extends State<TicketOptions> {
                             onPressed: () async {
                               bool canPrint = false;
                               try{
-                                await widget.printService.ensureCharacteristicAvailable();
-                                if(widget.printService.characteristic != null){
+                                //await widget.printService.ensureCharacteristicAvailable();
+                                if(widget.bluetoothCharacteristic != null){
                                   canPrint = true;
                                 }
                               }catch(e){
@@ -204,10 +206,10 @@ class _TicketOptionsState extends State<TicketOptions> {
                                 showOverlay(context, const CustomToast(message: 'Impresion no disponible, continuando con la venta'));
                               }
                               if (canPrint) {
-                                PrintService2 printService2 = PrintService2(widget.printService.characteristic!);
+                                PrintService2 printService2 = PrintService2(widget.bluetoothCharacteristic!);
                                 try{
-                                  Platform.isAndroid ? await printService2.connectAndPrintAndroideTicket(ticketDetails, 'assets/imgLog/test2.jpeg') :
-                                  await printService2.connectAndPrintIOSTicket(ticketDetails, 'assets/imgLog/test2.jpeg');
+                                  Platform.isAndroid ? await printService2.connectAndPrintAndroideTicket(ticketDetails, 'assets/imgLog/demoLogo.png') :
+                                  await printService2.connectAndPrintIOSTicket(ticketDetails, 'assets/imgLog/demoLogo.png');
                                 } catch(e){
                                   print("Error al intentar imprimir: $e");
                                   showOverlay(context, const CustomToast(message: 'Error al intentar imprimir'));

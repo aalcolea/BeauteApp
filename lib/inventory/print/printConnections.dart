@@ -14,6 +14,7 @@ class PrintService extends ChangeNotifier {
     super.dispose();
   }
 
+  int noChooseMethot = 1;
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> devicesList = [];
   BluetoothDevice? selectedDevice;

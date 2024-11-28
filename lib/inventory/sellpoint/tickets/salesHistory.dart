@@ -7,8 +7,10 @@ import 'package:beaute_app/inventory/sellpoint/tickets/utils/sales/listenerQuery
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketsList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
 import '../../print/printConnections.dart';
+import '../../print/selBT.dart';
 import '../../themes/colors.dart';
 import '../../../regEx.dart';
 import '../../kboardVisibilityManager.dart';
@@ -17,8 +19,10 @@ import '../tickets/utils/salesList.dart';
 class SalesHistory extends StatefulWidget {
 
   final PrintService printService;
+  final SelBt? selBt;
+  final BluetoothCharacteristic? btCharacteristic;
 
-  const SalesHistory({super.key, required this.printService});
+  const SalesHistory({super.key, required this.printService, this.selBt, this.btCharacteristic});
 
   @override
   State<SalesHistory> createState() => _SalesHistoryState();
@@ -305,7 +309,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                           alignment: Alignment.centerLeft,
                           child: Text(
                             textAlign: TextAlign.left,
-                            '*Productos vendidos el ${longDate}',
+                            '*Productos vendidos el $longDate',
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -335,6 +339,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                       listenerOnDateChanged: listenerOnDateChanged,
                       dateController: dateController.text,
                       onDateChanged: (fechaRecibida) => dateController.text = fechaRecibida,
+                      bluetoothCharacteristic: widget.btCharacteristic,
                     ),
                     SalesList(
                       onShowBlur: _onShowBlurr,
@@ -342,7 +347,9 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
                       dateController: dateController.text,
                       onDateChanged: (fechaRecibida) => dateController.text = fechaRecibida,
                       printService: widget.printService,
+                      selBt: widget.selBt,
                       listenerQuery: listenerQuery,
+                      bluetoothCharacteristic: widget.btCharacteristic,
                     ),
                   ],
                 ),
@@ -431,7 +438,7 @@ class _SalesHistoryState extends State<SalesHistory> with SingleTickerProviderSt
       onPressed: () {
         setState(() {
           selectedPage = pageIndex;
-          pageController.animateToPage(pageIndex, duration: Duration(milliseconds: 250), curve: Curves.linear);
+          pageController.animateToPage(pageIndex, duration: const Duration(milliseconds: 250), curve: Curves.linear);
         });
       },
       child: Text(

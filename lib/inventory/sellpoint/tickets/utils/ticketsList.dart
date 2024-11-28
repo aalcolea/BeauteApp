@@ -2,6 +2,7 @@ import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerOnDateChang
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/listenerRemoverOL.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/utils/ticketOptions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
 import '../../../kboardVisibilityManager.dart';
 import '../../../print/printConnections.dart';
@@ -17,8 +18,9 @@ class Ticketslist extends StatefulWidget {
   final ListenerOnDateChanged listenerOnDateChanged;
   final String dateController;
   final void Function(String) onDateChanged;
+  final BluetoothCharacteristic? bluetoothCharacteristic;
 
-  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL, required this.printService, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged});
+  const Ticketslist({super.key, required this.onShowBlur, required this.onOptnSize, required this.listenerremoverOL, required this.printService, required this.listenerOnDateChanged, required this.dateController, required this.onDateChanged, this.bluetoothCharacteristic});
 
   @override
   State<Ticketslist> createState() => _TicketslistState();
@@ -144,7 +146,6 @@ class _TicketslistState extends State<Ticketslist> {
     ]);
     if (index >= 0 && index < tickets.length) {
       ticketTemp = [tickets[index]];
-      print('holajeje $ticketTemp');
       removeOverlay();
       final key = ticketKeys[index];
       if (key.currentContext != null && key.currentContext!.findRenderObject() is RenderBox) {
@@ -178,6 +179,7 @@ class _TicketslistState extends State<Ticketslist> {
                   ticketInfo: ticketInfo,
                   printService: widget.printService,
                   tickets: ticketTemp,
+                  bluetoothCharacteristic: widget.bluetoothCharacteristic,
                 ),
               ),
             );

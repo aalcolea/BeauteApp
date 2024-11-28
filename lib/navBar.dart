@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:beaute_app/agenda/themes/colors.dart';
+import 'package:beaute_app/agenda/utils/toastWidget.dart';
 import 'package:beaute_app/inventory/admin.dart';
 import 'package:beaute_app/agenda/views/admin/admin.dart';
 import 'package:beaute_app/inventory/listenerPrintService.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'agenda/forms/alertForm.dart';
+import 'agenda/utils/showToast.dart';
 import 'globalVar.dart';
 import 'agenda/services/auth_service.dart';
 import 'inventory/print/testPDF.dart';
@@ -24,9 +26,10 @@ class navBar extends StatefulWidget {
   final Function(int) onItemSelected;
   final void Function(bool) onLockScreen;
   final String currentScreen;
+  final Function (bool)? onChooseBT;
 
   const navBar({super.key, required this.onItemSelected, required this.onShowBlur, required this.isDoctorLog, required this.currentScreen,
-    this.onPrintServiceComunication, this.printServiceAfterInitConn, this.btChar, required this.onLockScreen});
+    this.onPrintServiceComunication, this.printServiceAfterInitConn, this.btChar, required this.onLockScreen, this.onChooseBT});
 
   @override
   State<navBar> createState() => _navBarState();
@@ -244,6 +247,16 @@ class _navBarState extends State<navBar> {
                                     isConecct = false;
                                   });
                                 },
+                                onLongPress: () async {
+                                  bool isOn = await flutterBlue.isOn;
+                                  if(isOn){
+                                    widget.onChooseBT!(true);
+                                  }else {
+                                    if(mounted){
+                                      showOverlay(context, const CustomToast(message: 'Encienda el Bluethoot'));
+                                    }
+                                }
+                                },
                                 child: Material(
                                   color: Colors.transparent,
                                   child: Container(
@@ -324,7 +337,7 @@ class _navBarState extends State<navBar> {
                                     backgroundColor: AppColors3.whiteColor,
                                     side: const BorderSide(color: AppColors3.primaryColor, width: 1.0),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    minimumSize: Size(170, 55),
+                                    minimumSize: const Size(170, 55),
                                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                     elevation: 5.0,
                                     shadowColor: Colors.black54,
@@ -368,7 +381,6 @@ class _navBarState extends State<navBar> {
                                                   SizedBox(width: 10),
                                                   Text('Cerrar sesion', style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.05, color: AppColors3.primaryColor))
                                                 ]))])))])),
-
               ],
             )
           );

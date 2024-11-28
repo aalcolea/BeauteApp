@@ -70,12 +70,13 @@ class _CategoryFormState extends State<CategoryForm> {
 
       if (_selectedImage != null) {
         request.files.add(await http.MultipartFile.fromPath('foto', _selectedImage!.path));
+
       }
 
       final response = await request.send();
 
       final responseBody = await http.Response.fromStream(response);
-
+      print(responseBody.body);
       if (response.statusCode == 201) {
         if(mounted){
           ScaffoldMessenger.of(context).showSnackBar(

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:beaute_app/agenda/utils/showToast.dart';
 import 'package:beaute_app/agenda/utils/toastWidget.dart';
+import 'package:beaute_app/inventory/print/selBT.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/services/cartService.dart';
 import 'package:beaute_app/inventory/sellpoint/cart/services/searchService.dart';
 import 'package:beaute_app/inventory/sellpoint/tickets/salesHistory.dart';
@@ -18,7 +19,10 @@ import 'package:beaute_app/inventory/print/printService.dart';
 import 'package:beaute_app/navBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:soundpool/soundpool.dart';
@@ -62,6 +66,11 @@ class _adminInvState extends State<adminInv> {
   List<dynamic> producto = []; ///despues le quito la lista (alan)
   bool lockScreen = false;
   ListenerPrintService listenerPrintService = ListenerPrintService();
+  //
+  SelBt selBt = SelBt();
+  bool chooseBT = false;
+  int methotBt = 0;
+  late BluetoothCharacteristic? bluetoothCharacteristic;
 
 
   void changeBlurr(){
@@ -174,6 +183,15 @@ class _adminInvState extends State<adminInv> {
     });
   }
 
+  void onChooseBT(bool chooseBT){
+    setState(() {
+      this.chooseBT = chooseBT;
+      print('${this.chooseBT}');
+      //selBt.checkConnectedDevices();
+      selBt.scanForDevices();
+    });
+  }
+
 
   onBackPressed(didPop) {
     if (!didPop) {
@@ -212,6 +230,7 @@ class _adminInvState extends State<adminInv> {
   void onPrintServiceComunication(PrintService printService){
     setState(() {
       this.printService = printService;
+      bluetoothCharacteristic = printService.characteristic!;
     });
 
   }
@@ -229,7 +248,8 @@ class _adminInvState extends State<adminInv> {
           case 1:
             return Categories(productsKey: productsKey, onHideBtnsBottom: onHideBtnsBottom, onShowBlur: _onShowBlur, listenerblurr: _listenerblurr);
           case 2:
-            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService, onShowBlurr: onShowBlurr);
+            return Cart(onHideBtnsBottom: onHideBtnsBottom, printService: printService,
+                onShowBlurr: onShowBlurr, selBt: selBt, bluetoothCharacteristic: bluetoothCharacteristic);
           default:
             return Container();
         }
@@ -250,7 +270,8 @@ class _adminInvState extends State<adminInv> {
                     currentScreen: currentScreen,
                     onPrintServiceComunication: onPrintServiceComunication,
                     printServiceAfterInitConn: printService,
-                    btChar: printService.characteristic, onLockScreen: onLockScreen),
+                    btChar: printService.characteristic, onLockScreen: onLockScreen,
+                  onChooseBT: onChooseBT),
                 body: Stack(
                     children: [
                       Container(
@@ -317,7 +338,9 @@ class _adminInvState extends State<adminInv> {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => SalesHistory(printService: printService,),
+                                                builder: (context) => SalesHistory(
+                                                    printService: printService, selBt: selBt,
+                                                btCharacteristic: bluetoothCharacteristic),
                                               ),
                                             );
                                           },
@@ -536,13 +559,119 @@ class _adminInvState extends State<adminInv> {
                   filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                   child: Container(
                     alignment: Alignment.center,
-                    child: const CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                      strokeAlign: 15,
-                      strokeWidth: 4.5,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                  color: AppColors.primaryColor,
+                                  strokeAlign: 15,
+                                  strokeWidth: 4.5),
+                            ),
+                            const SizedBox(height: 50),
+                            Text('Conectando...',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width * 0.06
+                            ),),
+                          ],
+                        ),
+                      )
+                    )))),
+            ///look4impresora
+            Visibility(
+                visible: chooseBT,
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          chooseBT = false;
+                        });
+                      },
+                      child: Material(
+                        color: Colors.transparent,
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                          child: Container(),
+                        ),
+                      ),
                     ),
-                  ),
-                ))
+                    Center(
+                        child: Container(
+                          constraints: BoxConstraints(
+                              maxHeight: MediaQuery.of(context).size.height * 0.5
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: MediaQuery.of(context).size.width * 0.04
+                          ),
+                          margin: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width * 0.12,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black54),
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.bluetooth,
+                                  size: MediaQuery.of(context).size.width * 0.0725,),
+                                const SizedBox(height: 12),
+                                Text('Bluetooth',
+                                  style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.042),),
+                                //
+                                const Divider(),
+                                Flexible(child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: selBt.devicesList.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(
+                                        children: [
+                                          if(selBt.devicesList[index].name != '')
+                                            ListTile(
+                                                title: Text(selBt.devicesList[index].name, style: TextStyle(color: Colors.black),),
+                                                subtitle: Text(selBt.devicesList[index].id.toString(),
+                                                    style: const TextStyle(color: Colors.black)),
+                                                onTap: () async {
+                                                  setState(() {
+                                                    selBt.selectedDevice = selBt.devicesList[index];
+                                                  });
+                                                  await selBt.connectTo(selBt.selectedDevice);
+                                                  await selBt.discoverServices(selBt.selectedDevice);
+                                                  //await selBt.selectedDevice!.connect();
+                                                  bluetoothCharacteristic = selBt.characteristic!;
+                                                  print('btchaasdr5 $bluetoothCharacteristic');
+
+                                                }),
+                                          if(selBt.devicesList[index].name != '')
+                                            Divider(
+                                              indent: MediaQuery.of(context).size.width * 0.03,
+                                              endIndent: MediaQuery.of(context).size.width * 0.03
+                                          ),
+                                        ],
+                                      );}
+                                )),
+                                const Divider(),
+                                Text('Seleccione dispositivo...', style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width * 0.042,
+                                ),)
+                              ],
+                            ),
+                          )
+                        )
+                    ),
+                  ],
+                )),
           ],
         ));
   }
