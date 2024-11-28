@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:beaute_app/inventory/stock/utils/listenerBlurr.dart';
 
 import '../../../themes/colors.dart';
@@ -42,6 +43,7 @@ class _CategoriesState extends State<Categories> {
   final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories'; //'http://192.168.101.140:8080/api/categories';
   bool hasMoreItems = true;
   String categoryName = '';
+  String? categoryImage;
   bool isLoading = false;
 
   void checkKeyboardVisibility() {
@@ -130,6 +132,7 @@ class _CategoriesState extends State<Categories> {
     try{
       List<Map<String, dynamic>> fetchedItems = await fetchItems(limit: limit, offset: offset);
       setState(() {
+        isLoading = false;
         // Only add new items that don't already exist in the items list
         for (var newItem in fetchedItems) {
           bool exists = items.any((item) => item['id'] == newItem['id']);
@@ -332,6 +335,8 @@ class _CategoriesState extends State<Categories> {
                             onLongPress: () {
                               toggleSelection(item['id'].toString());
                               categoryName = item['category'];
+                              categoryImage = item['image'];
+                              print(categoryImage);
                             },
                             child: Card(
                                 margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.07),
@@ -363,13 +368,14 @@ class _CategoriesState extends State<Categories> {
                                           height: MediaQuery.of(context).size.width * 0.35,
                                           width: MediaQuery.of(context).size.width * 0.5,
                                           child: Stack(
+                                            fit: StackFit.expand,
                                             alignment: Alignment.center,
                                             children: [
                                               ClipRRect(
                                                 borderRadius: BorderRadius.circular(10),
                                                 child: Image.network(
                                                   item['image'],
-                                                  fit: BoxFit.contain,
+                                                  fit: BoxFit.fitWidth,
                                                   loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                                     if (loadingProgress == null) {
                                                       return child;
@@ -456,7 +462,6 @@ class _CategoriesState extends State<Categories> {
                 children: [
                   selectedCategories.length == 1 ? FloatingActionButton(
                     onPressed: () {
-                      print(categoryName);
                       widget.onShowBlur(true);
                       showDialog(
                         context: context,
@@ -467,7 +472,9 @@ class _CategoriesState extends State<Categories> {
                             catName: categoryName,
                             onLoad: (load) {
                               isLoading = load;
-                            },);
+                            },
+                            catImage: categoryImage,
+                          );
                         },
                       ).then((_){
                         loadFirstItems();

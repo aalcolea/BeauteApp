@@ -14,9 +14,10 @@ class EditCategoryForm extends StatefulWidget {
 
   final int catID;
   final String catName;
+  final String? catImage;
   final Function(bool) onLoad;
 
-  const EditCategoryForm({Key? key, required this.catID, required this.catName, required this.onLoad}) : super(key: key);
+  const EditCategoryForm({Key? key, required this.catID, required this.catName, required this.onLoad, required this.catImage}) : super(key: key);
 
   @override
   _EditCategoryFormState createState() => _EditCategoryFormState();
@@ -30,6 +31,7 @@ class _EditCategoryFormState extends State<EditCategoryForm> {
   File? _selectedImage;
   final picker = ImagePicker();
   bool isLoading = false;
+
   Future<void> _requestPermission() async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -209,7 +211,7 @@ class _EditCategoryFormState extends State<EditCategoryForm> {
                           )
                       ),
                     )
-                        : Column(
+                        : widget.catImage == 'https://example.com/default.jpg' ? Column(
                       children: [
                         SizedBox(
                           width: double.infinity,
@@ -246,6 +248,39 @@ class _EditCategoryFormState extends State<EditCategoryForm> {
                           ),
                         )
                       ],
+                    ) : SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.width * 0.4,
+                      child: ElevatedButton(
+                          onPressed: _requestPermission,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.whiteColor,
+                              side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10)
+                                  )
+                              )
+                          ),
+                          child: Image.network(
+                            widget.catImage.toString(),
+                            fit: BoxFit.contain,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                        : null,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                      ),
                     )
                   ],
                 ),
@@ -255,7 +290,7 @@ class _EditCategoryFormState extends State<EditCategoryForm> {
                     : ElevatedButton(
                       onPressed: () async {
                         widget.onLoad(true);
-                        await categoryService.updateCategoryInfo(context: context, idCategory: widget.catID, name: nameController.text);
+                        await categoryService.updateCategoryInfo(context: context, idCategory: widget.catID, name: nameController.text, image: _selectedImage);
                       },
                       style: ElevatedButton.styleFrom(
                         splashFactory: InkRipple.splashFactory,

@@ -24,6 +24,7 @@ class _CategoryFormState extends State<CategoryForm> {
   File? _selectedImage;
   final picker = ImagePicker();
   bool isLoading = false;
+
   Future<void> _requestPermission() async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -265,7 +266,10 @@ class _CategoryFormState extends State<CategoryForm> {
                       width: double.infinity,
                       height: MediaQuery.of(context).size.width * 0.4,
                       child: ElevatedButton(
-                        onPressed: _requestPermission,
+                        onPressed: () {
+                          _requestPermission();
+                          print(_selectedImage);
+                        },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.whiteColor,
                             side: const BorderSide(color: AppColors.primaryColor, width: 1.5),

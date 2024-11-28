@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,7 @@ import '../../../../agenda/utils/toastWidget.dart';
 class CategoryService {
   final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories'; //'http://192.168.101.140:8080/api/categories';//
 
-  Future<bool> updateCategoryInfo({required context, required int idCategory, required String name}) async{
+  Future<bool> updateCategoryInfo({required context, required int idCategory, required String name, required File? image}) async{
     final url = Uri.parse(baseURL + '/$idCategory');
 
     if (name.isEmpty) {
@@ -20,17 +21,24 @@ class CategoryService {
       );
     }
 
+    print(image);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+
     try{
-      final response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode({
-          'nombre': name,
-        }),
-      );
+      final request = http.MultipartRequest('POST', url);
+      request.headers['X-HTTP-Method-Override'] = 'PUT';
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.fields['nombre'] = name;
+      if (image != null) {
+        request.files.add(await http.MultipartFile.fromPath('foto', image.path));
+      }
+      final response = await request.send();
+      final responseBody = await http.Response.fromStream(response);
+      print(responseBody.body);
+
       if(response.statusCode == 200){
         Navigator.of(context).pop(true);
         print('Categoría actualizada con éxito');
@@ -48,6 +56,13 @@ class CategoryService {
         );
         return true;
       }else{
+        String errorMessage = 'Error al crear la categoria';
+        try {
+          final responseData = jsonDecode(responseBody.body);
+          errorMessage = responseData['message'] ?? errorMessage;
+        } catch (e) {
+          errorMessage = 'Error inesperado: ${responseBody.body}';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               padding: EdgeInsets.only(
@@ -60,10 +75,10 @@ class CategoryService {
                     color: AppColors.whiteColor,
                     fontSize: MediaQuery.of(context).size.width * 0.045),)),
         );
-        throw Exception('Error al crear la categoría');
+        throw Exception('Error al crear la categoría ${response}');
       }
     }catch(e){
-      print('Error al editar la categoría');
+      print('Error al editar la categoría $e');
       throw Exception('Error al modificar la categoría: $e');
     }
   }
