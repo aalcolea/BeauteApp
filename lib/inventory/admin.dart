@@ -115,6 +115,19 @@ class _adminInvState extends State<adminInv> {
       print('error en la busqueda: $e');
     }finally{
       soundScaner();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(milliseconds: 1000),
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width * 0.08,
+              bottom: MediaQuery.of(context).size.width * 0.08,
+              left: MediaQuery.of(context).size.width * 0.02,
+            ),
+            content: Text('Producto agregado al carrito',
+              style: TextStyle(
+                  color: AppColors.whiteColor,
+                  fontSize: MediaQuery.of(context).size.width * 0.045),)),
+      );
       await Future.delayed(Duration(seconds: 3));
       isSearching = false;
     }
