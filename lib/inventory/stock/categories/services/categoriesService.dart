@@ -1,39 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as img;
-
 import '../../../themes/colors.dart';
-import '../../../../agenda/utils/showToast.dart';
-import '../../../../agenda/utils/toastWidget.dart';
 
 class CategoryService {
-  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories'; //'http://192.168.101.140:8080/api/categories';//
+  final String baseURL = 'https://beauteapp-dd0175830cc2.herokuapp.com/api/categories';
 
   Future<File?> processImage(File imageFile) async {
     try {
-      // Leer la imagen como bytes
       final bytes = await imageFile.readAsBytes();
-
-      // Decodificar la imagen usando la librería `image`
       final decodedImage = img.decodeImage(bytes);
+
       if (decodedImage == null) {
         print("Error: No se pudo decodificar la imagen.");
         return null;
       }
 
-      // Si el tamaño del archivo es mayor a 4096 KB, reducimos la calidad
       const maxSizeInBytes = 2048 * 512; // 4 MB
       if (imageFile.lengthSync() > maxSizeInBytes) {
         print("Reduciendo tamaño de la imagen...");
-        // Reducir la resolución y calidad de la imagen
-        final resizedImage = img.copyResize(decodedImage, width: 800); // Ajusta el ancho según necesites
+        final resizedImage = img.copyResize(decodedImage, width: 800);
         final compressedImage = img.encodeJpg(resizedImage, quality: 85);
-
-        // Guardar la imagen procesada en un archivo temporal
         final tempDir = Directory.systemTemp;
         final tempFile = File('${tempDir.path}/processed_image.jpg');
         await tempFile.writeAsBytes(compressedImage);
