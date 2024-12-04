@@ -14,7 +14,6 @@ class PrintService extends ChangeNotifier {
     super.dispose();
   }
 
-  int noChooseMethot = 1;
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> devicesList = [];
   BluetoothDevice? selectedDevice;
@@ -129,53 +128,60 @@ class PrintService extends ChangeNotifier {
       showOverlay(context, const CustomToast(message: 'Encienda Bluethooth'));
       return;
     }
+
     bool deviceFound = false;
+    StreamSubscription? scanSubscription; // Controla el stream manualmente
 
     try {
-        listenerPrintService.setChange(0, null);
-        await flutterBlue.startScan(timeout: const Duration(seconds: 5));
-        flutterBlue.scanResults.listen((results) async {
-          for (ScanResult r in results) {
-            if (r.device.name == nameTargetDevice) {
-              deviceFound = true;
-              flutterBlue.stopScan();
-              selectedDevice = r.device;
+      listenerPrintService.setChange(0, null);
+
+      await flutterBlue.startScan(timeout: const Duration(seconds: 5));
+      scanSubscription = flutterBlue.scanResults.listen((results) async {
+        for (ScanResult r in results) {
+          if (r.device.name == nameTargetDevice) {
+            deviceFound = true;
+            await flutterBlue.stopScan();
+            await scanSubscription?.cancel(); // Cancela el stream para evitar duplicados
+            selectedDevice = r.device;
+            isConnect = true;
+            print("Dispositivo encontrado: ${selectedDevice?.name}");
+            if (selectedDevice == null) {
+              print("selectedDevice es null inesperadamente");
+              return;
+            }
+
+            try {
+              await Future.delayed(const Duration(milliseconds: 50));
+              await selectedDevice!.connect();
+              await discoverServices(selectedDevice!);
               isConnect = true;
-              print("Dispositivo encontrado: ${selectedDevice?.name}");
-              try {
-                await Future.delayed(const Duration(milliseconds: 50));
-                await selectedDevice!.connect();
-                discoverServices(selectedDevice!);
-                isConnect = true;
-                listenToDeviceState(context);  // Inicia la escucha después de la conexión
-                listenerPrintService.setChange(1, true);
-                print("Dispositivo conectado: ${selectedDevice?.name}");
-                showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
-                notifyListeners();
-              } catch (e) {
-                print("Error al conectar con el dispositivo: $e");
-                selectedDevice = null;
-                listenerPrintService.setChange(0, null);
-                showOverlay(context, const CustomToast(message: "Espere mientras se reconecta automáticamente"));
-                await Future.delayed(const Duration(seconds: 8));
-                scanForDevices(context);
-                notifyListeners();
-              }
-              break;
-            }}
-        });
-        await Future.delayed(const Duration(seconds: 5));
-        if (!deviceFound) {
-          listenerPrintService.setChange(3, null);
-          showOverlay(context, const CustomToast(message: "Dispositivo no encontrado"));
+              listenToDeviceState(context);
+              listenerPrintService.setChange(1, true);
+              print("Dispositivo conectado: ${selectedDevice?.name}");
+              showOverlay(context, const CustomToast(message: "Dispositivo conectado correctamente"));
+              notifyListeners();
+            } catch (e) {
+              print("Error al conectar con el dispositivo: $e");
+            }
+            break;
+          }
         }
-      } catch (e) {
-        print("Error durante el escaneo: $e");
+      });
+
+      await Future.delayed(const Duration(seconds: 5));
+      if (!deviceFound) {
+        listenerPrintService.setChange(3, null);
+        showOverlay(context, const CustomToast(message: "Dispositivo no encontrado"));
       }
+    } catch (e) {
+      print("Error durante el escaneo: $e");
+    } finally {
+      await scanSubscription?.cancel(); // Limpia el stream siempre
+    }
+  }
 
-   }
 
-  void listenToDeviceState(context) {
+  void listenToDeviceState(context ) {
     _connectionSubscription?.cancel();
     if (selectedDevice != null) {
       _connectionSubscription = selectedDevice!.state.listen((state) {
@@ -184,15 +190,20 @@ class PrintService extends ChangeNotifier {
         }});}}
 
   void disconnect(context) async {
-    if (selectedDevice != null ) {
+    if (selectedDevice != null) {
       try {
-        _connectionSubscription?.cancel();
-        await selectedDevice?.disconnect();
-        selectedDevice = null;
-        isConnect = false;
+       // _connectionSubscription?.cancel();
+        print(selectedDevice);
+        bool result = await selectedDevice?.disconnect();
+       print('3 $result');
+        //selectedDevice = null;
+        //isConnect = false;
+        print('hola 2$listenerPrintService');
         listenerPrintService.setChange(2, false);
+
         notifyListeners();
-        showOverlay(context, const CustomToast(message: 'Dispositivo desconectado correctamente'));
+        showOverlay(context, const CustomToast(
+            message: 'Dispositivo desconectado correctamente'));
       } catch (e) {
         print("Error al desconectar el dispositivo: $e");
       }

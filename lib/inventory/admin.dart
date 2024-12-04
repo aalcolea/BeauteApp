@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:beaute_app/agenda/utils/showToast.dart';
@@ -67,10 +68,11 @@ class _adminInvState extends State<adminInv> {
   bool lockScreen = false;
   ListenerPrintService listenerPrintService = ListenerPrintService();
   //
-  SelBt selBt = SelBt();
+  SelBt? selBt = SelBt();
   bool chooseBT = false;
   int methotBt = 0;
   late BluetoothCharacteristic? bluetoothCharacteristic;
+  bool isLoadingBtOptn = false;
 
 
   void changeBlurr(){
@@ -183,15 +185,20 @@ class _adminInvState extends State<adminInv> {
     });
   }
 
-  void onChooseBT(bool chooseBT){
+
+  void onChooseBT(bool chooseBT) {
     setState(() {
+      isLoadingBtOptn = true;
       this.chooseBT = chooseBT;
-      print('${this.chooseBT}');
-      //selBt.checkConnectedDevices();
-      selBt.scanForDevices();
+      selBt?.scanForDevices().then((_) {
+      });
+      Timer(const Duration(seconds: 5), () {
+        setState(() {
+          isLoadingBtOptn = false;
+        });
+      });
     });
   }
-
 
   onBackPressed(didPop) {
     if (!didPop) {
@@ -230,15 +237,27 @@ class _adminInvState extends State<adminInv> {
   void onPrintServiceComunication(PrintService printService){
     setState(() {
       this.printService = printService;
+      print('ejecutado printService');
       bluetoothCharacteristic = printService.characteristic!;
     });
-
   }
 
   void onLockScreen(bool lockScreen){
     setState(() {
       this.lockScreen = lockScreen;
     });
+  }
+  void ontResetBt(bool resetBt){
+    print('selllllBT1 $selBt');
+    print('resetBtBT1 $resetBt');
+    if(resetBt){
+      setState(() {
+        selBt?.characteristic = null;
+        print('selllllBT2 $selBt');
+        print('resetBtT2 $resetBt');
+      });
+    }
+
   }
 
   @override
@@ -271,7 +290,9 @@ class _adminInvState extends State<adminInv> {
                     onPrintServiceComunication: onPrintServiceComunication,
                     printServiceAfterInitConn: printService,
                     btChar: printService.characteristic, onLockScreen: onLockScreen,
-                  onChooseBT: onChooseBT),
+                    selBt: selBt,
+                    onChooseBT: onChooseBT,
+                    onResetBT: ontResetBt),
                 body: Stack(
                     children: [
                       Container(
@@ -589,11 +610,11 @@ class _adminInvState extends State<adminInv> {
                 child: Stack(
                   children: [
                     GestureDetector(
-                      onTap: (){
+                      onTap: !isLoadingBtOptn ? (){
                         setState(() {
                           chooseBT = false;
                         });
-                      },
+                      } : null,
                       child: Material(
                         color: Colors.transparent,
                         child: BackdropFilter(
@@ -630,37 +651,39 @@ class _adminInvState extends State<adminInv> {
                                   style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.042),),
                                 //
                                 const Divider(),
-                                Flexible(child: ListView.builder(
+                                Flexible(
+                                    child: !isLoadingBtOptn ?  ListView.builder(
                                     padding: EdgeInsets.zero,
                                     shrinkWrap: true,
-                                    itemCount: selBt.devicesList.length,
+                                    itemCount: selBt?.devicesList.length,
                                     itemBuilder: (context, index) {
                                       return Column(
                                         children: [
-                                          if(selBt.devicesList[index].name != '')
+                                          if(selBt?.devicesList[index].name != '')
                                             ListTile(
-                                                title: Text(selBt.devicesList[index].name, style: TextStyle(color: Colors.black),),
-                                                subtitle: Text(selBt.devicesList[index].id.toString(),
+                                                title: Text(selBt!.devicesList[index].name, style: const TextStyle(color: Colors.black),),
+                                                subtitle: Text(selBt!.devicesList[index].id.toString(),
                                                     style: const TextStyle(color: Colors.black)),
                                                 onTap: () async {
                                                   setState(() {
-                                                    selBt.selectedDevice = selBt.devicesList[index];
+                                                    selBt?.selectedDevice = selBt?.devicesList[index];
                                                   });
-                                                  await selBt.connectTo(selBt.selectedDevice);
-                                                  await selBt.discoverServices(selBt.selectedDevice);
-                                                  //await selBt.selectedDevice!.connect();
-                                                  bluetoothCharacteristic = selBt.characteristic!;
+                                                  await selBt?.connectTo(selBt?.selectedDevice);
+                                                  await selBt?.discoverServices(selBt?.selectedDevice);
+                                                  bluetoothCharacteristic = selBt?.characteristic!;
                                                   print('btchaasdr5 $bluetoothCharacteristic');
-
                                                 }),
-                                          if(selBt.devicesList[index].name != '')
+                                          if(selBt?.devicesList[index].name != '')
                                             Divider(
                                               indent: MediaQuery.of(context).size.width * 0.03,
                                               endIndent: MediaQuery.of(context).size.width * 0.03
                                           ),
                                         ],
                                       );}
-                                )),
+                                ) : Padding(padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.06),
+                                    child: const CircularProgressIndicator(
+                                      color: AppColors.primaryColor,
+                                    ))),
                                 const Divider(),
                                 Text('Seleccione dispositivo...', style: TextStyle(
                                   fontSize: MediaQuery.of(context).size.width * 0.042,

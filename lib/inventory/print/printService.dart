@@ -18,6 +18,7 @@ class PrintService2 {
       return;
     }
 
+    await centrar();
     await printImageBW(imagePath);
     await printText(carrito);
     await Future.delayed(const Duration(milliseconds: 500));

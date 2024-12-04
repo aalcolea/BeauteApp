@@ -221,6 +221,7 @@ class PinEntryScreenState extends State<PinEntryScreen> with SingleTickerProvide
       if (enteredPin.length < 4) {
         textfield.text += number;
         enteredPin += number.toString();
+        print(enteredPin);
         enteredPin.length >= 4 ? authenticate() : null;
       }
     });

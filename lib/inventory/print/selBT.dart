@@ -3,6 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter_blue/flutter_blue.dart';
 
+import '../../agenda/utils/showToast.dart';
+import '../../agenda/utils/toastWidget.dart';
+
 class SelBt {
 
 
@@ -34,7 +37,7 @@ class SelBt {
     }
   }
 
-  void scanForDevices() {
+  Future <void> scanForDevices() async {
     flutterBlue.startScan(timeout: Duration(seconds: 5));
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
@@ -68,5 +71,17 @@ class SelBt {
   Future<void> connectTo (BluetoothDevice? btDevice) async {
     await btDevice?.connect();
     discoverServices(btDevice!);
+  }
+
+  void disconnect(context, BluetoothDevice? selectedDevice) async {
+    if (selectedDevice != null ) {
+      try {
+        await selectedDevice.disconnect();
+        selectedDevice = null;
+        showOverlay(context, const CustomToast(message: 'Dispositivo SELBT desconectado correctamente'));
+      } catch (e) {
+        print("Error al desconectar el dispositivo: $e");
+      }
+    }
   }
 }
