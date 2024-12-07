@@ -12,6 +12,7 @@ import '../../../../agenda/utils/toastWidget.dart';
 import '../../../kboardVisibilityManager.dart';
 import '../../categories/forms/categoryBox.dart';
 import '../services/productsService.dart';
+import '../utils/PopUpTabs/deleteProductDialog.dart';
 
 class ProductDetails extends StatefulWidget {
   final int idProduct;
@@ -22,11 +23,13 @@ class ProductDetails extends StatefulWidget {
   final double precio;
   final int catId;
   final Future<void> Function() onProductModified;
+  final Future<void> Function()? onProductDeleted;
+
   final void Function(
       bool
       ) onShowBlur;
 
-  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId, required this.onProductModified, required this.onShowBlur});
+  const ProductDetails({super.key, required this.idProduct, required this.nameProd, required this.descriptionProd, required this.barCode, required this.stock, required this.precio, required this.catId, required this.onProductModified, required this.onShowBlur, this.onProductDeleted});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -388,7 +391,28 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  setState(() {
+                                  widget.onShowBlur(true);
+                                  Navigator.pop(context);
+                                  showDeleteProductConfirmationDialog(
+                                    context,
+                                        () async {
+                                      await productService.deleteProduct(widget.idProduct);
+                                      if (mounted) {
+                                        showOverlay(
+                                          context,
+                                          const CustomToast(
+                                            message: 'Producto eliminado',
+                                          ),
+                                        );
+                                      }
+                                      if (widget.onProductDeleted != null) {
+                                        await widget.onProductDeleted!();
+                                      }
+                                    },
+                                  ).then((_) {
+                                    if (mounted) {
+                                      widget.onShowBlur(false);
+                                    }
                                   });
                                 },
                                 child: const Text('Eliminar Producto', style: TextStyle(color: AppColors.redDelete),),

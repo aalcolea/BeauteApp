@@ -326,6 +326,10 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                     removeOverlay();
                                     setState(() {});
                                   },
+                                  onProductDeleted: () async {
+                                    await refreshProducts();
+                                    removeOverlay();
+                                  },
                                   onShowBlur: widget.onShowBlur,
                                 ),
                               ),
