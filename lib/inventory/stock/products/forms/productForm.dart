@@ -15,7 +15,8 @@ import '../../../kboardVisibilityManager.dart';
 import '../services/productsService.dart';
 
 class ProductForm extends StatefulWidget {
-  const ProductForm({super.key});
+  final String? selectedCategory;
+  const ProductForm({super.key, this.selectedCategory});
 
   @override
   State<ProductForm> createState() => _ProductFormState();

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -5,9 +6,9 @@ import '../../../../../agenda/themes/colors.dart';
 import '../../../../themes/colors.dart';
 
 class SalesCalendar extends StatefulWidget {
-  final String? dateInit;
+  final String dateInit;
   final void Function(String, bool) onDayToAppointFormSelected;
-  SalesCalendar({Key? key, required this.onDayToAppointFormSelected, this.dateInit}) : super(key: key);
+  SalesCalendar({Key? key, required this.onDayToAppointFormSelected, required this.dateInit}) : super(key: key);
 
   @override
   State<SalesCalendar> createState() => _SalesCalendarState();
@@ -48,16 +49,18 @@ class _SalesCalendarState extends State<SalesCalendar> {
     }
   }
 
-  CalendarController _calendarController = CalendarController();
+  final CalendarController _calendarController = CalendarController();
   int initMonth = 0;
   int? currentMonth = 0;
   int? visibleYear = 0;
   DateTime now = DateTime.now();
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
-    widget.dateInit != null ? saleDateController.text = widget.dateInit! : null;
+    saleDateController.text = widget.dateInit;
+    selectedDate = DateFormat('yyyy-MM-dd').parse(widget.dateInit);
     initMonth = now.month;
     currentMonth = _calendarController.displayDate?.month;
     visibleYear = now.year;
@@ -218,16 +221,14 @@ class _SalesCalendarState extends State<SalesCalendar> {
                       },
                       onViewChanged: (ViewChangedDetails details) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          int? visibleMonthController =
-                              _calendarController.displayDate?.month;
+                          int? visibleMonthController = _calendarController.displayDate?.month;
                           currentMonth = visibleMonthController;
-                          int? visibleYearController =
-                              _calendarController.displayDate?.year;
+                          int? visibleYearController = _calendarController.displayDate?.year;
                           visibleYear = visibleYearController;
                           setState(() {});
                         });
                       },
-                      initialDisplayDate: DateTime.now(),
+                      initialDisplayDate: selectedDate,
                       monthCellBuilder: (BuildContext context, MonthCellDetails details) {
                         final bool isToday =
                             details.date.month == DateTime.now().month &&
@@ -237,8 +238,14 @@ class _SalesCalendarState extends State<SalesCalendar> {
                         final bool isInCurrentMonth =
                             details.date.month == currentMonth &&
                                 details.date.year == visibleYear;
+                        final bool dateToShow =
+                            details.date.month == selectedDate.month &&
+                        details.date.day == selectedDate.day &&
+                        details.date.year == selectedDate.year;
 
-                        if (isToday) {
+
+
+                        if (selectedDate == DateTime.now()) {
                           return Center(
                             child: Container(
                               width: null,
@@ -264,12 +271,12 @@ class _SalesCalendarState extends State<SalesCalendar> {
                               ),
                             ),
                           );
-                        } else if (isToday) {
+                        } else if (dateToShow) {
                           return Container(
                             width: null,
                             height: null,
                             decoration: BoxDecoration(
-                              color: AppColors3.whiteColor,
+                              color: AppColors3.primaryColor,
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: AppColors3.primaryColor,
@@ -280,7 +287,7 @@ class _SalesCalendarState extends State<SalesCalendar> {
                               child: Text(
                                 details.date.day.toString(),
                                 style: TextStyle(
-                                  color: AppColors3.primaryColor,
+                                  color: AppColors3.whiteColor,
                                   fontSize:
                                   MediaQuery.of(context).size.width * 0.05,
                                 ),

@@ -94,7 +94,7 @@ class _TicketslistState extends State<Ticketslist> {
       if(callback){
         await fetchSales(initData, finalData).then((_){
           WidgetsBinding.instance.addPostFrameCallback((_){
-            optnSize = ticketKeys[0].currentContext!.size!.height;
+            if(tickets.isNotEmpty) optnSize = ticketKeys[0].currentContext!.size!.height;
           });
         });
       }
@@ -118,6 +118,7 @@ class _TicketslistState extends State<Ticketslist> {
           tileController?.add(ExpansionTileController());
         }
         cantHelper = List.generate(tickets.length, (index) => 0);
+
         Future.delayed(Duration(milliseconds: 250));
         isLoading = false;
       });
