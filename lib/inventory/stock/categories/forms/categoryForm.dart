@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:beaute_app/inventory/kboardVisibilityManager.dart';
 import 'package:beaute_app/regEx.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,18 +25,62 @@ class _CategoryFormState extends State<CategoryForm> {
   File? _selectedImage;
   final picker = ImagePicker();
   bool isLoading = false;
+  late KeyboardVisibilityManager keyboardVisibilityManager;
+  //
+/*  Future<void> requestPermissions() async {
+    if (Platform.isAndroid) {
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+
+      if (androidInfo.version.sdkInt >= 31) {
+        // Android 12+ permisos específicos
+        if (await Permission.bluetoothScan.isDenied) {
+          await Permission.bluetoothScan.request();
+        }
+        if (await Permission.bluetoothConnect.isDenied) {
+          await Permission.bluetoothConnect.request();
+        }
+      }
+
+      if (androidInfo.version.sdkInt >= 33) {
+        // Android 13+ requiere permiso explícito para leer imágenes
+        if (await Permission.photos.isDenied) {
+          await Permission.photos.request();
+        }
+      }
+    }
+
+    // Siempre solicita permisos de almacenamiento si no están concedidos
+    if (await Permission.storage.isDenied) {
+      await Permission.storage.request();
+    }
+  }*/
+  //
+
 
   Future<void> _requestPermission() async {
     var status = await Permission.storage.status;
-    if (!status.isGranted) {
+    //var status2 = await Permission.manageExternalStorage.status;
+    if (status.isDenied) {
       status = await Permission.storage.request();
+      //status2 = await Permission.manageExternalStorage.request();
     }
     if (status.isGranted) {
       pickImage();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Permiso denegado para acceder a las imágenes')),
-      );
+      if(mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.width * 0.08,
+                bottom: MediaQuery.of(context).size.width * 0.08,
+                left: MediaQuery.of(context).size.width * 0.02,
+              ),
+              content: Text('Permiso denegado para acceder a las imágenes',
+                style: TextStyle(
+                    color: AppColors.whiteColor,
+                    fontSize: MediaQuery.of(context).size.width * 0.045),)),
+        );
+      }
     }
   }
 
@@ -133,7 +178,15 @@ class _CategoryFormState extends State<CategoryForm> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    keyboardVisibilityManager = KeyboardVisibilityManager();
+    super.initState();
+  }
+
+  @override
   void dispose() {
+    keyboardVisibilityManager.dispose();
     nameController.dispose();
     super.dispose();
   }
@@ -143,7 +196,9 @@ class _CategoryFormState extends State<CategoryForm> {
     return Material(
         color: Colors.transparent,
         child: Center(
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: EdgeInsets.only(bottom: keyboardVisibilityManager.visibleKeyboard ? MediaQuery.of(context).size.width * 0.52 : 0),
             width: MediaQuery.of(context).size.width * 0.9,
             padding: EdgeInsets.only(
               left: MediaQuery.of(context).size.width * 0.02,
@@ -155,7 +210,6 @@ class _CategoryFormState extends State<CategoryForm> {
               color: AppColors.whiteColor,
             ),
             child: Column(
-
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
@@ -187,16 +241,18 @@ class _CategoryFormState extends State<CategoryForm> {
                   height: MediaQuery.of(context).size.width * 0.105,
                   margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.width * 0.035,
-                    bottom: MediaQuery.of(context).size.width * 0.01
                   ),
                   padding: EdgeInsets.symmetric(
                     vertical: MediaQuery.of(context).size.width * 0.02,
                     horizontal: MediaQuery.of(context).size.width * 0.03,
                   ),
                   alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
                   ),
                   child: Text(
                     'Nombre de la categoría:',
@@ -207,7 +263,7 @@ class _CategoryFormState extends State<CategoryForm> {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.width * 0.105,
                   child: TextFormField(
@@ -220,16 +276,21 @@ class _CategoryFormState extends State<CategoryForm> {
                       hintStyle: TextStyle(
                         color: AppColors.primaryColor.withOpacity(0.5),
                       ),
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
                       ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(),
-                        borderRadius: BorderRadius.circular(10.0),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.primaryColor, width: 2.0),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
                       ),
                     ),
-                    onTap: () {},
                   ),
                 ),
                 Column(
@@ -266,35 +327,39 @@ class _CategoryFormState extends State<CategoryForm> {
                       width: double.infinity,
                       height: MediaQuery.of(context).size.width * 0.4,
                       child: ElevatedButton(
-                        onPressed: () {
-                          _requestPermission();
-                          print(_selectedImage);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.whiteColor,
-                            side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    bottomRight: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10)
-                                )
-                            )
-                        ),
-                        child: Image.file(
-                          _selectedImage!,
-                          height: 150,
-                          width: 150,
-                          fit: BoxFit.cover,
-                        )
+                          onPressed: () {
+                            print('aquiFly');
+                            _requestPermission();
+                            print(_selectedImage);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.whiteColor,
+                              side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10)
+                                  )
+                              )
+                          ),
+                          child: Image.file(
+                            _selectedImage!,
+                            height: 150,
+                            width: 150,
+                            fit: BoxFit.cover,
+                          )
                       ),
                     )
-                    : Column(
+                        : Column(
                       children: [
                         SizedBox(
                           width: double.infinity,
                           height: MediaQuery.of(context).size.width * 0.10,
                           child: ElevatedButton(
-                            onPressed: _requestPermission,
+                            onPressed: (){
+                              print('aquiFly1');
+                              _requestPermission();
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.whiteColor,
                                 side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
@@ -320,7 +385,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           child: const Text(
                             '*No se ha seleccionado una imagen',
                             style: TextStyle(
-                              color: AppColors.primaryColor
+                                color: AppColors.primaryColor
                             ),
                           ),
                         )
@@ -332,10 +397,10 @@ class _CategoryFormState extends State<CategoryForm> {
                 isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                        onPressed: () async {
-                          await createCategory();
-                          widget.onLoad(true);
-                        },
+                    onPressed: () async {
+                      await createCategory();
+                      widget.onLoad(true);
+                    },
                     style: ElevatedButton.styleFrom(
                       splashFactory: InkRipple.splashFactory,
                       padding: EdgeInsets.symmetric(

@@ -5,11 +5,13 @@ import 'package:beaute_app/inventory/stock/products/services/productsService.dar
 import 'package:beaute_app/inventory/stock/products/views/productDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:provider/provider.dart';
 import '../../../../agenda/utils/showToast.dart';
 import '../../../../agenda/utils/toastWidget.dart';
 import '../../../kboardVisibilityManager.dart';
 import '../../../sellpoint/cart/services/cartService.dart';
+import '../forms/productForm.dart';
 import '../utils/productOptions.dart';
 import '../../../themes/colors.dart';
 
@@ -265,7 +267,7 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                           children: [
                             Text(
                               textAlign: TextAlign.start,
-                              '${widget.selectedCategory}',
+                              widget.selectedCategory,
                               style: TextStyle(
                                 color: AppColors.primaryColor,
                                 fontSize: screenWidth! < 370.00
@@ -273,7 +275,34 @@ class ProductsState extends State<Products> with TickerProviderStateMixin {
                                     : MediaQuery.of(context).size.width * 0.082,
                                 fontWeight: FontWeight.bold,
                               ),)
-                          ]))
+                          ])),
+                      Spacer(),
+                      Padding(padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
+                      child: TextButton(
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductForm(
+                                selectedCategory: widget.selectedCategory,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 5, right: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          child: const Text(
+                              textAlign: TextAlign.center,
+                              'Agregar\nProducto',
+                          style: TextStyle(
+                            color: AppColors.primaryColor
+                          ),),
+                        )
+                      ),),
                     ],
                   )
                 ),
