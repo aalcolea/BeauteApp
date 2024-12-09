@@ -249,7 +249,6 @@ class _CategoriesState extends State<Categories> {
                           InkWell(
                             onTap: () {
                               if (isSelecting) {
-
                               } else {
                                 widget.onShowBlur(true);
                                 showDialog(
